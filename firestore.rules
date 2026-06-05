@@ -1,0 +1,141 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Fields:
+    //   - name: string (required)
+    //   - email: string (required, format: email)
+    //   - role: string (required, enum: ['admin', 'editor', 'viewer'])
+    //
+    // Collection: departments
+    // Fields:
+    //   - name: string (required, size < 100)
+    //   - description: string (required, size < 1000)
+    //   - contact_email: string (required, format: email)
+    //   - updatedAt: timestamp (required)
+    //
+    // Collection: audit_logs
+    // Fields:
+    //   - action: string (required, enum: ['CREATE', 'UPDATE', 'DELETE'])
+    //   - userId: string (required)
+    //   - userEmail: string (optional)
+    //   - targetId: string (required)
+    //   - targetType: string (required)
+    //   - timestamp: timestamp (required)
+    //   - details: map (optional)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "autosociomx@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isEditor() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'editor' || isAdmin());
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidUser(data) {
+      return hasOnlyAllowedFields(['name', 'email', 'role']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.email is string && isValidEmail(data.email) &&
+             data.role in ['admin', 'editor', 'viewer'];
+    }
+
+    function isValidDepartment(data) {
+      return hasOnlyAllowedFields(['name', 'description', 'contact_email', 'updatedAt']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
+             data.description is string && data.description.size() > 0 && data.description.size() < 1000 &&
+             data.contact_email is string && isValidEmail(data.contact_email) &&
+             data.updatedAt is timestamp;
+    }
+
+    function isValidAuditLog(data) {
+      return hasOnlyAllowedFields(['action', 'userId', 'userEmail', 'targetId', 'targetType', 'timestamp', 'details']) &&
+             data.action in ['CREATE', 'UPDATE', 'DELETE'] &&
+             data.userId == request.auth.uid &&
+             data.targetId is string &&
+             data.targetType is string &&
+             data.timestamp == request.time;
+    }
+
+    function isValidInfrastructure(data) {
+      return hasRequiredFields(['iun', 'name', 'type', 'status', 'departmentId', 'location']) &&
+             data.iun is string && data.iun.matches("^NAY-[A-Z]{3}-\\d{4}-\\d{3}$") &&
+             data.name is string && data.name.size() > 0 && data.name.size() < 200 &&
+             data.type in ['ROAD', 'BRIDGE', 'SCHOOL', 'HEALTH_CENTER', 'WATER_INFRA', 'ENERGY', 'SECURITY'] &&
+             data.status in ['OPTIMAL', 'RISK', 'CRITICAL', 'UNDER_MAINTENANCE', 'PLANNED'] &&
+             data.location.lat is number && data.location.lng is number &&
+             data.metrics.integrityScore >= 0 && data.metrics.integrityScore <= 100;
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /infrastructure/{assetId} {
+      allow read: if isAuthenticated();
+      allow create: if isEditor() && isValidInfrastructure(request.resource.data);
+      allow update: if isEditor() && isValidInfrastructure(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && isValidUser(request.resource.data) && (isOwner(userId) && request.resource.data.role == 'viewer' || isAdmin());
+      allow update: if isAuthenticated() && isValidUser(request.resource.data) && (isOwner(userId) && request.resource.data.role == resource.data.role || isAdmin());
+    }
+
+    match /departments/{deptId} {
+      allow read: if isAuthenticated();
+      allow create: if isEditor() && isValidDepartment(request.resource.data);
+      allow update: if isEditor() && isValidDepartment(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /audit_logs/{logId} {
+      allow read: if isAdmin();
+      allow create: if isAuthenticated() && isValidAuditLog(request.resource.data);
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

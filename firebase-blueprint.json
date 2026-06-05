@@ -1,0 +1,153 @@
+{
+  "entities": {
+    "Department": {
+      "title": "Department",
+      "description": "A government department or dependency.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the department."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the department's purpose."
+        },
+        "contact_email": {
+          "type": "string",
+          "format": "email",
+          "description": "The primary contact email for the department."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The last time the department was updated."
+        }
+      },
+      "required": ["name", "description", "contact_email"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "A record of an administrative action for transparency.",
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": ["CREATE", "UPDATE", "DELETE"],
+          "description": "The type of action performed."
+        },
+        "userId": {
+          "type": "string",
+          "description": "The UID of the user who performed the action."
+        },
+        "userEmail": {
+          "type": "string",
+          "description": "The email of the user who performed the action."
+        },
+        "targetId": {
+          "type": "string",
+          "description": "The ID of the resource being modified."
+        },
+        "targetType": {
+          "type": "string",
+          "description": "The type of resource being modified (e.g., 'Department')."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the action occurred."
+        },
+        "details": {
+          "type": "object",
+          "description": "Additional details about the change."
+        }
+      },
+      "required": ["action", "userId", "targetId", "targetType", "timestamp"]
+    },
+    "User": {
+      "title": "User",
+      "description": "A user profile within the governance system.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The user's display name."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "The user's email address."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin", "editor", "viewer"],
+          "description": "The user's role in the system."
+        }
+      },
+      "required": ["name", "email", "role"]
+    },
+    "InfrastructureAsset": {
+      "title": "InfrastructureAsset",
+      "description": "The Master Registry of government infrastructure assets.",
+      "type": "object",
+      "properties": {
+        "iun": { "type": "string", "description": "Identificador Único Nayarit" },
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["ROAD", "BRIDGE", "SCHOOL", "HEALTH_CENTER", "WATER_INFRA", "ENERGY", "SECURITY"] },
+        "status": { "type": "string", "enum": ["OPTIMAL", "RISK", "CRITICAL", "UNDER_MAINTENANCE", "PLANNED"] },
+        "departmentId": { "type": "string" },
+        "location": {
+          "type": "object",
+          "properties": {
+            "lat": { "type": "number" },
+            "lng": { "type": "number" },
+            "address": { "type": "string" },
+            "municipality": { "type": "string" }
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "properties": {
+            "integrityScore": { "type": "number" },
+            "physicalCondition": { "type": "number" },
+            "socialImpact": { "type": "number" },
+            "lastAuditDate": { "type": "string" },
+            "investmentAmount": { "type": "number" },
+            "beneficiaries": { "type": "number" }
+          }
+        },
+        "description": { "type": "string" },
+        "responsible": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "createdAt": { "type": "string" },
+            "updatedAt": { "type": "string" },
+            "version": { "type": "number" },
+            "source": { "type": "string", "enum": ["MANUAL", "IOT", "CITIZEN_REPORT", "SATELLITE"] }
+          }
+        }
+      },
+      "required": ["iun", "name", "type", "status", "departmentId", "location"]
+    }
+  },
+  "firestore": {
+    "departments": {
+      "schema": "Department",
+      "description": "Collection of government departments."
+    },
+    "audit_logs": {
+      "schema": "AuditLog",
+      "description": "Collection of audit logs for transparency."
+    },
+    "users": {
+      "schema": "User",
+      "description": "Collection of user profiles."
+    },
+    "infrastructure": {
+      "schema": "InfrastructureAsset",
+      "description": "Collection of infrastructure assets."
+    }
+  }
+}
