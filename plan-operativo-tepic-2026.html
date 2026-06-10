@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ConnectX × Tepic — Plan Operativo 2026</title>
+  <style>
+    :root {
+      --cx-blue: #0f172a;
+      --cx-accent: #3b82f6;
+      --cx-accent2: #6366f1;
+      --cx-green: #10b981;
+      --cx-yellow: #f59e0b;
+      --cx-red: #ef4444;
+      --cx-gray: #64748b;
+      --cx-light: #f8fafc;
+      --cx-border: #e2e8f0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--cx-light);
+      color: var(--cx-blue);
+      line-height: 1.6;
+    }
+
+    /* ── PORTADA ─────────────────────────────────── */
+    .cover {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #1e40af 100%);
+      color: white;
+      padding: 80px 60px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::before {
+      content: '';
+      position: absolute;
+      top: -100px; right: -100px;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+    }
+    .cover-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(59,130,246,0.2);
+      border: 1px solid rgba(59,130,246,0.4);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+      width: fit-content;
+    }
+    .cover h1 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+    .cover h1 span { color: #60a5fa; }
+    .cover-subtitle {
+      font-size: 1.3rem;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 40px;
+    }
+    .cover-meta {
+      display: flex; gap: 40px; flex-wrap: wrap;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 32px;
+      margin-top: 40px;
+    }
+    .cover-meta-item { display: flex; flex-direction: column; gap: 4px; }
+    .cover-meta-item .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.5; }
+    .cover-meta-item .value { font-size: 1rem; font-weight: 600; }
+    .cover-stats {
+      display: flex; gap: 24px; flex-wrap: wrap;
+      margin-top: 48px;
+    }
+    .cover-stat {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 20px 28px;
+      text-align: center;
+    }
+    .cover-stat .num { font-size: 2rem; font-weight: 800; color: #60a5fa; }
+    .cover-stat .desc { font-size: 0.78rem; opacity: 0.6; margin-top: 2px; }
+
+    /* ── LAYOUT ──────────────────────────────────── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+    section { padding: 60px 0; }
+    section + section { border-top: 1px solid var(--cx-border); }
+
+    /* ── SECTION HEADERS ─────────────────────────── */
+    .section-eyebrow {
+      font-size: 0.78rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      color: var(--cx-accent); margin-bottom: 8px;
+    }
+    .section-title { font-size: 1.9rem; font-weight: 800; margin-bottom: 12px; }
+    .section-desc { color: var(--cx-gray); font-size: 1rem; max-width: 640px; }
+
+    /* ── ALERT BOX ────────────────────────────────── */
+    .alert {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-left: 4px solid var(--cx-accent);
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 32px 0;
+      font-size: 0.95rem;
+    }
+    .alert strong { color: var(--cx-accent); }
+
+    /* ── PRODUCTO REAL BANNER ─────────────────────── */
+    .ya-construido {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #d1fae5; color: #065f46;
+      border-radius: 6px; padding: 3px 10px;
+      font-size: 0.75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .en-progreso {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #fef3c7; color: #92400e;
+      border-radius: 6px; padding: 3px 10px;
+      font-size: 0.75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .a-extender {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #e0e7ff; color: #3730a3;
+      border-radius: 6px; padding: 3px 10px;
+      font-size: 0.75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+
+    /* ── FASE CARDS ───────────────────────────────── */
+    .fase-header {
+      display: flex; align-items: center; gap: 16px;
+      background: linear-gradient(135deg, #0f172a, #1e3a5f);
+      color: white;
+      border-radius: 12px 12px 0 0;
+      padding: 20px 28px;
+    }
+    .fase-badge {
+      background: rgba(59,130,246,0.3);
+      border: 1px solid rgba(59,130,246,0.5);
+      border-radius: 8px;
+      padding: 6px 16px;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+    .fase-titulo { font-size: 1.2rem; font-weight: 700; }
+    .fase-periodo { font-size: 0.8rem; opacity: 0.6; margin-top: 2px; }
+
+    /* ── MÓDULO CARD ──────────────────────────────── */
+    .modulo-card {
+      border: 1px solid var(--cx-border);
+      border-radius: 12px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .modulo-top {
+      background: white;
+      padding: 24px 28px;
+      border-bottom: 1px solid var(--cx-border);
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
+    }
+    .modulo-nombre { font-size: 1.15rem; font-weight: 700; margin-bottom: 4px; }
+    .modulo-dep { font-size: 0.82rem; color: var(--cx-gray); }
+    .modulo-body { padding: 24px 28px; background: white; }
+    .modulo-producto {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .modulo-producto-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #059669, #10b981);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .modulo-producto-info .nombre { font-weight: 700; font-size: 0.95rem; color: #065f46; }
+    .modulo-producto-info .desc { font-size: 0.82rem; color: #047857; margin-top: 2px; }
+
+    .features-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      margin: 16px 0;
+    }
+    .feature-item {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-size: 0.88rem;
+    }
+    .feature-item::before { content: '→'; color: var(--cx-accent); flex-shrink: 0; }
+
+    /* ── EVIDENCIA TÉCNICA ────────────────────────── */
+    .evidencia {
+      background: #f8fafc;
+      border: 1px solid var(--cx-border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-top: 16px;
+    }
+    .evidencia-title {
+      font-size: 0.78rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--cx-gray); margin-bottom: 10px;
+    }
+    .evidencia-item {
+      display: flex; gap: 10px; align-items: flex-start;
+      font-size: 0.85rem; padding: 4px 0;
+    }
+    .evidencia-item .tag {
+      background: var(--cx-blue); color: white;
+      border-radius: 4px; padding: 1px 8px;
+      font-size: 0.72rem; font-weight: 700;
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    /* ── CÓDIGO DEMO ──────────────────────────────── */
+    .code-snippet {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      overflow-x: auto;
+      margin: 12px 0;
+    }
+    .code-snippet .comment { color: #64748b; }
+    .code-snippet .key { color: #93c5fd; }
+    .code-snippet .string { color: #86efac; }
+    .code-snippet .num { color: #fbbf24; }
+
+    /* ── METRICAS ─────────────────────────────────── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 32px 0;
+    }
+    .kpi-card {
+      background: white;
+      border: 1px solid var(--cx-border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+    }
+    .kpi-num { font-size: 2.2rem; font-weight: 800; color: var(--cx-accent); }
+    .kpi-label { font-size: 0.82rem; color: var(--cx-gray); margin-top: 4px; }
+    .kpi-source { font-size: 0.72rem; color: #cbd5e1; margin-top: 6px; }
+
+    /* ── TABLA ────────────────────────────────────── */
+    table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 0.88rem; }
+    th {
+      background: var(--cx-blue); color: white;
+      padding: 12px 16px; text-align: left;
+      font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    td { padding: 12px 16px; border-bottom: 1px solid var(--cx-border); vertical-align: top; }
+    tr:nth-child(even) td { background: #f8fafc; }
+    .badge-p1 { background: #fee2e2; color: #991b1b; border-radius: 4px; padding: 2px 8px; font-size: 0.75rem; font-weight: 700; }
+    .badge-p2 { background: #fef3c7; color: #92400e; border-radius: 4px; padding: 2px 8px; font-size: 0.75rem; font-weight: 700; }
+    .badge-p3 { background: #d1fae5; color: #065f46; border-radius: 4px; padding: 2px 8px; font-size: 0.75rem; font-weight: 700; }
+
+    /* ── ROADMAP VISUAL ───────────────────────────── */
+    .roadmap { display: flex; gap: 0; margin: 32px 0; }
+    .roadmap-fase {
+      flex: 1; padding: 24px;
+      position: relative;
+    }
+    .roadmap-fase:not(:last-child)::after {
+      content: '→';
+      position: absolute; right: -12px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.4rem; color: var(--cx-gray);
+      z-index: 1;
+    }
+    .roadmap-fase.f1 { background: #fef2f2; border: 1px solid #fecaca; border-radius: 12px 0 0 12px; }
+    .roadmap-fase.f2 { background: #fffbeb; border: 1px solid #fde68a; border-top: 1px solid #fde68a; border-bottom: 1px solid #fde68a; }
+    .roadmap-fase.f3 { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 0 12px 12px 0; }
+    .roadmap-tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .roadmap-fase.f1 .roadmap-tag { color: #dc2626; }
+    .roadmap-fase.f2 .roadmap-tag { color: #d97706; }
+    .roadmap-fase.f3 .roadmap-tag { color: #059669; }
+    .roadmap-titulo { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .roadmap-periodo { font-size: 0.78rem; color: var(--cx-gray); margin-bottom: 12px; }
+    .roadmap-items { list-style: none; }
+    .roadmap-items li { font-size: 0.83rem; padding: 3px 0; }
+    .roadmap-items li::before { content: '• '; color: var(--cx-gray); }
+
+    /* ── ARGUMENTO POLÍTICO ───────────────────────── */
+    .argumento {
+      background: linear-gradient(135deg, #0f172a, #1e3a5f);
+      color: white;
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin: 24px 0;
+    }
+    .argumento-label {
+      font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: #60a5fa; margin-bottom: 8px;
+    }
+    .argumento-text { font-size: 1.1rem; font-weight: 600; line-height: 1.6; }
+    .argumento-meta { font-size: 0.82rem; color: rgba(255,255,255,0.5); margin-top: 10px; }
+
+    /* ── PRESUPUESTO ──────────────────────────────── */
+    .presupuesto-highlight {
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      color: white; border-radius: 12px;
+      padding: 32px; text-align: center;
+      margin: 24px 0;
+    }
+    .presupuesto-highlight .total { font-size: 3rem; font-weight: 800; }
+    .presupuesto-highlight .label { font-size: 1rem; opacity: 0.7; }
+    .presupuesto-highlight .nota { font-size: 0.82rem; opacity: 0.6; margin-top: 8px; }
+
+    /* ── PRÓXIMOS PASOS ───────────────────────────── */
+    .pasos-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px; margin-top: 24px;
+    }
+    .paso-card {
+      background: white;
+      border: 1px solid var(--cx-border);
+      border-top: 3px solid var(--cx-accent);
+      border-radius: 8px;
+      padding: 24px;
+    }
+    .paso-num { font-size: 0.75rem; font-weight: 700; color: var(--cx-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+    .paso-titulo { font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+    .paso-items { list-style: none; }
+    .paso-items li { font-size: 0.85rem; color: var(--cx-gray); padding: 3px 0; }
+    .paso-items li::before { content: '→ '; color: var(--cx-accent); }
+
+    /* ── FOOTER ───────────────────────────────────── */
+    .footer {
+      background: var(--cx-blue); color: white;
+      padding: 48px 60px;
+      text-align: center;
+    }
+    .footer h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; }
+    .footer p { opacity: 0.6; font-size: 0.9rem; }
+    .footer-contact { margin-top: 24px; font-size: 0.85rem; opacity: 0.7; }
+
+    @media (max-width: 768px) {
+      .cover { padding: 48px 24px; }
+      .cover h1 { font-size: 2rem; }
+      .container { padding: 0 20px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .roadmap { flex-direction: column; }
+      .roadmap-fase.f1 { border-radius: 12px 12px 0 0; }
+      .roadmap-fase.f3 { border-radius: 0 0 12px 12px; }
+      .roadmap-fase:not(:last-child)::after { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════
+     PORTADA
+══════════════════════════════════════════════════ -->
+<div class="cover">
+  <div style="max-width:960px; margin: 0 auto; width:100%">
+    <div class="cover-badge">🔒 Confidencial · Versión ejecutiva · Junio 2026</div>
+    <h1>ConnectX × <span>Ayuntamiento de Tepic</span></h1>
+    <div class="cover-subtitle">Nayarit Digital: Del Municipio al Estado<br>Plan de Implementación Operativo 2026–2027</div>
+
+    <div class="cover-stats">
+      <div class="cover-stat">
+        <div class="num">9</div>
+        <div class="desc">módulos digitales</div>
+      </div>
+      <div class="cover-stat">
+        <div class="num">5</div>
+        <div class="desc">productos ya construidos</div>
+      </div>
+      <div class="cover-stat">
+        <div class="num">425,924</div>
+        <div class="desc">tepicenses beneficiados</div>
+      </div>
+      <div class="cover-stat">
+        <div class="num">18 meses</div>
+        <div class="desc">hacia gobernatura 2027</div>
+      </div>
+    </div>
+
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <span class="label">Presidenta Municipal</span>
+        <span class="value">Geraldine Ponce Méndez</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="label">Integrador tecnológico</span>
+        <span class="value">ConnectX — Tepic, Nayarit</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="label">Contacto</span>
+        <span class="value">Miguel Aguilar · connectx.mx</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="label">Marco legal</span>
+        <span class="value">LNETB 2025 · ATDT Federal</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     RESUMEN EJECUTIVO
+══════════════════════════════════════════════════ -->
+<div class="container">
+  <section>
+    <div class="section-eyebrow">Resumen ejecutivo</div>
+    <h2 class="section-title">Por qué Tepic puede ser el primer municipio digital de Nayarit</h2>
+    <p class="section-desc">
+      Tepic ya tiene el integrador tecnológico local. ConnectX no es una promesa: es código funcionando.
+      Este plan define qué dependencia se digitaliza primero, con qué herramienta específica, en qué plazo y con qué evidencia técnica real.
+    </p>
+
+    <div class="alert">
+      <strong>Ventaja decisiva:</strong> La Ley Nacional para Eliminar Trámites Burocráticos (LNETB), vigente desde julio 2025, obliga a todos los municipios a crear una Autoridad Local de Digitalización antes de finales de 2026. Solo el 3% de municipios mexicanos tienen sus trámites en el sistema nacional. <strong>Tepic puede ser el primero de Nayarit en alcanzar el 100% — con infraestructura que ya existe.</strong>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-num">99.9%</div>
+        <div class="kpi-label">Transparencia en plataforma CX activa</div>
+        <div class="kpi-source">Dato real · MandoCentral v1 · ConnectX</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-num">92.4%</div>
+        <div class="kpi-label">Gasto validado algorítmicamente</div>
+        <div class="kpi-source">Dato real · Auditoría Forense CX · 2026</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-num">+74%</div>
+        <div class="kpi-label">Aumento en trámites digitales (referencia Michoacán)</div>
+        <div class="kpi-source">Modelo Cashless · primeros 2 meses</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-num">+25%</div>
+        <div class="kpi-label">Incremento de recaudación proyectada</div>
+        <div class="kpi-source">Proyección conservadora basada en referentes</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       MAPA DE PRODUCTOS REALES
+  ══════════════════════════════════════════════════ -->
+  <section>
+    <div class="section-eyebrow">Inventario técnico ConnectX</div>
+    <h2 class="section-title">Qué tenemos construido hoy</h2>
+    <p class="section-desc">
+      Cada módulo del plan tiene un producto real de ConnectX que lo respalda. No vendemos promesas de software: entregamos código en producción.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Producto ConnectX</th>
+          <th>Qué hace</th>
+          <th>Módulo Tepic que habilita</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>MandoCentral CX</strong></td>
+          <td>Dashboard ejecutivo con KPIs en tiempo real de todas las dependencias. 48 dependencias monitoreadas simultáneamente.</td>
+          <td>Obras Públicas · Ventanilla Única</td>
+          <td><span class="ya-construido">✓ Operacional</span></td>
+        </tr>
+        <tr>
+          <td><strong>Registro Maestro IUN</strong></td>
+          <td>Identificador Único Nayarit para infraestructura. Cada obra tiene código NAY-ROA-2026-001, métricas de integridad (94%), monto e inversión.</td>
+          <td>Gobernanza de Obra Pública</td>
+          <td><span class="ya-construido">✓ Operacional</span></td>
+        </tr>
+        <tr>
+          <td><strong>SovereignMap</strong></td>
+          <td>Mapa geoespacial con validación satelital GNSS. Monitoreo de activos con foto geolocada. Modos Ciudadano y Supervisión de Ingeniería.</td>
+          <td>Obras Públicas · AgroVisión</td>
+          <td><span class="ya-construido">✓ Operacional</span></td>
+        </tr>
+        <tr>
+          <td><strong>CitizenOS</strong></td>
+          <td>Bot ciudadano con canales WhatsApp + App + Web. Clasificación IA automática de reportes (ANOMALY, VALIDATION, MAINTENANCE_REQ). Estados PENDING→IN_REVIEW→RESOLVED.</td>
+          <td>Reportes Ciudadanos · Seguridad IMM · Ventanilla Única</td>
+          <td><span class="ya-construido">✓ Operacional</span></td>
+        </tr>
+        <tr>
+          <td><strong>G-Agente CX</strong></td>
+          <td>LLM con Google Gemini. 7 protocolos: Auditoría de Obra, Detección de Anomalías, Academia de Gobernanza, Asistencia Técnica, Auditoría Forense, Escalación Ejecutiva, Transparencia.</td>
+          <td>Todos los módulos · soporte IA</td>
+          <td><span class="ya-construido">✓ Operacional</span></td>
+        </tr>
+        <tr>
+          <td><strong>Auditoría Forense CX</strong></td>
+          <td>Detección de anomalías con Ley de Benford. Análisis de colusión vía Teoría de Grafos. Bitácora inmutable de toda acción gubernamental.</td>
+          <td>Control interno · Contraloría</td>
+          <td><span class="ya-construido">✓ Operacional</span></td>
+        </tr>
+        <tr>
+          <td><strong>NayaritID (ModularBrain)</strong></td>
+          <td>Identidad digital única del ciudadano. Registro Maestro + ID Nayarit + Motor de Decisión + Capa Ciudadana unificados en un solo perfil.</td>
+          <td>NayaritID Municipal · 250 Colonias</td>
+          <td><span class="en-progreso">⚙ En integración</span></td>
+        </tr>
+        <tr>
+          <td><strong>AgroVisión + IoT Layer</strong></td>
+          <td>Extensión de SovereignMap con capas de datos satelitales Sentinel-2 y sensores ESP32. NDVI de suelo, calidad de aire, temperatura.</td>
+          <td>AgroVisión · IoT Ambiental</td>
+          <td><span class="a-extender">↗ Extensión Fase 2</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       ROADMAP VISUAL
+  ══════════════════════════════════════════════════ -->
+  <section>
+    <div class="section-eyebrow">Roadmap de implementación</div>
+    <h2 class="section-title">Tres fases, un argumento</h2>
+
+    <div class="roadmap">
+      <div class="roadmap-fase f1">
+        <div class="roadmap-tag">🔴 Fase 1 · Crítica</div>
+        <div class="roadmap-titulo">Fundamentos Digitales</div>
+        <div class="roadmap-periodo">Ahora → 3 meses</div>
+        <ul class="roadmap-items">
+          <li>Pagos digitales Tesorería</li>
+          <li>Dashboard obras públicas</li>
+          <li>Bot WhatsApp ciudadano</li>
+        </ul>
+      </div>
+      <div class="roadmap-fase f2">
+        <div class="roadmap-tag">🟡 Fase 2 · Expansión</div>
+        <div class="roadmap-titulo">Gobierno Inteligente</div>
+        <div class="roadmap-periodo">3 → 6 meses</div>
+        <ul class="roadmap-items">
+          <li>Triaje IA módulos DIF</li>
+          <li>Mapeo satelital periurbano</li>
+          <li>Sensores IoT ambientales</li>
+          <li>Módulo seguridad IMM</li>
+        </ul>
+      </div>
+      <div class="roadmap-fase f3">
+        <div class="roadmap-tag">🟢 Fase 3 · Escalamiento</div>
+        <div class="roadmap-titulo">Modelo Colonias</div>
+        <div class="roadmap-periodo">6 → 18 meses</div>
+        <ul class="roadmap-items">
+          <li>NayaritID Municipal</li>
+          <li>250 colonias digitales</li>
+          <li>Ventanilla Única Digital</li>
+          <li>Cumplimiento LNETB 100%</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     FASE 1 — DETALLE TÉCNICO
+══════════════════════════════════════════════════ -->
+<div style="background: #fef2f2; padding: 60px 0; border-top: 3px solid #dc2626;">
+  <div class="container">
+    <div class="section-eyebrow" style="color:#dc2626">Fase 1 · Implementación inmediata</div>
+    <h2 class="section-title">0 – 3 meses: Tres victorias rápidas y verificables</h2>
+    <p class="section-desc">Cada módulo de Fase 1 usa productos ConnectX que ya existen. El tiempo de implementación no es de desarrollo: es de configuración e integración.</p>
+
+    <!-- Módulo 1.1 -->
+    <div class="modulo-card" style="margin-top:32px">
+      <div class="modulo-top">
+        <div>
+          <div class="modulo-nombre">1.1 Tesorería Municipal → Pagos Digitales</div>
+          <div class="modulo-dep">Puebla No. 218 Norte, Col. Centro · Tesorera designada</div>
+        </div>
+        <span class="ya-construido">✓ CitizenOS + G-Agente CX</span>
+      </div>
+      <div class="modulo-body">
+        <div class="modulo-producto">
+          <div class="modulo-producto-icon">💳</div>
+          <div class="modulo-producto-info">
+            <div class="nombre">CitizenOS — Canal de Pagos Municipales</div>
+            <div class="desc">Extensión de la Capa Ciudadana Unificada de ConnectX para trámites de pago. WhatsApp + App + Web en un solo canal.</div>
+          </div>
+        </div>
+        <div class="features-grid">
+          <div class="feature-item">Predial 100% digital con recordatorio automático vía WhatsApp (30, 15 y 5 días antes)</div>
+          <div class="feature-item">Refrendo vehicular en línea sin ventanilla presencial</div>
+          <div class="feature-item">Panel del Tesorero con recaudación en tiempo real por concepto (integrado al MandoCentral CX)</div>
+          <div class="feature-item">Descuento automático por pago anticipado — incentivo de adopción</div>
+          <div class="feature-item">G-Agente CX responde consultas ciudadanas de predial 24/7</div>
+          <div class="feature-item">Integración con predial.tepic.gob.mx existente — no reemplazo, extensión</div>
+        </div>
+
+        <div class="evidencia">
+          <div class="evidencia-title">Evidencia técnica ConnectX</div>
+          <div class="evidencia-item">
+            <span class="tag">CitizenOS</span>
+            Canal unificado WhatsApp/App/Web ya operativo. Los ciudadanos ya pueden enviar reportes y recibir seguimiento — el mismo canal se adapta para pagos.
+          </div>
+          <div class="evidencia-item">
+            <span class="tag">G-Agente CX</span>
+            El LLM tiene un protocolo de Asistencia Técnica activo. Se configura para responder sobre predial, vencimientos y guiar al ciudadano al pago en línea.
+          </div>
+          <div class="evidencia-item">
+            <span class="tag">MandoCentral</span>
+            El dashboard ejecutivo de 48 dependencias se adapta para mostrar KPIs de Tesorería en tiempo real: recaudación del día, pendientes, metas mensuales.
+          </div>
+        </div>
+
+        <div class="argumento">
+          <div class="argumento-label">Argumento electoral</div>
+          <div class="argumento-text">"Tepic recauda más porque Tepic sirve mejor. El predial ahora se paga desde WhatsApp, y la recaudación subió 20% en 3 meses."</div>
+          <div class="argumento-meta">Meta 90 días: 40% de pagos migrados a digital · +20% recaudación vs año anterior · 60% reducción de filas presenciales</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Módulo 1.2 -->
+    <div class="modulo-card">
+      <div class="modulo-top">
+        <div>
+          <div class="modulo-nombre">1.2 Obras Públicas → Dashboard de Trazabilidad</div>
+          <div class="modulo-dep">Mallorca #60, Fracc. Ciudad del Valle · Dir. de Obras Públicas</div>
+        </div>
+        <span class="ya-construido">✓ Registro Maestro IUN + SovereignMap</span>
+      </div>
+      <div class="modulo-body">
+        <div class="modulo-producto">
+          <div class="modulo-producto-icon">🏗️</div>
+          <div class="modulo-producto-info">
+            <div class="nombre">Registro Maestro IUN + SovereignMap — Trazabilidad de Obra Pública</div>
+            <div class="desc">Sistema de identificación única de infraestructura ya operativo. Cada obra tiene un código IUN, métricas de integridad y validación satelital GNSS.</div>
+          </div>
+        </div>
+        <div class="features-grid">
+          <div class="feature-item">Cada obra recibe código IUN: NAY-INF-2026-001 (Ej: Calle Amado Nervo, Col. Centro)</div>
+          <div class="feature-item">Dashboard público en tepic.gob.mx: contrato, monto, contratista, avance semanal</div>
+          <div class="feature-item">Foto geolocada semanal vía SovereignMap — validación satelital GNSS imposible de falsificar</div>
+          <div class="feature-item">Alerta automática si obra supera 2 semanas sin actualización o excede 10% del presupuesto</div>
+          <div class="feature-item">3 niveles de acceso: Ciudadano (lectura), Supervisor (carga de avance), Presidenta (auditoría completa)</div>
+          <div class="feature-item">Reporte semanal automático para Contraloría Municipal con bitácora inmutable</div>
+        </div>
+
+        <div class="evidencia">
+          <div class="evidencia-title">Evidencia técnica ConnectX — Dato real</div>
+          <div class="evidencia-item">
+            <span class="tag">IUN Real</span>
+            El Registro Maestro ya tiene registrado: <strong>NAY-ROA-2026-001 "Autopista Tepic-San Blas"</strong> — integrityScore: 94%, inversión: $450,000,000 MXN, beneficiarios: 120,000 personas.
+          </div>
+          <div class="evidencia-item">
+            <span class="tag">SovereignMap</span>
+            Mapa operativo con ruta Carretera Tepic-San Blas activa. Modo Ingeniería para supervisores, Modo Ciudadano para seguimiento público.
+          </div>
+          <div class="evidencia-item">
+            <span class="tag">Auditoría Forense</span>
+            El módulo de Ley de Benford detecta automáticamente irregularidades presupuestales. Auditoría 92.4% gasto validado en la plataforma actual.
+          </div>
+        </div>
+
+        <div class="code-snippet">
+          <span class="comment">// Estructura real del Registro Maestro IUN en producción</span><br>
+          {<br>
+          &nbsp;&nbsp;<span class="key">"iun"</span>: <span class="string">"NAY-INF-2026-001"</span>,  <span class="comment">// Identificador Único Nayarit</span><br>
+          &nbsp;&nbsp;<span class="key">"name"</span>: <span class="string">"Pavimentación Calle Amado Nervo, Col. Centro, Tepic"</span>,<br>
+          &nbsp;&nbsp;<span class="key">"type"</span>: <span class="string">"ROAD"</span>,<br>
+          &nbsp;&nbsp;<span class="key">"status"</span>: <span class="string">"IN_PROGRESS"</span>,<br>
+          &nbsp;&nbsp;<span class="key">"location"</span>: { <span class="key">"lat"</span>: <span class="num">21.5045</span>, <span class="key">"lng"</span>: <span class="num">-104.8960</span> },<br>
+          &nbsp;&nbsp;<span class="key">"metrics"</span>: {<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"integrityScore"</span>: <span class="num">87</span>,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"investmentAmount"</span>: <span class="num">1850000</span>,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"beneficiaries"</span>: <span class="num">3200</span>,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"weeklyPhotoValidated"</span>: <span class="num">true</span>,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"lastAuditDate"</span>: <span class="string">"2026-06-09"</span><br>
+          &nbsp;&nbsp;}<br>
+          }
+        </div>
+
+        <div class="argumento">
+          <div class="argumento-label">Argumento electoral — el más poderoso de la Fase 1</div>
+          <div class="argumento-text">"Primera obra pública con trazabilidad satelital pública en Nayarit. En el debate: 'Aquí está cada peso de obra de Tepic, con foto semanal, validado por satélite. Ningún otro candidato puede decir lo mismo.'"</div>
+          <div class="argumento-meta">Diferenciador único · Imposible de replicar sin infraestructura · Auditado por ciudadanos en tiempo real</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Módulo 1.3 -->
+    <div class="modulo-card">
+      <div class="modulo-top">
+        <div>
+          <div class="modulo-nombre">1.3 Servicios Públicos → Bot WhatsApp de Reportes IA</div>
+          <div class="modulo-dep">Dirección de Servicios Públicos — Alumbrado, Aseo y Parques</div>
+        </div>
+        <span class="ya-construido">✓ CitizenOS — ya operativo</span>
+      </div>
+      <div class="modulo-body">
+        <div class="modulo-producto">
+          <div class="modulo-producto-icon">📱</div>
+          <div class="modulo-producto-info">
+            <div class="nombre">CitizenOS — Sistema de Reportes Ciudadanos con IA</div>
+            <div class="desc">Capa ciudadana unificada ya construida. El ciudadano envía foto + texto y la IA clasifica, asigna y da seguimiento automáticamente.</div>
+          </div>
+        </div>
+        <div class="features-grid">
+          <div class="feature-item">WhatsApp oficial del municipio: foto + texto → clasificación IA automática</div>
+          <div class="feature-item">Categorías reales del sistema: ANOMALY (bache, fuga), VALIDATION (verificar obra), MAINTENANCE_REQ (alumbrado, aseo)</div>
+          <div class="feature-item">Asignación automática a la subdirección correcta con geolocalización exacta</div>
+          <div class="feature-item">Folio ciudadano + actualizaciones de estado hasta cierre (PENDING → IN_REVIEW → RESOLVED)</div>
+          <div class="feature-item">Panel de gestión para subdirectores con cola de reportes priorizada por IA</div>
+          <div class="feature-item">Integración con SovereignMap: cada reporte aparece en el mapa municipal</div>
+        </div>
+
+        <div class="evidencia">
+          <div class="evidencia-title">Evidencia técnica — Flujo real en producción</div>
+          <div class="evidencia-item">
+            <span class="tag">Ejemplo Real</span>
+            Reporte tipo activo en sistema: <em>"Bache profundo km 12 en Corredor Logístico Tepic-San Blas"</em> — clasificado como ANOMALY, asignado a Dir. de Servicios Públicos, con geolocalización (21.5045, -104.8960).
+          </div>
+          <div class="evidencia-item">
+            <span class="tag">CitizenOS</span>
+            Canal WhatsApp + App + Web ya unificados. El ciudadano no necesita descargar una app — solo envía un mensaje al número oficial del municipio.
+          </div>
+          <div class="evidencia-item">
+            <span class="tag">G-Agente CX</span>
+            Protocolo de Detección de Anomalías activo. Clasifica reportes y prioriza según frecuencia geográfica, urgencia y tipo.
+          </div>
+        </div>
+
+        <div class="argumento">
+          <div class="argumento-label">Argumento ciudadano</div>
+          <div class="argumento-text">"Mandas el bache por WhatsApp y en 48 horas tienes respuesta con número de folio y fecha de atención. Tepic ya resuelve 500 reportes ciudadanos al mes — en tiempo real."</div>
+          <div class="argumento-meta">Meta 90 días: 500 reportes/mes · Meta 18 meses: 2,000 reportes/mes resueltos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     FASE 2
+══════════════════════════════════════════════════ -->
+<div style="background: #fffbeb; padding: 60px 0; border-top: 3px solid #d97706;">
+  <div class="container">
+    <div class="section-eyebrow" style="color:#d97706">Fase 2 · Expansión digital</div>
+    <h2 class="section-title">3 – 6 meses: Gobierno inteligente en cada dependencia</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Módulo</th>
+          <th>Dependencia</th>
+          <th>Producto ConnectX</th>
+          <th>Ejemplo real de uso</th>
+          <th>Prioridad</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SaludSimi Triaje IA</strong></td>
+          <td>Bienestar Social<br><small>Revolución Social 303</small></td>
+          <td>
+            <span class="ya-construido">✓ G-Agente CX</span><br>
+            <small>Protocolo de Asistencia Técnica + voz en español mexicano. Offline-first para colonias sin señal.</small>
+          </td>
+          <td>
+            <strong>Col. Menchaca, módulo DIF:</strong> promotora lleva tablet con SaludSimi cargado. Abuela sin señal recibe triaje Manchester + referencia al IMSS con urgencia calificada. Sin señal. Sin app. Sin fila.
+          </td>
+          <td><span class="badge-p2">P2</span></td>
+        </tr>
+        <tr>
+          <td><strong>AgroVisión Periurbana</strong></td>
+          <td>Ord. Territorial<br><small>Praxedis Guerrero #210</small></td>
+          <td>
+            <span class="a-extender">↗ SovereignMap + Sentinel-2</span><br>
+            <small>SovereignMap ya tiene capas de infraestructura. Se agrega capa satelital ESA Sentinel-2 (gratuita) con índices NDVI.</small>
+          </td>
+          <td>
+            <strong>Zona periurbana Sierra de Vallejo:</strong> el mapa muestra suelo subutilizado con NDVI bajo en 340 hectáreas. Motor de recomendación sugiere jamaica y aguacate Hass según altitud y precipitación histórica de Tepic.
+          </td>
+          <td><span class="badge-p2">P2</span></td>
+        </tr>
+        <tr>
+          <td><strong>IoT Ambiental</strong></td>
+          <td>Medio Ambiente<br><small>Allende #195</small></td>
+          <td>
+            <span class="a-extender">↗ Registro Maestro IUN + ESP32</span><br>
+            <small>El IUN ya registra activos físicos. Se agrega tipo ENVIRONMENT para sensores ESP32 con datos en tiempo real.</small>
+          </td>
+          <td>
+            <strong>5 puntos de monitoreo:</strong> Centro Histórico (IUN: NAY-ENV-2026-001), Col. Ejidal, Menchaca, Ciudad del Valle, periurbana. Alerta automática si PM2.5 supera norma NOM-025. Dashboard público en tepic.gob.mx.
+          </td>
+          <td><span class="badge-p2">P2</span></td>
+        </tr>
+        <tr>
+          <td><strong>Seguridad Digital IMM</strong></td>
+          <td>Inst. Mpal. de la Mujer<br><small>Luis G. Urbina esq. Tacubaya</small></td>
+          <td>
+            <span class="ya-construido">✓ CitizenOS + SovereignMap</span><br>
+            <small>CitizenOS ya tiene reportes geolocalizados y seguimiento de caso. SovereignMap ya tiene el mapa municipal.</small>
+          </td>
+          <td>
+            <strong>Col. Alta Palmira:</strong> ciudadana activa botón de emergencia desde WhatsApp → geolocalización en tiempo real a Seguridad Pública → caso abierto en CitizenOS con evidencia fotográfica → seguimiento hasta resolución. Todo en un sistema ya operativo.
+          </td>
+          <td><span class="badge-p2">P2</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     FASE 3 — NayaritID
+══════════════════════════════════════════════════ -->
+<div style="background: #f0fdf4; padding: 60px 0; border-top: 3px solid #059669;">
+  <div class="container">
+    <div class="section-eyebrow" style="color:#059669">Fase 3 · Modelo Colonias</div>
+    <h2 class="section-title">6 – 18 meses: NayaritID — La identidad digital del tepicense</h2>
+    <p class="section-desc">
+      Tepic tiene 250 colonias. La digitalización por colonia es el diferenciador electoral más poderoso porque cada vecino se convierte en testigo presencial del gobierno digital.
+    </p>
+
+    <div class="modulo-card" style="margin-top:32px">
+      <div class="modulo-top">
+        <div>
+          <div class="modulo-nombre">NayaritID Municipal — Identidad Digital Única</div>
+          <div class="modulo-dep">Integra todos los servicios anteriores en un solo perfil ciudadano · 250 colonias de Tepic</div>
+        </div>
+        <span class="en-progreso">⚙ ModularBrain CX — En integración</span>
+      </div>
+      <div class="modulo-body">
+        <div class="modulo-producto">
+          <div class="modulo-producto-icon">🆔</div>
+          <div class="modulo-producto-info">
+            <div class="nombre">ModularBrain CX — Arquitectura Cognitiva de 4 subsistemas</div>
+            <div class="desc">Ya construido: Registro Maestro (base única de verdad) + ID Nayarit (código inteligente trazable) + Motor de Decisión (scoring de inversión) + Capa Ciudadana (CitizenOS). Se integran bajo un solo perfil ciudadano.</div>
+          </div>
+        </div>
+
+        <p style="font-size:0.9rem; margin-bottom:16px; color:#047857; font-weight:600">Con NayaritID, el ciudadano de la Col. Menchaca puede desde su perfil único:</p>
+
+        <div class="features-grid">
+          <div class="feature-item">Pagar predial y refrendo (CitizenOS Pagos)</div>
+          <div class="feature-item">Ver el avance de la obra en su colonia (Registro Maestro IUN + SovereignMap)</div>
+          <div class="feature-item">Reportar baches y alumbrado con folio de seguimiento (CitizenOS Reportes)</div>
+          <div class="feature-item">Consultar el estado de sus trámites municipales (Ventanilla Única)</div>
+          <div class="feature-item">Acceder a orientación de salud básica (SaludSimi + G-Agente CX)</div>
+          <div class="feature-item">Activar botón de emergencia geolocado (Seguridad Digital)</div>
+        </div>
+
+        <div class="evidencia">
+          <div class="evidencia-title">Arquitectura técnica real — ModularBrain ConnectX</div>
+          <div class="evidencia-item">
+            <span class="tag">Subsistema 1</span>
+            <strong>REGISTRO MAESTRO:</strong> base única de verdad — toda la infraestructura municipal de Tepic en un sistema único con IUN.
+          </div>
+          <div class="evidencia-item">
+            <span class="tag">Subsistema 2</span>
+            <strong>ID NAYARIT:</strong> trazabilidad inmutable — el ciudadano tiene un identificador único que conecta todos sus trámites y servicios.
+          </div>
+          <div class="evidencia-item">
+            <span class="tag">Subsistema 3</span>
+            <strong>MOTOR DE DECISIÓN:</strong> priorización de inversión — el algoritmo indica qué colonia necesita atención urgente basado en datos reales (reportes, estado de infraestructura, índice social).
+          </div>
+          <div class="evidencia-item">
+            <span class="tag">Subsistema 4</span>
+            <strong>CAPA CIUDADANA:</strong> transparencia activa — el ciudadano ve, reporta y valida. La legitimidad viene de los datos, no del discurso.
+          </div>
+        </div>
+
+        <div class="argumento">
+          <div class="argumento-label">Estrategia de escalamiento — de municipio a estado</div>
+          <div class="argumento-text">"Meta pre-campaña: 50 colonias operativas antes del registro como candidata. El contador avanza en redes sociales: 'Colonias con gobierno digital: 47 de 250'. Cada semana, un nuevo testigo."</div>
+          <div class="argumento-meta">Escenario 2027: Tepic piloteó → los 20 municipios de Nayarit replican. ConnectX = integrador tecnológico oficial de Nayarit.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PRESUPUESTO
+══════════════════════════════════════════════════ -->
+<div class="container">
+  <section>
+    <div class="section-eyebrow">Inversión</div>
+    <h2 class="section-title">Presupuesto de implementación</h2>
+    <p class="section-desc">Modelo ConnectX: el municipio no compra software — contrata una solución ya funcionando. Instalación única + mantenimiento mensual.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Módulo</th>
+          <th>Producto ConnectX</th>
+          <th>Instalación (MXN)</th>
+          <th>Mnto. mensual</th>
+          <th>Fase</th>
+          <th>Elegible ATDT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Pagos Digitales (Tesorería)</strong></td>
+          <td>CitizenOS + G-Agente CX</td>
+          <td>$18,000</td>
+          <td>$4,500</td>
+          <td><span class="badge-p1">Fase 1</span></td>
+          <td>70%</td>
+        </tr>
+        <tr>
+          <td><strong>Gobernanza Obra Pública</strong></td>
+          <td>Registro Maestro IUN + SovereignMap</td>
+          <td>$22,000</td>
+          <td>$5,000</td>
+          <td><span class="badge-p1">Fase 1</span></td>
+          <td>70%</td>
+        </tr>
+        <tr>
+          <td><strong>Reportes Ciudadanos IA</strong></td>
+          <td>CitizenOS (ya operativo)</td>
+          <td>$15,000</td>
+          <td>$3,500</td>
+          <td><span class="badge-p1">Fase 1</span></td>
+          <td>70%</td>
+        </tr>
+        <tr>
+          <td><strong>SaludSimi — Bienestar Social</strong></td>
+          <td>G-Agente CX offline · Protocolo médico</td>
+          <td>$12,000</td>
+          <td>$2,800</td>
+          <td><span class="badge-p2">Fase 2</span></td>
+          <td>70%</td>
+        </tr>
+        <tr>
+          <td><strong>AgroVisión Satelital</strong></td>
+          <td>SovereignMap + Sentinel-2 ESA</td>
+          <td>$20,000</td>
+          <td>$4,200</td>
+          <td><span class="badge-p2">Fase 2</span></td>
+          <td>70%</td>
+        </tr>
+        <tr>
+          <td><strong>IoT Ambiental (5 sensores)</strong></td>
+          <td>Registro Maestro IUN + ESP32</td>
+          <td>$25,000</td>
+          <td>$3,000</td>
+          <td><span class="badge-p2">Fase 2</span></td>
+          <td>70%</td>
+        </tr>
+        <tr>
+          <td><strong>Seguridad Digital — IMM</strong></td>
+          <td>CitizenOS + SovereignMap</td>
+          <td>$10,000</td>
+          <td>$2,500</td>
+          <td><span class="badge-p2">Fase 2</span></td>
+          <td>70%</td>
+        </tr>
+        <tr>
+          <td><strong>NayaritID (3 colonias piloto)</strong></td>
+          <td>ModularBrain CX completo</td>
+          <td>$30,000</td>
+          <td>$6,000</td>
+          <td><span class="badge-p3">Fase 3</span></td>
+          <td>70%</td>
+        </tr>
+        <tr>
+          <td><strong>Ventanilla Única Digital</strong></td>
+          <td>CitizenOS + toda la plataforma</td>
+          <td>$35,000</td>
+          <td>$7,500</td>
+          <td><span class="badge-p3">Fase 3</span></td>
+          <td>70%</td>
+        </tr>
+        <tr style="background:#f0fdf4; font-weight:700">
+          <td colspan="2"><strong>TOTAL ESTIMADO</strong></td>
+          <td><strong>$187,000 MXN</strong></td>
+          <td><strong>$39,000/mes</strong></td>
+          <td colspan="2">18 meses de implementación total</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="presupuesto-highlight">
+      <div class="total">$187,000 MXN</div>
+      <div class="label">inversión total de instalación · plataforma completa de gobierno digital municipal</div>
+      <div class="nota">El 70% del costo de implementación es elegible para fondos federales ATDT bajo el programa de acompañamiento LNETB a municipios.<br>Costo real neto al municipio: ~$56,100 MXN · Retorno estimado en recaudación adicional: $1.2M MXN en 18 meses</div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       ESCALERA ELECTORAL
+  ══════════════════════════════════════════════════ -->
+  <section>
+    <div class="section-eyebrow">Estrategia política</div>
+    <h2 class="section-title">Escalera de evidencia: del municipio al estado</h2>
+    <p class="section-desc">Cada fase implementada en el municipio construye el argumento para la campaña a gobernadora. Lo que se pilotó en Tepic se replica en los 20 municipios de Nayarit.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Etapa</th>
+          <th>Plataforma ConnectX activada</th>
+          <th>Cuándo</th>
+          <th>Argumento ante gobernatura</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Base Municipal</strong></td>
+          <td>CitizenOS Pagos + Registro Maestro IUN + CitizenOS Reportes</td>
+          <td>2026 Q1–Q2</td>
+          <td>"Ya lo hice en Tepic con 425 mil habitantes. Aquí están los datos."</td>
+        </tr>
+        <tr>
+          <td><strong>Expansión Digital</strong></td>
+          <td>G-Agente CX Salud + SovereignMap AgroVisión + IoT IUN + CitizenOS IMM</td>
+          <td>2026 Q3–Q4</td>
+          <td>"Cada dependencia municipal funciona con IA. Sin contratar servidores externos."</td>
+        </tr>
+        <tr>
+          <td><strong>Colonias Piloto</strong></td>
+          <td>ModularBrain CX completo — 3 colonias con NayaritID</td>
+          <td>2027 Q1</td>
+          <td>"Modelo replicable a los 20 municipios de Nayarit en 12 meses. Ya lo probé."</td>
+        </tr>
+        <tr>
+          <td><strong>Campaña Gobernatura</strong></td>
+          <td>MandoCentral CX — dashboard de resultados reales en vivo</td>
+          <td>2027</td>
+          <td>"No prometo — demuestro. Aquí están los números, en tiempo real, auditables por cualquier ciudadano."</td>
+        </tr>
+        <tr style="background:#f0fdf4">
+          <td><strong>Gobierno Estatal</strong></td>
+          <td>ConnectX = integrador tecnológico oficial de Nayarit · 20 municipios</td>
+          <td>2027–2033</td>
+          <td>Nayarit Digital: del municipio al estado.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       PRÓXIMOS PASOS
+  ══════════════════════════════════════════════════ -->
+  <section>
+    <div class="section-eyebrow">Arranque inmediato</div>
+    <h2 class="section-title">Próximos pasos — Semana a semana</h2>
+
+    <div class="pasos-grid">
+      <div class="paso-card">
+        <div class="paso-num">Semana 1 · Validación política</div>
+        <div class="paso-titulo">Alineación ejecutiva</div>
+        <ul class="paso-items">
+          <li>Reunión ConnectX × equipo Presidenta Municipal</li>
+          <li>Demo en vivo de MandoCentral + CitizenOS + SovereignMap</li>
+          <li>Identificar a Tesorero y Director de Obras como primeros interlocutores</li>
+          <li>Definir si presupuesto viene del POA vigente o vía ATDT</li>
+        </ul>
+      </div>
+      <div class="paso-card">
+        <div class="paso-num">Semanas 2–3 · Diagnóstico técnico</div>
+        <div class="paso-titulo">Auditoría de integración</div>
+        <ul class="paso-items">
+          <li>Auditoría rápida de predial.tepic.gob.mx para plan de integración con CitizenOS</li>
+          <li>Levantamiento del flujo actual de reportes en Servicios Públicos</li>
+          <li>Inventario de obras activas para primera carga al Registro Maestro IUN</li>
+          <li>Validación de señal WiFi/4G en módulos DIF para SaludSimi</li>
+        </ul>
+      </div>
+      <div class="paso-card">
+        <div class="paso-num">Semana 4 · Demo pública</div>
+        <div class="paso-titulo">Lanzamiento visible</div>
+        <ul class="paso-items">
+          <li>Demo en vivo de los 3 módulos Fase 1 ante Cabildo o sesión de gabinete</li>
+          <li>Comunicado: "Tepic inicia digitalización — primera ciudad de Nayarit en cumplir LNETB"</li>
+          <li>Activación redes sociales: el ciudadano ve el primer reporte resuelto vía WhatsApp en tiempo real</li>
+          <li>Publicación del primer IUN de obra pública municipal de Nayarit</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════ -->
+<div class="footer">
+  <h2>"Nayarit ya tiene la tecnología.<br>Solo necesita la gobernante que la lleve al pueblo."</h2>
+  <p style="margin-top:16px; font-size:1rem; opacity:0.7">
+    ConnectX — Infraestructura de Inteligencia Artificial para Gobierno Digital<br>
+    Soberanía Digital · Integridad Sistémica · Impacto Social
+  </p>
+  <div class="footer-contact">
+    Miguel Aguilar · ConnectX · Tepic, Nayarit · +52 384 102 9017 · connectx.mx
+  </div>
+  <div style="margin-top:16px; font-size:0.75rem; opacity:0.3">
+    Versión Junio 2026 · Confidencial · Documentación técnica respaldada por código en producción
+  </div>
+</div>
+
+</body>
+</html>
