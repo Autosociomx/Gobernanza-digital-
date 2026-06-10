@@ -3,6 +3,7 @@ import { DepartmentManager } from './components/DepartmentManager';
 import { MandoCentral } from './components/MandoCentral';
 import { ModularBrain } from './components/ModularBrain';
 import { CitizenOS } from './components/CitizenOS';
+import { RutaProEliteFunnel } from './components/RutaProEliteFunnel';
 import { GoogleGenAI } from "@google/genai";
 import { jsPDF } from 'jspdf';
 import { FirebaseProvider, useAuth } from './components/FirebaseProvider';
@@ -168,6 +169,7 @@ const Navbar = ({ onNavigate, user, onLogout }: {
     { name: 'Ecosistema Google AI', id: 'tecnologia' },
     { name: 'Trazabilidad Inmutable', id: 'auditoria' },
     { name: 'Mando Central de Operaciones', id: 'mando-central' },
+    { name: 'Ruta Pro', id: 'ruta-pro' },
   ];
 
   return (
@@ -196,14 +198,27 @@ const Navbar = ({ onNavigate, user, onLogout }: {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <button 
-                key={link.name} 
-                onClick={() => onNavigate(link.id)}
-                className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/70 hover:text-nayarit-orange transition-all duration-300 relative group"
-              >
-                {link.name}
-                <span className="absolute -bottom-2 left-0 w-0 h-0.5 bg-nayarit-orange transition-all duration-300 group-hover:w-full" />
-              </button>
+              link.id === 'ruta-pro' ? (
+                <button
+                  key={link.name}
+                  onClick={() => onNavigate(link.id)}
+                  className="relative text-[10px] font-bold uppercase tracking-[0.2em] text-nayarit-orange hover:text-orange-400 transition-all duration-300"
+                >
+                  {link.name}
+                  <span className="absolute -top-3 -right-7 px-1.5 py-0.5 bg-nayarit-orange text-white text-[7px] font-bold rounded-full tracking-widest">
+                    NUEVO
+                  </span>
+                </button>
+              ) : (
+                <button
+                  key={link.name}
+                  onClick={() => onNavigate(link.id)}
+                  className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/70 hover:text-nayarit-orange transition-all duration-300 relative group"
+                >
+                  {link.name}
+                  <span className="absolute -bottom-2 left-0 w-0 h-0.5 bg-nayarit-orange transition-all duration-300 group-hover:w-full" />
+                </button>
+              )
             ))}
             <button 
               onClick={() => window.dispatchEvent(new CustomEvent('download-pdf'))}
@@ -3121,6 +3136,11 @@ function AppContent() {
                       <MysteryShopAudit />
                     </div>
                   )}
+                  {activeSection === 'ruta-pro' && (
+                    <div className="-m-8 md:-m-12">
+                      <RutaProEliteFunnel />
+                    </div>
+                  )}
                 </div>
               </motion.div>
             </motion.div>
@@ -3140,6 +3160,27 @@ function AppContent() {
             </div>
           </div>
         </section>
+
+        {/* Ruta Pro Elite Teaser Banner */}
+        <div className="bg-gradient-to-r from-slate-950 via-orange-950/20 to-slate-950 border-y border-nayarit-orange/20 py-6">
+          <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-nayarit-orange/20 rounded-xl flex items-center justify-center shrink-0">
+                <Truck size={20} className="text-nayarit-orange" />
+              </div>
+              <div>
+                <p className="text-white font-bold text-sm">Nuevo: Ruta Pro Elite para PyMEs Mexicanas</p>
+                <p className="text-slate-400 text-xs">GPS + rutas optimizadas + alertas WhatsApp — desde $599/mes · Plan Anual $4,799/año</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setActiveSection('ruta-pro')}
+              className="shrink-0 px-6 py-2 bg-nayarit-orange text-white rounded-xl font-bold text-sm hover:bg-orange-600 transition-all flex items-center gap-2"
+            >
+              Ver Plan Anual <ArrowRight size={14} />
+            </button>
+          </div>
+        </div>
 
         <ContactSection />
         <GovernanceAcademy />
