@@ -200,6 +200,24 @@
             font-size: 13px;
             margin: 0;
         }
+
+        .alert-warning {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid #fbbf24;
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+
+        .alert-warning p, .alert-warning li {
+            font-size: 13px;
+            margin: 4px 0;
+        }
+
+        .alert-warning ul {
+            padding-left: 20px;
+            margin: 8px 0 0 0;
+        }
         
         @media (max-width: 1024px) {
             .grid-2 {
@@ -298,7 +316,7 @@
                 </h3>
                 <div class="code-block" style="color: #86efac;">
 const response = await client.messages.create({
-  model: "claude-sonnet-4-20250514",
+  model: "claude-fable-5",
   system: [
     {
       type: "text",
@@ -309,25 +327,47 @@ const response = await client.messages.create({
   messages: [...]
 });
 
-console.log(response.usage.cache_read_input_tokens);
-// Debe ser > 0 en turn 2+
+// Verifica que el caché funcionó:
+if (response.stop_reason === "refusal") {
+  console.error("Solicitud rechazada por el modelo");
+} else {
+  console.log(response.usage.cache_read_input_tokens);
+  // Debe ser > 0 en turn 2+
+}
                 </div>
-                
+
                 <h3 style="margin: 24px 0 12px 0; font-size: 14px; color: #fbbf24;">
                     Python
                 </h3>
                 <div class="code-block" style="color: #86efac;">
 response = client.messages.create(
+    model="claude-fable-5",
     system=[{
         "type": "text",
         "text": compressed_memories,
         "cache_control": {"type": "ephemeral"}  # ← IMPORTANTE
     }]
 )
+
+if response.stop_reason == "refusal":
+    print("Solicitud rechazada")
+else:
+    print(response.usage.cache_read_input_tokens)
                 </div>
-                
+
                 <div class="alert">
                     <p><strong>✅ Nota:</strong> Solo tienes que agregar <code>cache_control: { type: "ephemeral" }</code> a tu system prompt. El contenido comprimido hará el 90% del trabajo.</p>
+                </div>
+
+                <div class="alert-warning">
+                    <p><strong>⚠️ Notas específicas para Claude Fable 5</strong></p>
+                    <ul>
+                        <li><strong>Thinking siempre activo</strong> — No envíes <code>thinking: {type: "disabled"}</code>, regresa error 400. Simplemente omite el parámetro <code>thinking</code>.</li>
+                        <li><strong>Verificar <code>stop_reason</code></strong> — Fable 5 puede responder con <code>"refusal"</code>. Siempre revisa <code>stop_reason</code> antes de leer <code>content</code>.</li>
+                        <li><strong>Retención de datos</strong> — Fable 5 requiere política de 30 días de retención. Sin eso, el API devuelve error 400.</li>
+                        <li><strong>Mínimo 2,048 tokens para cachear</strong> — El output comprimido (~400 tokens) no alcanza el umbral solo. Combínalo con instrucciones del sistema para superar 2,048 tokens y activar el caché.</li>
+                        <li><strong>Precio</strong> — Input: $10/MTok | Cache write: $12.50/MTok | Cache read: $1/MTok | Output: $50/MTok</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -360,7 +400,19 @@ Turn 3:  150 + 200 = 350 tokens
 Turn 10: 150 + 200 = 350 tokens
 
 TOTAL 10 TURNS: ~3,100 tokens 💚
-AHORRO: 96% ($0.054 vs $0.45) 🎉
+
+── Con Claude Fable 5 (precios reales) ──────────────────
+Sin caché: 78,900 tokens × $10/MTok = ~$0.79
+Con caché:
+  Turn 1:  1,500 cache-write × $12.50/MTok = $0.019
+           + 200 input × $10/MTok = $0.002 → $0.021
+  Turn 2-10 (×9): 150 cache-read × $1/MTok = $0.00015
+           + 200 input × $10/MTok = $0.002 → $0.002/turn
+           9 turns = ~$0.019
+  TOTAL con caché: ~$0.040
+
+AHORRO: ~95% ($0.040 vs $0.79) 🎉
+⚠ Recuerda: necesitas ≥2,048 tokens en el bloque cacheado
                 </div>
                 
                 <h3 style="font-size: 14px; color: #fbbf24; margin: 20px 0 12px 0;">
@@ -383,6 +435,7 @@ AHORRO: 96% ($0.054 vs $0.45) 🎉
 CAUSAS:
 • TTL expirado (> 5 min entre calls) → Haz calls más frecuentes
 • Prompt cambió → Mantén array system[] idéntico
+• Bloque < 2,048 tokens (Fable 5) → Agrega más contexto al system prompt
                 </div>
             </div>
         </div>
