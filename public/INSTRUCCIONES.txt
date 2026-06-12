@@ -1,0 +1,7 @@
+Para mostrar tus fotos reales de Geraldine Ponce en la aplicación, renombra las imágenes que tienes y súbelas a esta carpeta (public/) arrastrándolas desde tu computadora:
+
+1. Foto principal (Hero): Nómbrala "geraldine-hero.jpg"
+2. Foto de Logos/Actividad: Nómbrala "geraldine-logros.jpg"
+3. Foto circular de perfil: Nómbrala "geraldine-perfil.jpg"
+
+Una vez subidas, la aplicación reemplazará automáticamente las fotos de muestra por las tuyas reales.

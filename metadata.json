@@ -1,5 +1,6 @@
 {
   "name": "Protocolo de Gobernanza Digital AI",
   "description": "Infraestructura de Inteligencia Artificial para la modernización de dependencias gubernamentales. Protocolo CX para la eficiencia operativa y transparencia absoluta.",
-  "requestFramePermissions": ["geolocation"]
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
