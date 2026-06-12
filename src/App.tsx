@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { LandingPage } from './components/LandingPage';
 import { DepartmentManager } from './components/DepartmentManager';
 import { MandoCentral } from './components/MandoCentral';
 import { ModularBrain } from './components/ModularBrain';
@@ -2822,56 +2823,7 @@ function AppContent() {
   }
 
   if (!user) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-950 p-4">
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="w-24 h-24 bg-nayarit-orange rounded-[2rem] flex items-center justify-center text-white font-bold text-5xl mb-12 shadow-2xl shadow-orange-500/40 prestige-border"
-        >
-          CX
-        </motion.div>
-        <motion.h1 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="text-5xl font-bold text-white mb-6 text-center tracking-tighter"
-        >
-          PLATAFORMA SOBERANA DE <span className="gold-gradient">GOBERNANZA DIGITAL CX</span>
-        </motion.h1>
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="text-slate-400 text-center mb-12 max-w-md leading-relaxed font-medium"
-        >
-          Inicie sesión en la infraestructura crítica de soberanía digital que orquesta la integridad de las 48 dependencias gubernamentales. Trazabilidad inmutable y validación algorítmica de grado industrial.
-        </motion.p>
-        <motion.button 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          onClick={login}
-          className="group px-10 py-5 bg-white text-slate-950 rounded-2xl font-black text-xl hover:bg-nayarit-orange hover:text-white transition-all duration-500 flex items-center gap-4 shadow-2xl shadow-white/5"
-        >
-          <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center group-hover:bg-white/20 transition-colors">
-            <Globe size={20} className="text-slate-950 group-hover:text-white" />
-          </div>
-          Autenticación de Seguridad Google AI
-        </motion.button>
-        
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-20 flex items-center gap-8 opacity-30 grayscale"
-        >
-          <div className="flex items-center gap-2 font-bold text-xl text-white"><Database size={20}/> Firebase</div>
-          <div className="flex items-center gap-2 font-bold text-xl text-white"><ShieldCheck size={20}/> Vertex AI</div>
-          <div className="flex items-center gap-2 font-bold text-xl text-white"><Globe size={20}/> Google Cloud</div>
-        </motion.div>
-      </div>
-    );
+    return <LandingPage onLogin={login} />;
   }
 
   const hubItems = [

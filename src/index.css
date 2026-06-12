@@ -5,11 +5,26 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Playfair Display", serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-  
+  --font-frau: "Fraunces", serif;
+  --font-inst: "Instrument Sans", sans-serif;
+  --font-spline: "Spline Sans Mono", monospace;
+
   --color-nayarit-orange: #F27D26;
   --color-nayarit-blue: #1E3A8A;
   --color-nayarit-earth: #78350F;
   --color-gold: #D4AF37;
+
+  /* Wixárika palette */
+  --color-wix-magenta: #E5007A;
+  --color-wix-turq: #00BCD4;
+  --color-wix-solar: #FFB300;
+  --color-wix-verde: #00873E;
+  --color-wix-coral: #F44336;
+  --color-wix-morado: #7B1FA2;
+  --color-wix-tinta: #150800;
+  --color-wix-crema: #FEF8EE;
+  --color-wix-hueso: #F0E6D3;
+  --color-wix-gris: #6B5D50;
 }
 
 @layer base {

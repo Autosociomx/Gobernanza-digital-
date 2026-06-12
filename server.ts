@@ -1,6 +1,7 @@
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
+import https from "https";
 import Database from "better-sqlite3";
 
 // Initialize Database
@@ -46,6 +47,36 @@ async function startServer() {
     const stmt = db.prepare("UPDATE departments SET name = ?, description = ?, contact_email = ? WHERE id = ?");
     stmt.run(name, description, contact_email, id);
     res.json({ success: true });
+  });
+
+  // Claude API proxy — keeps the API key server-side
+  app.post("/api/claude", (req, res) => {
+    const apiKey = process.env.ANTHROPIC_API_KEY || "";
+    const body = JSON.stringify(req.body);
+
+    const options = {
+      hostname: "api.anthropic.com",
+      path: "/v1/messages",
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "Content-Length": Buffer.byteLength(body),
+      },
+    };
+
+    const upstream = https.request(options, (upRes) => {
+      res.setHeader("Content-Type", "application/json");
+      upRes.pipe(res, { end: true });
+    });
+
+    upstream.on("error", (err) => {
+      res.status(502).json({ error: err.message });
+    });
+
+    upstream.write(body);
+    upstream.end();
   });
 
   // Vite middleware for development
