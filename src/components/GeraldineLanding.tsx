@@ -104,15 +104,24 @@ const ChatIA = () => {
     }
   }, [messages]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
-    setMessages(prev => [...prev, { role: 'u', text: input.trim() }]);
+    const userText = input.trim();
+    setMessages(prev => [...prev, { role: 'u', text: userText }]);
     setInput('');
-    
-    // Simulate thinking delay
-    setTimeout(() => {
-      setMessages(prev => [...prev, { role: 'ia', text: 'El asistente de demostración no está conectado a la API en vivo por el momento. ¡La visión de respuesta instantánea será una realidad en la campaña de 2027! 🚀' }]);
-    }, 1200);
+
+    try {
+      const res = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: userText }),
+      });
+      const data = await res.json();
+      const reply = data.response || data.error || 'Sin respuesta del servidor.';
+      setMessages(prev => [...prev, { role: 'ia', text: reply }]);
+    } catch {
+      setMessages(prev => [...prev, { role: 'ia', text: 'No pude conectarme al asistente en este momento. Intenta de nuevo. 🌽' }]);
+    }
   };
 
   return (

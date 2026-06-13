@@ -1,8 +1,32 @@
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
+import fs from "fs";
 import Database from "better-sqlite3";
 import { GoogleGenAI } from "@google/genai";
+
+// Validate required env vars at startup
+if (!process.env.GEMINI_API_KEY) {
+  console.warn("⚠️  ADVERTENCIA: GEMINI_API_KEY no configurada. El asistente IA no funcionará.");
+  console.warn("   → En Google AI Studio: Settings > Secrets > añadir GEMINI_API_KEY");
+}
+
+// Load CONNECTX-CORE system prompt from file
+const SYSTEM_PROMPT_PATH = path.join(process.cwd(), "public", "CONNECTX_SYSTEM_PROMPT.md");
+let CONNECTX_SYSTEM_INSTRUCTION = "";
+try {
+  const raw = fs.readFileSync(SYSTEM_PROMPT_PATH, "utf-8");
+  // Extract only the code blocks (the actual prompt content, not the markdown headers)
+  const blocks = raw.match(/```[\s\S]*?```/g) || [];
+  CONNECTX_SYSTEM_INSTRUCTION = blocks
+    .map(b => b.replace(/^```\w*\n?/, "").replace(/\n?```$/, ""))
+    .join("\n\n---\n\n");
+  console.log(`✅ CONNECTX-CORE system prompt cargado (${CONNECTX_SYSTEM_INSTRUCTION.length} chars)`);
+} catch {
+  // Fallback to inline prompt if file not found
+  CONNECTX_SYSTEM_INSTRUCTION = `Eres CONECTX-CORE, el motor de inteligencia cívica del Sistema Operativo de Gobernanza Digital de Nayarit Digital. Sirves al ciudadano, no a la burocracia. Tu tono es cálido, directo y profesional. Respondes en español. Nunca uses lenguaje burocrático. Primero valida la emoción del ciudadano, luego ofrece la solución concreta.`;
+  console.warn("⚠️  No se encontró CONNECTX_SYSTEM_PROMPT.md — usando prompt de respaldo.");
+}
 
 // Initialize AI
 const ai = new GoogleGenAI({
@@ -74,7 +98,7 @@ async function startServer() {
         model: "gemini-1.5-flash",
         contents: [{ role: "user", parts: [{ text: message }] }],
         config: {
-          systemInstruction: "Eres el Consultor Senior de ConnectX para Geraldine Ponce. Posees un Doctorado en Ciencia Política y una Maestría en Desarrollo Urbano y Tecnologías de la Información. Tu tono es institucional, profundamente analítico, tecnológico y pragmático. No solo asistes, asesoras en gobernanza digital, optimización de recaudación y bienestar ciudadano mediante la trazabilidad de datos de Google Cloud. Tus respuestas son breves pero con alta densidad estratégica.",
+          systemInstruction: CONNECTX_SYSTEM_INSTRUCTION,
         },
       });
       

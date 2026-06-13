@@ -39,7 +39,8 @@ export function NayaritMap({
         defaultCenter={center}
         defaultZoom={zoom}
         mapId="NAYARIT_DIGITAL_MAP"
-        internalUsageAttributionIds={['gmp_mcp_codeassist_v1_aistudio']}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        {...{ internalUsageAttributionIds: ['gmp_mcp_codeassist_v1_aistudio'] } as any}
         className="w-full h-full rounded-xl"
         gestureHandling={'greedy'}
         disableDefaultUI={false}

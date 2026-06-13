@@ -100,7 +100,7 @@ export function CitizenApp({ onLogout }: { onLogout: () => void }) {
               exit={{ opacity: 0, x: -10 }}
               transition={{ duration: 0.2 }}
             >
-              {activeTab === 'home' && <HomeView />}
+              {activeTab === 'home' && <HomeView onShowMap={() => setShowMap(true)} />}
               {activeTab === 'payments' && <PaymentsView onPay={(item: any) => setPayingItem(item)} />}
               {activeTab === 'services' && <ServicesView />}
               {activeTab === 'profile' && <ProfileView onLogout={onLogout} />}
@@ -419,7 +419,7 @@ function TabButton({ icon: Icon, label, active, onClick }: { icon: any, label: s
   );
 }
 
-function HomeView() {
+function HomeView({ onShowMap }: { onShowMap: () => void }) {
   return (
     <div className="space-y-6 pt-2">
       {/* RUTA Digitial Card */}
@@ -457,7 +457,7 @@ function HomeView() {
          <p className="text-sm font-bold text-slate-900 leading-tight">Nueva obra de reencarpetamiento en tu colonia (San Juan).</p>
          <p className="text-xs text-slate-500 mt-2">Inversión: $1.2M. Haz clic para ver el avance en vivo.</p>
          <button 
-           onClick={() => setShowMap(true)}
+           onClick={() => onShowMap()}
            className="mt-4 text-xs font-bold text-magenta-500 flex items-center gap-1" style={{color:'var(--magenta)'}}
          >
            Ver Trazabilidad <ChevronRight className="w-3 h-3" />
