@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nayarit Digital — Ecosistema de Gobernanza 2.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,900;1,9..144,900&family=Instrument+Sans:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --magenta:#E5007A;--turq:#00BCD4;--solar:#FFB300;
+  --verde:#00873E;--coral:#F44336;--morado:#7B1FA2;
+  --tinta:#150800;--crema:#FEF8EE;--hueso:#F0E6D3;
+  --gris:#6B5D50;
+  --solar-dark:#8B6200;--solar-mid:#E8A000;
+  --magenta-glow:rgba(229,0,122,.55);
+  --turq-glow:rgba(0,188,212,.55);
+  --solar-glow:rgba(255,179,0,.6);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--crema);color:var(--tinta);font-family:'Instrument Sans',sans-serif;overflow-x:hidden;line-height:1.6}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--hueso)}
+::-webkit-scrollbar-thumb{background:var(--tinta);border-radius:4px}
+
+/* ── VIEWS ── */
+.view{display:none}.view.active{display:block}
+
+/* ═══════════════════ NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:900;
+  background:rgba(254,248,238,.92);backdrop-filter:blur(18px);
+  padding:.9rem 2rem;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(21,8,0,.08);transition:box-shadow .3s}
+nav.scrolled{box-shadow:0 6px 32px rgba(21,8,0,.12)}
+.nav-logo{font-family:'Fraunces',serif;font-weight:900;font-size:1.2rem;
+  letter-spacing:-.03em;color:var(--tinta);display:flex;align-items:center;gap:.5rem;text-decoration:none}
+.logo-gem{width:14px;height:14px;background:var(--magenta);transform:rotate(45deg);
+  box-shadow:2.5px 2.5px 0 var(--solar),0 0 12px var(--magenta-glow)}
+.nav-links{display:flex;align-items:center;gap:1.8rem;list-style:none}
+.nav-links button{background:none;border:none;cursor:pointer;
+  font-family:'Spline Sans Mono',monospace;font-size:.68rem;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--gris);transition:color .2s}
+.nav-links button:hover{color:var(--magenta)}
+
+/* ═══════════════════ TERMINAL BUTTON */
+.access-terminal{position:fixed;top:1.4rem;right:1.5rem;z-index:950}
+.access-btn{
+  background:rgba(10,4,0,.88);border:1px solid rgba(255,255,255,.18);
+  color:white;padding:.7rem 1.4rem;border-radius:999px;
+  font-family:'Spline Sans Mono',monospace;font-size:.68rem;font-weight:600;letter-spacing:.15em;
+  cursor:pointer;display:flex;align-items:center;gap:.65rem;
+  backdrop-filter:blur(12px);
+  box-shadow:0 4px 20px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.08);
+  transition:all .2s}
+.access-btn:hover{background:rgba(0,0,0,.96);box-shadow:0 8px 32px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08)}
+.dots{display:flex;gap:.3rem}
+.dot{width:7px;height:7px;border-radius:50%}
+.d1{background:#10b981;animation:blink 2s infinite}
+.d2{background:var(--turq)}
+.d3{background:var(--magenta)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.dropdown{position:absolute;right:0;top:calc(100% + .75rem);width:268px;
+  background:rgba(8,3,0,.96);backdrop-filter:blur(24px);
+  border:1px solid rgba(255,255,255,.08);border-radius:1.1rem;padding:.6rem;
+  box-shadow:0 24px 64px rgba(0,0,0,.6);display:none}
+.access-terminal:hover .dropdown{display:block}
+.dd-header{padding:.5rem 1rem .6rem;font-family:'Spline Sans Mono',monospace;
+  font-size:9px;color:rgba(255,255,255,.28);letter-spacing:.18em;text-transform:uppercase;
+  border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:.5rem}
+.mi{width:100%;display:flex;align-items:center;gap:.75rem;padding:.7rem 1rem;
+  background:none;border:none;cursor:pointer;border-radius:.75rem;
+  transition:background .18s;text-align:left}
+.mi:hover{background:rgba(255,255,255,.06)}
+.mi-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.mi-title{font-size:11px;font-weight:700;color:white;text-transform:uppercase;
+  letter-spacing:.05em;display:block;margin-bottom:.1rem}
+.mi-sub{font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.04em}
+
+/* ═══════════════════ 3D BUTTONS */
+/* Primary — Solar Yellow raised */
+.btn-3d{
+  display:inline-flex;align-items:center;gap:.55rem;
+  font-family:'Instrument Sans',sans-serif;font-weight:800;font-size:.92rem;
+  padding:1rem 2.2rem;border-radius:14px;border:none;cursor:pointer;
+  position:relative;transition:transform .12s ease,box-shadow .12s ease;
+  text-decoration:none;
+}
+.btn-solar{
+  background:linear-gradient(180deg,#FFD600 0%,#FFB300 55%,var(--solar-mid) 100%);
+  color:var(--tinta);
+  box-shadow:
+    0 8px 0 var(--solar-dark),
+    0 14px 28px rgba(255,179,0,.45),
+    inset 0 1.5px 0 rgba(255,255,255,.55),
+    inset 0 -1px 0 rgba(0,0,0,.1);
+  text-shadow:0 1px 2px rgba(255,255,255,.3);
+}
+.btn-solar:hover{
+  transform:translateY(-5px);
+  box-shadow:
+    0 13px 0 var(--solar-dark),
+    0 22px 40px rgba(255,179,0,.55),
+    inset 0 1.5px 0 rgba(255,255,255,.55),
+    inset 0 -1px 0 rgba(0,0,0,.1);
+}
+.btn-solar:active{
+  transform:translateY(5px);
+  box-shadow:
+    0 3px 0 var(--solar-dark),
+    0 6px 12px rgba(255,179,0,.3),
+    inset 0 1.5px 0 rgba(255,255,255,.55),
+    inset 0 -1px 0 rgba(0,0,0,.1);
+}
+/* Secondary — Dark raised */
+.btn-dark{
+  background:linear-gradient(180deg,#2A1000 0%,#150800 100%);
+  color:var(--crema);
+  box-shadow:
+    0 8px 0 #000,
+    0 14px 28px rgba(21,8,0,.4),
+    inset 0 1.5px 0 rgba(255,255,255,.12),
+    inset 0 -1px 0 rgba(0,0,0,.3);
+}
+.btn-dark:hover{
+  transform:translateY(-5px);
+  box-shadow:
+    0 13px 0 #000,
+    0 22px 40px rgba(21,8,0,.5),
+    inset 0 1.5px 0 rgba(255,255,255,.12),
+    inset 0 -1px 0 rgba(0,0,0,.3);
+}
+.btn-dark:active{
+  transform:translateY(5px);
+  box-shadow:
+    0 3px 0 #000,
+    0 6px 12px rgba(21,8,0,.3),
+    inset 0 1.5px 0 rgba(255,255,255,.12);
+}
+/* Ghost outline */
+.btn-ghost{
+  background:transparent;
+  color:var(--tinta);
+  border:2.5px solid var(--tinta);
+  box-shadow:5px 5px 0 var(--tinta);
+  border-radius:14px;
+}
+.btn-ghost:hover{
+  background:var(--tinta);color:var(--crema);
+  transform:translate(-2px,-2px);
+  box-shadow:7px 7px 0 var(--magenta);
+}
+.btn-ghost:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--tinta)}
+
+/* ═══════════════════ HERO */
+.hero{
+  min-height:100vh;padding:8rem 2rem 5rem;
+  display:grid;grid-template-columns:1.1fr 1fr;align-items:center;gap:3rem;
+  position:relative;overflow:hidden;
+  background-color:var(--crema);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpolygon points='40,3 77,40 40,77 3,40' fill='none' stroke='%23E5007A' stroke-width='1.8' opacity='0.15'/%3E%3Cpolygon points='40,14 66,40 40,66 14,40' fill='none' stroke='%2300BCD4' stroke-width='1.4' opacity='0.12'/%3E%3Cpolygon points='40,24 56,40 40,56 24,40' fill='none' stroke='%2300873E' stroke-width='1.2' opacity='0.12'/%3E%3Ccircle cx='40' cy='40' r='3.5' fill='%23FFB300' opacity='0.2'/%3E%3C/svg%3E");
+  background-size:80px;
+}
+.hero-banda{position:absolute;top:0;left:0;right:0;height:5px;
+  background:linear-gradient(90deg,var(--magenta) 0 20%,var(--solar) 20% 40%,var(--turq) 40% 60%,var(--verde) 60% 80%,var(--coral) 80%)}
+
+/* ═══════════════════ OJOS DE DIOS — PREMIUM 3D */
+.ojos-escena{position:absolute;inset:0;pointer-events:none;z-index:1;
+  perspective:700px;overflow:hidden}
+
+/* Halos luminosos detrás de cada ojo */
+.ojo-halo{position:absolute;border-radius:50%;pointer-events:none;
+  animation:halo-pulse 4s ease-in-out infinite}
+@keyframes halo-pulse{0%,100%{opacity:.35;transform:scale(1)}50%{opacity:.65;transform:scale(1.18)}}
+
+.halo-a{width:260px;height:260px;left:-5%;bottom:2%;
+  background:radial-gradient(circle at 50%,rgba(229,0,122,.6) 0%,rgba(123,31,162,.3) 40%,transparent 70%);
+  filter:blur(18px);animation-delay:0s}
+.halo-b{width:190px;height:190px;right:1%;top:8%;
+  background:radial-gradient(circle at 50%,rgba(0,188,212,.6) 0%,rgba(0,135,62,.3) 40%,transparent 70%);
+  filter:blur(14px);animation-delay:-1.5s}
+.halo-c{width:130px;height:130px;left:36%;top:2%;
+  background:radial-gradient(circle at 50%,rgba(244,67,54,.5) 0%,rgba(255,179,0,.3) 40%,transparent 70%);
+  filter:blur(12px);animation-delay:-3s}
+.halo-d{width:90px;height:90px;left:62%;bottom:18%;
+  background:radial-gradient(circle at 50%,rgba(0,135,62,.5) 0%,rgba(0,188,212,.2) 40%,transparent 70%);
+  filter:blur(10px);animation-delay:-2s}
+
+/* Ojos base */
+.ojo{position:absolute;transform-style:preserve-3d;will-change:transform;
+  filter:drop-shadow(0 22px 40px rgba(21,8,0,.35));
+  animation:ojo-float 6s ease-in-out infinite}
+.ojo:nth-child(6){animation-delay:-2.3s;animation-duration:7.5s}
+.ojo:nth-child(7){animation-delay:-4.1s;animation-duration:8.5s}
+.ojo:nth-child(8){animation-delay:-1s;animation-duration:5.5s}
+@keyframes ojo-float{0%,100%{margin-top:0}50%{margin-top:-18px}}
+
+.ojo-giro{position:absolute;inset:0;transform-style:preserve-3d;
+  animation:ojo-spin 9s linear infinite}
+.ojo:nth-child(6) .ojo-giro{animation-duration:12s;animation-direction:reverse}
+.ojo:nth-child(7) .ojo-giro{animation-duration:7s}
+.ojo:nth-child(8) .ojo-giro{animation-duration:15s;animation-direction:reverse}
+@keyframes ojo-spin{from{transform:rotateZ(45deg) rotateY(0) rotateX(10deg)}
+  to{transform:rotateZ(45deg) rotateY(360deg) rotateX(10deg)}}
+
+/* Palitos de madera */
+.ojo-giro::before,.ojo-giro::after{content:'';position:absolute;
+  background:linear-gradient(90deg,#7A4E28,#C49A6C 30%,#E8C49A 50%,#C49A6C 70%,#7A4E28);
+  border-radius:4px;box-shadow:0 3px 8px rgba(21,8,0,.4);transform:translateZ(-8px)}
+.ojo-giro::before{width:130%;height:5%;top:47.5%;left:-15%}
+.ojo-giro::after{width:5%;height:130%;left:47.5%;top:-15%}
+
+/* Capas del ojo */
+.capa{position:absolute;border-style:solid;
+  box-shadow:inset 0 3px 5px rgba(255,255,255,.4),
+    inset 0 -3px 5px rgba(21,8,0,.25),0 1px 3px rgba(21,8,0,.2)}
+.c1{transform:translateZ(0)}.c2{transform:translateZ(3px)}.c3{transform:translateZ(6px)}
+.c4{transform:translateZ(9px)}.c5{transform:translateZ(12px)}.c6{transform:translateZ(15px)}
+.c7{transform:translateZ(18px)}
+
+/* OJO A — grande, magenta+solar+turq */
+.ojo-a{width:210px;height:210px;left:-3%;bottom:5%;
+  filter:drop-shadow(0 0 20px rgba(229,0,122,.5)) drop-shadow(0 24px 40px rgba(21,8,0,.4))}
+.ojo-a .c1{inset:0;border-width:18px;border-color:var(--magenta)}
+.ojo-a .c2{inset:18px;border-width:16px;border-color:var(--solar)}
+.ojo-a .c3{inset:34px;border-width:14px;border-color:#fff}
+.ojo-a .c4{inset:48px;border-width:14px;border-color:var(--turq)}
+.ojo-a .c5{inset:62px;border-width:12px;border-color:var(--morado)}
+.ojo-a .c6{inset:74px;border-width:10px;border-color:var(--solar)}
+.ojo-a .c7{inset:84px;background:var(--tinta);border-radius:2px}
+
+/* OJO B — mediano, turq+verde+solar */
+.ojo-b{width:148px;height:148px;right:3%;top:10%;
+  filter:drop-shadow(0 0 16px rgba(0,188,212,.55)) drop-shadow(0 20px 36px rgba(21,8,0,.35))}
+.ojo-b .c1{inset:0;border-width:13px;border-color:var(--turq)}
+.ojo-b .c2{inset:13px;border-width:12px;border-color:#fff}
+.ojo-b .c3{inset:25px;border-width:11px;border-color:var(--verde)}
+.ojo-b .c4{inset:36px;border-width:11px;border-color:var(--solar)}
+.ojo-b .c5{inset:47px;border-width:10px;border-color:var(--coral)}
+.ojo-b .c6{inset:57px;background:#fff;border-radius:2px}
+
+/* OJO C — pequeño, coral+solar+morado */
+.ojo-c{width:100px;height:100px;left:38%;top:4%;
+  filter:drop-shadow(0 0 12px rgba(244,67,54,.5)) drop-shadow(0 14px 28px rgba(21,8,0,.3))}
+.ojo-c .c1{inset:0;border-width:10px;border-color:var(--coral)}
+.ojo-c .c2{inset:10px;border-width:9px;border-color:var(--solar)}
+.ojo-c .c3{inset:19px;border-width:8px;border-color:var(--morado)}
+.ojo-c .c4{inset:27px;border-width:7px;border-color:#fff}
+.ojo-c .c5{inset:34px;background:var(--tinta);border-radius:2px}
+
+/* OJO D — micro, verde */
+.ojo-d{width:66px;height:66px;left:63%;bottom:20%;
+  filter:drop-shadow(0 0 10px rgba(0,135,62,.5)) drop-shadow(0 10px 20px rgba(21,8,0,.3))}
+.ojo-d .c1{inset:0;border-width:7px;border-color:var(--verde)}
+.ojo-d .c2{inset:7px;border-width:6px;border-color:var(--solar)}
+.ojo-d .c3{inset:13px;border-width:6px;border-color:var(--turq)}
+.ojo-d .c4{inset:19px;background:var(--tinta);border-radius:2px}
+
+/* ═══════════════════ HERO CONTENT */
+.hero-content{position:relative;z-index:10}
+.badge-pill{display:inline-flex;align-items:center;gap:.55rem;
+  font-family:'Spline Sans Mono',monospace;font-weight:600;font-size:.6rem;
+  letter-spacing:.2em;text-transform:uppercase;
+  border:2px solid var(--tinta);background:var(--solar);
+  padding:.38rem 1rem;border-radius:999px;margin-bottom:1.6rem;
+  box-shadow:4px 4px 0 var(--tinta),0 8px 20px rgba(255,179,0,.4)}
+.badge-dot{width:7px;height:7px;border-radius:50%;background:var(--magenta);animation:blink 2s infinite}
+h1.hero-title{font-family:'Fraunces',serif;font-weight:900;
+  font-size:clamp(3.2rem,9vw,6.5rem);line-height:.92;letter-spacing:-.045em;margin-bottom:.35em}
+.ht-dark{display:block;color:var(--tinta)}
+.ht-mag{display:block;color:var(--magenta);font-style:italic;
+  text-shadow:3px 3px 0 rgba(229,0,122,.15)}
+.hero-quote{font-family:'Fraunces',serif;font-style:italic;
+  font-size:clamp(1rem,2vw,1.3rem);color:var(--gris);margin-bottom:1rem;line-height:1.6}
+.hero-body{font-size:clamp(.88rem,1.6vw,1rem);color:rgba(21,8,0,.75);
+  max-width:440px;line-height:1.78;margin-bottom:2.2rem}
+.hero-em{font-weight:800;color:var(--magenta);font-style:normal}
+.cta-row{display:flex;flex-wrap:wrap;gap:1rem;align-items:center}
+
+/* ═══════════════════ PHOTO FRAME */
+.foto-col{position:relative;z-index:10}
+.foto-frame{position:relative;padding:10px;border-radius:1.4rem;
+  background:linear-gradient(135deg,var(--magenta),var(--solar),var(--turq),var(--verde));
+  box-shadow:0 32px 72px rgba(21,8,0,.28),0 0 0 1px rgba(255,255,255,.2);
+  max-width:360px;margin:auto}
+.foto-frame img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:top;
+  border-radius:1rem;display:block;filter:saturate(1.08)}
+.foto-tag{position:absolute;top:-14px;right:-12px;background:var(--magenta);color:white;
+  font-family:'Spline Sans Mono',monospace;font-size:.56rem;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;padding:.45rem .85rem;border-radius:.45rem;
+  box-shadow:0 8px 24px rgba(229,0,122,.5),3px 3px 0 var(--morado);
+  max-width:155px;text-align:center;line-height:1.35}
+.foto-badge{position:absolute;bottom:-1.4rem;left:-1.4rem;background:white;
+  border:1px solid rgba(0,0,0,.07);padding:1.2rem 1.8rem;border-radius:.9rem;
+  box-shadow:12px 12px 40px -10px rgba(0,0,0,.18);z-index:20;
+  transition:box-shadow .3s}
+.foto-badge:hover{box-shadow:16px 16px 50px -10px rgba(229,0,122,.25)}
+.foto-badge h4{font-family:'Fraunces',serif;font-weight:900;font-size:1.3rem;
+  color:var(--tinta);line-height:1;margin-bottom:.35rem}
+.fb-row{display:flex;align-items:center;gap:.45rem}
+.fb-dot{width:7px;height:7px;background:#10b981;border-radius:50%;animation:blink 2s infinite}
+.fb-lbl{font-family:'Spline Sans Mono',monospace;font-size:.58rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.14em;color:var(--gris)}
+
+/* ═══════════════════ SECTIONS */
+section{padding:5.5rem 2rem}
+.wrap{max-width:1080px;margin:auto}
+.wrap-md{max-width:980px;margin:auto}
+.sec-pill{display:inline-block;font-family:'Spline Sans Mono',monospace;font-size:.58rem;
+  font-weight:600;letter-spacing:.22em;text-transform:uppercase;
+  padding:.32rem .9rem;border-radius:999px;margin-bottom:1.1rem}
+.pill-mg{background:var(--magenta);color:#fff}
+.pill-sl{background:var(--solar);color:var(--tinta);
+  box-shadow:3px 3px 0 var(--tinta)}
+h2.st{font-family:'Fraunces',serif;font-weight:900;
+  font-size:clamp(2rem,5vw,3.6rem);line-height:.96;letter-spacing:-.035em;margin-bottom:1rem}
+h2.st em{font-style:italic;color:var(--magenta)}
+.sl{font-family:'Fraunces',serif;font-style:italic;
+  font-size:clamp(1rem,2vw,1.35rem);color:var(--gris);line-height:1.5;
+  max-width:680px;margin-bottom:3.4rem}
+
+/* ── ECO CARDS */
+.eco-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.4rem}
+.eco-card{background:#fff;border-radius:1.3rem;border:1.5px solid rgba(21,8,0,.08);
+  padding:2rem 1.8rem;transition:all .25s;position:relative;overflow:hidden}
+.eco-card::before{content:'';position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(135deg,rgba(229,0,122,.03),rgba(0,188,212,.03));opacity:0;transition:opacity .25s}
+.eco-card:hover{box-shadow:0 20px 50px rgba(0,0,0,.1),0 0 0 2px var(--magenta);transform:translateY(-4px)}
+.eco-card:hover::before{opacity:1}
+.eco-icon{font-size:2.3rem;display:block;margin-bottom:.9rem;filter:drop-shadow(0 4px 8px rgba(0,0,0,.15))}
+.eco-card h3{font-family:'Fraunces',serif;font-weight:900;font-size:1.25rem;color:var(--tinta);margin-bottom:.4rem}
+.eco-card p{font-size:.82rem;color:var(--gris);line-height:1.68}
+
+/* ── OBSERVATORIO */
+.obs{background:var(--tinta);position:relative;overflow:hidden}
+.obs-grid{display:grid;grid-template-columns:1fr .85fr;gap:4rem;align-items:center}
+h2.obs-t{font-family:'Fraunces',serif;font-weight:900;
+  font-size:clamp(2rem,5vw,3.6rem);line-height:.96;letter-spacing:-.035em;
+  margin-bottom:1.4rem;color:var(--crema)}
+h2.obs-t em{font-style:italic;color:var(--solar)}
+.obs-body{font-size:1rem;color:rgba(254,248,238,.7);margin-bottom:2rem;line-height:1.75}
+.obs-item{display:flex;align-items:center;gap:.8rem;font-size:.85rem;color:rgba(254,248,238,.75);margin-bottom:.85rem}
+.obs-star{color:var(--solar);font-size:1rem}
+/* Widget */
+.obs-widget{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
+  border-radius:1.5rem;padding:1.6rem;backdrop-filter:blur(12px)}
+.obs-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+.obs-lbl{font-family:'Spline Sans Mono',monospace;font-size:.62rem;
+  color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em}
+.obs-live{width:9px;height:9px;border-radius:50%;background:var(--verde);animation:blink 1.5s infinite}
+.metric{margin-bottom:1.3rem}
+.bar-track{height:5px;background:rgba(255,255,255,.1);border-radius:999px;overflow:hidden;margin-bottom:.4rem}
+.bar-fill{height:100%;border-radius:999px}
+.m-labels{display:flex;justify-content:space-between;
+  font-family:'Spline Sans Mono',monospace;font-size:.54rem;color:rgba(255,255,255,.38);text-transform:uppercase}
+
+/* ── MADUREZ */
+.madz-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.madz-card{background:var(--crema);padding:1.6rem;border-radius:1.1rem;border:1px solid rgba(21,8,0,.06);text-align:center}
+.madz-card.feat{background:var(--tinta);border-color:rgba(255,255,255,.08);
+  box-shadow:0 24px 60px rgba(0,0,0,.25),0 0 0 3px var(--solar);
+  transform:scale(1.07);position:relative;z-index:2}
+.madz-num{font-family:'Fraunces',serif;font-weight:900;font-size:2.1rem;margin-bottom:.5rem}
+.madz-lbl{font-family:'Spline Sans Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gris)}
+.madz-card.feat .madz-lbl{color:rgba(255,255,255,.45)}
+.madz-tag{margin-top:.8rem;font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+
+/* ── IA */
+.ia-sec{background:var(--tinta);position:relative;overflow:hidden}
+.ia-bg-pat{position:absolute;inset:0;opacity:.04;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpolygon points='40,3 77,40 40,77 3,40' fill='none' stroke='%23FFB300' stroke-width='1.8'/%3E%3Cpolygon points='40,14 66,40 40,66 14,40' fill='none' stroke='%2300BCD4' stroke-width='1.4'/%3E%3C/svg%3E");
+  background-size:80px}
+.ia-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:center}
+h2.ia-t{font-family:'Fraunces',serif;font-weight:900;
+  font-size:clamp(2rem,5vw,3.6rem);line-height:.96;letter-spacing:-.035em;
+  margin-bottom:1rem;color:var(--crema)}
+h2.ia-t em{font-style:italic;color:var(--solar)}
+.ia-lead{font-family:'Fraunces',serif;font-style:italic;
+  font-size:clamp(1rem,2vw,1.3rem);color:rgba(254,248,238,.58);line-height:1.55;max-width:540px;margin-bottom:2.2rem}
+/* Chat */
+.chat-shell{background:var(--crema);border-radius:1.4rem;overflow:hidden;
+  box-shadow:0 32px 80px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.06)}
+.chat-hd{display:flex;align-items:center;gap:.7rem;padding:.9rem 1.2rem;
+  background:linear-gradient(90deg,var(--magenta),var(--morado))}
+.chat-av{width:34px;height:34px;border-radius:50%;background:var(--solar);
+  display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.chat-name{font-weight:700;font-size:.82rem;color:white;display:block}
+.chat-sub{font-family:'Spline Sans Mono',monospace;font-size:.52rem;color:rgba(255,255,255,.65);display:block}
+.chat-body{padding:1.1rem;display:flex;flex-direction:column;gap:.7rem;
+  min-height:240px;max-height:300px;overflow-y:auto}
+.msg{max-width:86%;padding:.65rem .95rem;border-radius:1rem;font-size:.8rem;line-height:1.55}
+.msg-ia{align-self:flex-start;background:#fff;color:var(--tinta);
+  border:1px solid rgba(0,0,0,.09);border-bottom-left-radius:.25rem}
+.msg-u{align-self:flex-end;background:var(--tinta);color:var(--crema);border-bottom-right-radius:.25rem}
+.chat-ft{display:flex;gap:.5rem;padding:.9rem 1.1rem;border-top:1px solid rgba(0,0,0,.09)}
+.chat-in{flex:1;border:1.5px solid rgba(0,0,0,.18);border-radius:999px;
+  padding:.6rem 1.1rem;font-size:.8rem;outline:none;
+  font-family:'Instrument Sans',sans-serif;transition:border-color .2s}
+.chat-in:focus{border-color:var(--magenta)}
+.chat-send{background:var(--magenta);border:none;border-radius:50%;
+  width:38px;height:38px;flex-shrink:0;color:white;font-size:1rem;cursor:pointer;
+  transition:all .2s;box-shadow:0 4px 0 var(--morado)}
+.chat-send:hover{background:var(--morado);transform:translateY(-2px);box-shadow:0 6px 0 #4a0060}
+.chat-send:active{transform:translateY(2px);box-shadow:0 2px 0 var(--morado)}
+/* IA features */
+.ia-features{display:flex;flex-direction:column;gap:1rem}
+.ia-feat{display:flex;gap:1rem;align-items:flex-start;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
+  border-radius:1rem;padding:1.1rem 1.2rem;transition:all .22s}
+.ia-feat:hover{background:rgba(255,255,255,.08);border-color:rgba(255,179,0,.35);
+  transform:translateX(6px)}
+.ia-feat-icon{font-size:1.4rem;flex-shrink:0;margin-top:.1rem}
+.ia-feat-title{font-weight:700;font-size:.85rem;color:var(--crema);display:block;margin-bottom:.2rem}
+.ia-feat-body{font-size:.74rem;color:rgba(254,248,238,.5);line-height:1.6}
+
+/* ── IMPLEMENTACION */
+.impl-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+h2.impl-t{font-family:'Fraunces',serif;font-weight:900;
+  font-size:clamp(2rem,5vw,3.4rem);line-height:.96;letter-spacing:-.035em;margin-bottom:1.4rem}
+h2.impl-t em{font-style:italic;color:var(--magenta)}
+.impl-quote{background:var(--solar);padding:1.5rem;border-radius:1.2rem;
+  border:2.5px solid var(--tinta);box-shadow:6px 6px 0 var(--tinta),0 12px 28px rgba(255,179,0,.3);margin-bottom:2rem}
+.impl-quote p{font-family:'Fraunces',serif;font-style:italic;font-size:.92rem;color:var(--tinta);line-height:1.6}
+.steps{display:flex;flex-direction:column;gap:1.4rem}
+.step-card{background:#fff;padding:1.5rem;border-radius:1.2rem;
+  border:1.5px solid rgba(0,0,0,.06);box-shadow:0 2px 12px rgba(0,0,0,.05);
+  display:flex;gap:1.2rem;transition:all .2s}
+.step-card:hover{transform:translateX(6px);box-shadow:0 8px 24px rgba(0,0,0,.1)}
+.step-num{width:46px;height:46px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.2rem;flex-shrink:0}
+.step-card h4{font-family:'Fraunces',serif;font-weight:900;font-size:1.1rem;margin-bottom:.2rem}
+.step-card p{font-size:.79rem;color:var(--gris);line-height:1.6}
+
+/* ── GOOGLE CLOUD */
+.gc-hd{text-align:center;margin-bottom:3.4rem}
+.gc-eyebrow{font-family:'Spline Sans Mono',monospace;font-size:.6rem;font-weight:600;
+  letter-spacing:.25em;text-transform:uppercase;color:var(--gris);display:block;margin-bottom:.9rem}
+h2.gc-t{font-family:'Fraunces',serif;font-weight:900;
+  font-size:clamp(1.7rem,4vw,2.7rem);line-height:.96;letter-spacing:-.035em}
+.gc-sub{font-size:.85rem;color:var(--gris);margin-top:.8rem;max-width:480px;margin-left:auto;margin-right:auto}
+.gc-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem}
+.gc-card{background:rgba(255,255,255,.45);border:1px solid rgba(0,0,0,.06);
+  padding:1.5rem;border-radius:1.2rem;text-align:center;
+  transition:all .22s;cursor:default}
+.gc-card:hover{background:#fff;box-shadow:0 12px 32px rgba(0,0,0,.1);transform:translateY(-6px)}
+.gc-icon{font-size:2.1rem;display:block;margin-bottom:.6rem;
+  transition:transform .22s;filter:drop-shadow(0 4px 8px rgba(0,0,0,.12))}
+.gc-card:hover .gc-icon{transform:scale(1.15) translateY(-3px)}
+.gc-name{font-family:'Spline Sans Mono',monospace;font-size:.63rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.1em;color:var(--tinta);display:block;margin-bottom:.2rem}
+.gc-desc{font-size:.63rem;color:var(--gris);font-weight:500}
+
+/* ── FOOTER */
+footer{background:var(--tinta);padding:2.8rem 2rem;text-align:center;border-top:5px solid var(--magenta)}
+.f-name{font-family:'Fraunces',serif;font-weight:900;font-size:2rem;
+  letter-spacing:-.03em;color:var(--crema);display:block;margin-bottom:.3rem}
+.f-name em{font-style:italic;color:var(--magenta)}
+.f-sub{font-family:'Fraunces',serif;font-style:italic;font-size:.88rem;color:rgba(254,248,238,.45);margin-bottom:1rem}
+.f-bar{height:3px;width:84px;margin:.9rem auto;border-radius:2px;
+  background:linear-gradient(90deg,var(--magenta),var(--solar),var(--turq),var(--verde))}
+.f-credit{font-family:'Spline Sans Mono',monospace;font-size:.56rem;color:rgba(254,248,238,.22)}
+.f-credit a{color:var(--solar);text-decoration:none}
+
+/* ═══════════════════ C5 DASHBOARD */
+.c5-view{min-height:100vh;background:#0f1115;color:#cbd5e1;font-family:'Instrument Sans',sans-serif;display:flex;overflow:hidden}
+.c5-sb{width:272px;height:100vh;background:#161920;border-right:1px solid #1e2430;display:flex;flex-direction:column;flex-shrink:0;position:sticky;top:0}
+.c5-sb-hd{padding:1.4rem;border-bottom:1px solid #1e2430;display:flex;align-items:center;gap:.75rem}
+.c5-logo-mk{width:32px;height:32px;border-radius:.5rem;
+  background:linear-gradient(135deg,#a855f7,#f43f5e);
+  display:flex;align-items:center;justify-content:center;font-weight:900;color:white;font-size:1rem;
+  box-shadow:0 4px 16px rgba(168,85,247,.4)}
+.c5-app-nm{font-weight:700;color:white;letter-spacing:-.02em;line-height:1;margin-bottom:.15rem;font-size:.92rem}
+.c5-app-sb{font-family:'Spline Sans Mono',monospace;font-size:9px;color:#475569;letter-spacing:.1em;text-transform:uppercase}
+.c5-nav-lbl{font-size:.72rem;font-weight:600;color:#475569;margin:.5rem 0 .75rem;padding:0 .5rem;letter-spacing:.05em;text-transform:uppercase}
+.c5-sb-body{flex:1;overflow-y:auto;padding:1.4rem 1rem}
+.c5-btn{width:100%;display:flex;align-items:center;gap:.7rem;padding:.7rem 1rem;
+  background:none;border:none;cursor:pointer;border-radius:.75rem;
+  transition:background .15s;text-align:left;color:#94a3b8;margin-bottom:.2rem}
+.c5-btn:hover{background:rgba(255,255,255,.04)}
+.c5-btn.active{background:rgba(255,255,255,.07);color:white}
+.c5-btn-ic{width:30px;height:30px;border-radius:.5rem;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
+.c5-btn-nm{font-weight:600;font-size:.78rem;display:block}
+.c5-sb-ft{padding:1rem;border-top:1px solid #1e2430}
+.c5-back{width:100%;display:flex;align-items:center;gap:.75rem;padding:.7rem 1rem;background:none;border:none;cursor:pointer;border-radius:.75rem;color:#475569;transition:all .15s;font-family:'Instrument Sans',sans-serif;font-size:.82rem}
+.c5-back:hover{background:rgba(239,68,68,.08);color:#f87171}
+.c5-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.c5-topbar{padding:1rem 1.5rem;border-bottom:1px solid #1e2430;
+  display:flex;align-items:center;gap:1rem;background:#0f1115;flex-shrink:0}
+.c5-tb-title{font-weight:700;color:white;font-size:1.05rem}
+.c5-tb-sub{font-family:'Spline Sans Mono',monospace;font-size:.62rem;color:#475569;letter-spacing:.05em}
+.c5-content{flex:1;overflow-y:auto;padding:1.4rem}
+.c5-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.4rem}
+.kpi{background:#161920;border:1px solid #1e2430;border-radius:.75rem;padding:1.2rem;transition:border-color .2s}
+.kpi:hover{border-color:#334155}
+.kpi-lbl{font-family:'Spline Sans Mono',monospace;font-size:.58rem;color:#475569;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.45rem}
+.kpi-val{font-family:'Fraunces',serif;font-weight:900;font-size:1.75rem;color:white;margin-bottom:.22rem}
+.kpi-delta{font-size:.7rem;font-weight:700}
+.up{color:#10b981}.neutral{color:#f59e0b}
+.c5-chart-card{background:#161920;border:1px solid #1e2430;border-radius:.75rem;padding:1.2rem;margin-bottom:1.4rem}
+.c5-chart-title{font-weight:700;color:white;font-size:.88rem;margin-bottom:1rem}
+.bar-chart{display:flex;align-items:flex-end;gap:.45rem;height:110px}
+.bar-col{display:flex;flex-direction:column;align-items:center;flex:1;gap:.3rem}
+.bar-body{width:100%;border-radius:4px 4px 0 0}
+.bar-lbl{font-family:'Spline Sans Mono',monospace;font-size:.52rem;color:#475569;text-transform:uppercase}
+.c5-act{background:#161920;border:1px solid #1e2430;border-radius:.75rem;padding:1.2rem}
+.act-row{display:flex;align-items:center;gap:.7rem;padding:.55rem 0;border-bottom:1px solid #1e2430}
+.act-row:last-child{border-bottom:none}
+.act-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.act-text{flex:1;font-size:.78rem;color:#cbd5e1}
+.act-time{font-family:'Spline Sans Mono',monospace;font-size:.58rem;color:#475569}
+
+/* ═══════════════════ CITIZEN */
+.cit-view{min-height:100vh;background:#f8fafc;font-family:'Instrument Sans',sans-serif}
+.cit-hd{background:linear-gradient(135deg,var(--magenta),var(--morado));padding:1.5rem 1.5rem 2.5rem;color:white}
+.cit-back{background:rgba(255,255,255,.18);border:none;border-radius:999px;
+  padding:.4rem .9rem;font-size:.73rem;color:white;cursor:pointer;
+  font-family:'Instrument Sans',sans-serif;font-weight:600;margin-bottom:1rem;transition:background .2s}
+.cit-back:hover{background:rgba(255,255,255,.28)}
+.cit-title{font-family:'Fraunces',serif;font-weight:900;font-size:1.8rem;line-height:1}
+.cit-sub{font-size:.84rem;opacity:.78;margin-top:.3rem}
+.cit-body{padding:1rem 1.4rem;margin-top:-1rem}
+.cit-search{background:white;border-radius:1rem;padding:1rem;
+  box-shadow:0 4px 24px rgba(0,0,0,.1);margin-bottom:1rem;
+  display:flex;gap:.7rem;align-items:center;border:1.5px solid rgba(229,0,122,.12)}
+.cit-search input{flex:1;border:none;outline:none;font-family:'Instrument Sans',sans-serif;font-size:.88rem;color:var(--tinta)}
+.cit-search input::placeholder{color:#94a3b8}
+.cit-cats{display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem;margin-bottom:1rem}
+.cat-btn{background:white;border:1.5px solid rgba(0,0,0,.07);border-radius:1rem;
+  padding:1rem;display:flex;align-items:center;gap:.7rem;cursor:pointer;transition:all .2s;text-align:left}
+.cat-btn:hover{border-color:var(--magenta);box-shadow:0 6px 20px rgba(229,0,122,.15);transform:translateY(-2px)}
+.cat-icon{font-size:1.5rem;flex-shrink:0}
+.cat-nm{font-weight:700;font-size:.84rem;color:var(--tinta);display:block}
+.cat-desc{font-size:.68rem;color:#64748b}
+.cit-recent{background:white;border-radius:1rem;padding:1rem;border:1px solid rgba(0,0,0,.06)}
+.rec-title{font-weight:700;font-size:.82rem;color:var(--gris);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.7rem;font-family:'Spline Sans Mono',monospace}
+.rec-item{display:flex;align-items:center;gap:.7rem;padding:.55rem 0;border-bottom:1px solid rgba(0,0,0,.05)}
+.rec-item:last-child{border-bottom:none}
+.ri-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ri-text{flex:1;font-size:.8rem;color:var(--tinta)}
+.ri-badge{font-family:'Spline Sans Mono',monospace;font-size:.58rem;font-weight:600;
+  padding:.18rem .55rem;border-radius:999px;text-transform:uppercase}
+.bg-g{background:rgba(16,185,129,.1);color:#059669}
+.bg-y{background:rgba(245,158,11,.1);color:#d97706}
+.bg-b{background:rgba(59,130,246,.1);color:#2563eb}
+
+/* ═══════════════════ DEV */
+.dev-view{min-height:100vh;background:#0f172a;color:#e2e8f0;font-family:'Instrument Sans',sans-serif;padding:2rem}
+.dev-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid #1e293b}
+.dev-title{font-family:'Fraunces',serif;font-weight:900;font-size:2rem;color:white}
+.dev-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.dev-card{background:#1e293b;border:1px solid #334155;border-radius:.75rem;padding:1.2rem}
+.dev-card-t{font-weight:700;font-size:.88rem;color:white;margin-bottom:1rem}
+.dev-chk{display:flex;align-items:flex-start;gap:.7rem;padding:.5rem 0;border-bottom:1px solid #0f172a}
+.dev-chk:last-child{border-bottom:none}
+.chk-ic{flex-shrink:0;font-size:.9rem;margin-top:.1rem}
+.chk-strong{color:white;display:block;margin-bottom:.1rem;font-size:.8rem;font-weight:700}
+.chk-sub{color:#64748b;font-size:.75rem}
+.done{color:#10b981}.pend{color:#f59e0b}.prog{color:#3b82f6}
+
+/* ═══════════════════ EXECUTIVE */
+.exec-view{min-height:100vh;
+  background:linear-gradient(140deg,#150800 0%,#3d0d00 50%,#150800 100%);
+  color:var(--crema);padding:3rem 2rem;font-family:'Instrument Sans',sans-serif}
+.exec-hd{text-align:center;margin-bottom:3rem}
+.exec-t{font-family:'Fraunces',serif;font-weight:900;font-size:3rem;
+  letter-spacing:-.04em;color:var(--crema);margin-bottom:.5rem}
+.exec-t em{color:var(--solar);font-style:italic}
+.exec-sub{font-size:.95rem;color:rgba(254,248,238,.55);font-family:'Fraunces',serif;font-style:italic}
+.exec-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-bottom:2.5rem}
+.ec{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
+  border-radius:1.2rem;padding:1.75rem;backdrop-filter:blur(10px);transition:all .25s}
+.ec:hover{background:rgba(255,255,255,.08);border-color:rgba(255,179,0,.3);transform:translateY(-4px)}
+.ec-icon{font-size:2rem;margin-bottom:1rem;display:block;filter:drop-shadow(0 4px 8px rgba(0,0,0,.3))}
+.ec-title{font-family:'Fraunces',serif;font-weight:900;font-size:1.2rem;color:var(--crema);margin-bottom:.5rem}
+.ec-body{font-size:.8rem;color:rgba(254,248,238,.55);line-height:1.68}
+.ec-stat{margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.08)}
+.ec-num{font-family:'Fraunces',serif;font-weight:900;font-size:1.6rem;color:var(--solar)}
+.ec-lbl{font-family:'Spline Sans Mono',monospace;font-size:.58rem;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.08em}
+.exec-cta-row{display:flex;justify-content:center}
+
+/* ═══════════════════ RESPONSIVE */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;padding-top:6.5rem}
+  .obs-grid,.impl-grid,.ia-grid{grid-template-columns:1fr}
+  .madz-grid{grid-template-columns:repeat(2,1fr)}
+  .gc-grid{grid-template-columns:repeat(3,1fr)}
+  .c5-kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .exec-cards{grid-template-columns:1fr}
+  .dev-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+}
+@media(max-width:640px){
+  .gc-grid{grid-template-columns:repeat(2,1fr)}
+  .cit-cats{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ LANDING -->
+<div class="view active" id="view-landing">
+
+<nav id="main-nav">
+  <a href="#" class="nav-logo"><span class="logo-gem"></span>Nayarit Digital</a>
+  <ul class="nav-links">
+    <li><button onclick="scrollSec('ecosistema')">Ecosistema</button></li>
+    <li><button onclick="scrollSec('observatorio')">Observatorio</button></li>
+    <li><button onclick="scrollSec('madurez')">Madurez Digital</button></li>
+    <li><button onclick="scrollSec('ia')">Asistente IA</button></li>
+  </ul>
+</nav>
+
+<div class="access-terminal">
+  <button class="access-btn">
+    <div class="dots"><div class="dot d1"></div><div class="dot d2"></div><div class="dot d3"></div></div>
+    TERMINAL DE ACCESO
+  </button>
+  <div class="dropdown">
+    <div class="dd-header">Ecosistema ConnectX</div>
+    <button class="mi" onclick="showView('c5')">
+      <div class="mi-dot" style="background:#10b981"></div>
+      <div><span class="mi-title">C5 Hub Gobierno</span><span class="mi-sub">Dashboard Centralizado</span></div>
+    </button>
+    <button class="mi" onclick="showView('citizen')">
+      <div class="mi-dot" style="background:var(--turq)"></div>
+      <div><span class="mi-title">Citizen App (RUTA)</span><span class="mi-sub">Interfaz Ciudadana</span></div>
+    </button>
+    <button class="mi" onclick="showView('executive')">
+      <div class="mi-dot" style="background:var(--solar)"></div>
+      <div><span class="mi-title">Carpeta Ejecutiva</span><span class="mi-sub">PDF Estratégico AI</span></div>
+    </button>
+    <button class="mi" onclick="showView('dev')" style="margin-top:.4rem;padding-top:.75rem;border-top:1px solid rgba(255,255,255,.06)">
+      <div class="mi-dot" style="background:#a855f7"></div>
+      <div><span class="mi-title">Roadmap Técnico</span><span class="mi-sub">Estado de Implementación</span></div>
+    </button>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-banda"></div>
+
+  <!-- Ojos de Dios + halos -->
+  <div class="ojos-escena" id="ojos">
+    <div class="ojo-halo halo-a"></div>
+    <div class="ojo-halo halo-b"></div>
+    <div class="ojo-halo halo-c"></div>
+    <div class="ojo-halo halo-d"></div>
+    <div class="ojo ojo-a"><div class="ojo-giro"><div class="capa c1"></div><div class="capa c2"></div><div class="capa c3"></div><div class="capa c4"></div><div class="capa c5"></div><div class="capa c6"></div><div class="capa c7"></div></div></div>
+    <div class="ojo ojo-b"><div class="ojo-giro"><div class="capa c1"></div><div class="capa c2"></div><div class="capa c3"></div><div class="capa c4"></div><div class="capa c5"></div><div class="capa c6"></div></div></div>
+    <div class="ojo ojo-c"><div class="ojo-giro"><div class="capa c1"></div><div class="capa c2"></div><div class="capa c3"></div><div class="capa c4"></div><div class="capa c5"></div></div></div>
+    <div class="ojo ojo-d"><div class="ojo-giro"><div class="capa c1"></div><div class="capa c2"></div><div class="capa c3"></div><div class="capa c4"></div></div></div>
+  </div>
+
+  <div class="hero-content">
+    <div class="badge-pill"><span class="badge-dot"></span>Nayarit Digital · Ecosistema de Gobernanza 2.0</div>
+    <h1 class="hero-title">
+      <span class="ht-dark">El Sistema Operativo</span>
+      <span class="ht-mag">Municipal de Tepic</span>
+    </h1>
+    <p class="hero-quote">"La digitalización municipal basada en interoperabilidad, inclusión y datos abiertos incrementa simultáneamente la recaudación, la eficiencia administrativa y la confianza ciudadana."</p>
+    <p class="hero-body">Nayarit Digital no es un conjunto de aplicaciones. Es una infraestructura institucional que reposa sobre tres pilares: <em class="hero-em">Interoperabilidad, Inclusión y Datos Abiertos.</em></p>
+    <div class="cta-row">
+      <button class="btn-3d btn-solar" onclick="showView('citizen')">Demo Ciudadana (RUTA) →</button>
+      <button class="btn-3d btn-dark" onclick="showView('c5')">Dashboard Gobernanza</button>
+    </div>
+  </div>
+
+  <div class="foto-col">
+    <div class="foto-frame">
+      <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&h=625&fit=crop&crop=faces&auto=format&q=80" alt="Geraldine Ponce"/>
+      <div class="foto-tag">Visión de Estado: Nayarit Digital</div>
+      <div class="foto-badge">
+        <h4>Nayarit 2027</h4>
+        <div class="fb-row"><div class="fb-dot"></div><span class="fb-lbl">Transformación Real</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSISTEMA -->
+<section style="background:var(--crema)" id="ecosistema">
+  <div class="wrap">
+    <span class="sec-pill pill-mg">Una plataforma · Todas las aplicaciones</span>
+    <h2 class="st">Ecosistema Nayarit Digital</h2>
+    <p class="sl">Siete ejes estratégicos integrados bajo el protocolo ConnectX, diseñados para gobernar con datos y humanidad.</p>
+    <div class="eco-grid">
+      <div class="eco-card"><span class="eco-icon">💳</span><h3>Tesorería Digital</h3><p>Pago de predial, agua y licencias 100% en línea. Incrementa la recaudación mediante recordatorios automáticos por WhatsApp.</p></div>
+      <div class="eco-card"><span class="eco-icon">🏗️</span><h3>Trazabilidad de Obras</h3><p>Control total de obra pública. Avance físico-financiero visible en tiempo real. Auditoría ciudadana por diseño.</p></div>
+      <div class="eco-card"><span class="eco-icon">📱</span><h3>Servicios Públicos</h3><p>Reporte de baches, luminarias y basura mediante IA. Seguimiento automático del folio hasta su resolución final.</p></div>
+      <div class="eco-card"><span class="eco-icon">💚</span><h3>TEPICTU Salud</h3><p>Orientación médica con IA que funciona sin internet. Democratiza el acceso a la salud preventiva en comunidades remotas.</p></div>
+      <div class="eco-card"><span class="eco-icon">🌽</span><h3>Asistente Ciudadano</h3><p>El cerebro del ecosistema. Responde en español y lenguas originarias. Ejecuta trámites mediante lenguaje natural.</p></div>
+      <div class="eco-card"><span class="eco-icon">🫂</span><h3>Bienestar Social</h3><p>Gestión de apoyos y seguimiento de casos vulnerables detectados automáticamente por el ecosistema digital.</p></div>
+      <div class="eco-card"><span class="eco-icon">🚜</span><h3>Agrovisión 3D</h3><p>Monitoreo satelital y modelado 3D de la producción agropecuaria. Inteligencia de mercado para el campo nayarita.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- OBSERVATORIO -->
+<section class="obs" id="observatorio">
+  <div class="wrap-md">
+    <div class="obs-grid">
+      <div>
+        <span class="sec-pill pill-sl">El Activo Estratégico</span>
+        <h2 class="obs-t">Observatorio Digital<br/><em>de Nayarit.</em></h2>
+        <p class="obs-body">El software se vuelve obsoleto; el dato longitudinal es el verdadero poder. El Observatorio visualiza en tiempo real la salud comunitaria, la recaudación y el desempeño gubernamental.</p>
+        <div class="obs-item"><span class="obs-star">✦</span> Mapas de calor de reportes ciudadanos por colonia.</div>
+        <div class="obs-item"><span class="obs-star">✦</span> Tableros de obra con transparencia financiera total.</div>
+        <div class="obs-item"><span class="obs-star">✦</span> Datos abiertos para atraer inversión extranjera.</div>
+        <div style="margin-top:2rem">
+          <button class="btn-3d btn-solar" onclick="showView('c5')">Ver Dashboard Live →</button>
+        </div>
+      </div>
+      <div class="obs-widget">
+        <div class="obs-hd"><span class="obs-lbl">Status: Nayarit Digital Live</span><div class="obs-live"></div></div>
+        <div class="metric">
+          <div class="bar-track"><div class="bar-fill" style="width:78%;background:var(--magenta)"></div></div>
+          <div class="m-labels"><span>Recaudación Predial</span><span>+78% vs 2021</span></div>
+        </div>
+        <div class="metric">
+          <div class="bar-track"><div class="bar-fill" style="width:92%;background:var(--turq)"></div></div>
+          <div class="m-labels"><span>Obras Trazadas</span><span>92% Eficiencia</span></div>
+        </div>
+        <div class="metric">
+          <div class="bar-track"><div class="bar-fill" style="width:65%;background:var(--solar)"></div></div>
+          <div class="m-labels"><span>Bienestar Social</span><span>65K Beneficiarios</span></div>
+        </div>
+        <div class="metric">
+          <div class="bar-track"><div class="bar-fill" style="width:84%;background:var(--verde)"></div></div>
+          <div class="m-labels"><span>Satisfacción Ciudadana</span><span>84 / 100</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MADUREZ -->
+<section style="background:#fff;text-align:center" id="madurez">
+  <div class="wrap-md">
+    <span class="sec-pill pill-sl">Medir para transformar</span>
+    <h2 class="st">Índice de Madurez Digital Municipal</h2>
+    <p class="sl" style="margin:0 auto 3.4rem">De un municipio tradicional a una Gobernanza Aumentada. El IMDM es el termómetro de la modernización de Tepic.</p>
+    <div class="madz-grid">
+      <div class="madz-card"><div class="madz-num" style="color:var(--tinta)">22</div><div class="madz-lbl">Línea Base 2021</div><div class="madz-tag" style="color:#dc2626">Emergente Bajo</div></div>
+      <div class="madz-card"><div class="madz-num" style="color:var(--magenta)">68</div><div class="madz-lbl">Hoy (Tepic)</div><div class="madz-tag" style="color:var(--magenta)">Gobierno Inteligente</div></div>
+      <div class="madz-card feat"><div class="madz-num" style="color:var(--solar)">81+</div><div class="madz-lbl">Nayarit 2027</div><div class="madz-tag" style="color:var(--solar)">Gobernanza Aumentada</div></div>
+      <div class="madz-card"><div class="madz-num" style="color:var(--turq)">100</div><div class="madz-lbl">Meta Técnica</div><div class="madz-tag" style="color:var(--turq)">Transparencia Total</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- IA -->
+<section class="ia-sec" id="ia">
+  <div class="ia-bg-pat"></div>
+  <div class="wrap-md" style="position:relative;z-index:10">
+    <span class="sec-pill pill-sl">Interfaz Única · Multilingüe</span>
+    <h2 class="ia-t">Asistente IA<br/><em>de Gobernanza.</em></h2>
+    <p class="ia-lead">El ciudadano no necesita saber qué dependencia resuelve su problema. La IA orquesta todo el gobierno desde WhatsApp o el portal web.</p>
+    <div class="ia-grid">
+      <div class="chat-shell">
+        <div class="chat-hd">
+          <div class="chat-av">🌽</div>
+          <div><span class="chat-name">Asistente Nayarit Digital</span><span class="chat-sub">Potenciado por Gemini · Siempre disponible</span></div>
+        </div>
+        <div class="chat-body" id="chatBody">
+          <div class="msg msg-ia">¡Hola! Soy el asistente de la campaña. Pregúntame sobre las propuestas, los logros en Tepic o cómo participar. 🌽</div>
+          <div class="msg msg-u">¿Qué es TEPICTU Salud?</div>
+          <div class="msg msg-ia">TEPICTU Salud es el sistema de triaje médico con IA que funciona en módulos DIF de Tepic — y sin internet para las comunidades serranas. 💚</div>
+        </div>
+        <div class="chat-ft">
+          <input class="chat-in" id="chatIn" placeholder="Escribe tu pregunta..." onkeydown="if(event.key==='Enter')sendChat()"/>
+          <button class="chat-send" onclick="sendChat()">→</button>
+        </div>
+      </div>
+      <div class="ia-features">
+        <div class="ia-feat"><span class="ia-feat-icon">💬</span><div><span class="ia-feat-title">Atención 24/7 sin internet</span><span class="ia-feat-body">Protocolo TEPICTU integrado: triaje médico inteligente en zonas sin señal.</span></div></div>
+        <div class="ia-feat"><span class="ia-feat-icon">🌐</span><div><span class="ia-feat-title">Inclusión Real</span><span class="ia-feat-body">Soporte en wixárika y cora. Un gobierno que habla el idioma de su gente.</span></div></div>
+        <div class="ia-feat"><span class="ia-feat-icon">🛡️</span><div><span class="ia-feat-title">Privacidad por Diseño</span><span class="ia-feat-body">Cifrado de grado militar. La identidad ciudadana siempre protegida.</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPLEMENTACION -->
+<section style="background:var(--crema)" id="impl">
+  <div class="wrap-md">
+    <div class="impl-grid">
+      <div>
+        <span class="sec-pill pill-mg">Estrategia: Primero Tepic</span>
+        <h2 class="impl-t">Implementación por<br/><em>Colonias.</em></h2>
+        <p style="font-size:1rem;color:var(--gris);margin-bottom:2rem;line-height:1.75">Cada colonia de Tepic se convierte en un nodo inteligente. Empezamos donde la gente más lo necesita, calle por calle hasta digitalizar todo el municipio.</p>
+        <div class="impl-quote"><p>"El despliegue de Tepic será el laboratorio de datos para la Nayarit del futuro. Eficiencia calle por calle."</p></div>
+        <button class="btn-3d btn-ghost" onclick="showView('executive')">Ver Carpeta Ejecutiva →</button>
+      </div>
+      <div class="steps">
+        <div class="step-card"><div class="step-num" style="background:var(--solar)">1</div><div><h4>Modelo Piloto (Colonias)</h4><p>Activación inmediata con Reporte Ciudadano e IA. Resultados en 30 días.</p></div></div>
+        <div class="step-card"><div class="step-num" style="background:var(--turq);color:white">2</div><div><h4>Interoperabilidad Total</h4><p>Tesorería, Salud y Servicios conectados. Un gobierno en la palma de la mano.</p></div></div>
+        <div class="step-card"><div class="step-num" style="background:var(--magenta);color:white">3</div><div><h4>Transparencia Trazable</h4><p>Auditoría ciudadana automática. Cada peso tiene un rastro digital inalterable.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GOOGLE CLOUD -->
+<section style="background:var(--crema);border-top:1px solid rgba(0,0,0,.06)">
+  <div class="wrap">
+    <div class="gc-hd">
+      <span class="gc-eyebrow">Respaldo Tecnológico</span>
+      <h2 class="gc-t">Potenciado por Google Cloud</h2>
+      <p class="gc-sub">Infraestructura de clase mundial para garantizar la seguridad, escalabilidad y rapidez de Nayarit Digital.</p>
+    </div>
+    <div class="gc-grid">
+      <div class="gc-card"><span class="gc-icon">🤖</span><span class="gc-name">Vertex AI</span><span class="gc-desc">Gemini 1.5 Pro</span></div>
+      <div class="gc-card"><span class="gc-icon">📍</span><span class="gc-name">G. Maps</span><span class="gc-desc">Trazabilidad Real</span></div>
+      <div class="gc-card"><span class="gc-icon">📊</span><span class="gc-name">BigQuery</span><span class="gc-desc">Dato Longitudinal</span></div>
+      <div class="gc-card"><span class="gc-icon">🔥</span><span class="gc-name">Firestore</span><span class="gc-desc">Interoperabilidad</span></div>
+      <div class="gc-card"><span class="gc-icon">🚀</span><span class="gc-name">Cloud Run</span><span class="gc-desc">Escalabilidad</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="f-name">Geraldine <em>Ponce</em></span>
+  <p class="f-sub">Presidenta Municipal de Tepic · Candidata a Gobernadora de Nayarit 2027</p>
+  <div class="f-bar"></div>
+  <p class="f-credit">Estrategia digital: <a href="#">ConnectX</a> · Tepic, Nayarit · 2027</p>
+</footer>
+</div><!-- /landing -->
+
+<!-- ═══════════════ C5 DASHBOARD -->
+<div class="view" id="view-c5">
+<div class="c5-view">
+  <div class="c5-sb">
+    <div class="c5-sb-hd">
+      <div class="c5-logo-mk">N</div>
+      <div><div class="c5-app-nm">Nayarit Digital</div><div class="c5-app-sb">C5 Governance Hub</div></div>
+    </div>
+    <div class="c5-sb-body">
+      <div class="c5-nav-lbl">Módulos del Ecosistema</div>
+      <button class="c5-btn active" onclick="setMod(this,'Tesorería Digital')"><div class="c5-btn-ic" style="background:rgba(16,185,129,.12)">💳</div><span class="c5-btn-nm">Tesorería Digital</span></button>
+      <button class="c5-btn" onclick="setMod(this,'Trazabilidad de Obras')"><div class="c5-btn-ic" style="background:rgba(245,158,11,.12)">🏗️</div><span class="c5-btn-nm">Trazabilidad Obras</span></button>
+      <button class="c5-btn" onclick="setMod(this,'Servicios Públicos')"><div class="c5-btn-ic" style="background:rgba(59,130,246,.12)">📱</div><span class="c5-btn-nm">Servicios Públicos</span></button>
+      <button class="c5-btn" onclick="setMod(this,'TEPICTU Salud')"><div class="c5-btn-ic" style="background:rgba(244,63,94,.12)">💚</div><span class="c5-btn-nm">TEPICTU Salud</span></button>
+      <button class="c5-btn" onclick="setMod(this,'Bienestar Social')"><div class="c5-btn-ic" style="background:rgba(236,72,153,.12)">🫂</div><span class="c5-btn-nm">Bienestar Social</span></button>
+      <button class="c5-btn" onclick="setMod(this,'Asistente IA')"><div class="c5-btn-ic" style="background:rgba(168,85,247,.12)">🤖</div><span class="c5-btn-nm">Asistente IA</span></button>
+      <button class="c5-btn" onclick="setMod(this,'Agrovisión 3D')"><div class="c5-btn-ic" style="background:rgba(34,197,94,.12)">🚜</div><span class="c5-btn-nm">Agrovisión 3D</span></button>
+      <button class="c5-btn" onclick="setMod(this,'Observatorio Digital')"><div class="c5-btn-ic" style="background:rgba(6,182,212,.12)">📊</div><span class="c5-btn-nm">Observatorio Digital</span></button>
+    </div>
+    <div class="c5-sb-ft">
+      <button class="c5-back" onclick="showView('landing')">← Volver al inicio</button>
+    </div>
+  </div>
+  <div class="c5-main">
+    <div class="c5-topbar">
+      <div><div class="c5-tb-title" id="modTitle">Tesorería Digital</div><div class="c5-tb-sub">Recaudación en tiempo real · Tepic, Nayarit</div></div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:.45rem">
+        <div style="width:8px;height:8px;border-radius:50%;background:#10b981;animation:blink 1.5s infinite"></div>
+        <span style="font-family:'Spline Sans Mono',monospace;font-size:.62rem;color:#475569">LIVE</span>
+      </div>
+    </div>
+    <div class="c5-content">
+      <div class="c5-kpi-grid">
+        <div class="kpi"><div class="kpi-lbl">Recaudación Mensual</div><div class="kpi-val">$18.4M</div><div class="kpi-delta up">↑ 32% vs mes anterior</div></div>
+        <div class="kpi"><div class="kpi-lbl">Trámites en Línea</div><div class="kpi-val">4,219</div><div class="kpi-delta up">↑ 18% esta semana</div></div>
+        <div class="kpi"><div class="kpi-lbl">Tiempo de Resolución</div><div class="kpi-val">2.3h</div><div class="kpi-delta up">↓ 47% reducción</div></div>
+        <div class="kpi"><div class="kpi-lbl">Satisfacción Ciudadana</div><div class="kpi-val">94%</div><div class="kpi-delta neutral">→ Estable</div></div>
+      </div>
+      <div class="c5-chart-card">
+        <div class="c5-chart-title">Recaudación mensual 2025 (MXN millones)</div>
+        <div class="bar-chart">
+          <div class="bar-col"><div class="bar-body" style="height:52%;background:linear-gradient(0deg,#7B1FA2,#E5007A)"></div><span class="bar-lbl">Ene</span></div>
+          <div class="bar-col"><div class="bar-body" style="height:58%;background:linear-gradient(0deg,#7B1FA2,#E5007A)"></div><span class="bar-lbl">Feb</span></div>
+          <div class="bar-col"><div class="bar-body" style="height:70%;background:linear-gradient(0deg,#7B1FA2,#E5007A)"></div><span class="bar-lbl">Mar</span></div>
+          <div class="bar-col"><div class="bar-body" style="height:64%;background:linear-gradient(0deg,#7B1FA2,#E5007A)"></div><span class="bar-lbl">Abr</span></div>
+          <div class="bar-col"><div class="bar-body" style="height:79%;background:linear-gradient(0deg,#00873E,#00BCD4)"></div><span class="bar-lbl">May</span></div>
+          <div class="bar-col"><div class="bar-body" style="height:85%;background:linear-gradient(0deg,#00873E,#00BCD4)"></div><span class="bar-lbl">Jun</span></div>
+          <div class="bar-col"><div class="bar-body" style="height:91%;background:linear-gradient(0deg,#8B6200,#FFB300)"></div><span class="bar-lbl">Jul</span></div>
+          <div class="bar-col"><div class="bar-body" style="height:100%;background:linear-gradient(0deg,#8B6200,#FFD600)"></div><span class="bar-lbl">Ago</span></div>
+          <div class="bar-col"><div class="bar-body" style="height:94%;background:linear-gradient(0deg,#8B6200,#FFD600)"></div><span class="bar-lbl">Sep</span></div>
+          <div class="bar-col"><div class="bar-body" style="height:88%;background:linear-gradient(0deg,#7B1FA2,#E5007A)"></div><span class="bar-lbl">Oct</span></div>
+          <div class="bar-col"><div class="bar-body" style="height:96%;background:linear-gradient(0deg,#7B1FA2,#E5007A)"></div><span class="bar-lbl">Nov</span></div>
+          <div class="bar-col"><div class="bar-body" style="height:90%;background:linear-gradient(0deg,#7B1FA2,#E5007A)"></div><span class="bar-lbl">Dic</span></div>
+        </div>
+      </div>
+      <div class="c5-act">
+        <div class="c5-chart-title">Actividad Reciente</div>
+        <div class="act-row"><div class="act-dot" style="background:#10b981"></div><div class="act-text">Pago predial registrado — Col. Centro, $12,400 MXN</div><div class="act-time">hace 2 min</div></div>
+        <div class="act-row"><div class="act-dot" style="background:#3b82f6"></div><div class="act-text">Folio #4821 — Bache Av. México Sur, Col. Las Palmas</div><div class="act-time">hace 7 min</div></div>
+        <div class="act-row"><div class="act-dot" style="background:#f59e0b"></div><div class="act-text">Obra Fraccionamiento Residencial — avance 68% físico</div><div class="act-time">hace 15 min</div></div>
+        <div class="act-row"><div class="act-dot" style="background:#a855f7"></div><div class="act-text">TEPICTU Salud: 23 triajes completados — Módulo DIF Norte</div><div class="act-time">hace 22 min</div></div>
+        <div class="act-row"><div class="act-dot" style="background:#f43f5e"></div><div class="act-text">Beneficiario Bienestar registrado — Folio BNF-2847</div><div class="act-time">hace 38 min</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════ CITIZEN APP -->
+<div class="view" id="view-citizen">
+<div class="cit-view">
+  <div class="cit-hd">
+    <button class="cit-back" onclick="showView('landing')">← Volver</button>
+    <div class="cit-title">Nayarit Digital</div>
+    <div class="cit-sub">RUTA — Tu gobierno en la palma de tu mano</div>
+  </div>
+  <div class="cit-body">
+    <div class="cit-search">
+      <span style="font-size:1.2rem">🔍</span>
+      <input placeholder="¿En qué te podemos ayudar hoy?"/>
+    </div>
+    <div class="cit-cats">
+      <div class="cat-btn"><span class="cat-icon">💳</span><div><span class="cat-nm">Pagar Predial</span><span class="cat-desc">En línea, seguro y rápido</span></div></div>
+      <div class="cat-btn"><span class="cat-icon">🚦</span><div><span class="cat-nm">Reportar Problema</span><span class="cat-desc">Baches, luz, basura</span></div></div>
+      <div class="cat-btn"><span class="cat-icon">💚</span><div><span class="cat-nm">TEPICTU Salud</span><span class="cat-desc">Orientación médica IA</span></div></div>
+      <div class="cat-btn"><span class="cat-icon">📋</span><div><span class="cat-nm">Mis Trámites</span><span class="cat-desc">Seguimiento de folios</span></div></div>
+      <div class="cat-btn"><span class="cat-icon">🏗️</span><div><span class="cat-nm">Obras Públicas</span><span class="cat-desc">Trazabilidad en tiempo real</span></div></div>
+      <div class="cat-btn"><span class="cat-icon">🫂</span><div><span class="cat-nm">Apoyo Social</span><span class="cat-desc">Programas de bienestar</span></div></div>
+    </div>
+    <div class="cit-recent">
+      <div class="rec-title">Mis Reportes Recientes</div>
+      <div class="rec-item"><div class="ri-dot" style="background:#10b981"></div><div class="ri-text">Bache Av. Insurgentes #420 — reparado</div><span class="ri-badge bg-g">Resuelto</span></div>
+      <div class="rec-item"><div class="ri-dot" style="background:#f59e0b"></div><div class="ri-text">Luminaria apagada Col. Moctezuma</div><span class="ri-badge bg-y">En proceso</span></div>
+      <div class="rec-item"><div class="ri-dot" style="background:#3b82f6"></div><div class="ri-text">Poda de árbol Cal. Río Lerma</div><span class="ri-badge bg-b">Registrado</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════ DEV CHECKLIST -->
+<div class="view" id="view-dev">
+<div class="dev-view">
+  <div class="dev-hd">
+    <div class="dev-title">Roadmap Técnico</div>
+    <button onclick="showView('landing')" style="background:#1e293b;border:1px solid #334155;border-radius:.5rem;padding:.5rem 1rem;color:#94a3b8;cursor:pointer;font-family:'Instrument Sans',sans-serif">← Volver</button>
+  </div>
+  <div class="dev-grid">
+    <div class="dev-card">
+      <div class="dev-card-t">🏗️ Infraestructura</div>
+      <div class="dev-chk"><span class="chk-ic done">✅</span><div><span class="chk-strong">Firebase + Firestore</span><span class="chk-sub">Base de datos en tiempo real operativa</span></div></div>
+      <div class="dev-chk"><span class="chk-ic done">✅</span><div><span class="chk-strong">Express + Vite SSR</span><span class="chk-sub">server.ts + vite.config.ts integrados</span></div></div>
+      <div class="dev-chk"><span class="chk-ic done">✅</span><div><span class="chk-strong">Tailwind CSS v4</span><span class="chk-sub">Variables CSS nierika configuradas</span></div></div>
+      <div class="dev-chk"><span class="chk-ic pend">⏳</span><div><span class="chk-strong">Google Maps API key</span><span class="chk-sub">Pendiente .env.production</span></div></div>
+    </div>
+    <div class="dev-card">
+      <div class="dev-card-t">🤖 IA &amp; APIs</div>
+      <div class="dev-chk"><span class="chk-ic done">✅</span><div><span class="chk-strong">@google/genai SDK</span><span class="chk-sub">Gemini 1.5 Pro integrado en C5</span></div></div>
+      <div class="dev-chk"><span class="chk-ic done">✅</span><div><span class="chk-strong">Chat UI funcional</span><span class="chk-sub">ChatIA component + mock responses</span></div></div>
+      <div class="dev-chk"><span class="chk-ic pend">⏳</span><div><span class="chk-strong">GEMINI_API_KEY producción</span><span class="chk-sub">Requiere variable de entorno real</span></div></div>
+      <div class="dev-chk"><span class="chk-ic pend">⏳</span><div><span class="chk-strong">TEPICTU offline IA</span><span class="chk-sub">Modelo TensorFlow.js sin internet</span></div></div>
+    </div>
+    <div class="dev-card">
+      <div class="dev-card-t">📱 Vistas Completadas</div>
+      <div class="dev-chk"><span class="chk-ic done">✅</span><div><span class="chk-strong">GeraldineLanding</span><span class="chk-sub">Hero + 7 secciones + Ojos de Dios</span></div></div>
+      <div class="dev-chk"><span class="chk-ic done">✅</span><div><span class="chk-strong">C5Dashboard</span><span class="chk-sub">8 módulos con charts Recharts</span></div></div>
+      <div class="dev-chk"><span class="chk-ic done">✅</span><div><span class="chk-strong">CitizenApp (RUTA)</span><span class="chk-sub">6 categorías + seguimiento folios</span></div></div>
+      <div class="dev-chk"><span class="chk-ic done">✅</span><div><span class="chk-strong">ExecutiveFolder</span><span class="chk-sub">PDF estratégico con jsPDF</span></div></div>
+    </div>
+    <div class="dev-card">
+      <div class="dev-card-t">🚀 Próximos Pasos</div>
+      <div class="dev-chk"><span class="chk-ic prog">🔵</span><div><span class="chk-strong">Deploy Cloud Run</span><span class="chk-sub">Pipeline CI/CD en configuración</span></div></div>
+      <div class="dev-chk"><span class="chk-ic pend">⏳</span><div><span class="chk-strong">Firebase Auth</span><span class="chk-sub">Login ciudadano + roles gobierno</span></div></div>
+      <div class="dev-chk"><span class="chk-ic pend">⏳</span><div><span class="chk-strong">NayaritMap real</span><span class="chk-sub">Mapa interactivo colonias Tepic</span></div></div>
+      <div class="dev-chk"><span class="chk-ic pend">⏳</span><div><span class="chk-strong">Push Notifications</span><span class="chk-sub">Alertas de folios vía WhatsApp</span></div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════ EXECUTIVE -->
+<div class="view" id="view-executive">
+<div class="exec-view">
+  <button onclick="showView('landing')" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:999px;padding:.42rem 1rem;font-size:.73rem;color:var(--crema);cursor:pointer;font-family:'Instrument Sans',sans-serif;margin-bottom:2rem;transition:background .2s" onmouseover="this.style.background='rgba(255,255,255,.15)'" onmouseout="this.style.background='rgba(255,255,255,.08)'">← Volver</button>
+  <div class="exec-hd">
+    <div class="exec-t">Carpeta <em>Ejecutiva</em></div>
+    <div class="exec-sub">Estrategia Nayarit Digital · Propuesta para Inversores y Gobierno 2027</div>
+  </div>
+  <div class="exec-cards">
+    <div class="ec"><div class="ec-icon">📊</div><div class="ec-title">Diagnóstico Territorial</div><div class="ec-body">Análisis del estado de digitalización de Tepic. Brecha de servicios cuantificada. Mapa de calor de necesidades por colonia.</div><div class="ec-stat"><div class="ec-num">127</div><div class="ec-lbl">Colonias analizadas</div></div></div>
+    <div class="ec"><div class="ec-icon">💰</div><div class="ec-title">Modelo Financiero</div><div class="ec-body">ROI proyectado en 36 meses. Recaudación predial +78% demostrado. Ahorro operativo en trámites presenciales estimado anual.</div><div class="ec-stat"><div class="ec-num">$42M</div><div class="ec-lbl">Ahorro operativo anual</div></div></div>
+    <div class="ec"><div class="ec-icon">🗺️</div><div class="ec-title">Hoja de Ruta 2027</div><div class="ec-body">3 fases: Piloto colonias (Q1), Interoperabilidad total (Q2-Q3), Expansión estatal (Q4). Hitos medibles cada 30 días.</div><div class="ec-stat"><div class="ec-num">3 fases</div><div class="ec-lbl">Implementación escalonada</div></div></div>
+    <div class="ec"><div class="ec-icon">🤖</div><div class="ec-title">Stack Tecnológico</div><div class="ec-body">Google Cloud: Vertex AI (Gemini), BigQuery, Firestore, Maps, Cloud Run. Arquitectura serverless escalable.</div><div class="ec-stat"><div class="ec-num">5</div><div class="ec-lbl">Servicios Google Cloud</div></div></div>
+    <div class="ec"><div class="ec-icon">👥</div><div class="ec-title">Impacto Social</div><div class="ec-body">65,000 beneficiarios directos en Bienestar Social. Salud preventiva en 48 comunidades serranas sin conectividad.</div><div class="ec-stat"><div class="ec-num">65K</div><div class="ec-lbl">Beneficiarios directos</div></div></div>
+    <div class="ec"><div class="ec-icon">🌐</div><div class="ec-title">Ecosistema ConnectX</div><div class="ec-body">Protocolo de interoperabilidad que conecta 7 módulos. API abierta para integración estatal y federal.</div><div class="ec-stat"><div class="ec-num">7</div><div class="ec-lbl">Módulos integrados</div></div></div>
+  </div>
+  <div class="exec-cta-row">
+    <button class="btn-3d btn-solar" onclick="alert('En producción: genera PDF ejecutivo con jsPDF + datos Firebase en tiempo real')">📄 Descargar Carpeta Ejecutiva (PDF)</button>
+  </div>
+</div>
+</div>
+
+<script>
+// VIEW ROUTER
+function showView(n){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+n).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// NAV SCROLL
+window.addEventListener('scroll',()=>{
+  const n=document.getElementById('main-nav');
+  if(n) n.classList.toggle('scrolled',window.scrollY>50);
+},{passive:true});
+
+// SMOOTH SCROLL
+function scrollSec(id){
+  const el=document.getElementById(id);
+  if(el) el.scrollIntoView({behavior:'smooth'});
+}
+
+// OJOS PARALLAX
+(function(){
+  const scene=document.getElementById('ojos');
+  if(!scene) return;
+  const ojos=scene.querySelectorAll('.ojo');
+  const halos=scene.querySelectorAll('.ojo-halo');
+  const mults=[22,38,56,70];
+  let cx=0,cy=0,tx=0,ty=0;
+  const isTouch='ontouchstart' in window;
+  if(!isTouch){
+    window.addEventListener('mousemove',e=>{
+      tx=(e.clientX/window.innerWidth-0.5);
+      ty=(e.clientY/window.innerHeight-0.5);
+    },{passive:true});
+  }
+  function tick(){
+    cx+=(tx-cx)*0.055;
+    cy+=(ty-cy)*0.055;
+    ojos.forEach((o,i)=>{
+      const m=mults[i]||mults[mults.length-1];
+      o.style.transform=`translateX(${cx*m}px) translateY(${cy*m}px)`;
+    });
+    halos.forEach((h,i)=>{
+      const m=(mults[i]||mults[mults.length-1])*0.6;
+      h.style.transform=`translateX(${cx*m}px) translateY(${cy*m}px)`;
+    });
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+// C5 MODULE
+function setMod(btn,name){
+  document.querySelectorAll('.c5-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const el=document.getElementById('modTitle');
+  if(el) el.textContent=name;
+}
+
+// CHAT
+function sendChat(){
+  const inp=document.getElementById('chatIn');
+  const body=document.getElementById('chatBody');
+  if(!inp||!body||!inp.value.trim()) return;
+  const txt=inp.value.trim(); inp.value='';
+  const u=document.createElement('div');
+  u.className='msg msg-u'; u.textContent=txt;
+  body.appendChild(u); body.scrollTop=body.scrollHeight;
+  setTimeout(()=>{
+    const r=document.createElement('div');
+    r.className='msg msg-ia';
+    r.textContent='El asistente demo está en modo offline. En producción estará conectado a Gemini API para respuestas inteligentes en tiempo real. 🚀';
+    body.appendChild(r); body.scrollTop=body.scrollHeight;
+  },1100);
+}
+</script>
+</body>
+</html>
