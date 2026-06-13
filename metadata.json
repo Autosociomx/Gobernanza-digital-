@@ -1,6 +1,6 @@
 {
-  "name": "Protocolo de Gobernanza Digital AI",
-  "description": "Infraestructura de Inteligencia Artificial para la modernización de dependencias gubernamentales. Protocolo CX para la eficiencia operativa y transparencia absoluta.",
+  "name": "Nayarit Digital",
+  "description": "Ecosistema de Gobernanza 2.0. El Sistema Operativo Municipal de Tepic: Infraestructura digital para la transparencia, eficiencia y atención ciudadana mediante Inteligencia Artificial.",
   "requestFramePermissions": ["geolocation"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

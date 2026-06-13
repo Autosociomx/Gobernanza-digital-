@@ -153,7 +153,11 @@ const ChatIA = () => {
   );
 };
 
-export const GeraldineLanding = () => {
+interface GeraldineLandingProps {
+  onNavigate: (view: 'landing' | 'c5' | 'citizen' | 'dev' | 'executive') => void;
+}
+
+export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
   const [navScrolled, setNavScrolled] = useState(false);
   const { scrollY } = useScroll();
 
@@ -161,18 +165,24 @@ export const GeraldineLanding = () => {
     return scrollY.on('change', (y) => setNavScrolled(y > 50));
   }, [scrollY]);
 
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <>
       {/* NAV */}
       <nav className={`fixed top-0 left-0 right-0 z-[900] bg-[#FEF8EE]/95 backdrop-blur-[14px] px-[2rem] py-[0.95rem] flex items-center justify-between border-b border-black/10 transition-shadow duration-300 ${navScrolled ? 'shadow-[0_6px_28px_rgba(21,8,0,0.1)]' : ''}`}>
         <a href="#" className="font-serif font-black text-[1.2rem] tracking-tight text-[var(--tinta)] flex items-center gap-[0.55rem] no-underline">
-          <span className="w-[14px] h-[14px] bg-[var(--magenta)] transform rotate-45 shrink-0 shadow-[2.5px_2.5px_0_var(--solar)]"></span>Geraldine Ponce
+          <span className="w-[14px] h-[14px] bg-[var(--magenta)] transform rotate-45 shrink-0 shadow-[2.5px_2.5px_0_var(--solar)]"></span>Nayarit Digital
         </a>
         <ul className="hidden md:flex items-center gap-[2rem] m-0 p-0 list-none">
-          <li><a href="#logros" className="font-mono text-[0.72rem] font-bold tracking-[0.12em] uppercase text-[var(--gris)] hover:text-[var(--magenta)] transition-colors">Logros</a></li>
-          <li><a href="#pilares" className="font-mono text-[0.72rem] font-bold tracking-[0.12em] uppercase text-[var(--gris)] hover:text-[var(--magenta)] transition-colors">Propuesta</a></li>
-          <li><a href="#ia" className="font-mono text-[0.72rem] font-bold tracking-[0.12em] uppercase text-[var(--gris)] hover:text-[var(--magenta)] transition-colors">Asistente IA</a></li>
-          <li><a href="#comunidad" className="bg-[var(--tinta)] hover:bg-[var(--magenta)] text-[var(--crema)] font-mono text-[0.72rem] font-bold tracking-[0.12em] uppercase px-[1.3rem] py-[0.5rem] rounded-full transition-colors">Únete</a></li>
+          <li><button onClick={() => scrollTo('ecosistema')} className="font-mono text-[0.72rem] font-bold tracking-[0.12em] uppercase text-[var(--gris)] hover:text-[var(--magenta)] transition-colors">Ecosistema</button></li>
+          <li><button onClick={() => scrollTo('observatorio')} className="font-mono text-[0.72rem] font-bold tracking-[0.12em] uppercase text-[var(--gris)] hover:text-[var(--magenta)] transition-colors">Observatorio</button></li>
+          <li><button onClick={() => scrollTo('madurez')} className="font-mono text-[0.72rem] font-bold tracking-[0.12em] uppercase text-[var(--gris)] hover:text-[var(--magenta)] transition-colors">Madurez Digital</button></li>
+          <li><button onClick={() => scrollTo('ia')} className="font-mono text-[0.72rem] font-bold tracking-[0.12em] uppercase text-[var(--gris)] hover:text-[var(--magenta)] transition-colors">Asistente IA</button></li>
+          <li><a href="/public/NAYARIT_DIGITAL_V2.md" target="_blank" className="bg-[var(--tinta)] hover:bg-[var(--magenta)] text-[var(--crema)] font-mono text-[0.72rem] font-bold tracking-[0.12em] uppercase px-[1.3rem] py-[0.5rem] rounded-full transition-colors no-underline">Propuesta V2.0</a></li>
         </ul>
       </nav>
 
@@ -184,36 +194,40 @@ export const GeraldineLanding = () => {
         <div className="relative z-10">
           <motion.div initial={{opacity:0,y:28}} animate={{opacity:1,y:0}} transition={{delay:0.1, duration:0.6}}
             className="inline-flex items-center gap-[0.55rem] font-mono font-bold text-[0.62rem] tracking-[0.2em] uppercase text-[var(--tinta)] border-[1.5px] border-[var(--tinta)] bg-[var(--solar)] px-[0.95rem] py-[0.35rem] rounded-full mb-[1.6rem] shadow-[3px_3px_0_var(--tinta)]">
-            <span className="w-[6px] h-[6px] rounded-full bg-[var(--magenta)] animate-pulse"></span>Nayarit · Gobernatura · 2027
+            <span className="w-[6px] h-[6px] rounded-full bg-[var(--magenta)] animate-pulse"></span>Nayarit Digital · Ecosistema de Gobernanza 2.0
           </motion.div>
           
-          <h1 className="font-serif font-black text-[clamp(4.2rem,11.5vw,9rem)] leading-[0.9] tracking-[-0.045em] mb-[0.32em]">
-            <motion.span initial={{opacity:0,y:28}} animate={{opacity:1,y:0}} transition={{delay:0.2, duration:0.8}} className="block text-[var(--tinta)]">Geraldine</motion.span>
+          <h1 className="font-serif font-black text-[clamp(3.5rem,10vw,7rem)] leading-[0.9] tracking-[-0.045em] mb-[0.32em]">
+            <motion.span initial={{opacity:0,y:28}} animate={{opacity:1,y:0}} transition={{delay:0.2, duration:0.8}} className="block text-[var(--tinta)]">El Sistema Operativo</motion.span>
             <motion.span initial={{opacity:0,y:28}} animate={{opacity:1,y:0}} transition={{delay:0.32, duration:0.8}} className="block text-[var(--magenta)] italic relative">
-              Ponce
+              Municipal de Tepic
             </motion.span>
           </h1>
           
           <motion.p initial={{opacity:0,y:28}} animate={{opacity:1,y:0}} transition={{delay:0.45, duration:0.8}}
             className="font-serif italic text-[clamp(1.05rem,2.2vw,1.45rem)] text-[var(--gris)] mb-[1.1rem]">
-            <strong className="not-italic font-semibold text-[var(--tinta)]">Presidenta Municipal de Tepic</strong>,<br/>
-            primera mujer en gobernar la capital de Nayarit
+            "La digitalización municipal basada en interoperabilidad, inclusión y datos abiertos incrementa simultáneamente la recaudación, la eficiencia administrativa y la confianza ciudadana."
           </motion.p>
           
           <motion.p initial={{opacity:0,y:28}} animate={{opacity:1,y:0}} transition={{delay:0.55, duration:0.8}}
             className="font-sans text-[clamp(0.9rem,1.8vw,1.05rem)] text-[var(--tinta)]/80 max-w-[450px] leading-[1.75] mb-[2rem]">
-            La gobernante que <em className="not-italic font-bold text-[var(--magenta)]">ya transformó Tepic.</em><br/>
-            Ahora lleva ese cambio a los 20 municipios de Nayarit.
+            Nayarit Digital no es un conjunto de aplicaciones. Es una infraestructura institucional que reposa sobre tres pilares: <em className="not-italic font-bold text-[var(--magenta)]">Interoperabilidad, Inclusión y Datos Abiertos.</em>
           </motion.p>
           
           <motion.div initial={{opacity:0,y:28}} animate={{opacity:1,y:0}} transition={{delay:0.65, duration:0.8}}
             className="flex flex-wrap gap-[0.85rem]">
-            <a href="#pilares" className="bg-[var(--tinta)] hover:bg-[var(--magenta)] text-[var(--crema)] font-bold text-[0.88rem] px-[2rem] py-[0.9rem] rounded-full inline-flex items-center gap-[0.5rem] transition-all hover:-translate-y-1 shadow-[0_4px_0_var(--magenta)] hover:shadow-[0_7px_0_var(--tinta)]">
-              Ver la propuesta →
-            </a>
-            <a href="#comunidad" className="bg-transparent hover:bg-[var(--turq)] text-[var(--tinta)] hover:text-white font-bold text-[0.88rem] px-[2rem] py-[0.9rem] rounded-full inline-flex items-center gap-[0.5rem] transition-all border-2 border-[var(--tinta)] hover:border-[var(--turq)] hover:-translate-y-1">
-              Únete al movimiento
-            </a>
+            <button 
+              onClick={() => onNavigate('citizen')}
+              className="bg-[var(--tinta)] hover:bg-[var(--magenta)] text-[var(--crema)] font-bold text-[0.88rem] px-[2rem] py-[0.9rem] rounded-full inline-flex items-center gap-[0.5rem] transition-all hover:-translate-y-1 shadow-[0_4px_0_var(--magenta)] hover:shadow-[0_7px_0_var(--tinta)]"
+            >
+              Demo Ciudadana (RUTA) →
+            </button>
+            <button 
+              onClick={() => onNavigate('c5')}
+              className="bg-transparent hover:bg-[var(--turq)] text-[var(--tinta)] hover:text-white font-bold text-[0.88rem] px-[2rem] py-[0.9rem] rounded-full inline-flex items-center gap-[0.5rem] transition-all border-2 border-[var(--tinta)] hover:border-[var(--turq)] hover:-translate-y-1"
+            >
+              Dashboard Gobernanza
+            </button>
           </motion.div>
         </div>
 
@@ -222,237 +236,195 @@ export const GeraldineLanding = () => {
             <img 
               className="w-full aspect-[3/4] object-cover object-top rounded-[0.8rem] saturate-[1.06]" 
               src="/geraldine-hero.jpg" 
-              onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&h=800&fit=crop&crop=faces&auto=format&q=85"; }}
+              onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1541614101331-1a5a3a194e92?w=500&h=625&fit=crop&crop=faces&auto=format&q=80"; }}
               alt="Geraldine Ponce — Presidenta Municipal de Tepic" 
             />
-            <div className="absolute -top-[12px] -right-[10px] bg-[var(--magenta)] text-white font-mono text-[0.58rem] font-bold tracking-[0.08em] uppercase px-[0.75rem] py-[0.45rem] rounded-[0.4rem] shadow-[0_6px_18px_rgba(229,0,122,0.4)] max-w-[150px] text-center leading-[1.35]">1ª Presidenta Municipal de Tepic</div>
-            <div className="absolute -bottom-[14px] -left-[12px] bg-[var(--crema)] border-2 border-[var(--tinta)] rounded-[0.7rem] px-[1rem] py-[0.6rem] shadow-[4px_4px_0_var(--solar)]">
-              <span className="font-serif font-black text-[1.6rem] leading-none text-[var(--tinta)] block">30</span>
-              <span className="font-mono text-[0.58rem] font-bold tracking-[0.1em] uppercase text-[var(--gris)] block mt-[0.12rem]">años · Tepic</span>
-            </div>
+            <div className="absolute -top-[12px] -right-[10px] bg-[var(--magenta)] text-white font-mono text-[0.58rem] font-bold tracking-[0.08em] uppercase px-[0.75rem] py-[0.45rem] rounded-[0.4rem] shadow-[0_6px_18px_rgba(229,0,122,0.4)] max-w-[150px] text-center leading-[1.35]">Visión de Estado: Nayarit Digital</div>
+            {/* Refined Badge */}
+            <motion.div 
+              initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} transition={{delay:0.55, duration:0.6}}
+              className="absolute -bottom-[1.2rem] -left-[1.2rem] bg-white border border-black/[0.08] p-[1.2rem_1.8rem] rounded-[0.8rem] shadow-[20px_20px_60px_-15px_rgba(0,0,0,0.15)] group-hover:shadow-[20px_20px_80px_-15px_rgba(229,0,122,0.2)] transition-all z-20"
+            >
+              <h4 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] leading-none mb-[0.35rem]">Nayarit 2027</h4>
+              <div className="flex items-center gap-[0.5rem]">
+                <span className="w-[6px] h-[6px] bg-emerald-500 rounded-full animate-pulse"></span>
+                <p className="font-mono text-[0.6rem] font-extrabold uppercase tracking-[0.14em] text-[var(--gris)]">Transformación Real</p>
+              </div>
+            </motion.div>
           </div>
         </motion.div>
       </section>
 
-      {/* STATS */}
-      <div className="bg-[var(--tinta)] px-[2rem] py-[2.2rem] border-t-[5px] border-[var(--solar)]">
-        <div className="max-w-[980px] mx-auto grid grid-cols-2 lg:grid-cols-4 gap-[1rem] text-center">
-          <div><span className="font-serif font-black text-[clamp(2rem,5vw,3.4rem)] leading-none text-[var(--magenta)] block">425K</span><span className="font-mono text-[0.6rem] uppercase tracking-[0.14em] text-white/50 mt-[0.4rem] block">Tepicenses gobernados</span></div>
-          <div><span className="font-serif font-black text-[clamp(2rem,5vw,3.4rem)] leading-none text-[var(--turq)] block">100%</span><span className="font-mono text-[0.6rem] uppercase tracking-[0.14em] text-white/50 mt-[0.4rem] block">Obras trazables en vivo</span></div>
-          <div><span className="font-serif font-black text-[clamp(2rem,5vw,3.4rem)] leading-none text-[var(--solar)] block">20</span><span className="font-mono text-[0.6rem] uppercase tracking-[0.14em] text-white/50 mt-[0.4rem] block">Municipios por digitalizar</span></div>
-          <div><span className="font-serif font-black text-[clamp(2rem,5vw,3.4rem)] leading-none text-[#5DD39E] block">519K</span><span className="font-mono text-[0.6rem] uppercase tracking-[0.14em] text-white/50 mt-[0.4rem] block">Seguidores en Instagram</span></div>
-        </div>
-      </div>
-
-      {/* LOGROS */}
-      <section className="px-[2rem] py-[5.5rem] bg-[var(--crema)]" id="logros">
-        <div className="max-w-[980px] mx-auto">
+      {/* INTEGRATED MODULES */}
+      <section className="px-[2rem] py-[5.5rem] bg-[var(--crema)]" id="ecosistema">
+        <div className="max-w-[1080px] mx-auto">
           <Reveal delay={0.1}>
-            <span className="inline-block font-mono text-[0.6rem] font-bold tracking-[0.2em] uppercase text-white px-[0.9rem] py-[0.32rem] rounded-full mb-[1.1rem]" style={{background:'var(--magenta)'}}>Resultados reales · Tepic 2021–2026</span>
+            <span className="inline-block font-mono text-[0.6rem] font-bold tracking-[0.2em] uppercase text-white px-[0.9rem] py-[0.32rem] rounded-full mb-[1.1rem]" style={{background:'var(--magenta)'}}>Una plataforma · Todas las aplicaciones</span>
           </Reveal>
           <Reveal delay={0.2}>
-            <h2 className="font-serif font-black text-[clamp(2.1rem,5.5vw,3.9rem)] leading-[0.98] tracking-[-0.035em] mb-[1rem]">Mientras otros prometen,<br/><em className="italic text-[var(--magenta)]">ella ya lo hizo.</em></h2>
+            <h2 className="font-serif font-black text-[clamp(2.1rem,5.5vw,3.9rem)] leading-[0.98] tracking-[-0.035em] mb-[1rem]">Ecosistema Nayarit Digital</h2>
           </Reveal>
           <Reveal delay={0.3}>
-            <p className="font-serif italic text-[clamp(1.05rem,2.1vw,1.4rem)] text-[var(--gris)] leading-[1.5] max-w-[560px] mb-[2.4rem]">Cada logro ya funciona hoy. No es plan de campaña — es historial de gobierno.</p>
+            <p className="font-serif italic text-[clamp(1.05rem,2.1vw,1.4rem)] text-[var(--gris)] leading-[1.5] max-w-[700px] mb-[3.6rem]">Seis ejes estratégicos integrados bajo el protocolo de interoperabilidad ConnectX, diseñados para gobernar con datos y humanidad.</p>
           </Reveal>
-          
-          <div className="grid grid-cols-1 md:grid-cols-[1fr_1.3fr] gap-[2.6rem] items-start">
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[1.5rem]">
+            {/* 1. Tesorería */}
             <Reveal delay={0.1}>
-              <div className="lf-wrap">
-                <img 
-                  className="w-full aspect-[4/5] object-cover object-top rounded-[0.65rem] saturate-[1.08]" 
-                  src="/geraldine-logros.jpg" 
-                  onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1541614101331-1a5a3a194e92?w=500&h=625&fit=crop&crop=faces&auto=format&q=80"; }}
-                  alt="Geraldine Ponce en actividad de gobierno" 
-                />
-                <div className="absolute -bottom-[14px] -right-[12px] bg-[var(--crema)] border-2 border-[var(--tinta)] rounded-[0.7rem] px-[1rem] py-[0.65rem] shadow-[4px_4px_0_var(--turq)]">
-                  <b className="font-serif font-black text-[1.25rem] text-[var(--tinta)] block leading-none">2021</b>
-                  <small className="font-mono text-[0.56rem] font-bold tracking-[0.1em] uppercase text-[var(--gris)]">–2026 · En gobierno</small>
+              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full">
+                <span className="text-[2.2rem] block mb-[0.8rem]">💳</span>
+                <h3 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] mb-[0.4rem]">Tesorería Digital</h3>
+                <p className="text-[0.82rem] text-[var(--gris)] leading-[1.65]">Pago de predial, agua y licencias 100% en línea. Incrementa la recaudación mediante recordatorios automáticos por WhatsApp.</p>
+              </div>
+            </Reveal>
+
+            {/* 2. Obras */}
+            <Reveal delay={0.2}>
+              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full">
+                <span className="text-[2.2rem] block mb-[0.8rem]">🏗️</span>
+                <h3 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] mb-[0.4rem]">Trazabilidad de Obras</h3>
+                <p className="text-[0.82rem] text-[var(--gris)] leading-[1.65]">Control total de obra pública. Avance físico-financiero visible en tiempo real. Auditoría ciudadana por diseño.</p>
+              </div>
+            </Reveal>
+
+            {/* 3. Servicios */}
+            <Reveal delay={0.3}>
+              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full">
+                <span className="text-[2.2rem] block mb-[0.8rem]">📱</span>
+                <h3 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] mb-[0.4rem]">Servicios Públicos</h3>
+                <p className="text-[0.82rem] text-[var(--gris)] leading-[1.65]">Reporte de baches, luminarias y basura mediante IA. Seguimiento automático del folio hasta su resolución final.</p>
+              </div>
+            </Reveal>
+
+            {/* 4. Salud */}
+            <Reveal delay={0.4}>
+              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full">
+                <span className="text-[2.2rem] block mb-[0.8rem]">💚</span>
+                <h3 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] mb-[0.4rem]">TEPICTU Salud</h3>
+                <p className="text-[0.82rem] text-[var(--gris)] leading-[1.65]">Orientación médica con IA que funciona sin internet. Democratiza el acceso a la salud preventiva en comunidades remotas.</p>
+              </div>
+            </Reveal>
+
+            {/* 5. Asistente IA */}
+            <Reveal delay={0.5}>
+              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full">
+                <span className="text-[2.2rem] block mb-[0.8rem]">🌽</span>
+                <h3 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] mb-[0.4rem]">Asistente Ciudadano</h3>
+                <p className="text-[0.82rem] text-[var(--gris)] leading-[1.65]">El cerebro del ecosistema. Responde en español y lenguas originarias. Ejecuta trámites mediante lenguaje natural.</p>
+              </div>
+            </Reveal>
+
+            {/* 6. Bienestar */}
+            <Reveal delay={0.6}>
+              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full">
+                <span className="text-[2.2rem] block mb-[0.8rem]">🫂</span>
+                <h3 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] mb-[0.4rem]">Bienestar Social</h3>
+                <p className="text-[0.82rem] text-[var(--gris)] leading-[1.65]">Gestión de apoyos y seguimiento de casos vulnerables detectados automáticamente por el ecosistema digital.</p>
+              </div>
+            </Reveal>
+
+            {/* 7. Agrovisión 3D */}
+            <Reveal delay={0.7}>
+              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full group">
+                <span className="text-[2.2rem] block mb-[0.8rem] transition-transform group-hover:scale-110">🚜</span>
+                <h3 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] mb-[0.4rem]">Agrovisión 3D</h3>
+                <p className="text-[0.82rem] text-[var(--gris)] leading-[1.65]">Monitoreo satelital y modelado 3D de la producción agropecuaria. Inteligencia de mercado para el campo.</p>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* STRATEGIC ASSET: OBSERVATORIO */}
+      <section className="px-[2rem] py-[5.5rem] bg-[var(--tinta)] relative overflow-hidden" id="observatorio">
+        <div className="max-w-[980px] mx-auto relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.8fr] gap-[4rem] items-center">
+            <div>
+              <Reveal delay={0.1}>
+                <span className="inline-block font-mono text-[0.6rem] font-bold tracking-[0.2em] uppercase text-[var(--tinta)] px-[0.9rem] py-[0.32rem] rounded-full mb-[1.1rem] bg-[var(--solar)]">El Activo Estratégico</span>
+              </Reveal>
+              <Reveal delay={0.2}>
+                <h2 className="font-serif font-black text-[clamp(2.1rem,5vw,3.9rem)] leading-[0.98] tracking-[-0.035em] mb-[1.4rem] text-[var(--crema)]">Observatorio Digital<br/><em className="italic" style={{color:'var(--solar)'}}>de Nayarit.</em></h2>
+              </Reveal>
+              <Reveal delay={0.3}>
+                <p className="text-[1rem] text-[var(--crema)]/70 mb-[2rem] leading-[1.7]">El software se vuelve obsoleto; el dato longitudinal es el verdadero poder. El Observatorio visualiza en tiempo real la salud comunitaria, la recaudación y el desempeño gubernamental, consolidando una inteligencia territorial única en México.</p>
+                <div className="flex flex-col gap-[0.9rem]">
+                  <div className="flex items-center gap-[0.8rem] text-[var(--crema)]/80 text-[0.85rem]"><span className="text-[var(--solar)]">✦</span> Mapas de calor de reportes ciudadanos por colonia.</div>
+                  <div className="flex items-center gap-[0.8rem] text-[var(--crema)]/80 text-[0.85rem]"><span className="text-[var(--solar)]">✦</span> Tableros de obra con transparencia financiera total.</div>
+                  <div className="flex items-center gap-[0.8rem] text-[var(--crema)]/80 text-[0.85rem]"><span className="text-[var(--solar)]">✦</span> Datos abiertos para atraer inversión extranjera.</div>
+                </div>
+              </Reveal>
+            </div>
+            <Reveal delay={0.4}>
+              <div className="bg-white/5 border border-white/10 rounded-[1.5rem] p-[1.5rem] backdrop-blur-md">
+                <div className="flex justify-between items-center mb-[1.5rem]">
+                  <span className="font-mono text-[0.65rem] text-white/50 uppercase tracking-[0.1em]">Status: Nayarit Digital Live</span>
+                  <div className="w-[8px] h-[8px] rounded-full bg-[var(--verde)] animate-pulse"></div>
+                </div>
+                <div className="space-y-[1.2rem]">
+                  <div className="h-[4px] w-full bg-white/10 rounded-full overflow-hidden leading-none"><div className="h-full bg-[var(--magenta)]" style={{width:'78%'}}></div></div>
+                  <div className="flex justify-between font-mono text-[0.55rem] text-white/40 uppercase"><span>Recaudación Predial</span><span>+78% vs 2021</span></div>
+                  <div className="h-[4px] w-full bg-white/10 rounded-full overflow-hidden leading-none"><div className="h-full bg-[var(--turq)]" style={{width:'92%'}}></div></div>
+                  <div className="flex justify-between font-mono text-[0.55rem] text-white/40 uppercase"><span>Obras Trazadas</span><span>92% Eficiencia</span></div>
+                  <div className="h-[4px] w-full bg-white/10 rounded-full overflow-hidden leading-none"><div className="h-full bg-[var(--solar)]" style={{width:'65%'}}></div></div>
+                  <div className="flex justify-between font-mono text-[0.55rem] text-white/40 uppercase"><span>Bienestar Social</span><span>65K Beneficiarios</span></div>
                 </div>
               </div>
             </Reveal>
+          </div>
+        </div>
+      </section>
 
-            <div className="flex flex-col gap-[1rem]">
-              <Reveal delay={0.1} className="bg-white border-[1.5px] border-black/10 rounded-[1rem] p-[1.25rem_1.45rem] relative overflow-hidden transition-all hover:-translate-y-1 hover:shadow-[0_14px_36px_rgba(21,8,0,0.12)] hover:border-black/30 group">
-                <div className="absolute left-0 top-0 bottom-0 w-[5px] rounded-l-[5px] bg-[var(--magenta)]"></div>
-                <div className="flex items-center gap-[0.75rem] mb-[0.4rem]"><span className="text-[1.45rem] shrink-0">🏗️</span><div className="font-serif font-semibold text-[1.02rem] tracking-[-0.01em] text-[var(--tinta)]">Obras Públicas Transparentes</div></div>
-                <p className="text-[0.82rem] text-[var(--gris)] leading-[1.68] pl-[2.2rem]">Cada peso de construcción vial, drenaje y equipamiento, visible en tiempo real desde cualquier celular. Cero opacidad.</p>
-                <span className="inline-block mt-[0.6rem] ml-[2.2rem] font-mono text-[0.54rem] font-bold tracking-[0.14em] uppercase text-white bg-[var(--magenta)] px-[0.7rem] py-[0.22rem] rounded-full">Activo · Dashboard público</span>
-              </Reveal>
-              
-              <Reveal delay={0.2} className="bg-white border-[1.5px] border-black/10 rounded-[1rem] p-[1.25rem_1.45rem] relative overflow-hidden transition-all hover:-translate-y-1 hover:shadow-[0_14px_36px_rgba(21,8,0,0.12)] hover:border-black/30 group">
-                <div className="absolute left-0 top-0 bottom-0 w-[5px] rounded-l-[5px] bg-[var(--turq)]"></div>
-                <div className="flex items-center gap-[0.75rem] mb-[0.4rem]"><span className="text-[1.45rem] shrink-0">💳</span><div className="font-serif font-semibold text-[1.02rem] tracking-[-0.01em] text-[var(--tinta)]">Predial y Trámites Digitales</div></div>
-                <p className="text-[0.82rem] text-[var(--gris)] leading-[1.68] pl-[2.2rem]">Pagos municipales sin filas, con recordatorio por WhatsApp. Recaudación incrementada desde el primer mes.</p>
-                <span className="inline-block mt-[0.6rem] ml-[2.2rem] font-mono text-[0.54rem] font-bold tracking-[0.14em] uppercase text-white bg-[var(--turq)] px-[0.7rem] py-[0.22rem] rounded-full">Activo · Tesorería digital</span>
-              </Reveal>
+      {/* IMDM SECTION */}
+      <section className="px-[2rem] py-[5.5rem] bg-[var(--blanco)]" id="madurez">
+        <div className="max-w-[980px] mx-auto text-center">
+          <Reveal delay={0.1}>
+            <span className="inline-block font-mono text-[0.6rem] font-bold tracking-[0.2em] uppercase text-[var(--tinta)] px-[0.9rem] py-[0.32rem] rounded-full mb-[1.1rem] bg-[var(--solar)]">Medir para transformar</span>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <h2 className="font-serif font-black text-[clamp(2rem,5vw,3.5rem)] leading-[0.98] tracking-[-0.035em] mb-[1.4rem]">Índice de Madurez Digital Municipal</h2>
+          </Reveal>
+          <Reveal delay={0.3}>
+            <p className="font-serif italic text-[1.2rem] text-[var(--gris)] max-w-[700px] mx-auto mb-[3.6rem]">De un municipio tradicional a una Gobernanza Aumentada. El IMDM es el termómetro de la modernización de Tepic.</p>
+          </Reveal>
 
-              <Reveal delay={0.3} className="bg-white border-[1.5px] border-black/10 rounded-[1rem] p-[1.25rem_1.45rem] relative overflow-hidden transition-all hover:-translate-y-1 hover:shadow-[0_14px_36px_rgba(21,8,0,0.12)] hover:border-black/30 group">
-                <div className="absolute left-0 top-0 bottom-0 w-[5px] rounded-l-[5px] bg-[var(--solar)]"></div>
-                <div className="flex items-center gap-[0.75rem] mb-[0.4rem]"><span className="text-[1.45rem] shrink-0">📱</span><div className="font-serif font-semibold text-[1.02rem] tracking-[-0.01em] text-[var(--tinta)]">Reportes Ciudadanos con IA</div></div>
-                <p className="text-[0.82rem] text-[var(--gris)] leading-[1.68] pl-[2.2rem]">Foto por WhatsApp → la IA clasifica y asigna → el vecino recibe seguimiento hasta resolución.</p>
-                <span className="inline-block mt-[0.6rem] ml-[2.2rem] font-mono text-[0.54rem] font-bold tracking-[0.14em] uppercase text-[var(--tinta)] bg-[var(--solar)] px-[0.7rem] py-[0.22rem] rounded-full">Activo · Servicios públicos</span>
-              </Reveal>
-
-              <Reveal delay={0.4} className="bg-white border-[1.5px] border-black/10 rounded-[1rem] p-[1.25rem_1.45rem] relative overflow-hidden transition-all hover:-translate-y-1 hover:shadow-[0_14px_36px_rgba(21,8,0,0.12)] hover:border-black/30 group">
-                <div className="absolute left-0 top-0 bottom-0 w-[5px] rounded-l-[5px] bg-[var(--verde)]"></div>
-                <div className="flex items-center gap-[0.75rem] mb-[0.4rem]"><span className="text-[1.45rem] shrink-0">💚</span><div className="font-serif font-semibold text-[1.02rem] tracking-[-0.01em] text-[var(--tinta)]">TEPICTU Salud</div></div>
-                <p className="text-[0.82rem] text-[var(--gris)] leading-[1.68] pl-[2.2rem]">Triaje médico con IA en módulos DIF. Funciona sin internet. Nombre de la palabra original que da origen a "Tepic".</p>
-                <span className="inline-block mt-[0.6rem] ml-[2.2rem] font-mono text-[0.54rem] font-bold tracking-[0.14em] uppercase text-white bg-[var(--verde)] px-[0.7rem] py-[0.22rem] rounded-full">Activo · Bienestar social</span>
-              </Reveal>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[1rem]">
+            <div className="bg-[var(--crema)] p-[1.5rem] rounded-[1rem] border border-black/5">
+              <div className="font-black text-[2rem] text-[var(--tinta)] mb-[0.5rem]">22</div>
+              <div className="font-mono text-[0.6rem] uppercase tracking-[0.1em] text-[var(--gris)]">Línea Base 2021</div>
+              <div className="mt-[0.8rem] text-[0.7rem] text-red-600 font-bold uppercase">Emergente Bajo</div>
+            </div>
+            <div className="bg-[var(--crema)] p-[1.5rem] rounded-[1rem] border border-black/5">
+              <div className="font-black text-[2rem] text-[var(--magenta)] mb-[0.5rem]">68</div>
+              <div className="font-mono text-[0.6rem] uppercase tracking-[0.1em] text-[var(--gris)]">Hoy (Tepic)</div>
+              <div className="mt-[0.8rem] text-[0.7rem] text-[var(--magenta)] font-bold uppercase">Gobierno Inteligente</div>
+            </div>
+            <div className="bg-[var(--tinta)] p-[1.5rem] rounded-[1rem] border border-white/10 shadow-xl lg:scale-110 relative z-20">
+              <div className="font-black text-[2rem] text-[var(--solar)] mb-[0.5rem]">81+</div>
+              <div className="font-mono text-[0.6rem] uppercase tracking-[0.1em] text-white/50">Nayarit 2027</div>
+              <div className="mt-[0.8rem] text-[0.7rem] text-[var(--solar)] font-bold uppercase">Gobernanza Aumentada</div>
+            </div>
+            <div className="bg-[var(--crema)] p-[1.5rem] rounded-[1rem] border border-black/5">
+              <div className="font-black text-[2rem] text-[var(--turq)] mb-[0.5rem]">100</div>
+              <div className="font-mono text-[0.6rem] uppercase tracking-[0.1em] text-[var(--gris)]">Meta Técnica</div>
+              <div className="mt-[0.8rem] text-[0.7rem] text-[var(--turq)] font-bold uppercase">Transparencia Total</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ESCALERA DE VALOR (Added requested Value Ladder integration) */}
-      <section className="px-[2rem] py-[5.5rem] bg-[var(--blanco)]" id="escalera">
-        <div className="max-w-[980px] mx-auto">
-          <Reveal delay={0.1}>
-            <span className="inline-block font-mono text-[0.6rem] font-bold tracking-[0.2em] uppercase text-[var(--tinta)] px-[0.9rem] py-[0.32rem] rounded-full mb-[1.1rem] bg-[var(--solar)]">
-              Estrategia Política Integral
-            </span>
-          </Reveal>
-          <Reveal delay={0.2}>
-            <h2 className="font-serif font-black text-[clamp(2.1rem,5vw,3.9rem)] leading-[0.98] tracking-[-0.035em] mb-[1rem]">La Escalera de<br/><em className="italic text-[var(--magenta)]">Valor Electoral.</em></h2>
-          </Reveal>
-          <Reveal delay={0.3}>
-            <p className="font-serif italic text-[clamp(1.05rem,2.1vw,1.4rem)] text-[var(--gris)] leading-[1.5] max-w-[560px] mb-[2.4rem]">
-              Cómo la modernización consolida el poder a través de resultados trazables. ConnectX como conductor político hacia 2027.
-            </p>
-          </Reveal>
-
-          <div className="flex flex-col gap-[1.5rem]">
-            {/* Step 1 */}
-            <Reveal delay={0.1} className="bg-[var(--crema)] p-[2rem] rounded-[1rem] border-l-[6px] border-[var(--magenta)] flex flex-col md:flex-row gap-[1.5rem] md:items-center relative overflow-hidden transition-all hover:bg-white hover:shadow-[0_10px_30px_rgba(21,8,0,0.08)]">
-              <div className="md:w-1/3 shrink-0">
-                <span className="inline-block font-mono text-[0.55rem] font-bold tracking-[0.15em] uppercase px-[0.7rem] py-[0.2rem] rounded-full bg-[var(--magenta)] text-white mb-[0.8rem]">Día 1 · Auditoría</span>
-                <h4 className="font-serif font-bold text-[1.5rem] text-[var(--tinta)] leading-[1.1]">El Acercamiento <br/>con Evidencia</h4>
-              </div>
-              <div className="md:w-2/3 md:pl-[2rem] md:border-l border-black/10">
-                <p className="text-[0.9rem] text-[var(--gris)] leading-[1.6]"><strong>Iniciar relación:</strong> Ofrecemos a la gobernante un análisis gratuito de sus redes sociales (519K seguidores). Demostramos dónde está la fricción ciudadana de forma cuantitativa, exponiendo los folios perdidos del modelo actual. La solución inicia evidenciando el dolor real.</p>
-              </div>
-            </Reveal>
-
-            {/* Step 2 */}
-            <Reveal delay={0.2} className="bg-[var(--crema)] p-[2rem] rounded-[1rem] border-l-[6px] border-[var(--turq)] flex flex-col md:flex-row gap-[1.5rem] md:items-center relative overflow-hidden transition-all hover:bg-white hover:shadow-[0_10px_30px_rgba(21,8,0,0.08)]">
-              <div className="md:w-1/3 shrink-0">
-                <span className="inline-block font-mono text-[0.55rem] font-bold tracking-[0.15em] uppercase px-[0.7rem] py-[0.2rem] rounded-full bg-[var(--turq)] text-white mb-[0.8rem]">Día 30 · Victoria Temprana</span>
-                <h4 className="font-serif font-bold text-[1.5rem] text-[var(--tinta)] leading-[1.1]">Bot Tepic <br/>(El Quick Win)</h4>
-              </div>
-              <div className="md:w-2/3 md:pl-[2rem] md:border-l border-black/10">
-                <p className="text-[0.9rem] text-[var(--gris)] leading-[1.6]"><strong>El día a día:</strong> Despliegue del módulo de atención mediante inteligencia artificial en WhatsApp. Se erradican las filas y repunta radicalmente la respuesta institucional. El capital político inicial se afianza mediante un éxito de atención directa.</p>
-              </div>
-            </Reveal>
-
-            {/* Step 3 */}
-            <Reveal delay={0.3} className="bg-[var(--crema)] p-[2rem] rounded-[1rem] border-l-[6px] border-[var(--solar)] flex flex-col md:flex-row gap-[1.5rem] md:items-center relative overflow-hidden transition-all hover:bg-white hover:shadow-[0_10px_30px_rgba(21,8,0,0.08)]">
-              <div className="md:w-1/3 shrink-0">
-                <span className="inline-block font-mono text-[0.55rem] font-bold tracking-[0.15em] uppercase px-[0.7rem] py-[0.2rem] rounded-full bg-[var(--solar)] text-[var(--tinta)] mb-[0.8rem]">Mes 6 · Core Business</span>
-                <h4 className="font-serif font-bold text-[1.5rem] text-[var(--tinta)] leading-[1.1]">Gobernanza Total <br/>y Trazabilidad</h4>
-              </div>
-              <div className="md:w-2/3 md:pl-[2rem] md:border-l border-black/10">
-                <p className="text-[0.9rem] text-[var(--gris)] leading-[1.6]"><strong>Control estructural:</strong> ConnectX centraliza Tesorería, Salud (TEPICTU) y Módulos Ciudadanos. Las obras son 100% trazables. Se instala un panel maestro (C5 digital) en el despacho gubernamental, transformando "intentos" en "gestión integral".</p>
-              </div>
-            </Reveal>
-
-            {/* Step 4 */}
-            <Reveal delay={0.4} className="bg-[#150800] p-[2rem] rounded-[1rem] border-l-[6px] border-[var(--verde)] flex flex-col md:flex-row gap-[1.5rem] md:items-center relative overflow-hidden shadow-xl">
-              <div className="absolute right-0 top-0 bottom-0 w-[40%] bg-[radial-gradient(ellipse_at_top_right,_var(--verde)_0%,_transparent_70%)] opacity-20 pointer-events-none"></div>
-              <div className="md:w-1/3 shrink-0 relative z-10">
-                <span className="inline-block font-mono text-[0.55rem] font-bold tracking-[0.15em] uppercase px-[0.7rem] py-[0.2rem] rounded-full bg-[var(--verde)] text-white mb-[0.8rem]">Año 3+ · El FOCO</span>
-                <h4 className="font-serif font-bold text-[1.5rem] text-white leading-[1.1]">Gobernatura de<br/>Nayarit 2027</h4>
-              </div>
-              <div className="md:w-2/3 md:pl-[2rem] md:border-l border-white/20 relative z-10">
-                <p className="text-[0.9rem] text-slate-300 leading-[1.6]"><strong>El Salto Político (MOAT):</strong> De un municipio inteligente, la propuesta tecnológica se ofrece hacia las 20 cabeceras restantes del estado. ConnectX construye la infraestructura logística y digital necesaria para respaldar de manera aplastante y cuantificable la candidatura estatal.</p>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* FRASE */}
-      <div className="frase wix-bg">
-        <div className="max-w-[920px] mx-auto grid grid-cols-1 md:grid-cols-[auto_1fr] gap-[2.4rem] items-center text-center md:text-left">
-          <Reveal delay={0.1}>
-            <div className="ff-wrap mx-auto md:mx-0">
-              <img 
-                className="w-full aspect-square object-cover object-top rounded-full block" 
-                src="/geraldine-perfil.jpg" 
-                onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1586996292898-71f4036c4e07?w=300&h=300&fit=crop&crop=faces&auto=format&q=80"; }}
-                alt="Geraldine Ponce" 
-              />
-            </div>
-          </Reveal>
-          <Reveal delay={0.2}>
-            <blockquote className="font-serif font-semibold italic text-[clamp(1.5rem,3.6vw,2.7rem)] text-white leading-[1.25] mb-[1rem]">"Si pude digitalizar Tepic con <em className="italic text-[var(--solar)]">425 mil habitantes,</em> puedo digitalizar Nayarit entero."</blockquote>
-            <cite className="font-mono text-[0.6rem] font-bold tracking-[0.2em] uppercase text-white/65 not-italic">— Geraldine Ponce · Presidenta Municipal de Tepic</cite>
-          </Reveal>
-        </div>
-      </div>
-
-      {/* PILARES */}
-      <section className="px-[2rem] py-[5.5rem] bg-[var(--hueso)]" id="pilares">
-        <div className="max-w-[980px] mx-auto">
-          <Reveal delay={0.1}>
-            <span className="inline-block font-mono text-[0.6rem] font-bold tracking-[0.2em] uppercase text-white px-[0.9rem] py-[0.32rem] rounded-full mb-[1.1rem]" style={{background:'var(--turq)'}}>Propuesta de Gobierno · 2027–2033</span>
-          </Reveal>
-          <Reveal delay={0.2}>
-            <h2 className="font-serif font-black text-[clamp(2.1rem,5.5vw,3.9rem)] leading-[0.98] tracking-[-0.035em] mb-[1rem]">Cuatro pilares.<br/><em className="italic" style={{color:'var(--turq)'}}>Un solo Nayarit.</em></h2>
-          </Reveal>
-          <Reveal delay={0.3}>
-            <p className="font-serif italic text-[clamp(1.05rem,2.1vw,1.4rem)] text-[var(--gris)] leading-[1.5] max-w-[560px] mb-[2.4rem]">Productos ya construidos en Tepic. Listos el primer día de gobierno.</p>
-          </Reveal>
-
-          <Reveal delay={0.4} className="grid grid-cols-1 md:grid-cols-2 gap-[1.3rem] mt-[2.2rem]">
-            <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] relative overflow-hidden transition-all hover:-translate-y-1.5 hover:shadow-[0_20px_48px_rgba(21,8,0,0.14)] after:content-[''] after:absolute after:top-0 after:left-0 after:right-0 after:h-[6px] after:bg-[var(--magenta)]">
-              <span className="inline-block font-mono text-[0.56rem] font-bold tracking-[0.18em] uppercase text-white px-[0.8rem] py-[0.24rem] rounded-full mb-[1.1rem] bg-[var(--magenta)]">Transparencia</span>
-              <span className="block text-[2.6rem] mb-[0.85rem]">🏛️</span>
-              <div className="font-serif font-black text-[1.35rem] tracking-[-0.02em] text-[var(--tinta)] mb-[0.55rem]">Gobierno Transparente</div>
-              <p className="text-[0.83rem] text-[var(--gris)] leading-[1.72] mb-[1rem]">Trazabilidad satelital de cada obra estatal. Contratos, avances y auditoría ciudadana en tiempo real.</p>
-              <p className="font-serif italic text-[0.92rem] leading-[1.5] pl-[0.9rem] border-l-[3px] border-[var(--magenta)] text-[var(--magenta)]">"Cada peso del erario, visible en el celular de cualquier nayarita."</p>
-            </div>
-
-            <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] relative overflow-hidden transition-all hover:-translate-y-1.5 hover:shadow-[0_20px_48px_rgba(21,8,0,0.14)] after:content-[''] after:absolute after:top-0 after:left-0 after:right-0 after:h-[6px] after:bg-[var(--verde)]">
-              <span className="inline-block font-mono text-[0.56rem] font-bold tracking-[0.18em] uppercase text-white px-[0.8rem] py-[0.24rem] rounded-full mb-[1.1rem] bg-[var(--verde)]">Campo</span>
-              <span className="block text-[2.6rem] mb-[0.85rem]">🌽</span>
-              <div className="font-serif font-black text-[1.35rem] tracking-[-0.02em] text-[var(--tinta)] mb-[0.55rem]">El Sexenio del Campesino</div>
-              <p className="text-[0.83rem] text-[var(--gris)] leading-[1.72] mb-[1rem]">Mapeo satelital de la sierra. IA que recomienda cultivos por suelo, altitud y clima. Sensores IoT en el celular del productor.</p>
-              <p className="font-serif italic text-[0.92rem] leading-[1.5] pl-[0.9rem] border-l-[3px] border-[var(--verde)] text-[var(--verde)]">"Llego con el mapa ya hecho. Los demás llegan con promesas."</p>
-            </div>
-
-            <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] relative overflow-hidden transition-all hover:-translate-y-1.5 hover:shadow-[0_20px_48px_rgba(21,8,0,0.14)] after:content-[''] after:absolute after:top-0 after:left-0 after:right-0 after:h-[6px] after:bg-[var(--coral)]">
-              <span className="inline-block font-mono text-[0.56rem] font-bold tracking-[0.18em] uppercase text-white px-[0.8rem] py-[0.24rem] rounded-full mb-[1.1rem] bg-[var(--coral)]">Salud</span>
-              <span className="block text-[2.6rem] mb-[0.85rem]">💚</span>
-              <div className="font-serif font-black text-[1.35rem] tracking-[-0.02em] text-[var(--tinta)] mb-[0.55rem]">TEPICTU Salud</div>
-              <p className="text-[0.83rem] text-[var(--gris)] leading-[1.72] mb-[1rem]">Triaje médico con IA en cada clínica estatal. Funciona offline — llega a El Nayar, Huajicori, La Yesca.</p>
-              <p className="font-serif italic text-[0.92rem] leading-[1.5] pl-[0.9rem] border-l-[3px] border-[var(--coral)] text-[var(--coral)]">"Inteligencia artificial del mar a la sierra. Sin excepción."</p>
-            </div>
-
-            <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] relative overflow-hidden transition-all hover:-translate-y-1.5 hover:shadow-[0_20px_48px_rgba(21,8,0,0.14)] after:content-[''] after:absolute after:top-0 after:left-0 after:right-0 after:h-[6px] after:bg-[var(--turq)]">
-              <span className="inline-block font-mono text-[0.56rem] font-bold tracking-[0.18em] uppercase text-white px-[0.8rem] py-[0.24rem] rounded-full mb-[1.1rem] bg-[var(--turq)]">PyMEs</span>
-              <span className="block text-[2.6rem] mb-[0.85rem]">🛒</span>
-              <div className="font-serif font-black text-[1.35rem] tracking-[-0.02em] text-[var(--tinta)] mb-[0.55rem]">PyMEs Nayaritas</div>
-              <p className="text-[0.83rem] text-[var(--gris)] leading-[1.72] mb-[1rem]">Digitalización para tortillerías, panaderías y restaurantes. Tecnología de grandes empresas, para el pueblo.</p>
-              <p className="font-serif italic text-[0.92rem] leading-[1.5] pl-[0.9rem] border-l-[3px] border-[var(--turq)] text-[var(--turq)]">"El primer gobierno que digitaliza al pueblo, no a las corporaciones."</p>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ASISTENTE IA */}
+      {/* ASISTENTE IA (MODIFIED) */}
       <section className="px-[2rem] py-[5.5rem] bg-[var(--tinta)] relative overflow-hidden" id="ia">
         <div className="absolute inset-0 opacity-5" style={{backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpolygon points='40,3 77,40 40,77 3,40' fill='none' stroke='%23FFB300' stroke-width='1.8'/%3E%3Cpolygon points='40,14 66,40 40,66 14,40' fill='none' stroke='%2300BCD4' stroke-width='1.4'/%3E%3C/svg%3E\")", backgroundSize: '80px 80px'}}></div>
         <div className="max-w-[980px] mx-auto relative z-10">
           <Reveal delay={0.1}>
-            <span className="inline-block font-mono text-[0.6rem] font-bold tracking-[0.2em] uppercase text-[var(--tinta)] px-[0.9rem] py-[0.32rem] rounded-full mb-[1.1rem] bg-[var(--solar)]">Propuesta de valor · Inteligencia Artificial</span>
+            <span className="inline-block font-mono text-[0.6rem] font-bold tracking-[0.2em] uppercase text-[var(--tinta)] px-[0.9rem] py-[0.32rem] rounded-full mb-[1.1rem] bg-[var(--solar)]">Interfaz Única · Multilingüe</span>
           </Reveal>
           <Reveal delay={0.2}>
-            <h2 className="font-serif font-black text-[clamp(2.1rem,5.5vw,3.9rem)] leading-[0.98] tracking-[-0.035em] mb-[1rem] text-[var(--crema)]">Pregúntale a la<br/><em className="italic" style={{color:'var(--solar)'}}>campaña. Directamente.</em></h2>
+            <h2 className="font-serif font-black text-[clamp(2.1rem,5.5vw,3.9rem)] leading-[0.98] tracking-[-0.035em] mb-[1rem] text-[var(--crema)]">Asistente IA<br/><em className="italic" style={{color:'var(--solar)'}}>de Gobernanza.</em></h2>
           </Reveal>
           <Reveal delay={0.3}>
-            <p className="font-serif italic text-[clamp(1.05rem,2.1vw,1.4rem)] text-[var(--crema)]/60 leading-[1.5] max-w-[560px] mb-[2.4rem]">El primer asistente de IA de una campaña en Nayarit: responde dudas sobre propuestas, trámites y resultados — las 24 horas, en lenguaje claro.</p>
+            <p className="font-serif italic text-[clamp(1.05rem,2.1vw,1.4rem)] text-[var(--crema)]/60 leading-[1.5] max-w-[560px] mb-[2.4rem]">El ciudadano no necesita saber qué dependencia resuelve su problema. La IA es la capa que orquesta todo el gobierno desde WhatsApp o el portal web.</p>
           </Reveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-[2.4rem] items-center">
@@ -464,37 +436,115 @@ export const GeraldineLanding = () => {
               <div className="flex gap-[1rem] items-start bg-white/5 border border-white/10 rounded-[0.9rem] p-[1.05rem_1.2rem] transition-all hover:bg-white/10 hover:border-[var(--solar)]/35">
                 <span className="text-[1.4rem] shrink-0 mt-[0.1rem]">💬</span>
                 <div>
-                  <span className="block font-sans font-bold text-[0.85rem] text-[var(--crema)] mb-[0.2rem]">Respuestas al instante, 24/7</span>
-                  <p className="text-[0.76rem] text-[var(--crema)]/55 leading-[1.6]">Cualquier ciudadano pregunta sobre propuestas, trámites municipales o resultados — y recibe respuesta clara al momento, sin esperar oficinas.</p>
-                </div>
-              </div>
-
-              <div className="flex gap-[1rem] items-start bg-white/5 border border-white/10 rounded-[0.9rem] p-[1.05rem_1.2rem] transition-all hover:bg-white/10 hover:border-[var(--solar)]/35">
-                <span className="text-[1.4rem] shrink-0 mt-[0.1rem]">🗳️</span>
-                <div>
-                  <span className="block font-sans font-bold text-[0.85rem] text-[var(--crema)] mb-[0.2rem]">Escucha ciudadana inteligente</span>
-                  <p className="text-[0.76rem] text-[var(--crema)]/55 leading-[1.6]">Cada conversación detecta las preocupaciones reales por colonia: agua, seguridad, baches. La campaña responde a lo que la gente realmente pide.</p>
+                  <span className="block font-sans font-bold text-[0.85rem] text-[var(--crema)] mb-[0.2rem]">Atención 24/7 sin internet</span>
+                  <p className="text-[0.76rem] text-[var(--crema)]/55 leading-[1.6]">Protocolo TEPICTU Salud integrado: triaje médico inteligente en zonas sin señal celular.</p>
                 </div>
               </div>
 
               <div className="flex gap-[1rem] items-start bg-white/5 border border-white/10 rounded-[0.9rem] p-[1.05rem_1.2rem] transition-all hover:bg-white/10 hover:border-[var(--solar)]/35">
                 <span className="text-[1.4rem] shrink-0 mt-[0.1rem]">🌐</span>
                 <div>
-                  <span className="block font-sans font-bold text-[0.85rem] text-[var(--crema)] mb-[0.2rem]">Habla tu idioma</span>
-                  <p className="text-[0.76rem] text-[var(--crema)]/55 leading-[1.6]">Español, wixárika, náhuatl o cora: la IA responde en la lengua del ciudadano. Inclusión real para los pueblos originarios de Nayarit.</p>
+                  <span className="block font-sans font-bold text-[0.85rem] text-[var(--crema)] mb-[0.2rem]">Inclusión Real</span>
+                  <p className="text-[0.76rem] text-[var(--crema)]/55 leading-[1.6]">Soporte completo en wixárika y cora. Un gobierno que finalmente habla el idioma de su gente.</p>
                 </div>
               </div>
 
               <div className="flex gap-[1rem] items-start bg-white/5 border border-white/10 rounded-[0.9rem] p-[1.05rem_1.2rem] transition-all hover:bg-white/10 hover:border-[var(--solar)]/35">
-                <span className="text-[1.4rem] shrink-0 mt-[0.1rem]">📊</span>
+                <span className="text-[1.4rem] shrink-0 mt-[0.1rem]">🛡️</span>
                 <div>
-                  <span className="block font-sans font-bold text-[0.85rem] text-[var(--crema)] mb-[0.2rem]">Transparencia verificable</span>
-                  <p className="text-[0.76rem] text-[var(--crema)]/55 leading-[1.6]">El asistente cita datos reales del gobierno municipal: obras, presupuestos, avances. No opina — informa con evidencia.</p>
+                  <span className="block font-sans font-bold text-[0.85rem] text-[var(--crema)] mb-[0.2rem]">Privacidad por Diseño</span>
+                  <p className="text-[0.76rem] text-[var(--crema)]/55 leading-[1.6]">Sus datos están seguros. Cifrado de grado militar para la protección de la identidad ciudadana.</p>
                 </div>
               </div>
             </Reveal>
           </div>
         </div>
+      </section>
+
+      {/* IMPLEMENTATION STRATEGY */}
+      <section className="px-[2rem] py-[5.5rem] bg-[var(--crema)]" id="implementacion">
+        <div className="max-w-[980px] mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-[4rem] items-start">
+            <div>
+              <Reveal delay={0.1}>
+                <span className="inline-block font-mono text-[0.6rem] font-bold tracking-[0.2em] uppercase text-white px-[0.9rem] py-[0.32rem] rounded-full mb-[1.1rem]" style={{background:'var(--magenta)'}}>Estrategia: Primero Tepic</span>
+              </Reveal>
+              <Reveal delay={0.2}>
+                <h2 className="font-serif font-black text-[clamp(2.1rem,5vw,3.5rem)] leading-[0.98] tracking-[-0.035em] mb-[1.4rem]">Implementación por <br/><em className="italic text-[var(--magenta)]">Colonias.</em></h2>
+              </Reveal>
+              <Reveal delay={0.3}>
+                <p className="text-[1rem] text-[var(--gris)] mb-[2rem] leading-[1.7]">Convertiremos cada colonia de Tepic en un nodo inteligente. Empezamos donde la gente más lo necesita, resolviendo problemas calle por calle hasta digitalizar todo el municipio.</p>
+              </Reveal>
+              <div className="bg-[var(--solar)] p-[1.5rem] rounded-[1.2rem] border-2 border-[var(--tinta)] shadow-[5px_5px_0_var(--tinta)] mb-[2rem]">
+                <p className="font-serif italic text-[0.9rem] text-[var(--tinta)] leading-[1.6]">"El despliegue municipal de Tepic servirá como el laboratorio de datos para la Nayarit del futuro. Eficiencia calle por calle."</p>
+              </div>
+            </div>
+            <div className="space-y-[1.5rem]">
+              <Reveal delay={0.4}>
+                <div className="bg-white p-[1.5rem] rounded-[1.2rem] border border-black/5 shadow-sm">
+                   <div className="flex gap-[1.2rem]">
+                      <div className="w-[45px] h-[45px] rounded-full bg-[var(--solar)] flex items-center justify-center font-black text-[1.2rem]">1</div>
+                      <div>
+                         <h4 className="font-serif font-black text-[1.1rem] mb-[0.2rem]">Modelo Piloto (Colonias)</h4>
+                         <p className="text-[0.78rem] text-[var(--gris)] leading-[1.6]">Activación inmediata en colonias clave con Reporte Ciudadano e IA. Resultados en 30 días.</p>
+                      </div>
+                   </div>
+                </div>
+              </Reveal>
+              <Reveal delay={0.5}>
+                <div className="bg-white p-[1.5rem] rounded-[1.2rem] border border-black/5 shadow-sm">
+                   <div className="flex gap-[1.2rem]">
+                      <div className="w-[45px] h-[45px] rounded-full bg-[var(--turq)] flex items-center justify-center font-black text-[1.2rem] text-white">2</div>
+                      <div>
+                         <h4 className="font-serif font-black text-[1.1rem] mb-[0.2rem]">Interoperabilidad Total</h4>
+                         <p className="text-[0.78rem] text-[var(--gris)] leading-[1.6]">Conexión fluida entre Tesorería, Salud y Servicios para un gobierno en la palma de la mano.</p>
+                      </div>
+                   </div>
+                </div>
+              </Reveal>
+              <Reveal delay={0.6}>
+                <div className="bg-white p-[1.5rem] rounded-[1.2rem] border border-black/5 shadow-sm">
+                   <div className="flex gap-[1.2rem]">
+                      <div className="w-[45px] h-[45px] rounded-full bg-[var(--magenta)] flex items-center justify-center font-black text-[1.2rem] text-white">3</div>
+                      <div>
+                         <h4 className="font-serif font-black text-[1.1rem] mb-[0.2rem]">Transparencia Trazable</h4>
+                         <p className="text-[0.78rem] text-[var(--gris)] leading-[1.6]">Auditoría ciudadana automática. Cada peso invertido en Tepic tiene un rastro digital inalterable.</p>
+                      </div>
+                   </div>
+                </div>
+              </Reveal>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* GOOGLE CLOUD INFRASTRUCTURE */}
+      <section className="px-[2rem] py-[5.5rem] bg-[var(--crema)] border-t border-black/5">
+          <div className="max-w-[1080px] mx-auto">
+              <Reveal delay={0.1} className="text-center mb-[3.6rem]">
+                  <span className="inline-block font-mono text-[0.62rem] font-bold tracking-[0.25em] uppercase text-[var(--gris)] mb-[1rem]">RESPALDO TECNOLÓGICO</span>
+                  <h2 className="font-serif font-black text-[clamp(1.8rem,4vw,2.8rem)] leading-[0.98] tracking-[-0.035em]">Potenciado por Google Cloud</h2>
+                  <p className="text-[0.85rem] text-[var(--gris)] mt-[0.8rem] max-w-[500px] mx-auto">Infraestructura de clase mundial para garantizar la seguridad, escalabilidad y rapidez de la Nayarit Digital.</p>
+              </Reveal>
+
+              <div className="grid grid-cols-2 lg:grid-cols-5 gap-[1rem]">
+                  {[
+                      { name: 'Vertex AI', icon: '🤖', desc: 'Gemini 1.5 Pro' },
+                      { name: 'G. Maps', icon: '📍', desc: 'Trazabilidad Real' },
+                      { name: 'BigQuery', icon: '📊', desc: 'Dato Longitudinal' },
+                      { name: 'Firestore', icon: '🔥', desc: 'Interoperabilidad' },
+                      { name: 'Cloud Run', icon: '🚀', desc: 'Escalabilidad' }
+                  ].map((tool, i) => (
+                      <Reveal key={tool.name} delay={0.2 + (i * 0.1)}>
+                          <div className="bg-white/40 border border-black/5 p-[1.5rem] rounded-[1.2rem] text-center hover:bg-white transition-all group">
+                              <div className="text-[2rem] mb-[0.6rem] transition-transform group-hover:scale-110">{tool.icon}</div>
+                              <h4 className="font-mono text-[0.65rem] font-extrabold uppercase tracking-widest text-[var(--tinta)] mb-[0.2rem]">{tool.name}</h4>
+                              <p className="text-[0.65rem] text-[var(--gris)] font-medium leading-none">{tool.desc}</p>
+                          </div>
+                      </Reveal>
+                  ))}
+              </div>
+          </div>
       </section>
 
       {/* FOOTER */}

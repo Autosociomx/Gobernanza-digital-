@@ -2,6 +2,17 @@ import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
 import Database from "better-sqlite3";
+import { GoogleGenAI } from "@google/genai";
+
+// Initialize AI
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY || "",
+  httpOptions: {
+    headers: {
+      'User-Agent': 'aistudio-build',
+    }
+  }
+});
 
 // Initialize Database
 const db = new Database("government_data.db");
@@ -46,6 +57,32 @@ async function startServer() {
     const stmt = db.prepare("UPDATE departments SET name = ?, description = ?, contact_email = ? WHERE id = ?");
     stmt.run(name, description, contact_email, id);
     res.json({ success: true });
+  });
+
+  // AI Assistant Endpoint
+  app.post("/api/ai/chat", async (req, res) => {
+    const { message } = req.body;
+    
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ 
+        error: "GEMINI_API_KEY no configurada. Por favor, añádela en Settings > Secrets." 
+      });
+    }
+
+    try {
+      const response = await ai.models.generateContent({
+        model: "gemini-1.5-flash",
+        contents: [{ role: "user", parts: [{ text: message }] }],
+        config: {
+          systemInstruction: "Eres el Consultor Senior de ConnectX para Geraldine Ponce. Posees un Doctorado en Ciencia Política y una Maestría en Desarrollo Urbano y Tecnologías de la Información. Tu tono es institucional, profundamente analítico, tecnológico y pragmático. No solo asistes, asesoras en gobernanza digital, optimización de recaudación y bienestar ciudadano mediante la trazabilidad de datos de Google Cloud. Tus respuestas son breves pero con alta densidad estratégica.",
+        },
+      });
+      
+      res.json({ response: response.text });
+    } catch (error: any) {
+      console.error("AI Assistant Error:", error);
+      res.status(500).json({ error: error.message || "Error procesando la solicitud de IA" });
+    }
   });
 
   // Vite middleware for development
