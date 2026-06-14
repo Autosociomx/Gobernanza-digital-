@@ -353,6 +353,111 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
                 <p className="text-[0.82rem] text-[var(--gris)] leading-[1.65]">Monitoreo satelital y modelado 3D de la producción agropecuaria. Inteligencia de mercado para el campo.</p>
               </div>
             </Reveal>
+
+            {/* 8. Alerta Violeta */}
+            <Reveal delay={0.8}>
+              <div className="rounded-[1.2rem] border-[2px] border-[#9333ea]/30 p-[2rem_1.9rem] hover:shadow-xl hover:shadow-purple-500/10 transition-all h-full group relative overflow-hidden" style={{background:'linear-gradient(135deg,#1a0a2e 0%,#0f0518 100%)'}}>
+                <div className="absolute inset-0 opacity-[0.06]" style={{backgroundImage:'repeating-linear-gradient(45deg,#9333ea 0,#9333ea 1px,transparent 0,transparent 50%)',backgroundSize:'16px 16px'}}></div>
+                <div className="relative z-10">
+                  <div className="flex items-center gap-[0.5rem] mb-[0.8rem]">
+                    <span className="text-[2.2rem] transition-transform group-hover:scale-110">🚁</span>
+                    <span className="w-[6px] h-[6px] rounded-full bg-purple-400 animate-pulse"></span>
+                    <span className="font-mono text-[0.5rem] font-bold uppercase tracking-[0.15em] text-purple-400">Sistema Activo</span>
+                  </div>
+                  <h3 className="font-serif font-black text-[1.3rem] text-white mb-[0.4rem]">Alerta Violeta <em className="text-purple-400 italic">2.0</em></h3>
+                  <p className="text-[0.82rem] text-white/60 leading-[1.65]">IA de triage contra falsas alarmas. Drones de respuesta inmediata. Coordinación automática policía + DIF + refugio en segundos. Presentado ante el PNUD/ONU.</p>
+                  <div className="mt-[1rem] flex gap-[0.5rem] flex-wrap">
+                    <span className="font-mono text-[0.5rem] font-bold uppercase tracking-widest bg-purple-500/20 text-purple-300 px-[0.6rem] py-[0.25rem] rounded-full border border-purple-500/30">Drones</span>
+                    <span className="font-mono text-[0.5rem] font-bold uppercase tracking-widest bg-purple-500/20 text-purple-300 px-[0.6rem] py-[0.25rem] rounded-full border border-purple-500/30">IA Triage</span>
+                    <span className="font-mono text-[0.5rem] font-bold uppercase tracking-widest bg-purple-500/20 text-purple-300 px-[0.6rem] py-[0.25rem] rounded-full border border-purple-500/30">ONU</span>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* ALERTA VIOLETA DESTACADA */}
+      <section className="px-[2rem] py-[5rem] relative overflow-hidden" style={{background:'linear-gradient(135deg,#0f0518 0%,#1a0a2e 50%,#0c0a1a 100%)'}}>
+        <div className="absolute inset-0 opacity-[0.04]" style={{backgroundImage:'repeating-linear-gradient(45deg,#a855f7 0,#a855f7 1px,transparent 0,transparent 50%)',backgroundSize:'22px 22px'}}></div>
+        <div className="max-w-[980px] mx-auto relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-[4rem] items-center">
+            <div>
+              <Reveal delay={0.1}>
+                <span className="inline-flex items-center gap-[0.4rem] font-mono text-[0.58rem] font-bold tracking-[0.18em] uppercase text-purple-400 border border-purple-500/30 bg-purple-500/10 px-[0.9rem] py-[0.32rem] rounded-full mb-[1.2rem]">
+                  <span className="w-[5px] h-[5px] rounded-full bg-purple-400 animate-pulse"></span>
+                  Reconocido por la ONU · PNUD México 2026
+                </span>
+              </Reveal>
+              <Reveal delay={0.2}>
+                <h2 className="font-serif font-black text-[clamp(2rem,5vw,3.6rem)] leading-[0.95] tracking-[-0.04em] text-white mb-[1rem]">
+                  Alerta Violeta <em className="text-purple-400 italic">2.0</em><br/>
+                  <span className="text-[clamp(1.2rem,3vw,2rem)] text-white/50 font-light not-italic">con inteligencia artificial y drones</span>
+                </h2>
+              </Reveal>
+              <Reveal delay={0.3}>
+                <p className="text-[0.95rem] text-white/60 leading-[1.75] mb-[2rem] max-w-[480px]">
+                  Tepic es el primer municipio de México que integra drones, IA y coordinación multi-agencia en un solo protocolo de protección a la mujer. ConnectX convierte ese protocolo en el sistema nervioso central de la seguridad.
+                </p>
+              </Reveal>
+              <Reveal delay={0.4}>
+                <div className="flex flex-col gap-[0.8rem]">
+                  {[
+                    { icon: '🤖', text: 'IA reduce falsas alarmas del 50% al menos del 15%' },
+                    { icon: '🚁', text: 'Drones llegan antes que las patrullas — vigilancia aérea en tiempo real' },
+                    { icon: '🔗', text: 'Coordinación automática: policía + DIF + refugio + hospital en segundos' },
+                    { icon: '🌐', text: 'Mapa de calor predictivo por colonia, hora y día de la semana' },
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start gap-[0.8rem] text-white/75 text-[0.85rem]">
+                      <span className="text-[1.1rem] shrink-0">{item.icon}</span>
+                      <span>{item.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </Reveal>
+            </div>
+
+            <Reveal delay={0.3}>
+              <div className="bg-white/5 border border-purple-500/20 rounded-[1.2rem] p-[1.8rem] backdrop-blur-md">
+                <div className="flex justify-between items-center mb-[1.5rem]">
+                  <span className="font-mono text-[0.6rem] text-purple-400/70 uppercase tracking-[0.1em]">Panel Alerta Violeta — En Vivo</span>
+                  <div className="flex items-center gap-[0.4rem]">
+                    <div className="w-[6px] h-[6px] rounded-full bg-purple-400 animate-pulse"></div>
+                    <span className="font-mono text-[0.5rem] text-purple-400 uppercase tracking-widest">Activo</span>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-[0.8rem] mb-[1.5rem]">
+                  {[
+                    { n: '2.4 min', label: 'Tiempo resp. promedio', color: '#a855f7' },
+                    { n: '98%', label: 'Alertas atendidas', color: '#22c55e' },
+                    { n: '4', label: 'Drones activos', color: '#60a5fa' },
+                    { n: '-68%', label: 'Falsas alarmas (IA)', color: '#f59e0b' },
+                  ].map((stat) => (
+                    <div key={stat.label} className="bg-white/5 rounded-[0.8rem] p-[1rem] text-center border border-white/5">
+                      <p className="font-serif font-black text-[1.6rem] leading-none mb-[0.3rem]" style={{color: stat.color}}>{stat.n}</p>
+                      <p className="font-mono text-[0.48rem] text-white/40 uppercase tracking-wider leading-tight">{stat.label}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="space-y-[0.8rem]">
+                  <div className="font-mono text-[0.55rem] text-white/30 uppercase tracking-widest mb-[0.5rem]">Últimas alertas · hoy</div>
+                  {[
+                    { zona: 'Col. Mololoa', estado: 'Atendida', t: '08:14', color: '#22c55e' },
+                    { zona: 'Col. Centro', estado: 'En ruta', t: '08:31', color: '#f59e0b' },
+                    { zona: 'Col. Las Quintas', estado: 'Drone activo', t: '08:47', color: '#60a5fa' },
+                  ].map((a) => (
+                    <div key={a.zona} className="flex items-center justify-between bg-white/3 rounded-[0.6rem] px-[0.9rem] py-[0.6rem] border border-white/5">
+                      <div>
+                        <p className="font-mono text-[0.62rem] font-bold text-white">{a.zona}</p>
+                        <p className="font-mono text-[0.5rem] text-white/30 uppercase tracking-wider">{a.t} hrs</p>
+                      </div>
+                      <span className="font-mono text-[0.52rem] font-bold uppercase tracking-wider px-[0.6rem] py-[0.2rem] rounded-full" style={{color: a.color, background: a.color + '20', border: `1px solid ${a.color}40`}}>{a.estado}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
           </div>
         </div>
       </section>
