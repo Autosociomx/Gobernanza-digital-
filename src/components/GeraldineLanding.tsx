@@ -90,6 +90,32 @@ const Reveal = ({ children, delay = 0, className = "" }: { children: React.React
   </motion.div>
 );
 
+const CandidatePhotoFrame = () => {
+  const [imgFailed, setImgFailed] = useState(false);
+  return imgFailed ? (
+    <div className="w-full aspect-[3/4] rounded-[0.8rem] flex flex-col items-center justify-center relative overflow-hidden"
+      style={{background:'linear-gradient(145deg,var(--tinta) 0%,#2a0a1a 60%,var(--magenta) 140%)'}}>
+      <div className="absolute inset-0 opacity-[0.06]" style={{backgroundImage:'repeating-linear-gradient(45deg,var(--solar) 0,var(--solar) 1px,transparent 0,transparent 50%)',backgroundSize:'18px 18px'}}></div>
+      <span className="font-serif font-black text-[6rem] leading-none text-white/10 select-none relative z-10">
+        {CANDIDATE.firstName[0]}{CANDIDATE.lastName[0]}
+      </span>
+      <span className="font-mono text-[0.55rem] font-bold uppercase tracking-[0.22em] text-white/30 mt-[0.8rem] relative z-10">
+        {CANDIDATE.displayName}
+      </span>
+      <span className="font-mono text-[0.48rem] uppercase tracking-[0.18em] text-[var(--magenta)]/60 mt-[0.3rem] relative z-10">
+        {CANDIDATE.municipality} · {CANDIDATE.state}
+      </span>
+    </div>
+  ) : (
+    <img
+      className="w-full aspect-[3/4] object-cover object-top rounded-[0.8rem] saturate-[1.06]"
+      src={CANDIDATE.photoPath}
+      onError={() => setImgFailed(true)}
+      alt={CANDIDATE.photoAlt}
+    />
+  );
+};
+
 const ChatIA = () => {
   const [messages, setMessages] = useState<{ role: 'ia' | 'u', text: string }[]>([
     { role: 'ia', text: '¡Hola! Soy el asistente de la campaña. Pregúntame sobre las propuestas, los logros en Tepic o cómo participar. 🌽' },
@@ -234,12 +260,7 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
 
         <motion.div initial={{opacity:0,y:28}} animate={{opacity:1,y:0}} transition={{delay:0.4, duration:0.9}} className="relative z-10 w-full max-w-[300px] md:max-w-full mx-auto md:-order-none order-first">
           <div className="foto-frame group">
-            <img 
-              className="w-full aspect-[3/4] object-cover object-top rounded-[0.8rem] saturate-[1.06]" 
-              src={CANDIDATE.photoPath}
-              onError={(e) => { e.currentTarget.src = CANDIDATE.photoFallback; }}
-              alt={CANDIDATE.photoAlt} 
-            />
+            <CandidatePhotoFrame />
             <div className="absolute -top-[12px] -right-[10px] bg-[var(--magenta)] text-white font-mono text-[0.58rem] font-bold tracking-[0.08em] uppercase px-[0.75rem] py-[0.45rem] rounded-[0.4rem] shadow-[0_6px_18px_rgba(229,0,122,0.4)] max-w-[150px] text-center leading-[1.35]">Visión de Estado: Nayarit Digital</div>
             {/* Refined Badge */}
             <motion.div 
@@ -369,6 +390,12 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
                   <div className="flex justify-between font-mono text-[0.55rem] text-white/40 uppercase"><span>Obras Trazadas</span><span>92% Eficiencia</span></div>
                   <div className="h-[4px] w-full bg-white/10 rounded-full overflow-hidden leading-none"><div className="h-full bg-[var(--solar)]" style={{width:'65%'}}></div></div>
                   <div className="flex justify-between font-mono text-[0.55rem] text-white/40 uppercase"><span>Bienestar Social</span><span>65K Beneficiarios</span></div>
+                  <div className="h-[4px] w-full bg-white/10 rounded-full overflow-hidden leading-none"><div className="h-full bg-[var(--verde)]" style={{width:'83%'}}></div></div>
+                  <div className="flex justify-between font-mono text-[0.55rem] text-white/40 uppercase"><span>Confianza Ciudadana</span><span>83 / 100 IMDM</span></div>
+                  <div className="h-[4px] w-full bg-white/10 rounded-full overflow-hidden leading-none"><div className="h-full bg-[var(--magenta)]/60" style={{width:'68%'}}></div></div>
+                  <div className="flex justify-between font-mono text-[0.55rem] text-white/40 uppercase"><span>Trámites Digitalizados</span><span>+340% vs 2021</span></div>
+                  <div className="h-[4px] w-full bg-white/10 rounded-full overflow-hidden leading-none"><div className="h-full bg-[var(--turq)]/70" style={{width:'72%'}}></div></div>
+                  <div className="flex justify-between font-mono text-[0.55rem] text-white/40 uppercase"><span>Tiempo de Respuesta</span><span>-68% en gestión</span></div>
                 </div>
               </div>
             </Reveal>
