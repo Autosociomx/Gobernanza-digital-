@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Home, 
   CreditCard, 
@@ -13,42 +13,107 @@ import {
   Lightbulb,
   Droplets,
   Send,
-  Loader2
+  Loader2,
+  Barcode,
+  QrCode,
+  Heart,
+  X,
+  Users
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { NayaritMap } from './NayaritMap';
+import { TepictuSalud } from './TepictuSalud';
+import { ForumView } from './ForumView';
+import { QRCodeSVG } from 'qrcode.react';
+import JsBarcode from 'jsbarcode';
 
-type TabType = 'home' | 'payments' | 'services' | 'profile';
+type TabType = 'home' | 'forum' | 'payments' | 'services' | 'profile';
+type Language = 'es' | 'cora' | 'wixarika';
 
-export function CitizenApp({ onLogout }: { onLogout: () => void }) {
-  const [activeTab, setActiveTab] = useState<TabType>('home');
-  const [showChat, setShowChat] = useState(false);
-  const [showMap, setShowMap] = useState(false);
+export function CitizenApp({ 
+  onLogout, 
+  initialTab = 'home',
+  initialAction = null 
+}: { 
+  onLogout: () => void,
+  initialTab?: TabType,
+  initialAction?: 'chat' | 'triage' | 'map' | null
+}) {
+  const [activeTab, setActiveTab] = useState<TabType>(initialTab);
+  const [showChat, setShowChat] = useState(initialAction === 'chat');
+  const [showMap, setShowMap] = useState(initialAction === 'map');
+  const [showTriage, setShowTriage] = useState(initialAction === 'triage');
   const [selectedWork, setSelectedWork] = useState<any>(null);
   const [payingItem, setPayingItem] = useState<any>(null);
-  const [paymentStep, setPaymentStep] = useState<'idle' | 'processing' | 'success'>('idle');
+  const [paymentStep, setPaymentStep] = useState<'idle' | 'processing' | 'success' | 'cash_instructions'>('idle');
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'cash'>('card');
+  const [paymentRef, setPaymentRef] = useState<string>('');
+  const [lang, setLang] = useState<Language>('es');
   
+  const translations = {
+    es: {
+      welcome: "Hola, Juan Pérez",
+      ai_greet: "¡Hola Juan! Soy tu Asistente de Nayarit Digital. Puedo ayudarte con tus reportes, pagos o cualquier duda sobre los servicios de Tepic. ¿En qué te puedo apoyar hoy?",
+      home: "Inicio",
+      forum: "Foro",
+      payments: "Pagos",
+      services: "Trámites",
+      profile: "Perfil",
+      assistant_online: "Online · Wixárika Support",
+    },
+    cora: {
+      welcome: "Tyu'un, Juan Pérez",
+      ai_greet: "Pue'en Juan! Ne'ij tyu'iti'in Nayarit Digital. Ne'ij amu'u ne'itye tyu'uti'in...",
+      home: "Tyu'un",
+      forum: "Tyu'uchal",
+      payments: "Tyu'upay",
+      services: "Tyu'useve",
+      profile: "Pēfi'i",
+      assistant_online: "Online · Cora Support",
+    },
+    wixarika: {
+      welcome: "Haux Juan Pérez",
+      ai_greet: "¡Ke tsi' kaniu Juan! Ne keniu Asistente Nayarit Digital. ¿Kewa pikanetsi'iwau?",
+      home: "Haux",
+      forum: "Chime",
+      payments: "Paka",
+      services: "Yereta",
+      profile: "Kewita",
+      assistant_online: "Online · Wixárika Support",
+    }
+  };
+
   // AI Chat State
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([
-    { role: 'assistant', content: '¡Hola Juan! Soy tu Asistente de Nayarit Digital. Puedo ayudarte con tus reportes, pagos o cualquier duda sobre los servicios de Tepic. ¿En qué te puedo apoyar hoy?' }
+    { role: 'assistant', content: translations[lang].ai_greet }
   ]);
+
+  useEffect(() => {
+    setMessages([{ role: 'assistant', content: translations[lang].ai_greet }]);
+  }, [lang]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
-  const handleSendMessage = async () => {
-    if (!inputValue.trim()) return;
+  const quickActions = {
+    es: ["Pagar Predial", "Reportar Bache", "Mapa de Obras", "Ayuda"],
+    cora: ["Tyu'upay", "Reportar", "Mapa", "Ayuda"],
+    wixarika: ["Paka", "Reportar", "Mapa", "Ayuda"]
+  };
+
+  const handleSendMessage = async (text?: string) => {
+    const userMsg = text || inputValue.trim();
+    if (!userMsg) return;
     
-    const userMsg = inputValue.trim();
     setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
-    setInputValue('');
+    if (!text) setInputValue('');
     setIsTyping(true);
 
     try {
       const response = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMsg })
+        body: JSON.stringify({ message: `${userMsg} (Language selected: ${lang})` })
       });
       const data = await response.json();
       
@@ -61,6 +126,37 @@ export function CitizenApp({ onLogout }: { onLogout: () => void }) {
       setIsTyping(false);
     }
   };
+
+  const generatePaymentRef = async () => {
+    const curp = "PEGJ900101HNT";
+    const servicio = payingItem?.title || "SERVICIO";
+    const seed = `${curp}|${servicio}|${Date.now()}|${Math.random()}`;
+    const encoder = new TextEncoder();
+    const data = encoder.encode(seed);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    const idPago = hashHex.substring(0, 16);
+    const ref = (parseInt(idPago.slice(0, 14), 16) % 100000000000000).toString().padStart(14, '0');
+    setPaymentRef(ref);
+    return ref;
+  };
+
+  const barcodeRef = React.useRef<SVGSVGElement>(null);
+
+  useEffect(() => {
+    if (paymentStep === 'cash_instructions' && paymentRef && barcodeRef.current) {
+      JsBarcode(barcodeRef.current, paymentRef, {
+        format: "CODE128",
+        lineColor: "#000",
+        width: 2,
+        height: 60,
+        displayValue: true,
+        fontSize: 12,
+        margin: 10
+      });
+    }
+  }, [paymentStep, paymentRef]);
 
   return (
     <div className="flex justify-center bg-slate-100 min-h-screen">
@@ -77,10 +173,25 @@ export function CitizenApp({ onLogout }: { onLogout: () => void }) {
         </div>
 
         {/* Header */}
-        <header className="px-6 py-4 flex justify-between items-center">
+        <header className="px-6 py-4 flex justify-between items-start">
           <div>
             <p className="text-[10px] uppercase tracking-widest font-black text-magenta-500" style={{color:'var(--magenta)'}}>Nayarit Digital</p>
-            <h1 className="text-xl font-serif font-black text-slate-900 leading-tight">Hola, Juan Pérez</h1>
+            <h1 className="text-xl font-serif font-black text-slate-900 leading-tight">{translations[lang].welcome}</h1>
+            <div className="flex gap-2 mt-2">
+               {['es', 'cora', 'wixarika'].map(l => (
+                 <button 
+                   key={l}
+                   onClick={() => setLang(l as Language)}
+                   className={cn(
+                     "text-[8px] font-bold uppercase px-2 py-0.5 rounded transition-all",
+                     lang === l ? "bg-magenta-500 text-white" : "bg-slate-100 text-slate-400"
+                   )}
+                   style={lang === l ? {backgroundColor:'var(--magenta)'} : {}}
+                 >
+                   {l}
+                 </button>
+               ))}
+            </div>
           </div>
           <div className="relative">
              <div className="w-10 h-10 rounded-full bg-slate-100 border-2 border-white shadow-sm overflow-hidden flex items-center justify-center">
@@ -91,7 +202,7 @@ export function CitizenApp({ onLogout }: { onLogout: () => void }) {
         </header>
 
         {/* Content Canvas */}
-        <main className="flex-1 overflow-y-auto px-6 pb-24">
+        <main className="flex-1 overflow-y-auto px-6 pb-24 relative">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab}
@@ -100,100 +211,125 @@ export function CitizenApp({ onLogout }: { onLogout: () => void }) {
               exit={{ opacity: 0, x: -10 }}
               transition={{ duration: 0.2 }}
             >
-              {activeTab === 'home' && <HomeView />}
+              {activeTab === 'home' && (
+                <HomeView 
+                  onShowMap={() => setShowMap(true)} 
+                  onShowTriage={() => setShowTriage(true)}
+                  onGoToForum={() => setActiveTab('forum')}
+                />
+              )}
+              {activeTab === 'forum' && <ForumView />}
               {activeTab === 'payments' && <PaymentsView onPay={(item: any) => setPayingItem(item)} />}
-              {activeTab === 'services' && <ServicesView />}
+              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} />}
               {activeTab === 'profile' && <ProfileView onLogout={onLogout} />}
             </motion.div>
           </AnimatePresence>
+
+          {/* Floating AI Assistant Button */}
+          <button 
+            onClick={() => setShowChat(true)}
+            className="fixed bottom-24 right-8 w-14 h-14 bg-magenta-500 rounded-full flex items-center justify-center text-2xl shadow-xl shadow-magenta-500/30 transform hover:scale-110 transition-transform active:scale-95 z-40"
+            style={{backgroundColor:'var(--magenta)'}}
+          >
+            🌽
+          </button>
         </main>
 
         {/* Navigation Bar */}
-        <nav className="absolute bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-100 px-6 py-3 pb-8 flex justify-between items-center z-40">
-           <TabButton icon={Home} label="Inicio" active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
-           <TabButton icon={CreditCard} label="Pagos" active={activeTab === 'payments'} onClick={() => setActiveTab('payments')} />
-           <div className="relative -mt-10">
-              <button 
-                onClick={() => setShowChat(true)}
-                className="w-14 h-14 bg-black rounded-full flex items-center justify-center shadow-xl shadow-black/20 text-white transform hover:scale-110 transition-transform active:scale-95"
-              >
-                <Plus className="w-6 h-6" />
-              </button>
-           </div>
-           <TabButton icon={FileText} label="Trámites" active={activeTab === 'services'} onClick={() => setActiveTab('services')} />
-           <TabButton icon={User} label="Perfil" active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} />
+        <nav className="absolute bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-100 px-2 py-3 pb-8 flex justify-around items-center z-40">
+           <TabButton icon={Home} label={translations[lang].home} active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
+           <TabButton icon={Users} label={translations[lang].forum} active={activeTab === 'forum'} onClick={() => setActiveTab('forum')} />
+           <TabButton icon={CreditCard} label={translations[lang].payments} active={activeTab === 'payments'} onClick={() => setActiveTab('payments')} />
+           <TabButton icon={FileText} label={translations[lang].services} active={activeTab === 'services'} onClick={() => setActiveTab('services')} />
+           <TabButton icon={User} label={translations[lang].profile} active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} />
         </nav>
 
         {/* AI Chat Overlay */}
         <AnimatePresence>
           {showChat && (
             <motion.div 
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="absolute inset-0 z-50 bg-white flex flex-col"
+               initial={{ y: '100%' }}
+               animate={{ y: 0 }}
+               exit={{ y: '100%' }}
+               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+               className="absolute inset-0 z-50 bg-white flex flex-col"
             >
-               <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center text-white">🌽</div>
+               {/* Chat Header */}
+               <div className="px-6 py-8 border-b border-slate-100 flex justify-between items-center bg-slate-900 text-white">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-magenta-500 flex items-center justify-center text-xl shadow-lg ring-2 ring-white/20">🌽</div>
                     <div>
-                      <p className="text-xs font-bold text-slate-900">Nayarit IA Assistant</p>
-                      <p className="text-[10px] text-emerald-500 font-bold uppercase">Online · Wixárika Support</p>
+                      <p className="text-[1.1rem] font-black uppercase tracking-tight leading-none mb-1">Nayarit IA Assistant</p>
+                      <p className="text-[10px] text-emerald-400 font-bold uppercase flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        {translations[lang].assistant_online}
+                      </p>
                     </div>
                   </div>
-                  <button onClick={() => setShowChat(false)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-                     <ChevronRight className="w-5 h-5 text-slate-400 rotate-90" />
+                  <button onClick={() => setShowChat(false)} className="p-3 hover:bg-white/10 rounded-full transition-colors">
+                    <X className="w-8 h-8" />
                   </button>
                </div>
-               <div className="flex-1 p-6 overflow-y-auto space-y-4">
+
+               {/* Messages Console */}
+               <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#f0f2f5] custom-scrollbar">
                   {messages.map((msg, i) => (
-                    <div 
-                      key={i} 
+                    <motion.div 
+                      key={i}
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
                       className={cn(
-                        "p-4 text-sm max-w-[85%] transition-all",
+                        "max-w-[85%] p-4 rounded-3xl text-[1rem] shadow-sm font-medium leading-relaxed",
                         msg.role === 'assistant' 
-                          ? "bg-slate-100 rounded-2xl rounded-tl-none text-slate-700" 
-                          : "bg-magenta-500 text-white rounded-2xl rounded-tr-none ml-auto"
+                          ? "bg-white text-slate-800 rounded-tl-none border border-slate-100" 
+                          : "bg-magenta-500 text-white ml-auto rounded-tr-none shadow-magenta-500/20"
                       )}
-                      style={msg.role === 'user' ? {backgroundColor:'var(--magenta)'} : {}}
+                      style={msg.role === 'user' ? {backgroundColor: 'var(--magenta)'} : {}}
                     >
-                       {msg.content}
-                    </div>
+                      {msg.content}
+                    </motion.div>
                   ))}
                   {isTyping && (
-                    <div className="bg-slate-100 rounded-2xl rounded-tl-none p-4 w-12 flex justify-center">
-                       <Loader2 className="w-5 h-5 animate-spin text-slate-400" />
+                    <div className="flex gap-2 p-4 bg-white rounded-3xl rounded-tl-none border border-slate-200 w-20 shadow-sm">
+                      <div className="w-2 h-2 bg-slate-300 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-slate-300 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                      <div className="w-2 h-2 bg-slate-300 rounded-full animate-bounce [animation-delay:0.4s]"></div>
                     </div>
                   )}
-                  <div className="flex flex-wrap gap-2 pt-2">
-                     {['Pagar Predial', 'Reportar bache', 'Consulta SIAPA', 'Agendar Cita'].map(q => (
-                       <button 
-                         key={q} 
-                         onClick={() => { setInputValue(q); }}
-                         className="px-3 py-1.5 rounded-full border border-slate-200 text-xs text-slate-600 hover:bg-slate-50 transition-colors"
-                       >
-                         {q}
-                       </button>
-                     ))}
-                  </div>
                </div>
-               <div className="p-6 pb-10 border-t border-slate-100 flex gap-2">
-                  <input 
-                    type="text" 
-                    value={inputValue}
-                    onChange={(e) => setInputValue(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    placeholder="Escribe tu mensaje..." 
-                    className="flex-1 bg-slate-100 border-none rounded-full px-5 py-3 text-sm focus:ring-2 focus:ring-slate-200 outline-none" 
-                  />
-                  <button 
-                    onClick={handleSendMessage}
-                    disabled={isTyping}
-                    className="w-12 h-12 bg-slate-900 rounded-full flex items-center justify-center text-white disabled:opacity-50"
-                  >
-                     <Send className="w-5 h-5" />
-                  </button>
+
+               {/* Quick Actions (WhatsApp Style Chips) */}
+               <div className="px-4 py-3 bg-white border-t border-slate-100 flex gap-2 overflow-x-auto custom-scrollbar no-scrollbar scroll-smooth">
+                  {quickActions[lang].map((action) => (
+                    <button 
+                      key={action}
+                      onClick={() => handleSendMessage(action)}
+                      className="px-5 py-2.5 bg-slate-100 hover:bg-magenta-500 hover:text-white rounded-full text-xs font-black transition-all border border-slate-200 uppercase tracking-widest whitespace-nowrap active:scale-95 shadow-sm"
+                    >
+                      {action}
+                    </button>
+                  ))}
+               </div>
+
+               {/* Input Area */}
+               <div className="p-6 pb-12 bg-white border-t border-slate-100 flex items-center gap-3">
+                  <div className="flex-1 relative">
+                    <input 
+                      type="text"
+                      value={inputValue}
+                      onChange={(e) => setInputValue(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                      placeholder="Escribe tu mensaje..."
+                      className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-5 text-[1.1rem] focus:outline-none focus:border-magenta-500 transition-colors pr-14 font-medium"
+                    />
+                    <button 
+                      onClick={() => handleSendMessage()}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-3 bg-magenta-500 text-white rounded-xl shadow-lg hover:shadow-magenta-500/40 transition-all active:scale-90"
+                      style={{backgroundColor:'var(--magenta)'}}
+                    >
+                      <Send className="w-6 h-6" />
+                    </button>
+                  </div>
                </div>
             </motion.div>
           )}
@@ -201,6 +337,9 @@ export function CitizenApp({ onLogout }: { onLogout: () => void }) {
 
         {/* Trazabilida Map Overlay */}
         <AnimatePresence>
+          {showTriage && (
+            <TepictuSalud onClose={() => setShowTriage(false)} />
+          )}
           {showMap && (
              <motion.div 
                initial={{ opacity: 0 }}
@@ -335,17 +474,95 @@ export function CitizenApp({ onLogout }: { onLogout: () => void }) {
                          </div>
                          <div className="space-y-3">
                             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Método de Pago</p>
-                            <button className="w-full p-4 bg-white border-2 border-magenta-500 rounded-2xl flex items-center justify-between">
+                            <button 
+                              onClick={() => setPaymentMethod('card')}
+                              className={cn(
+                                "w-full p-4 border rounded-2xl flex items-center justify-between transition-all",
+                                paymentMethod === 'card' ? "bg-white border-magenta-500 ring-2 ring-magenta-500/10 shadow-lg" : "bg-white border-slate-100"
+                              )}
+                            >
                                <div className="flex items-center gap-4">
                                   <div className="w-8 h-5 bg-slate-100 rounded"></div>
                                   <span className="font-bold text-sm">VISA •••• 4412</span>
                                </div>
-                               <div className="w-4 h-4 border-4 border-magenta-500 rounded-full"></div>
+                               <div className={cn(
+                                 "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
+                                 paymentMethod === 'card' ? "border-magenta-500 bg-white" : "border-slate-200"
+                               )}>
+                                 {paymentMethod === 'card' && <div className="w-2.5 h-2.5 rounded-full bg-magenta-500"></div>}
+                               </div>
                             </button>
-                            <button className="w-full p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center gap-4 opacity-50 grayscale">
-                               <div className="w-8 h-5 bg-slate-100 rounded"></div>
-                               <span className="font-bold text-sm">Tarjeta Mercado Pago</span>
+                            
+                            <button 
+                              onClick={() => setPaymentMethod('cash')}
+                              className={cn(
+                                "w-full p-4 border rounded-2xl flex items-center justify-between transition-all",
+                                paymentMethod === 'cash' ? "bg-white border-magenta-500 ring-2 ring-magenta-500/10 shadow-lg" : "bg-white border-slate-100"
+                              )}
+                            >
+                               <div className="flex items-center gap-4">
+                                  <div className="w-8 h-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400">
+                                     <Barcode className="w-5 h-5" />
+                                  </div>
+                                  <div>
+                                     <span className="font-bold text-sm block">Pago en Efectivo</span>
+                                     <span className="text-[10px] text-slate-400 uppercase block">OXXO / CASINO / TELECOMM</span>
+                                  </div>
+                               </div>
+                               <div className={cn(
+                                 "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
+                                 paymentMethod === 'cash' ? "border-magenta-500 bg-white" : "border-slate-200"
+                               )}>
+                                 {paymentMethod === 'cash' && <div className="w-2.5 h-2.5 rounded-full bg-magenta-500"></div>}
+                               </div>
                             </button>
+                         </div>
+                      </div>
+                   )}
+
+                   {paymentStep === 'cash_instructions' && (
+                      <div className="flex flex-col items-center">
+                         <div className="bg-slate-50 w-full rounded-3xl p-6 border border-slate-100 shadow-sm space-y-6">
+                            <div className="text-center space-y-1">
+                               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Referencia de Pago</p>
+                               <h1 className="text-xl font-mono font-black text-slate-900 tracking-tighter">{paymentRef}</h1>
+                            </div>
+                            
+                            <div className="bg-white p-4 rounded-xl flex items-center justify-center border border-slate-100 shadow-sm overflow-hidden">
+                               <svg ref={barcodeRef} className="w-full h-auto"></svg>
+                            </div>
+
+                            <div className="flex justify-center py-2">
+                               <div className="p-4 bg-white rounded-2xl shadow-lg border border-slate-100">
+                                  <QRCodeSVG 
+                                    value={`https://gobernanza.digital/pago?ref=${paymentRef}&monto=204&curp=PEGJ900101HNT`}
+                                    size={140}
+                                    level="H"
+                                    includeMargin={true}
+                                  />
+                               </div>
+                            </div>
+
+                            <div className="space-y-3">
+                               <div className="flex justify-between items-center text-sm">
+                                  <span className="text-slate-500">Monto:</span>
+                                  <span className="font-bold text-slate-900">$204.00 MXN</span>
+                               </div>
+                               <div className="flex justify-between items-center text-sm">
+                                  <span className="text-slate-500">Vence:</span>
+                                  <span className="font-bold text-slate-900">15 JUN 2026</span>
+                               </div>
+                            </div>
+                         </div>
+                         
+                         <div className="mt-8 text-center space-y-4">
+                            <div className="flex items-center justify-center gap-2 text-magenta-500 font-bold text-xs" style={{color:'var(--magenta)'}}>
+                               <div className="w-2 h-2 rounded-full bg-magenta-500 animate-pulse"></div>
+                               ESPERANDO PAGO EN CAJA
+                            </div>
+                            <p className="text-xs text-slate-400 italic px-4 leading-relaxed">
+                               Muestra este código en cualquier OXXO, Casino o Telecomm. El cajero escaneará el código de barras y recibirás tu ticket de confirmación.
+                            </p>
                          </div>
                       </div>
                    )}
@@ -384,13 +601,26 @@ export function CitizenApp({ onLogout }: { onLogout: () => void }) {
                 <div className="p-8 pb-12">
                    {paymentStep === 'idle' && (
                       <button 
-                        onClick={() => {
-                          setPaymentStep('processing');
-                          setTimeout(() => setPaymentStep('success'), 2000);
+                        onClick={async () => {
+                          if (paymentMethod === 'card') {
+                            setPaymentStep('processing');
+                            setTimeout(() => setPaymentStep('success'), 2000);
+                          } else {
+                            await generatePaymentRef();
+                            setPaymentStep('cash_instructions');
+                          }
                         }}
                         className="w-full py-4 bg-slate-900 text-white rounded-full font-black shadow-xl transition-transform active:scale-95"
                       >
-                         Pagar $204.00 MNX
+                         {paymentMethod === 'card' ? 'Pagar $204.00 MNX' : 'Generar Código de Pago'}
+                      </button>
+                   )}
+                   {paymentStep === 'cash_instructions' && (
+                      <button 
+                        onClick={() => { setPayingItem(null); setPaymentStep('idle'); setActiveTab('home'); }}
+                        className="w-full py-4 bg-slate-900 text-white rounded-full font-black shadow-xl"
+                      >
+                         Volver al Inicio
                       </button>
                    )}
                    {paymentStep === 'success' && (
@@ -419,13 +649,16 @@ function TabButton({ icon: Icon, label, active, onClick }: { icon: any, label: s
   );
 }
 
-function HomeView() {
+function HomeView({ onShowMap, onShowTriage, onGoToForum }: { onShowMap: () => void, onShowTriage: () => void, onGoToForum: () => void }) {
   return (
     <div className="space-y-6 pt-2">
       {/* RUTA Digitial Card */}
       <div className="bg-gradient-to-br from-slate-900 to-indigo-900 rounded-[2rem] p-6 text-white relative overflow-hidden shadow-xl shadow-indigo-900/20">
          <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-10 -mt-10 blur-2xl"></div>
-         <p className="text-[10px] font-mono text-white/50 uppercase tracking-widest mb-4">RUTA Digital NAY</p>
+         <div className="flex justify-between items-start">
+            <p className="text-[10px] font-mono text-white/50 uppercase tracking-widest mb-4">RUTA Digital Ciudadana</p>
+            <span className="bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded text-[8px] font-black tracking-widest uppercase border border-blue-500/30">Transportista Acceso</span>
+         </div>
          <div className="flex justify-between items-end">
             <div>
               <p className="text-2xl font-serif font-bold">JUAN PÉREZ G.</p>
@@ -437,13 +670,32 @@ function HomeView() {
          </div>
       </div>
 
+      {/* Forum CTA for Transportistas */}
+      <button 
+        onClick={onGoToForum}
+        className="w-full bg-[var(--verde)] rounded-2xl p-5 flex items-center justify-between text-white shadow-lg overflow-hidden relative group"
+        style={{backgroundColor: 'var(--verde)'}}
+      >
+        <div className="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform">
+           <Users className="w-24 h-24" />
+        </div>
+        <div className="flex items-center gap-4 relative z-10">
+           <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-2xl">🚛</div>
+           <div className="text-left">
+              <p className="font-serif font-black text-lg leading-tight">Foro Comunitario Alianza</p>
+              <p className="text-[10px] text-white/70 font-bold uppercase tracking-widest">Panel de Transportistas</p>
+           </div>
+        </div>
+        <ChevronRight className="w-5 h-5 relative z-10" />
+      </button>
+
       {/* Quick Actions */}
       <div>
         <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Servicios Frecuentes</h2>
         <div className="grid grid-cols-2 gap-4">
            <QuickAction icon={Droplets} label="Pago de Agua" color="bg-blue-50 text-blue-600" />
            <QuickAction icon={CreditCard} label="Predial 2026" color="bg-emerald-50 text-emerald-600" />
-           <QuickAction icon={Stethoscope} label="Triaje Médico" color="bg-rose-50 text-rose-600" />
+           <QuickAction icon={Stethoscope} label="Triaje Médico" color="bg-rose-50 text-rose-600" onClick={onShowTriage} />
            <QuickAction icon={Lightbulb} label="Luminarias" color="bg-amber-50 text-amber-600" />
         </div>
       </div>
@@ -457,7 +709,7 @@ function HomeView() {
          <p className="text-sm font-bold text-slate-900 leading-tight">Nueva obra de reencarpetamiento en tu colonia (San Juan).</p>
          <p className="text-xs text-slate-500 mt-2">Inversión: $1.2M. Haz clic para ver el avance en vivo.</p>
          <button 
-           onClick={() => setShowMap(true)}
+           onClick={onShowMap}
            className="mt-4 text-xs font-bold text-magenta-500 flex items-center gap-1" style={{color:'var(--magenta)'}}
          >
            Ver Trazabilidad <ChevronRight className="w-3 h-3" />
@@ -467,9 +719,12 @@ function HomeView() {
   );
 }
 
-function QuickAction({ icon: Icon, label, color }: { icon: any, label: string, color: string }) {
+function QuickAction({ icon: Icon, label, color, onClick }: { icon: any, label: string, color: string, onClick?: () => void }) {
   return (
-    <div className={cn("p-4 rounded-2xl flex flex-col gap-3 transition-transform active:scale-95 cursor-pointer", color)}>
+    <div 
+      onClick={onClick}
+      className={cn("p-4 rounded-2xl flex flex-col gap-3 transition-transform active:scale-95 cursor-pointer", color)}
+    >
        <Icon className="w-6 h-6" />
        <span className="text-xs font-bold leading-tight">{label}</span>
     </div>
@@ -519,7 +774,7 @@ function PaymentsView({ onPay }: { onPay: (item: any) => void }) {
   );
 }
 
-function ServicesView() {
+function ServicesView({ onShowTriage }: { onShowTriage: () => void }) {
   return (
     <div className="pt-2 space-y-6">
       <h2 className="text-xl font-serif font-black text-slate-900">Trámites y Reportes</h2>
@@ -528,6 +783,16 @@ function ServicesView() {
          <input type="text" placeholder="Buscar trámite o reporte..." className="w-full bg-slate-100 border-none rounded-2xl pl-12 pr-4 py-4 text-sm outline-none" />
       </div>
       <div className="space-y-3">
+         <div 
+            onClick={onShowTriage}
+            className="flex justify-between items-center p-4 bg-rose-50 border border-rose-100 rounded-2xl cursor-pointer"
+         >
+            <div className="flex items-center gap-3">
+              <Stethoscope className="w-4 h-4 text-rose-600" />
+              <span className="text-sm font-bold text-rose-700">Triaje Médico TepictuSalud</span>
+            </div>
+            <ChevronRight className="w-4 h-4 text-rose-300" />
+         </div>
          {['Licencia de Funcionamiento', 'Permiso de Construcción', 'Uso de Suelo', 'Reporte de Bache', 'Falla de Alumbrado'].map(s => (
            <div key={s} className="flex justify-between items-center p-4 bg-white border border-slate-100 rounded-2xl">
               <span className="text-sm font-medium text-slate-700">{s}</span>

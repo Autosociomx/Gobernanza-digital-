@@ -4,16 +4,20 @@ import { C5Dashboard } from './components/C5Dashboard';
 import { CitizenApp } from './components/CitizenApp';
 import { DeveloperChecklist } from './components/DeveloperChecklist';
 import { ExecutiveFolder } from './components/ExecutiveFolder';
+import { motion, AnimatePresence } from 'motion/react';
+import { ChevronDown, LayoutDashboard, UserCircle2, FileText, Settings2 } from 'lucide-react';
 
 function App() {
   const [currentView, setCurrentView] = useState<'landing' | 'c5' | 'citizen' | 'dev' | 'executive'>('landing');
+  const [citizenTab, setCitizenTab] = useState<any>('home');
+  const [citizenAction, setCitizenAction] = useState<any>(null);
 
   if (currentView === 'c5') {
     return <C5Dashboard onLogout={() => setCurrentView('landing')} />;
   }
 
   if (currentView === 'citizen') {
-    return <CitizenApp onLogout={() => setCurrentView('landing')} />;
+    return <CitizenApp onLogout={() => setCurrentView('landing')} initialTab={citizenTab} initialAction={citizenAction} />;
   }
 
   if (currentView === 'dev') {
@@ -24,74 +28,46 @@ function App() {
     return <ExecutiveFolder onBack={() => setCurrentView('landing')} />;
   }
 
+  const menuItems = [
+    { 
+      id: 'c5', 
+      label: 'C5 HUB GOBIERNO', 
+      sub: 'Centro de Inteligencia', 
+      color: 'bg-emerald-500', 
+      icon: LayoutDashboard 
+    },
+    { 
+      id: 'citizen', 
+      label: 'DEMO CIUDADANA', 
+      sub: 'Experiencia Ciudadana RUTA', 
+      color: 'bg-cyan-500', 
+      icon: UserCircle2 
+    },
+    { 
+      id: 'executive', 
+      label: 'CARPETA EJECUTIVA', 
+      sub: 'Estrategia de Gobernanza AI', 
+      color: 'bg-magenta-500', 
+      icon: FileText 
+    },
+    { 
+      id: 'dev', 
+      label: 'ROADMAP TÉCNICO', 
+      sub: 'Estado de Implementación', 
+      color: 'bg-purple-500', 
+      icon: Settings2 
+    },
+  ];
+
   return (
-    <div className="min-h-screen relative">
-      {/* Centro de Control de Gobernanza (Consolidado) */}
-      <div className="fixed top-6 right-6 z-[950] flex flex-col items-end gap-3">
-        <div className="group relative">
-          <button 
-            className="bg-black/90 hover:bg-black backdrop-blur-xl border border-white/20 text-white px-6 py-3 rounded-full text-[0.7rem] font-mono tracking-[0.15em] font-bold transition-all shadow-2xl flex items-center gap-3"
-          >
-            <div className="flex gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
-              <span className="w-1.5 h-1.5 rounded-full bg-magenta-500"></span>
-            </div>
-            TERMINAL DE ACCESO
-          </button>
-          
-          {/* Dropdown Menu */}
-          <div className="absolute right-0 mt-3 w-64 bg-black/95 backdrop-blur-2xl border border-white/10 rounded-2xl p-2 shadow-2xl opacity-0 translate-y-2 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300">
-            <p className="px-4 py-2 text-[10px] font-mono text-slate-500 uppercase tracking-widest border-b border-white/5 mb-2">Ecosistema ConnectX</p>
-            
-            <button 
-              onClick={() => setCurrentView('c5')}
-              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-xl transition-colors text-left"
-            >
-              <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-              <div>
-                <p className="text-[11px] font-bold text-white uppercase tracking-tight">C5 Hub Gobierno</p>
-                <p className="text-[9px] text-slate-500 uppercase">Dashboard Centralizado</p>
-              </div>
-            </button>
-
-            <button 
-              onClick={() => setCurrentView('citizen')}
-              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-xl transition-colors text-left"
-            >
-              <div className="w-2 h-2 rounded-full bg-cyan-500"></div>
-              <div>
-                <p className="text-[11px] font-bold text-white uppercase tracking-tight">Citizen App (RUTA)</p>
-                <p className="text-[9px] text-slate-500 uppercase">Interfaz Ciudadana</p>
-              </div>
-            </button>
-
-            <button 
-              onClick={() => setCurrentView('executive')}
-              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-xl transition-colors text-left"
-            >
-              <div className="w-2 h-2 rounded-full bg-magenta-500"></div>
-              <div>
-                <p className="text-[11px] font-bold text-white uppercase tracking-tight">Carpeta Ejecutiva</p>
-                <p className="text-[9px] text-slate-500 uppercase">PDF Estratégico AI</p>
-              </div>
-            </button>
-
-            <button 
-              onClick={() => setCurrentView('dev')}
-              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-xl transition-colors text-left mt-2 border-t border-white/5"
-            >
-              <div className="w-2 h-2 rounded-full bg-purple-500"></div>
-              <div>
-                <p className="text-[11px] font-bold text-white uppercase tracking-tight">Roadmap Técnico</p>
-                <p className="text-[9px] text-slate-500 uppercase">Estado de Implementación</p>
-              </div>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <GeraldineLanding onNavigate={(view) => setCurrentView(view)} />
+    <div className="min-h-screen relative overflow-x-hidden">
+      <GeraldineLanding onNavigate={(view, subView, action) => {
+        if (view === 'citizen') {
+          setCitizenTab(subView || 'home');
+          setCitizenAction(action || null);
+        }
+        setCurrentView(view);
+      }} />
     </div>
   );
 }

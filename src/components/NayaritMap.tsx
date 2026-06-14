@@ -39,7 +39,6 @@ export function NayaritMap({
         defaultCenter={center}
         defaultZoom={zoom}
         mapId="NAYARIT_DIGITAL_MAP"
-        internalUsageAttributionIds={['gmp_mcp_codeassist_v1_aistudio']}
         className="w-full h-full rounded-xl"
         gestureHandling={'greedy'}
         disableDefaultUI={false}

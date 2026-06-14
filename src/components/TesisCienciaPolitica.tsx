@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { CANDIDATE } from '../config/candidate';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   User, 
@@ -67,7 +66,7 @@ export const TesisCienciaPolitica = () => {
       <div className="bg-slate-900 border-b border-slate-800 p-2 md:p-4 grid grid-cols-1 sm:grid-cols-3 gap-2 sticky top-[0px] z-30 shadow-lg">
         {[
           { icon: <Briefcase size={16} />, title: "1. Dossier ConnectX", subtitle: "Modelo Financiero" },
-          { icon: <TrendingUp size={16} />, title: "2. Escalera de Valor & Política", subtitle: `Gobernatura ${CANDIDATE.electionYear} (${CANDIDATE.caseLabel})` },
+          { icon: <TrendingUp size={16} />, title: "2. Escalera de Valor & Política", subtitle: "Gobernatura 2027 (Caso G. Ponce)" },
           { icon: <Database size={16} />, title: "3. Hoja de Ruta Téc.", subtitle: "Ecosistema 48 Dependencias" }
         ].map((doc, idx) => (
           <button
@@ -235,28 +234,28 @@ export const TesisCienciaPolitica = () => {
                 
                 <div className="relative z-10 flex-grow space-y-4">
                   <div className="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md">
-                    {CANDIDATE.successLabel}
+                    CASO DE ÉXITO GUBERNAMENTAL
                   </div>
-                  <h2 className="text-4xl md:text-5xl font-serif italic mb-1 text-rose-100">{CANDIDATE.fullName}</h2>
-                  <h3 className="text-lg md:text-2xl font-bold">{CANDIDATE.currentPosition} <br/><span className="text-rose-200 font-light">{CANDIDATE.seekingPosition}</span></h3>
+                  <h2 className="text-4xl md:text-5xl font-serif italic mb-1 text-rose-100">Geraldine Ponce</h2>
+                  <h3 className="text-lg md:text-2xl font-bold">Presidenta Municipal de Tepic <br/><span className="text-rose-200 font-light">Candidata a Gobernadora de Nayarit 2027</span></h3>
                   
                   <p className="text-sm md:text-base font-light text-rose-100 mt-4 max-w-xl italic">
-                    "{CANDIDATE.quote}"
+                    "La gobernante que ya transformó Tepic. Ahora lleva ese cambio a los 20 municipios de Nayarit."
                   </p>
                 </div>
 
                 <div className="relative z-10 shrink-0 grid grid-cols-2 gap-3 w-full md:w-auto">
                   <div className="bg-slate-900/50 p-4 rounded-xl text-center backdrop-blur-md border border-white/10">
-                    <p className="text-2xl font-black text-white">{CANDIDATE.stats.age}</p>
+                    <p className="text-2xl font-black text-white">30</p>
                     <p className="text-[9px] uppercase tracking-wider text-rose-200 font-bold">AÑOS</p>
                   </div>
                   <div className="bg-slate-900/50 p-4 rounded-xl text-center backdrop-blur-md border border-white/10">
-                    <p className="text-2xl font-black text-white">{CANDIDATE.stats.distinguisher.split(' ')[0]}</p>
-                    <p className="text-[9px] uppercase tracking-wider text-rose-200 font-bold">{CANDIDATE.stats.distinguisher.split(' ').slice(1).join(' ')}</p>
+                    <p className="text-2xl font-black text-white">1ª</p>
+                    <p className="text-[9px] uppercase tracking-wider text-rose-200 font-bold">MUJER PRESIDENTA</p>
                   </div>
                   <div className="bg-slate-900/50 p-4 rounded-xl text-center backdrop-blur-md border border-white/10">
-                    <p className="text-2xl font-black text-white">{CANDIDATE.stats.socialFollowers}</p>
-                    <p className="text-[9px] uppercase tracking-wider text-rose-200 font-bold">SEGUIDORES {CANDIDATE.stats.socialNetwork}</p>
+                    <p className="text-2xl font-black text-white">519K</p>
+                    <p className="text-[9px] uppercase tracking-wider text-rose-200 font-bold">SEGUIDORES IG</p>
                   </div>
                   <div className="bg-slate-900/50 p-4 rounded-xl text-center backdrop-blur-md border border-white/10">
                     <p className="text-2xl font-black text-white">100%</p>

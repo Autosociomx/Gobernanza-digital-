@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { CANDIDATE } from '../config/candidate';
+import React, { useState, useEffect } from 'react';
 import { 
   Building2, 
   Map as MapIcon, 
@@ -21,6 +20,9 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { NayaritMap } from './NayaritMap';
+
+type Language = 'es' | 'cora' | 'wixarika';
+
 import {
   AreaChart,
   Area,
@@ -33,7 +35,7 @@ import {
   Bar
 } from 'recharts';
 
-type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'ia' | 'agrovision' | 'observatorio';
+type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio';
 
 export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
   const [activeModule, setActiveModule] = useState<ModuleType>('tesoreria');
@@ -437,24 +439,43 @@ function SaludView() {
 }
 
 function IAView() {
+  const [lang, setLang] = useState<Language>('es');
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([
-    { role: 'assistant', content: CANDIDATE.aiGreeting }
+    { role: 'assistant', content: 'Presidenta Geraldine Ponce, el Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?' }
   ]);
+
+  useEffect(() => {
+    const greets = {
+      es: 'Presidenta Geraldine Ponce, el Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?',
+      cora: "Presidenta Geraldine Ponce, ConnectX IA amu'u tyu'un. ¿Tyu'un ne'ij tyu'uti'in Tepic?",
+      wixarika: 'Geraldine Ponce keniu, ConnectX IA keniu. ¿Kewa pikanetsi\'iwau Tepic?'
+    };
+    setMessages([{ role: 'assistant', content: greets[lang] }]);
+  }, [lang]);
+
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
-  const handleSendMessage = async () => {
-    if (!inputValue.trim()) return;
-    const userMsg = inputValue;
+  const strategicShortcuts = [
+    "Resumen Recaudación",
+    "Optimización Bacheo",
+    "Reporte Bienestar",
+    "Visión Tepic 2027"
+  ];
+
+  const handleSendMessage = async (text?: string) => {
+    const userMsg = text || inputValue.trim();
+    if (!userMsg) return;
+    
     setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
-    setInputValue('');
+    if (!text) setInputValue('');
     setIsTyping(true);
 
     try {
       const response = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMsg })
+        body: JSON.stringify({ message: `${userMsg} (Context: Governance Admin, Language: ${lang})` })
       });
       const data = await response.json();
       if (data.error) throw new Error(data.error);
@@ -468,99 +489,140 @@ function IAView() {
 
   return (
     <div className="space-y-6">
-      <div className="text-center max-w-2xl mx-auto py-8">
-        <div className="w-16 h-16 bg-purple-500/20 border border-purple-500/30 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(168,85,247,0.2)]">
-          <Bot className="w-8 h-8 text-purple-400" />
+      <div className="flex justify-between items-end">
+        <div>
+          <h3 className="text-3xl font-black text-white flex items-center gap-4">
+            <div className="p-3 rounded-2xl bg-purple-500/10 border border-purple-500/20 shadow-xl">
+              <Bot className="w-8 h-8 text-purple-400" />
+            </div>
+            Nucleo ConnectX AI
+          </h3>
+          <p className="text-slate-500 text-xs mt-2 uppercase font-black tracking-widest flex items-center gap-3">
+             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+             GOBERNANZA DATA-DRIVEN · COBERTURA TOTAL
+          </p>
         </div>
-        <h3 className="text-3xl font-bold text-white tracking-tight mb-2">ConnectX AI Governance</h3>
-        <p className="text-slate-400 text-sm">Control centralizado de inteligencia artificial para el municipio de Tepic.</p>
+        <div className="flex gap-2">
+          {['es', 'cora', 'wixarika'].map(l => (
+            <button 
+              key={l}
+              onClick={() => setLang(l as Language)}
+              className={cn(
+                "w-12 h-12 rounded-xl font-black text-[10px] uppercase shadow-lg transition-all",
+                lang === l ? "bg-purple-600 text-white ring-2 ring-purple-500/40" : "bg-slate-800 text-slate-500 hover:bg-slate-700"
+              )}
+            >
+              {l}
+            </button>
+          ))}
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
-        <div className="bg-[#161920] border border-slate-800 rounded-xl p-6 flex flex-col h-[500px] shadow-2xl">
-          <h4 className="text-sm font-semibold text-slate-300 mb-4 pb-4 border-b border-slate-800 flex justify-between items-center">
-             <span>Consola de Comando IA</span>
-             <span className="text-[10px] text-emerald-500 font-mono">LATENCY: 42ms</span>
-          </h4>
-          <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-12">
+        <div className="bg-[#12141a] border border-slate-800 rounded-[2.5rem] p-8 flex flex-col h-[650px] shadow-3xl">
+          <div className="flex-1 overflow-y-auto space-y-8 pr-4 custom-scrollbar">
             {messages.map((msg, i) => (
-               <div key={i} className={cn("flex gap-3", msg.role === 'user' && "flex-row-reverse")}>
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={cn("flex flex-col", msg.role === 'user' ? "items-end" : "items-start")}
+              >
                  <div className={cn(
-                   "w-8 h-8 rounded flex-shrink-0 flex items-center justify-center text-xs font-bold",
-                   msg.role === 'assistant' ? "bg-purple-600 text-white" : "bg-slate-700 text-slate-300"
-                 )}>
-                   {msg.role === 'assistant' ? <Bot className="w-4 h-4" /> : 'GP'}
-                 </div>
-                 <div className={cn(
-                   "px-4 py-2.5 rounded-2xl text-sm border transition-all",
+                   "p-6 rounded-[2rem] text-[1.1rem] leading-relaxed shadow-xl max-w-[90%] font-medium",
                    msg.role === 'assistant' 
-                     ? "bg-purple-600/20 border-purple-500/30 text-slate-200 rounded-tl-none" 
-                     : "bg-slate-800/80 border-slate-700 text-slate-300 rounded-tr-none"
+                    ? "bg-slate-800/80 text-white border border-slate-700 rounded-tl-none" 
+                    : "bg-purple-600 text-white rounded-tr-none shadow-purple-600/20"
                  )}>
                    {msg.content}
                  </div>
-               </div>
+                 <span className="text-[10px] text-slate-600 mt-3 font-black uppercase tracking-widest px-2">
+                   {msg.role === 'user' ? 'G. Ponce' : 'ConnectX Strategic AI'} · {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                 </span>
+              </motion.div>
             ))}
             {isTyping && (
-              <div className="flex gap-3">
-                <div className="w-8 h-8 rounded bg-purple-600 flex items-center justify-center"><Bot className="w-4 h-4 text-white" /></div>
-                <div className="bg-purple-600/10 px-4 py-2.5 rounded-2xl rounded-tl-none border border-purple-500/20">
-                   <Loader2 className="w-4 h-4 animate-spin text-purple-400" />
-                </div>
+              <div className="flex gap-3 p-6 bg-slate-800/50 rounded-[2rem] rounded-tl-none border border-slate-700 w-28">
+                <div className="w-2.5 h-2.5 bg-purple-500 rounded-full animate-bounce"></div>
+                <div className="w-2.5 h-2.5 bg-purple-500 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                <div className="w-2.5 h-2.5 bg-purple-500 rounded-full animate-bounce [animation-delay:0.4s]"></div>
               </div>
             )}
           </div>
-          <div className="mt-4 flex gap-2">
-            <input 
-               type="text" 
-               value={inputValue}
-               onChange={(e) => setInputValue(e.target.value)}
-               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-               placeholder="Consultar estatus de colonias o eficiencia..." 
-               className="w-full bg-slate-900 border border-slate-800 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500 transition-colors" 
-            />
-            <button 
-              onClick={handleSendMessage}
-              disabled={isTyping}
-              className="bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-500 transition-colors disabled:opacity-50"
-            >
-              <Send className="w-5 h-5" />
-            </button>
+
+          <div className="mt-8 pt-8 border-t border-slate-800/50 space-y-6">
+            <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
+               {strategicShortcuts.map(s => (
+                 <button 
+                  key={s} 
+                  onClick={() => handleSendMessage(s)}
+                  className="px-6 py-3 bg-slate-800/50 hover:bg-purple-600 text-[10px] text-slate-400 hover:text-white uppercase font-black tracking-widest rounded-xl border border-slate-700 hover:border-purple-500 transition-all active:scale-95 whitespace-nowrap shadow-lg"
+                 >
+                   {s}
+                 </button>
+               ))}
+            </div>
+            <div className="relative">
+              <input 
+                type="text"
+                placeholder="Introducir comando ejecutivo..."
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                className="w-full bg-slate-900 border-2 border-slate-800 rounded-2xl px-6 py-6 text-white text-[1.15rem] pr-20 focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all font-bold placeholder:text-slate-800"
+              />
+              <button 
+                onClick={() => handleSendMessage()}
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-4 bg-purple-600 text-white rounded-2xl shadow-xl hover:bg-purple-500 transition-all active:scale-90"
+              >
+                <Send className="w-6 h-6" />
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="space-y-6">
-           <div className="bg-[#161920] border border-slate-800 rounded-xl p-6">
-              <h4 className="text-sm font-semibold text-slate-300 mb-4">Métricas del LLM</h4>
-              <div className="space-y-4">
-                 <div>
-                   <div className="flex justify-between text-xs mb-1">
-                     <span className="text-slate-400">Precisión de Intención (Intent)</span>
-                     <span className="text-purple-400 font-mono">94.2%</span>
+        <div className="space-y-8">
+           <div className="bg-[#161920] border border-slate-800 rounded-[2.5rem] p-8 shadow-3xl">
+              <h4 className="text-[10px] font-black text-slate-500 mb-8 uppercase tracking-[0.3em] border-l-4 border-purple-500 pl-4">Eficacia del Sistema</h4>
+              <div className="space-y-10">
+                 {[
+                   { label: 'Indice de Recaudación Digital', val: 94.2, color: 'bg-emerald-500' },
+                   { label: 'Resolución Autónoma IA', val: 78.5, color: 'bg-purple-500' },
+                   { label: 'Satisfacción Ciudadana (UX)', val: 91.0, color: 'bg-blue-500' },
+                 ].map((item, i) => (
+                   <div key={i} className="space-y-3">
+                     <div className="flex justify-between text-xs font-black uppercase tracking-tighter">
+                        <span className="text-slate-400">{item.label}</span>
+                        <span className="text-white text-lg">{item.val}%</span>
+                     </div>
+                     <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden shadow-inner">
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${item.val}%` }}
+                          transition={{ delay: 1, duration: 1.5 }}
+                          className={`h-full ${item.color} shadow-lg`}
+                        />
+                     </div>
                    </div>
-                   <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                     <div className="h-full bg-purple-500 w-[94.2%]"></div>
-                   </div>
-                 </div>
-                 <div>
-                   <div className="flex justify-between text-xs mb-1">
-                     <span className="text-slate-400">Trámites Resueltos sin Humano</span>
-                     <span className="text-emerald-400 font-mono">78.5%</span>
-                   </div>
-                   <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                     <div className="h-full bg-emerald-500 w-[78.5%]"></div>
-                   </div>
-                 </div>
+                 ))}
+              </div>
+              <div className="mt-12 p-6 bg-purple-600/5 rounded-3xl border border-purple-600/20">
+                 <p className="text-[10px] text-purple-400 font-black uppercase tracking-widest mb-3">Reporte Algorítmico:</p>
+                 <p className="text-sm text-slate-400 italic leading-relaxed font-medium">
+                   "La integración del módulo de recaudación digital en Tepic ha superado las proyecciones iniciales, eliminando el 100% de la opacidad en transferencias de ventanilla."
+                 </p>
               </div>
            </div>
            
-           <div className="p-6 bg-gradient-to-br from-purple-500/10 to-indigo-500/10 border border-purple-500/20 rounded-xl">
-             <h4 className="font-semibold text-purple-300 mb-2">Traducción Indígena Activa</h4>
-             <p className="text-sm text-purple-200/70 mb-4">Procesamiento de lenguaje natural mapeado a dialectos regionales.</p>
-             <div className="flex gap-2">
-               <span className="px-2.5 py-1 bg-purple-500/20 border border-purple-500/30 text-purple-300 rounded text-xs">Wixárika (Huichol)</span>
-               <span className="px-2.5 py-1 bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 rounded text-xs">Náayeri (Cora)</span>
-             </div>
+           <div className="bg-gradient-to-br from-purple-700 to-indigo-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden group shadow-3xl">
+              <TrendingUp className="w-12 h-12 mb-6 text-white/40" />
+              <h4 className="text-2xl font-black mb-2 uppercase tracking-tighter italic">Vanguardia Digital</h4>
+              <p className="text-sm text-white/60 leading-relaxed font-medium mb-8">
+                ConnectX es ahora el sistema operativo municipal más avanzado de México, diseñado para la trazabilidad absoluta.
+              </p>
+              <button className="w-full py-4 bg-white text-indigo-900 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl transition-all active:scale-95">
+                Consultar Auditoría Google Cloud
+              </button>
            </div>
         </div>
       </div>

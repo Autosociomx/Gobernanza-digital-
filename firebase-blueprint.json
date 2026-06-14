@@ -130,6 +130,35 @@
         }
       },
       "required": ["iun", "name", "type", "status", "departmentId", "location"]
+    },
+    "ForumThread": {
+      "title": "ForumThread",
+      "description": "A discussion thread in the community forum.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "category": { "type": "string", "enum": ["PROBLEMAS_TECNICOS", "CONSEJOS_OPERACION", "DISCUSION_OBRAS", "GENERAL"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "commentCount": { "type": "number" }
+      },
+      "required": ["title", "content", "authorId", "authorName", "category", "createdAt"]
+    },
+    "ForumComment": {
+      "title": "ForumComment",
+      "description": "A comment on a forum thread.",
+      "type": "object",
+      "properties": {
+        "threadId": { "type": "string" },
+        "content": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["threadId", "content", "authorId", "authorName", "createdAt"]
     }
   },
   "firestore": {
@@ -148,6 +177,14 @@
     "infrastructure": {
       "schema": "InfrastructureAsset",
       "description": "Collection of infrastructure assets."
+    },
+    "forum_threads": {
+      "schema": "ForumThread",
+      "description": "Collection of community forum threads."
+    },
+    "forum_threads/{threadId}/comments": {
+      "schema": "ForumComment",
+      "description": "Subcollection of comments for a specific thread."
     }
   }
 }

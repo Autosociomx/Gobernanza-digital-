@@ -1,9 +1,9 @@
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
+import fs from "fs/promises";
 import Database from "better-sqlite3";
 import { GoogleGenAI } from "@google/genai";
-import { CANDIDATE } from "./src/config/candidate";
 
 // Initialize AI
 const ai = new GoogleGenAI({
@@ -31,6 +31,19 @@ async function startServer() {
   const PORT = 3000;
 
   app.use(express.json());
+
+  // Load System Prompt from public/CONNECTX_SYSTEM_PROMPT.md
+  let systemPrompt = "Eres el Consultor Senior de ConnectX para Geraldine Ponce. Posees un Doctorado en Ciencia Política y una Maestría en Desarrollo Urbano y Tecnologías de la Información. Tu tono es institucional, profundamente analítico, tecnológico y pragmático. Eres multilingüe: hablas español perfecto y entiendes/respondes en Cora y Wixárika para garantizar la inclusión total en Tepic. No solo asistes, asesoras en gobernanza digital, optimización de recaudación y bienestar ciudadano mediante la trazabilidad de datos de Google Cloud. Tus respuestas son breves pero con alta densidad estratégica.";
+  
+  try {
+    const promptPath = path.join(process.cwd(), 'public', 'CONNECTX_SYSTEM_PROMPT.md');
+    const fileContent = await fs.readFile(promptPath, 'utf-8');
+    if (fileContent.trim()) {
+      systemPrompt = fileContent;
+    }
+  } catch (error) {
+    console.warn("Could not read CONNECTX_SYSTEM_PROMPT.md, using default fallback.", error);
+  }
 
   // API routes
   app.get("/api/departments", (req, res) => {
@@ -62,7 +75,7 @@ async function startServer() {
 
   // AI Assistant Endpoint
   app.post("/api/ai/chat", async (req, res) => {
-    const { message } = req.body;
+    const { message, context } = req.body;
     
     if (!process.env.GEMINI_API_KEY) {
       return res.status(500).json({ 
@@ -71,11 +84,13 @@ async function startServer() {
     }
 
     try {
+      const finalPrompt = context ? `${context}\n\nPregunta del usuario: ${message}` : message;
+      
       const response = await ai.models.generateContent({
-        model: "gemini-1.5-flash",
-        contents: [{ role: "user", parts: [{ text: message }] }],
+        model: "gemini-3.5-flash",
+        contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
         config: {
-          systemInstruction: CANDIDATE.aiSystemInstruction,
+          systemInstruction: systemPrompt,
         },
       });
       

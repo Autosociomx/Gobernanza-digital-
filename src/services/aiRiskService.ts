@@ -1,7 +1,14 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Department, AuditLog } from "./departmentService";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+const ai = new GoogleGenAI({ 
+  apiKey: process.env.GEMINI_API_KEY!,
+  httpOptions: {
+    headers: {
+      'User-Agent': 'aistudio-build',
+    }
+  }
+});
 
 export interface RiskAnalysisResult {
   score: number;
@@ -57,7 +64,7 @@ export const analyzeRisksWithAI = async (
     `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3.5-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",

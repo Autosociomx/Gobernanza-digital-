@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
-import { CANDIDATE, PLATFORM } from '../config/candidate';
+import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 
 // Ojos de Dios 3D component
-const OjosEscena = () => {
+const OjosEscena = ({ onClick }: { onClick?: () => void }) => {
   const [offset, setOffset] = useState({ cx: 0, cy: 0, tx: 0, ty: 0 });
 
   useEffect(() => {
@@ -54,7 +53,7 @@ const OjosEscena = () => {
   }, []);
 
   return (
-    <div className="ojos-escena" id="ojosEscena">
+    <div className="ojos-escena cursor-pointer" id="ojosEscena" onClick={onClick}>
       <div className="ojo ojo-a" style={{ transform: `translate(${offset.cx * 22}px, ${offset.cy * 22}px)` }}>
         <div className="ojo-giro">
           <div className="capa c1"></div><div className="capa c2"></div><div className="capa c3"></div>
@@ -155,16 +154,35 @@ const ChatIA = () => {
 };
 
 interface GeraldineLandingProps {
-  onNavigate: (view: 'landing' | 'c5' | 'citizen' | 'dev' | 'executive') => void;
+  onNavigate: (view: 'landing' | 'c5' | 'citizen' | 'dev' | 'executive', subView?: string, action?: string) => void;
 }
 
 export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
   const [navScrolled, setNavScrolled] = useState(false);
+  const [terminalOpen, setTerminalOpen] = useState(false);
+  const [terminalCmd, setTerminalCmd] = useState('');
   const { scrollY } = useScroll();
 
   useEffect(() => {
     return scrollY.on('change', (y) => setNavScrolled(y > 50));
   }, [scrollY]);
+
+  const handleCommandSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const cmd = terminalCmd.trim().toLowerCase();
+    if (cmd === '@c5' || cmd === '@hub') {
+      onNavigate('c5');
+    } else if (cmd === '@ruta' || cmd === '@citizen') {
+      onNavigate('citizen');
+    } else if (cmd === '@ejecutiva' || cmd === '@ejecutivo') {
+      onNavigate('executive');
+    } else if (cmd === '@tech' || cmd === '@road') {
+      onNavigate('dev');
+    }
+    setTerminalCmd('');
+    setTerminalOpen(false);
+  };
+
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
@@ -182,26 +200,77 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
           <li><button onClick={() => scrollTo('ecosistema')} className="font-mono text-[0.72rem] font-bold tracking-[0.12em] uppercase text-[var(--gris)] hover:text-[var(--magenta)] transition-colors">Ecosistema</button></li>
           <li><button onClick={() => scrollTo('observatorio')} className="font-mono text-[0.72rem] font-bold tracking-[0.12em] uppercase text-[var(--gris)] hover:text-[var(--magenta)] transition-colors">Observatorio</button></li>
           <li><button onClick={() => scrollTo('madurez')} className="font-mono text-[0.72rem] font-bold tracking-[0.12em] uppercase text-[var(--gris)] hover:text-[var(--magenta)] transition-colors">Madurez Digital</button></li>
-          <li><button onClick={() => scrollTo('ia')} className="font-mono text-[0.72rem] font-bold tracking-[0.12em] uppercase text-[var(--gris)] hover:text-[var(--magenta)] transition-colors">Asistente IA</button></li>
-          <li><a href="/public/NAYARIT_DIGITAL_V2.md" target="_blank" className="bg-[var(--tinta)] hover:bg-[var(--magenta)] text-[var(--crema)] font-mono text-[0.72rem] font-bold tracking-[0.12em] uppercase px-[1.3rem] py-[0.5rem] rounded-full transition-colors no-underline">Propuesta V2.0</a></li>
+          <li><button onClick={() => scrollTo('triage')} className="font-mono text-[0.72rem] font-bold tracking-[0.12em] uppercase text-[var(--gris)] hover:text-[var(--magenta)] transition-colors">Triaje Médico</button></li>
         </ul>
       </nav>
 
       {/* HERO */}
       <section className="min-h-screen pt-[7.5rem] md:pt-[7.5rem] px-[2rem] pb-[4rem] grid grid-cols-1 md:grid-cols-[1.15fr_1fr] items-center gap-[3rem] relative overflow-hidden wix-bg" id="inicio">
         <div className="hero-banda-top"></div>
-        <OjosEscena />
+        <OjosEscena onClick={() => setTerminalOpen(true)} />
         
-        <div className="relative z-10">
-          <motion.div initial={{opacity:0,y:28}} animate={{opacity:1,y:0}} transition={{delay:0.1, duration:0.6}}
-            className="inline-flex items-center gap-[0.55rem] font-mono font-bold text-[0.62rem] tracking-[0.2em] uppercase text-[var(--tinta)] border-[1.5px] border-[var(--tinta)] bg-[var(--solar)] px-[0.95rem] py-[0.35rem] rounded-full mb-[1.6rem] shadow-[3px_3px_0_var(--tinta)]">
+        {/* HIDDEN TERMINAL OVERLAY */}
+        <AnimatePresence>
+          {terminalOpen && (
+             <motion.div 
+               initial={{ opacity: 0, scale: 0.9, y: -20 }}
+               animate={{ opacity: 1, scale: 1, y: 0 }}
+               exit={{ opacity: 0, scale: 0.9, y: -20 }}
+               className="fixed top-1/4 left-1/2 -translate-x-1/2 z-[1000] bg-black/90 backdrop-blur-md p-6 rounded-2xl border border-[var(--magenta)] shadow-[0_0_40px_rgba(229,0,122,0.5)] w-[300px]"
+             >
+               <div className="flex justify-between items-center mb-4">
+                  <span className="font-mono text-xs text-[var(--magenta)] font-bold">ACCESO RESTRINGIDO</span>
+                  <button onClick={() => setTerminalOpen(false)} className="text-white/50 hover:text-white">✕</button>
+               </div>
+               <form onSubmit={handleCommandSubmit}>
+                  <input 
+                    type="password" 
+                    autoFocus
+                    placeholder="Comando @..."
+                    value={terminalCmd}
+                    onChange={(e) => setTerminalCmd(e.target.value)}
+                    className="w-full bg-black border-b-2 border-white/20 focus:border-[var(--magenta)] text-white font-mono text-sm px-2 py-2 outline-none transition-colors"
+                  />
+               </form>
+             </motion.div>
+          )}
+        </AnimatePresence>
+        
+        <motion.div 
+          initial={{opacity:0, scale:0.95, perspective:1000}} 
+          animate={{opacity:1, scale:1}} 
+          transition={{duration:1.2, ease:"easeOut"}}
+          className="relative z-10"
+        >
+          <motion.div 
+            whileHover={{ rotateX: -5, rotateY: 5, translateZ: 20 }}
+            transition={{ type: "spring", stiffness: 100, damping: 20 }}
+            className="inline-flex items-center gap-[0.55rem] font-mono font-bold text-[0.62rem] tracking-[0.2em] uppercase text-[var(--tinta)] border-[1.5px] border-[var(--tinta)] bg-[var(--solar)] px-[0.95rem] py-[0.35rem] rounded-full mb-[1.6rem] shadow-[3px_3px_0_var(--tinta)] cursor-default"
+          >
             <span className="w-[6px] h-[6px] rounded-full bg-[var(--magenta)] animate-pulse"></span>Nayarit Digital · Ecosistema de Gobernanza 2.0
           </motion.div>
           
-          <h1 className="font-serif font-black text-[clamp(3.5rem,10vw,7rem)] leading-[0.9] tracking-[-0.045em] mb-[0.32em]">
-            <motion.span initial={{opacity:0,y:28}} animate={{opacity:1,y:0}} transition={{delay:0.2, duration:0.8}} className="block text-[var(--tinta)]">El Sistema Operativo</motion.span>
-            <motion.span initial={{opacity:0,y:28}} animate={{opacity:1,y:0}} transition={{delay:0.32, duration:0.8}} className="block text-[var(--magenta)] italic relative">
+          <h1 className="font-serif font-black text-[clamp(3.5rem,10vw,7rem)] leading-[0.9] tracking-[-0.045em] mb-[0.32em] drop-shadow-2xl">
+            <motion.span 
+              initial={{opacity:0, x:-20}} 
+              animate={{opacity:1, x:0}} 
+              transition={{delay:0.2, duration:0.8}} 
+              className="block text-[var(--tinta)]"
+            >
+              El Sistema Operativo
+            </motion.span>
+            <motion.span 
+              initial={{opacity:0, x:20}} 
+              animate={{opacity:1, x:0}} 
+              transition={{delay:0.32, duration:0.8}} 
+              className="block text-[var(--magenta)] italic relative"
+            >
               Municipal de Tepic
+              <motion.div 
+                className="absolute -bottom-2 left-0 h-1 bg-[var(--magenta)] w-0"
+                animate={{ width: "100%" }}
+                transition={{ delay: 1, duration: 1 }}
+              />
             </motion.span>
           </h1>
           
@@ -217,41 +286,37 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
           
           <motion.div initial={{opacity:0,y:28}} animate={{opacity:1,y:0}} transition={{delay:0.65, duration:0.8}}
             className="flex flex-wrap gap-[0.85rem]">
-            <button 
+            <motion.button 
+              whileHover={{ scale: 1.05, rotateZ: -1 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => onNavigate('citizen')}
-              className="bg-[var(--tinta)] hover:bg-[var(--magenta)] text-[var(--crema)] font-bold text-[0.88rem] px-[2rem] py-[0.9rem] rounded-full inline-flex items-center gap-[0.5rem] transition-all hover:-translate-y-1 shadow-[0_4px_0_var(--magenta)] hover:shadow-[0_7px_0_var(--tinta)]"
+              className="bg-[var(--tinta)] hover:bg-[var(--magenta)] text-[var(--crema)] font-bold text-[0.88rem] px-[2rem] py-[0.9rem] rounded-full inline-flex items-center gap-[0.5rem] transition-all shadow-[0_4px_0_var(--magenta)] hover:shadow-[0_8px_20px_rgba(229,0,122,0.3)]"
             >
-              Demo Ciudadana (RUTA) →
-            </button>
-            <button 
-              onClick={() => onNavigate('c5')}
-              className="bg-transparent hover:bg-[var(--turq)] text-[var(--tinta)] hover:text-white font-bold text-[0.88rem] px-[2rem] py-[0.9rem] rounded-full inline-flex items-center gap-[0.5rem] transition-all border-2 border-[var(--tinta)] hover:border-[var(--turq)] hover:-translate-y-1"
-            >
-              Dashboard Gobernanza
-            </button>
+              Ruta Digital Ciudadana →
+            </motion.button>
           </motion.div>
-        </div>
+        </motion.div>
 
         <motion.div initial={{opacity:0,y:28}} animate={{opacity:1,y:0}} transition={{delay:0.4, duration:0.9}} className="relative z-10 w-full max-w-[300px] md:max-w-full mx-auto md:-order-none order-first">
-          <div className="foto-frame group">
+          <div className="foto-frame group relative">
             <img 
-              className="w-full aspect-[3/4] object-cover object-top rounded-[0.8rem] saturate-[1.06]" 
-              src={CANDIDATE.photoPath}
-              onError={(e) => { e.currentTarget.src = CANDIDATE.photoFallback; }}
-              alt={CANDIDATE.photoAlt} 
+              className="w-full aspect-[3/4] object-cover object-top rounded-[1rem] saturate-[1.06] border-4 border-white shadow-2xl" 
+              src="/geraldine-hero.jpg" 
+              onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1541614101331-1a5a3a194e92?w=500&h=625&fit=crop&crop=faces&auto=format&q=80"; }}
+              alt="Geraldine Ponce — Presidenta Municipal de Tepic" 
             />
-            <div className="absolute -top-[12px] -right-[10px] bg-[var(--magenta)] text-white font-mono text-[0.58rem] font-bold tracking-[0.08em] uppercase px-[0.75rem] py-[0.45rem] rounded-[0.4rem] shadow-[0_6px_18px_rgba(229,0,122,0.4)] max-w-[150px] text-center leading-[1.35]">Visión de Estado: Nayarit Digital</div>
-            {/* Refined Badge */}
+            {/* Slogan Badge */}
             <motion.div 
               initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} transition={{delay:0.55, duration:0.6}}
-              className="absolute -bottom-[1.2rem] -left-[1.2rem] bg-white border border-black/[0.08] p-[1.2rem_1.8rem] rounded-[0.8rem] shadow-[20px_20px_60px_-15px_rgba(0,0,0,0.15)] group-hover:shadow-[20px_20px_80px_-15px_rgba(229,0,122,0.2)] transition-all z-20"
+              className="absolute -bottom-[1.5rem] -left-[1.5rem] bg-white border border-black/[0.08] p-[1.4rem_2rem] rounded-[1rem] shadow-[20px_20px_60px_-15px_rgba(0,0,0,0.15)] group-hover:shadow-[20px_20px_80px_-15px_rgba(229,0,122,0.2)] transition-all z-20"
             >
-              <h4 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] leading-none mb-[0.35rem]">Nayarit 2027</h4>
-              <div className="flex items-center gap-[0.5rem]">
-                <span className="w-[6px] h-[6px] bg-emerald-500 rounded-full animate-pulse"></span>
-                <p className="font-mono text-[0.6rem] font-extrabold uppercase tracking-[0.14em] text-[var(--gris)]">Transformación Real</p>
+              <h4 className="font-serif font-black text-[1.4rem] text-[var(--tinta)] leading-none mb-[0.4rem]">La ciudad que sonríe.</h4>
+              <div className="flex items-center gap-[0.6rem]">
+                <span className="w-[6px] h-[6px] bg-[var(--magenta)] rounded-full animate-pulse"></span>
+                <p className="font-mono text-[0.65rem] font-extrabold uppercase tracking-[0.14em] text-[var(--gris)]">Geraldine Ponce</p>
               </div>
             </motion.div>
+
           </div>
         </motion.div>
       </section>
@@ -272,8 +337,8 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[1.5rem]">
             {/* 1. Tesorería */}
             <Reveal delay={0.1}>
-              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full">
-                <span className="text-[2.2rem] block mb-[0.8rem]">💳</span>
+              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full cursor-pointer hover:border-[var(--magenta)] group" onClick={() => onNavigate('citizen', 'payments')}>
+                <span className="text-[2.2rem] block mb-[0.8rem] transition-transform group-hover:scale-110">💳</span>
                 <h3 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] mb-[0.4rem]">Tesorería Digital</h3>
                 <p className="text-[0.82rem] text-[var(--gris)] leading-[1.65]">Pago de predial, agua y licencias 100% en línea. Incrementa la recaudación mediante recordatorios automáticos por WhatsApp.</p>
               </div>
@@ -281,17 +346,17 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
 
             {/* 2. Obras */}
             <Reveal delay={0.2}>
-              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full">
-                <span className="text-[2.2rem] block mb-[0.8rem]">🏗️</span>
-                <h3 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] mb-[0.4rem]">Trazabilidad de Obras</h3>
+              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full cursor-pointer hover:border-[var(--magenta)] group" onClick={() => onNavigate('citizen', 'services', 'map')}>
+                <span className="text-[2.2rem] block mb-[0.8rem] transition-transform group-hover:scale-110">🏗️</span>
+                <h3 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] mb-[0.4rem]">Transparencia de Obras</h3>
                 <p className="text-[0.82rem] text-[var(--gris)] leading-[1.65]">Control total de obra pública. Avance físico-financiero visible en tiempo real. Auditoría ciudadana por diseño.</p>
               </div>
             </Reveal>
 
             {/* 3. Servicios */}
             <Reveal delay={0.3}>
-              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full">
-                <span className="text-[2.2rem] block mb-[0.8rem]">📱</span>
+              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full cursor-pointer hover:border-[var(--turq)] group" onClick={() => onNavigate('citizen', 'services', 'map')}>
+                <span className="text-[2.2rem] block mb-[0.8rem] transition-transform group-hover:scale-110">📱</span>
                 <h3 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] mb-[0.4rem]">Servicios Públicos</h3>
                 <p className="text-[0.82rem] text-[var(--gris)] leading-[1.65]">Reporte de baches, luminarias y basura mediante IA. Seguimiento automático del folio hasta su resolución final.</p>
               </div>
@@ -299,8 +364,8 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
 
             {/* 4. Salud */}
             <Reveal delay={0.4}>
-              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full">
-                <span className="text-[2.2rem] block mb-[0.8rem]">💚</span>
+              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full cursor-pointer hover:border-[var(--verde)] group" onClick={() => onNavigate('citizen', 'services', 'triage')}>
+                <span className="text-[2.2rem] block mb-[0.8rem] transition-transform group-hover:scale-110">💚</span>
                 <h3 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] mb-[0.4rem]">TEPICTU Salud</h3>
                 <p className="text-[0.82rem] text-[var(--gris)] leading-[1.65]">Orientación médica con IA que funciona sin internet. Democratiza el acceso a la salud preventiva en comunidades remotas.</p>
               </div>
@@ -308,8 +373,8 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
 
             {/* 5. Asistente IA */}
             <Reveal delay={0.5}>
-              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full">
-                <span className="text-[2.2rem] block mb-[0.8rem]">🌽</span>
+              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full cursor-pointer hover:border-[var(--solar)] group" onClick={() => onNavigate('citizen', 'home', 'chat')}>
+                <span className="text-[2.2rem] block mb-[0.8rem] transition-transform group-hover:scale-110">🌽</span>
                 <h3 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] mb-[0.4rem]">Asistente Ciudadano</h3>
                 <p className="text-[0.82rem] text-[var(--gris)] leading-[1.65]">El cerebro del ecosistema. Responde en español y lenguas originarias. Ejecuta trámites mediante lenguaje natural.</p>
               </div>
@@ -317,19 +382,10 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
 
             {/* 6. Bienestar */}
             <Reveal delay={0.6}>
-              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full">
-                <span className="text-[2.2rem] block mb-[0.8rem]">🫂</span>
+              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full cursor-pointer hover:border-[var(--magenta)] group" onClick={() => onNavigate('citizen', 'profile')}>
+                <span className="text-[2.2rem] block mb-[0.8rem] transition-transform group-hover:scale-110">🫂</span>
                 <h3 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] mb-[0.4rem]">Bienestar Social</h3>
                 <p className="text-[0.82rem] text-[var(--gris)] leading-[1.65]">Gestión de apoyos y seguimiento de casos vulnerables detectados automáticamente por el ecosistema digital.</p>
-              </div>
-            </Reveal>
-
-            {/* 7. Agrovisión 3D */}
-            <Reveal delay={0.7}>
-              <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full group">
-                <span className="text-[2.2rem] block mb-[0.8rem] transition-transform group-hover:scale-110">🚜</span>
-                <h3 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] mb-[0.4rem]">Agrovisión 3D</h3>
-                <p className="text-[0.82rem] text-[var(--gris)] leading-[1.65]">Monitoreo satelital y modelado 3D de la producción agropecuaria. Inteligencia de mercado para el campo.</p>
               </div>
             </Reveal>
           </div>
@@ -396,65 +452,70 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
               <div className="mt-[0.8rem] text-[0.7rem] text-red-600 font-bold uppercase">Emergente Bajo</div>
             </div>
             <div className="bg-[var(--crema)] p-[1.5rem] rounded-[1rem] border border-black/5">
-              <div className="font-black text-[2rem] text-[var(--magenta)] mb-[0.5rem]">68</div>
+              <div className="font-black text-[2rem] text-[var(--magenta)] mb-[0.5rem]">45</div>
               <div className="font-mono text-[0.6rem] uppercase tracking-[0.1em] text-[var(--gris)]">Hoy (Tepic)</div>
-              <div className="mt-[0.8rem] text-[0.7rem] text-[var(--magenta)] font-bold uppercase">Gobierno Inteligente</div>
+              <div className="mt-[0.8rem] text-[0.7rem] text-[var(--magenta)] font-bold uppercase">En Transición</div>
             </div>
             <div className="bg-[var(--tinta)] p-[1.5rem] rounded-[1rem] border border-white/10 shadow-xl lg:scale-110 relative z-20">
-              <div className="font-black text-[2rem] text-[var(--solar)] mb-[0.5rem]">81+</div>
-              <div className="font-mono text-[0.6rem] uppercase tracking-[0.1em] text-white/50">Nayarit 2027</div>
-              <div className="mt-[0.8rem] text-[0.7rem] text-[var(--solar)] font-bold uppercase">Gobernanza Aumentada</div>
+              <div className="font-black text-[2rem] text-[var(--solar)] mb-[0.5rem]">65</div>
+              <div className="font-mono text-[0.6rem] uppercase tracking-[0.1em] text-white/50">Corto Plazo</div>
+              <div className="mt-[0.8rem] text-[0.7rem] text-[var(--solar)] font-bold uppercase">Gobernanza Conectada</div>
             </div>
             <div className="bg-[var(--crema)] p-[1.5rem] rounded-[1rem] border border-black/5">
-              <div className="font-black text-[2rem] text-[var(--turq)] mb-[0.5rem]">100</div>
-              <div className="font-mono text-[0.6rem] uppercase tracking-[0.1em] text-[var(--gris)]">Meta Técnica</div>
-              <div className="mt-[0.8rem] text-[0.7rem] text-[var(--turq)] font-bold uppercase">Transparencia Total</div>
+              <div className="font-black text-[2rem] text-[var(--turq)] mb-[0.5rem]">78</div>
+              <div className="font-mono text-[0.6rem] uppercase tracking-[0.1em] text-[var(--gris)]">Visión 2027</div>
+              <div className="mt-[0.8rem] text-[0.7rem] text-[var(--turq)] font-bold uppercase">Madurez Funcional</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ASISTENTE IA (MODIFIED) */}
-      <section className="px-[2rem] py-[5.5rem] bg-[var(--tinta)] relative overflow-hidden" id="ia">
+      {/* TRIAJE MÉDICO (MODIFIED) */}
+      <section className="px-[2rem] py-[5.5rem] bg-[var(--tinta)] relative overflow-hidden" id="triage">
         <div className="absolute inset-0 opacity-5" style={{backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpolygon points='40,3 77,40 40,77 3,40' fill='none' stroke='%23FFB300' stroke-width='1.8'/%3E%3Cpolygon points='40,14 66,40 40,66 14,40' fill='none' stroke='%2300BCD4' stroke-width='1.4'/%3E%3C/svg%3E\")", backgroundSize: '80px 80px'}}></div>
         <div className="max-w-[980px] mx-auto relative z-10">
           <Reveal delay={0.1}>
-            <span className="inline-block font-mono text-[0.6rem] font-bold tracking-[0.2em] uppercase text-[var(--tinta)] px-[0.9rem] py-[0.32rem] rounded-full mb-[1.1rem] bg-[var(--solar)]">Interfaz Única · Multilingüe</span>
+            <span className="inline-block font-mono text-[0.6rem] font-bold tracking-[0.2em] uppercase text-[var(--tinta)] px-[0.9rem] py-[0.32rem] rounded-full mb-[1.1rem] bg-[var(--verde)]">TEPICTU Salud · Orientación Inteligente</span>
           </Reveal>
           <Reveal delay={0.2}>
-            <h2 className="font-serif font-black text-[clamp(2.1rem,5.5vw,3.9rem)] leading-[0.98] tracking-[-0.035em] mb-[1rem] text-[var(--crema)]">Asistente IA<br/><em className="italic" style={{color:'var(--solar)'}}>de Gobernanza.</em></h2>
+            <h2 className="font-serif font-black text-[clamp(2.1rem,5.5vw,3.9rem)] leading-[0.98] tracking-[-0.035em] mb-[1rem] text-[var(--crema)]">Triaje Médico<br/><em className="italic" style={{color:'var(--turq)'}}>Nacional.</em></h2>
           </Reveal>
           <Reveal delay={0.3}>
-            <p className="font-serif italic text-[clamp(1.05rem,2.1vw,1.4rem)] text-[var(--crema)]/60 leading-[1.5] max-w-[560px] mb-[2.4rem]">El ciudadano no necesita saber qué dependencia resuelve su problema. La IA es la capa que orquesta todo el gobierno desde WhatsApp o el portal web.</p>
+            <p className="font-serif italic text-[clamp(1.05rem,2.1vw,1.4rem)] text-[var(--crema)]/60 leading-[1.5] max-w-[560px] mb-[2.4rem]">Un sistema de evaluación rápida de síntomas operado por inteligencia artificial. Democratizando el acceso a salud preventiva 24/7 incluso en zonas con baja conectividad.</p>
           </Reveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-[2.4rem] items-center">
             <Reveal delay={0.1}>
-              <ChatIA />
+              <div className="bg-[var(--crema)] rounded-[1.2rem] p-8 shadow-xl text-center relative overflow-hidden group border-2 border-transparent hover:border-[var(--verde)] transition-colors cursor-pointer" onClick={() => onNavigate('citizen', 'services', 'triage')}>
+                <div className="w-20 h-20 bg-[var(--verde)] text-white rounded-full flex items-center justify-center text-4xl mx-auto mb-6 shadow-lg transform transition-transform group-hover:scale-110">🩺</div>
+                <h3 className="font-serif font-black text-2xl text-[var(--tinta)] mb-3">Iniciar Evaluación</h3>
+                <p className="text-[var(--gris)] text-sm mb-6">Responde unas sencillas preguntas para obtener una orientación médica inmediata y recomendaciones de cuidado.</p>
+                <div className="inline-block bg-[var(--tinta)] text-white font-bold py-3 px-8 rounded-full text-sm hover:bg-[var(--magenta)] transition-colors">Comenzar Triaje →</div>
+              </div>
             </Reveal>
 
             <Reveal delay={0.2} className="flex flex-col gap-[1rem]">
-              <div className="flex gap-[1rem] items-start bg-white/5 border border-white/10 rounded-[0.9rem] p-[1.05rem_1.2rem] transition-all hover:bg-white/10 hover:border-[var(--solar)]/35">
+              <div className="flex gap-[1rem] items-start bg-white/5 border border-white/10 rounded-[0.9rem] p-[1.05rem_1.2rem] transition-all hover:bg-white/10 hover:border-[var(--verde)]/35">
                 <span className="text-[1.4rem] shrink-0 mt-[0.1rem]">💬</span>
                 <div>
-                  <span className="block font-sans font-bold text-[0.85rem] text-[var(--crema)] mb-[0.2rem]">Atención 24/7 sin internet</span>
-                  <p className="text-[0.76rem] text-[var(--crema)]/55 leading-[1.6]">Protocolo TEPICTU Salud integrado: triaje médico inteligente en zonas sin señal celular.</p>
+                  <span className="block font-sans font-bold text-[0.85rem] text-[var(--crema)] mb-[0.2rem]">Atención Inmediata</span>
+                  <p className="text-[0.76rem] text-[var(--crema)]/55 leading-[1.6]">Análisis de síntomas en tiempo real para determinar el nivel de urgencia y guiar los siguientes pasos.</p>
                 </div>
               </div>
 
-              <div className="flex gap-[1rem] items-start bg-white/5 border border-white/10 rounded-[0.9rem] p-[1.05rem_1.2rem] transition-all hover:bg-white/10 hover:border-[var(--solar)]/35">
+              <div className="flex gap-[1rem] items-start bg-white/5 border border-white/10 rounded-[0.9rem] p-[1.05rem_1.2rem] transition-all hover:bg-white/10 hover:border-[var(--verde)]/35">
                 <span className="text-[1.4rem] shrink-0 mt-[0.1rem]">🌐</span>
                 <div>
-                  <span className="block font-sans font-bold text-[0.85rem] text-[var(--crema)] mb-[0.2rem]">Inclusión Real</span>
-                  <p className="text-[0.76rem] text-[var(--crema)]/55 leading-[1.6]">Soporte completo en wixárika y cora. Un gobierno que finalmente habla el idioma de su gente.</p>
+                  <span className="block font-sans font-bold text-[0.85rem] text-[var(--crema)] mb-[0.2rem]">Inclusión Geográfica</span>
+                  <p className="text-[0.76rem] text-[var(--crema)]/55 leading-[1.6]">Soporte completo en wixárika y cora. Diseñado para comunidades sin acceso rápido a centros de salud.</p>
                 </div>
               </div>
 
-              <div className="flex gap-[1rem] items-start bg-white/5 border border-white/10 rounded-[0.9rem] p-[1.05rem_1.2rem] transition-all hover:bg-white/10 hover:border-[var(--solar)]/35">
+              <div className="flex gap-[1rem] items-start bg-white/5 border border-white/10 rounded-[0.9rem] p-[1.05rem_1.2rem] transition-all hover:bg-white/10 hover:border-[var(--verde)]/35">
                 <span className="text-[1.4rem] shrink-0 mt-[0.1rem]">🛡️</span>
                 <div>
-                  <span className="block font-sans font-bold text-[0.85rem] text-[var(--crema)] mb-[0.2rem]">Privacidad por Diseño</span>
-                  <p className="text-[0.76rem] text-[var(--crema)]/55 leading-[1.6]">Sus datos están seguros. Cifrado de grado militar para la protección de la identidad ciudadana.</p>
+                  <span className="block font-sans font-bold text-[0.85rem] text-[var(--crema)] mb-[0.2rem]">Privacidad Clínica</span>
+                  <p className="text-[0.76rem] text-[var(--crema)]/55 leading-[1.6]">Tus datos médicos nunca se comparten. Cifrado absoluto para proteger tu evaluación e historial.</p>
                 </div>
               </div>
             </Reveal>
@@ -519,13 +580,13 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
         </div>
       </section>
 
-      {/* GOOGLE CLOUD INFRASTRUCTURE */}
+      {/* CONNECTX INFRASTRUCTURE */}
       <section className="px-[2rem] py-[5.5rem] bg-[var(--crema)] border-t border-black/5">
           <div className="max-w-[1080px] mx-auto">
               <Reveal delay={0.1} className="text-center mb-[3.6rem]">
-                  <span className="inline-block font-mono text-[0.62rem] font-bold tracking-[0.25em] uppercase text-[var(--gris)] mb-[1rem]">RESPALDO TECNOLÓGICO</span>
-                  <h2 className="font-serif font-black text-[clamp(1.8rem,4vw,2.8rem)] leading-[0.98] tracking-[-0.035em]">Potenciado por Google Cloud</h2>
-                  <p className="text-[0.85rem] text-[var(--gris)] mt-[0.8rem] max-w-[500px] mx-auto">Infraestructura de clase mundial para garantizar la seguridad, escalabilidad y rapidez de la Nayarit Digital.</p>
+                  <span className="inline-block font-mono text-[0.62rem] font-bold tracking-[0.25em] uppercase text-[var(--gris)] mb-[1rem]">INFRAESTRUCTURA Y DISEÑO</span>
+                  <h2 className="font-serif font-black text-[clamp(1.8rem,4vw,2.8rem)] leading-[0.98] tracking-[-0.035em]">Hecho por ConnectX</h2>
+                  <p className="text-[0.85rem] text-[var(--gris)] mt-[0.8rem] max-w-[500px] mx-auto">Desarrollo de clase mundial para garantizar la seguridad, escalabilidad y excelencia de Nayarit Digital.</p>
               </Reveal>
 
               <div className="grid grid-cols-2 lg:grid-cols-5 gap-[1rem]">
@@ -548,62 +609,18 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
           </div>
       </section>
 
-      {/* EXCLUSIVIDAD — sección de cierre estratégico */}
-      <section className="px-[2rem] py-[5rem] bg-[var(--tinta)] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.04]" style={{backgroundImage:'repeating-linear-gradient(45deg,var(--magenta) 0,var(--magenta) 1px,transparent 0,transparent 50%)',backgroundSize:'24px 24px'}}></div>
-        <div className="max-w-[860px] mx-auto text-center relative z-10">
-          <Reveal delay={0.05}>
-            <span className="inline-flex items-center gap-[0.5rem] font-mono text-[0.58rem] font-extrabold tracking-[0.22em] uppercase text-[var(--magenta)] border border-[var(--magenta)]/40 bg-[var(--magenta)]/10 px-[1rem] py-[0.4rem] rounded-full mb-[1.8rem]">
-              <span className="w-[5px] h-[5px] rounded-full bg-[var(--magenta)] animate-pulse"></span>
-              Licencia Exclusiva · Un candidato por estado
-            </span>
-          </Reveal>
-          <Reveal delay={0.15}>
-            <h2 className="font-serif font-black text-[clamp(2.2rem,5.5vw,4rem)] leading-[0.95] tracking-[-0.04em] text-[var(--crema)] mb-[1.2rem]">
-              Esta plataforma no es de nadie<br/>
-              <em className="text-[var(--magenta)] italic">hasta que alguien la firma.</em>
-            </h2>
-          </Reveal>
-          <Reveal delay={0.25}>
-            <p className="font-serif italic text-[clamp(1rem,2vw,1.3rem)] text-[var(--crema)]/60 max-w-[600px] mx-auto mb-[3rem] leading-[1.6]">
-              ConnectX opera bajo modelo de licencia territorial exclusiva. Solo un candidato por estado puede activarla antes de {PLATFORM.urgencyDeadline}. Si no es la persona que la firma, será la persona contra quien se use.
-            </p>
-          </Reveal>
-
-          <Reveal delay={0.35}>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-[1.2rem] mb-[3rem]">
-              {[
-                { num: '1', label: 'Candidato por Estado', icon: '🔒', desc: 'Licencia territorial. No compartida.' },
-                { num: PLATFORM.electionYear.toString(), label: 'Ventana de adopción', icon: '⏳', desc: `Cierre estratégico ${PLATFORM.urgencyDeadline}` },
-                { num: PLATFORM.municipalitiesCount + '', label: 'Municipios en alcance', icon: '🗺️', desc: `Cobertura total de ${PLATFORM.state}` },
-              ].map((item, i) => (
-                <div key={i} className="bg-white/5 border border-white/10 rounded-[1rem] p-[1.8rem] text-left hover:bg-white/8 transition-all">
-                  <span className="text-[1.8rem] block mb-[0.6rem]">{item.icon}</span>
-                  <p className="font-serif font-black text-[2rem] text-[var(--solar)] leading-none mb-[0.25rem]">{item.num}</p>
-                  <p className="font-mono text-[0.65rem] font-extrabold uppercase tracking-widest text-[var(--crema)] mb-[0.35rem]">{item.label}</p>
-                  <p className="text-[0.75rem] text-[var(--crema)]/45 leading-[1.55]">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-
-          <Reveal delay={0.45}>
-            <div className="inline-flex flex-col sm:flex-row items-center gap-[0.75rem]">
-              <div className="bg-[var(--magenta)] text-white font-bold text-[0.9rem] px-[2.2rem] py-[1rem] rounded-full shadow-[0_0_40px_rgba(229,0,122,0.4)] hover:shadow-[0_0_60px_rgba(229,0,122,0.6)] transition-all cursor-default">
-                Solicitar licencia exclusiva →
-              </div>
-              <p className="font-mono text-[0.58rem] text-[var(--crema)]/30 uppercase tracking-widest">
-                panaderiabelenb@gmail.com · ConnectX
-              </p>
-            </div>
-          </Reveal>
-        </div>
-      </section>
+      {/* GLOBAl FLOATING ASSISTANT BUTTON */}
+      <button 
+         onClick={() => onNavigate('citizen', 'home', 'chat')}
+         className="fixed bottom-6 right-6 z-[950] w-[60px] h-[60px] rounded-full shadow-[0_10px_25px_rgba(0,0,0,0.2)] bg-[var(--magenta)] text-[1.8rem] flex items-center justify-center transform transition-all hover:scale-105 hover:shadow-[0_15px_30px_rgba(229,0,122,0.4)] active:scale-95"
+      >
+        🌽
+      </button>
 
       {/* FOOTER */}
-      <footer className="bg-[var(--tinta)] px-[2rem] py-[2.6rem] text-center border-t-[1px] border-white/10">
-        <span className="font-serif font-black text-[1.9rem] tracking-[-0.03em] text-[var(--crema)] block mb-[0.3rem]">{CANDIDATE.firstName} <em className="italic text-[var(--magenta)]">{CANDIDATE.lastName}</em></span>
-        <p className="font-serif italic text-[0.88rem] text-[var(--crema)]/50 mb-[1rem]">{CANDIDATE.currentPosition} · {CANDIDATE.seekingPosition}</p>
+      <footer className="bg-[var(--tinta)] px-[2rem] py-[2.6rem] text-center border-t-[5px] border-[var(--magenta)]">
+        <span className="font-serif font-black text-[1.9rem] tracking-[-0.03em] text-[var(--crema)] block mb-[0.3rem]">Geraldine <em className="italic text-[var(--magenta)]">Ponce</em></span>
+        <p className="font-serif italic text-[0.88rem] text-[var(--crema)]/50 mb-[1rem]">Presidenta Municipal de Tepic · Candidata a Gobernadora de Nayarit 2027</p>
         <div className="h-[3px] w-[84px] mx-auto my-[0.9rem] rounded-[2px]" style={{background:'linear-gradient(90deg,var(--magenta),var(--solar),var(--turq),var(--verde))'}}></div>
         <p className="font-mono text-[0.58rem] text-[var(--crema)]/25">Estrategia digital: <a href="https://connectx.mx" target="_blank" rel="noreferrer" className="text-[var(--solar)] hover:opacity-80">ConnectX</a> · Tepic, Nayarit</p>
       </footer>

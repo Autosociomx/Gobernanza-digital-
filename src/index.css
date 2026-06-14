@@ -7,6 +7,31 @@
   --font-mono: 'Spline Sans Mono', ui-monospace, SFMono-Regular, monospace;
 }
 
+html {
+  scroll-behavior: smooth;
+  font-size: 20px; /* Enhanced for better legibility in public services */
+}
+
+/* Strategic Accessibility Utilities */
+.text-legible {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  letter-spacing: -0.01em;
+  font-weight: 500;
+  color: var(--tinta);
+}
+
+.high-contrast-card {
+  background: white;
+  border: 3px solid var(--tinta);
+  box-shadow: 0 12px 0 var(--tinta);
+}
+
+.accessible-focus:focus {
+  outline: 4px solid var(--solar);
+  outline-offset: 4px;
+}
+
 :root {
   --magenta:  #E5007A;
   --turq:     #00BCD4;
@@ -31,7 +56,7 @@ body {
   color: var(--tinta);
   font-family: var(--inst);
   overflow-x: hidden;
-  line-height: 1.6;
+  line-height: 1.8; /* Increased line-height for easier reading */
 }
 
 /* Patrón nierika 5 colores */

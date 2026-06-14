@@ -104,6 +104,23 @@ service cloud.firestore {
              data.metrics.integrityScore >= 0 && data.metrics.integrityScore <= 100;
     }
 
+    function isValidForumThread(data) {
+      return hasRequiredFields(['title', 'content', 'authorId', 'authorName', 'category', 'createdAt']) &&
+             data.title is string && data.title.size() > 0 && data.title.size() < 200 &&
+             data.content is string && data.content.size() > 0 && data.content.size() < 5000 &&
+             data.authorId == request.auth.uid &&
+             data.category in ['PROBLEMAS_TECNICOS', 'CONSEJOS_OPERACION', 'DISCUSION_OBRAS', 'GENERAL'] &&
+             data.createdAt == request.time;
+    }
+
+    function isValidForumComment(data) {
+      return hasRequiredFields(['threadId', 'content', 'authorId', 'authorName', 'createdAt']) &&
+             data.threadId is string &&
+             data.content is string && data.content.size() > 0 && data.content.size() < 2000 &&
+             data.authorId == request.auth.uid &&
+             data.createdAt == request.time;
+    }
+
     // ===============================================================
     // Rules
     // ===============================================================
@@ -131,6 +148,23 @@ service cloud.firestore {
     match /audit_logs/{logId} {
       allow read: if isAdmin();
       allow create: if isAuthenticated() && isValidAuditLog(request.resource.data);
+    }
+
+    match /forum_threads/{threadId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidForumThread(request.resource.data);
+      allow update: if isAuthenticated() && (
+        (isOwner(resource.data.authorId) && isValidForumThread(request.resource.data)) ||
+        isAdmin() ||
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['commentCount']))
+      );
+      allow delete: if isAdmin() || (isAuthenticated() && isOwner(resource.data.authorId));
+
+      match /comments/{commentId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated() && isValidForumComment(request.resource.data);
+        allow delete: if isAdmin() || (isAuthenticated() && isOwner(resource.data.authorId));
+      }
     }
 
     // Default deny
