@@ -4,9 +4,10 @@ import { C5Dashboard } from './components/C5Dashboard';
 import { CitizenApp } from './components/CitizenApp';
 import { DeveloperChecklist } from './components/DeveloperChecklist';
 import { ExecutiveFolder } from './components/ExecutiveFolder';
+import { MeetingBrief } from './components/MeetingBrief';
 
 function App() {
-  const [currentView, setCurrentView] = useState<'landing' | 'c5' | 'citizen' | 'dev' | 'executive'>('landing');
+  const [currentView, setCurrentView] = useState<'landing' | 'c5' | 'citizen' | 'dev' | 'executive' | 'meeting'>('landing');
 
   if (currentView === 'c5') {
     return <C5Dashboard onLogout={() => setCurrentView('landing')} />;
@@ -22,6 +23,10 @@ function App() {
 
   if (currentView === 'executive') {
     return <ExecutiveFolder onBack={() => setCurrentView('landing')} />;
+  }
+
+  if (currentView === 'meeting') {
+    return <MeetingBrief onBack={() => setCurrentView('landing')} />;
   }
 
   return (
@@ -77,7 +82,7 @@ function App() {
               </div>
             </button>
 
-            <button 
+            <button
               onClick={() => setCurrentView('dev')}
               className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-xl transition-colors text-left mt-2 border-t border-white/5"
             >
@@ -85,6 +90,17 @@ function App() {
               <div>
                 <p className="text-[11px] font-bold text-white uppercase tracking-tight">Roadmap Técnico</p>
                 <p className="text-[9px] text-slate-500 uppercase">Estado de Implementación</p>
+              </div>
+            </button>
+
+            <button
+              onClick={() => setCurrentView('meeting')}
+              className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-xl transition-colors text-left border-t border-white/5 mt-1"
+            >
+              <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></div>
+              <div>
+                <p className="text-[11px] font-bold text-white uppercase tracking-tight">Reunión Galván</p>
+                <p className="text-[9px] text-slate-500 uppercase">Guión + Brief Ejecutivo</p>
               </div>
             </button>
           </div>
