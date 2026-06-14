@@ -546,6 +546,89 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
         </div>
       </section>
 
+      {/* TEPIC → NAYARIT: Escalera de logros hacia la gubernatura */}
+      <section className="px-[2rem] py-[5.5rem] bg-[var(--crema)]" id="escalera">
+        <div className="max-w-[1080px] mx-auto">
+          <Reveal delay={0.1}>
+            <span className="inline-block font-mono text-[0.6rem] font-bold tracking-[0.2em] uppercase text-white px-[0.9rem] py-[0.32rem] rounded-full mb-[1.2rem]" style={{background:'var(--magenta)'}}>Prueba · No Promesa</span>
+          </Reveal>
+          <Reveal delay={0.2}>
+            <h2 className="font-serif font-black text-[clamp(2rem,5.5vw,3.8rem)] leading-[0.96] tracking-[-0.04em] mb-[0.6rem]">
+              Lo que Tepic ya demostró.<br/>
+              <em className="text-[var(--magenta)] italic">Lo que Nayarit va a vivir.</em>
+            </h2>
+          </Reveal>
+          <Reveal delay={0.3}>
+            <p className="font-serif italic text-[clamp(1rem,2vw,1.3rem)] text-[var(--gris)] max-w-[620px] mb-[3.5rem] leading-[1.6]">
+              Cada logro en Tepic es un modelo probado listo para replicarse en los 20 municipios de Nayarit. ConnectX es la infraestructura que hace ese salto posible.
+            </p>
+          </Reveal>
+
+          <div className="space-y-[1.2rem]">
+            {[
+              {
+                tepic: { icon: '🔒', stat: 'Top 10 nacional', label: 'Percepción de seguridad (INEGI)', detail: 'Alerta Violeta 2.0 + drones reconocida por la ONU/PNUD' },
+                nayarit: { stat: '20 municipios', label: 'con protocolo Violeta unificado', detail: 'Un solo centro de mando estatal para todas las alertas del estado' },
+                color: '#9333ea',
+              },
+              {
+                tepic: { icon: '🏗️', stat: '60+ obras', label: 'Trazadas y auditables en Tepic', detail: '350 km de calles rehabilitadas documentadas' },
+                nayarit: { stat: '100% obras', label: 'de Nayarit visibles en tiempo real', detail: 'Ningún gobernador ha tenido esto — cada peso de obra pública del estado en una pantalla' },
+                color: 'var(--turq)',
+              },
+              {
+                tepic: { icon: '💰', stat: '+78%', label: 'Recaudación predial vs 2021', detail: 'Tesorería Digital con recordatorios automáticos' },
+                nayarit: { stat: '$XX00M MXN', label: 'potencial recaudatorio adicional', detail: 'Si cada municipio de Nayarit replica el modelo fiscal de Tepic' },
+                color: 'var(--verde)',
+              },
+              {
+                tepic: { icon: '🌐', stat: '1ª mujer', label: 'Presidenta Conf. Nacional Seg. Pública', detail: 'Red de contacto con 2,000+ municipios del país' },
+                nayarit: { stat: 'Estándar nacional', label: 'ConnectX como reforma federal', detail: 'La plataforma de Tepic se convierte en ley de gobernanza digital para todos los municipios de México' },
+                color: 'var(--solar)',
+              },
+              {
+                tepic: { icon: '🌽', stat: '519K', label: 'seguidores en redes sociales', detail: 'Mayor alcance digital que cualquier político de Nayarit' },
+                nayarit: { stat: 'Datos en vivo', label: 'como argumento de campaña permanente', detail: 'Cada métrica del Observatorio es un post, un spot, una conferencia — sin necesidad de fabricar logros' },
+                color: 'var(--magenta)',
+              },
+            ].map((row, i) => (
+              <Reveal key={i} delay={0.1 * i}>
+                <div className="grid grid-cols-1 md:grid-cols-[auto_1fr_48px_1fr] items-center gap-0 bg-white rounded-[1rem] border border-black/8 overflow-hidden hover:shadow-lg transition-all">
+                  {/* Ícono */}
+                  <div className="flex items-center justify-center text-[2rem] p-[1.4rem_1.6rem] shrink-0">
+                    {row.tepic.icon}
+                  </div>
+                  {/* Tepic */}
+                  <div className="p-[1.4rem_1.5rem_1.4rem_0.5rem] border-r border-black/5">
+                    <div className="font-mono text-[0.5rem] font-bold uppercase tracking-[0.14em] text-[var(--gris)] mb-[0.25rem]">Tepic · Hoy</div>
+                    <div className="font-serif font-black text-[1.35rem] leading-none mb-[0.2rem]" style={{color: row.color}}>{row.tepic.stat}</div>
+                    <div className="font-sans font-bold text-[0.75rem] text-[var(--tinta)] mb-[0.15rem]">{row.tepic.label}</div>
+                    <div className="font-sans text-[0.68rem] text-[var(--gris)] leading-[1.5]">{row.tepic.detail}</div>
+                  </div>
+                  {/* Flecha */}
+                  <div className="flex items-center justify-center text-[1.4rem] font-black py-[1.4rem]" style={{color: row.color}}>→</div>
+                  {/* Nayarit */}
+                  <div className="p-[1.4rem_1.5rem_1.4rem_1rem]" style={{background: row.color + '08'}}>
+                    <div className="font-mono text-[0.5rem] font-bold uppercase tracking-[0.14em] mb-[0.25rem]" style={{color: row.color}}>Nayarit · 2027</div>
+                    <div className="font-serif font-black text-[1.35rem] leading-none mb-[0.2rem]" style={{color: row.color}}>{row.nayarit.stat}</div>
+                    <div className="font-sans font-bold text-[0.75rem] text-[var(--tinta)] mb-[0.15rem]">{row.nayarit.label}</div>
+                    <div className="font-sans text-[0.68rem] text-[var(--gris)] leading-[1.5]">{row.nayarit.detail}</div>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+
+          <Reveal delay={0.5}>
+            <div className="mt-[2.5rem] p-[1.8rem_2.2rem] rounded-[1rem] border-[2px] border-[var(--magenta)]/20 bg-[var(--magenta)]/5 text-center">
+              <p className="font-serif italic text-[clamp(1rem,2vw,1.25rem)] text-[var(--tinta)] leading-[1.6]">
+                "Un gobernador que ya sabe gobernar digitalmente<br/>no necesita aprender en el cargo. <em className="text-[var(--magenta)] not-italic font-black">Ya llega con prueba.</em>"
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* ASISTENTE IA (MODIFIED) */}
       <section className="px-[2rem] py-[5.5rem] bg-[var(--tinta)] relative overflow-hidden" id="ia">
         <div className="absolute inset-0 opacity-5" style={{backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpolygon points='40,3 77,40 40,77 3,40' fill='none' stroke='%23FFB300' stroke-width='1.8'/%3E%3Cpolygon points='40,14 66,40 40,66 14,40' fill='none' stroke='%2300BCD4' stroke-width='1.4'/%3E%3C/svg%3E\")", backgroundSize: '80px 80px'}}></div>
