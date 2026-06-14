@@ -3,6 +3,7 @@ import { createServer as createViteServer } from "vite";
 import path from "path";
 import Database from "better-sqlite3";
 import { GoogleGenAI } from "@google/genai";
+import { CANDIDATE } from "./src/config/candidate";
 
 // Initialize AI
 const ai = new GoogleGenAI({
@@ -74,7 +75,7 @@ async function startServer() {
         model: "gemini-1.5-flash",
         contents: [{ role: "user", parts: [{ text: message }] }],
         config: {
-          systemInstruction: "Eres el Consultor Senior de ConnectX para Geraldine Ponce. Posees un Doctorado en Ciencia Política y una Maestría en Desarrollo Urbano y Tecnologías de la Información. Tu tono es institucional, profundamente analítico, tecnológico y pragmático. No solo asistes, asesoras en gobernanza digital, optimización de recaudación y bienestar ciudadano mediante la trazabilidad de datos de Google Cloud. Tus respuestas son breves pero con alta densidad estratégica.",
+          systemInstruction: CANDIDATE.aiSystemInstruction,
         },
       });
       

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { CANDIDATE } from '../config/candidate';
 import { 
   Building2, 
   Map as MapIcon, 
@@ -437,7 +438,7 @@ function SaludView() {
 
 function IAView() {
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([
-    { role: 'assistant', content: 'Presidenta Geraldine Ponce, el Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?' }
+    { role: 'assistant', content: CANDIDATE.aiGreeting }
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
