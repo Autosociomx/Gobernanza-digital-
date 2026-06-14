@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
+import { CANDIDATE, PLATFORM } from '../config/candidate';
 
 // Ojos de Dios 3D component
 const OjosEscena = () => {
@@ -235,9 +236,9 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
           <div className="foto-frame group">
             <img 
               className="w-full aspect-[3/4] object-cover object-top rounded-[0.8rem] saturate-[1.06]" 
-              src="/geraldine-hero.jpg" 
-              onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1541614101331-1a5a3a194e92?w=500&h=625&fit=crop&crop=faces&auto=format&q=80"; }}
-              alt="Geraldine Ponce — Presidenta Municipal de Tepic" 
+              src={CANDIDATE.photoPath}
+              onError={(e) => { e.currentTarget.src = CANDIDATE.photoFallback; }}
+              alt={CANDIDATE.photoAlt} 
             />
             <div className="absolute -top-[12px] -right-[10px] bg-[var(--magenta)] text-white font-mono text-[0.58rem] font-bold tracking-[0.08em] uppercase px-[0.75rem] py-[0.45rem] rounded-[0.4rem] shadow-[0_6px_18px_rgba(229,0,122,0.4)] max-w-[150px] text-center leading-[1.35]">Visión de Estado: Nayarit Digital</div>
             {/* Refined Badge */}
@@ -547,10 +548,62 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
           </div>
       </section>
 
+      {/* EXCLUSIVIDAD — sección de cierre estratégico */}
+      <section className="px-[2rem] py-[5rem] bg-[var(--tinta)] relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.04]" style={{backgroundImage:'repeating-linear-gradient(45deg,var(--magenta) 0,var(--magenta) 1px,transparent 0,transparent 50%)',backgroundSize:'24px 24px'}}></div>
+        <div className="max-w-[860px] mx-auto text-center relative z-10">
+          <Reveal delay={0.05}>
+            <span className="inline-flex items-center gap-[0.5rem] font-mono text-[0.58rem] font-extrabold tracking-[0.22em] uppercase text-[var(--magenta)] border border-[var(--magenta)]/40 bg-[var(--magenta)]/10 px-[1rem] py-[0.4rem] rounded-full mb-[1.8rem]">
+              <span className="w-[5px] h-[5px] rounded-full bg-[var(--magenta)] animate-pulse"></span>
+              Licencia Exclusiva · Un candidato por estado
+            </span>
+          </Reveal>
+          <Reveal delay={0.15}>
+            <h2 className="font-serif font-black text-[clamp(2.2rem,5.5vw,4rem)] leading-[0.95] tracking-[-0.04em] text-[var(--crema)] mb-[1.2rem]">
+              Esta plataforma no es de nadie<br/>
+              <em className="text-[var(--magenta)] italic">hasta que alguien la firma.</em>
+            </h2>
+          </Reveal>
+          <Reveal delay={0.25}>
+            <p className="font-serif italic text-[clamp(1rem,2vw,1.3rem)] text-[var(--crema)]/60 max-w-[600px] mx-auto mb-[3rem] leading-[1.6]">
+              ConnectX opera bajo modelo de licencia territorial exclusiva. Solo un candidato por estado puede activarla antes de {PLATFORM.urgencyDeadline}. Si no es la persona que la firma, será la persona contra quien se use.
+            </p>
+          </Reveal>
+
+          <Reveal delay={0.35}>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-[1.2rem] mb-[3rem]">
+              {[
+                { num: '1', label: 'Candidato por Estado', icon: '🔒', desc: 'Licencia territorial. No compartida.' },
+                { num: PLATFORM.electionYear.toString(), label: 'Ventana de adopción', icon: '⏳', desc: `Cierre estratégico ${PLATFORM.urgencyDeadline}` },
+                { num: PLATFORM.municipalitiesCount + '', label: 'Municipios en alcance', icon: '🗺️', desc: `Cobertura total de ${PLATFORM.state}` },
+              ].map((item, i) => (
+                <div key={i} className="bg-white/5 border border-white/10 rounded-[1rem] p-[1.8rem] text-left hover:bg-white/8 transition-all">
+                  <span className="text-[1.8rem] block mb-[0.6rem]">{item.icon}</span>
+                  <p className="font-serif font-black text-[2rem] text-[var(--solar)] leading-none mb-[0.25rem]">{item.num}</p>
+                  <p className="font-mono text-[0.65rem] font-extrabold uppercase tracking-widest text-[var(--crema)] mb-[0.35rem]">{item.label}</p>
+                  <p className="text-[0.75rem] text-[var(--crema)]/45 leading-[1.55]">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.45}>
+            <div className="inline-flex flex-col sm:flex-row items-center gap-[0.75rem]">
+              <div className="bg-[var(--magenta)] text-white font-bold text-[0.9rem] px-[2.2rem] py-[1rem] rounded-full shadow-[0_0_40px_rgba(229,0,122,0.4)] hover:shadow-[0_0_60px_rgba(229,0,122,0.6)] transition-all cursor-default">
+                Solicitar licencia exclusiva →
+              </div>
+              <p className="font-mono text-[0.58rem] text-[var(--crema)]/30 uppercase tracking-widest">
+                panaderiabelenb@gmail.com · ConnectX
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* FOOTER */}
-      <footer className="bg-[var(--tinta)] px-[2rem] py-[2.6rem] text-center border-t-[5px] border-[var(--magenta)]">
-        <span className="font-serif font-black text-[1.9rem] tracking-[-0.03em] text-[var(--crema)] block mb-[0.3rem]">Geraldine <em className="italic text-[var(--magenta)]">Ponce</em></span>
-        <p className="font-serif italic text-[0.88rem] text-[var(--crema)]/50 mb-[1rem]">Presidenta Municipal de Tepic · Candidata a Gobernadora de Nayarit 2027</p>
+      <footer className="bg-[var(--tinta)] px-[2rem] py-[2.6rem] text-center border-t-[1px] border-white/10">
+        <span className="font-serif font-black text-[1.9rem] tracking-[-0.03em] text-[var(--crema)] block mb-[0.3rem]">{CANDIDATE.firstName} <em className="italic text-[var(--magenta)]">{CANDIDATE.lastName}</em></span>
+        <p className="font-serif italic text-[0.88rem] text-[var(--crema)]/50 mb-[1rem]">{CANDIDATE.currentPosition} · {CANDIDATE.seekingPosition}</p>
         <div className="h-[3px] w-[84px] mx-auto my-[0.9rem] rounded-[2px]" style={{background:'linear-gradient(90deg,var(--magenta),var(--solar),var(--turq),var(--verde))'}}></div>
         <p className="font-mono text-[0.58rem] text-[var(--crema)]/25">Estrategia digital: <a href="https://connectx.mx" target="_blank" rel="noreferrer" className="text-[var(--solar)] hover:opacity-80">ConnectX</a> · Tepic, Nayarit</p>
       </footer>
