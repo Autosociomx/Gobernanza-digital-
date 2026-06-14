@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ConnectX · Diagnóstico Océanos Azules · Nayarit</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,900;1,400;1,900&family=Instrument+Sans:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap');
+:root{--m:#E5007A;--c:#00BCD4;--s:#FFB300;--v:#00873E;--b:#60a5fa;--bg:#0a0a0f;--bg2:#111118;--border:rgba(255,255,255,.08)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Instrument Sans',sans-serif;background:var(--bg);color:#fff;min-height:100vh}
+
+/* NAV */
+.topbar{position:sticky;top:0;z-index:99;background:rgba(10,10,15,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.75rem 1.5rem;display:flex;align-items:center;gap:1rem}
+.brand{font-family:'Space Mono',monospace;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.18em;color:var(--m)}
+.toggle{margin-left:auto;display:flex;gap:.25rem;background:rgba(255,255,255,.05);padding:.25rem;border-radius:2rem;border:1px solid var(--border)}
+.toggle button{font-family:'Space Mono',monospace;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;border:none;cursor:pointer;padding:.45rem 1.2rem;border-radius:2rem;background:transparent;color:#666;transition:all .2s}
+.toggle button.active{background:white;color:#0a0a0f}
+.btn-print{font-family:'Space Mono',monospace;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;background:transparent;color:#555;border:1px solid #333;cursor:pointer;padding:.45rem 1rem;border-radius:2rem;transition:all .2s}
+.btn-print:hover{color:white;border-color:#666}
+
+/* LAYOUT */
+.wrap{max-width:1100px;margin:0 auto;padding:2.5rem 1.5rem}
+
+/* KPI ROW */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:2.5rem}
+.kpi{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:.75rem;padding:1.1rem}
+.kpi-n{font-family:'Fraunces',serif;font-weight:900;font-size:1.7rem;line-height:1;margin-bottom:.25rem}
+.kpi-label{font-size:.72rem;font-weight:700;color:white;margin-bottom:.15rem;line-height:1.3}
+.kpi-sub{font-family:'Space Mono',monospace;font-size:.48rem;color:#555;text-transform:uppercase;letter-spacing:.08em}
+
+/* TITLE */
+.section-title{font-family:'Fraunces',serif;font-weight:900;font-size:2rem;line-height:1;margin-bottom:.5rem}
+.section-sub{font-size:.88rem;color:#666;max-width:580px;line-height:1.65;margin-bottom:2rem}
+
+/* CARDS GRID */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-bottom:1.5rem}
+.card{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:.9rem;padding:1.4rem;cursor:pointer;transition:all .25s;text-align:left}
+.card:hover{background:rgba(255,255,255,.06);transform:translateY(-2px)}
+.card.open{transform:translateY(-2px)}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.8rem}
+.card-icon{font-size:1.8rem}
+.badge{font-family:'Space Mono',monospace;font-size:.45rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;padding:.2rem .6rem;border-radius:2rem}
+.card-name{font-family:'Fraunces',serif;font-weight:900;font-size:1rem;color:white;margin-bottom:.4rem}
+.card-amount{font-family:'Fraunces',serif;font-weight:900;font-size:1.5rem;line-height:1;margin-bottom:.2rem}
+.card-period{font-family:'Space Mono',monospace;font-size:.45rem;color:#555;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.7rem}
+.card-problem{font-size:.72rem;color:#888;line-height:1.6}
+.card-cta{font-family:'Space Mono',monospace;font-size:.5rem;text-transform:uppercase;letter-spacing:.1em;margin-top:.8rem}
+
+/* DETALLE */
+.detalle{border-radius:.9rem;padding:1.8rem;margin-bottom:1.5rem;display:none}
+.detalle.visible{display:block}
+.detalle-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
+.det-label{font-family:'Space Mono',monospace;font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;margin-bottom:.5rem}
+.det-text{font-size:.85rem;color:rgba(255,255,255,.75);line-height:1.65}
+.det-box{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:.6rem;padding:1rem;margin-top:.8rem}
+.det-box-label{font-family:'Space Mono',monospace;font-size:.48rem;color:#555;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem}
+.det-number{font-family:'Fraunces',serif;font-weight:900;font-size:1.8rem;line-height:1}
+.det-calc{font-size:.72rem;color:#888;line-height:1.6}
+
+/* TOTALES */
+.totales{border:1px solid var(--border);border-radius:.9rem;overflow:hidden;margin-bottom:1.5rem}
+.totales-header{background:rgba(255,255,255,.04);padding:1rem 1.5rem;border-bottom:1px solid var(--border)}
+.totales-header p{font-family:'Space Mono',monospace;font-size:.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:#666}
+.totales-body{padding:1.5rem}
+.totales-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.2rem}
+.total-card{text-align:center;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:.75rem;padding:1.2rem}
+.total-card.highlight{border-color:rgba(229,0,122,.4);background:rgba(229,0,122,.07)}
+.total-n{font-family:'Fraunces',serif;font-weight:900;font-size:1.8rem;line-height:1;margin-bottom:.3rem}
+.total-label{font-size:.7rem;font-weight:700;color:white;margin-bottom:.15rem}
+.total-sub{font-family:'Space Mono',monospace;font-size:.45rem;color:#555;text-transform:uppercase;letter-spacing:.07em}
+.conclusión{background:rgba(0,0,0,.4);border:1px solid var(--border);border-radius:.75rem;padding:1.2rem;text-align:center}
+.conclusión em{color:var(--m);font-style:normal;font-weight:900}
+.conclusión p{font-family:'Fraunces',serif;font-style:italic;font-size:1.05rem;color:rgba(255,255,255,.8);line-height:1.5;margin-bottom:.5rem}
+.conclusión small{font-family:'Space Mono',monospace;font-size:.5rem;color:#555;text-transform:uppercase;letter-spacing:.1em}
+
+/* DOBLE FILO */
+.filo{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.filo-card{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:.9rem;padding:1.4rem}
+.filo-tag{font-family:'Space Mono',monospace;font-size:.5rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;margin-bottom:.5rem}
+.filo-title{font-family:'Fraunces',serif;font-weight:900;font-size:1rem;color:white;margin-bottom:.5rem}
+.filo-body{font-size:.75rem;color:#888;line-height:1.6}
+
+/* HIDDEN ON SCREEN ONLY STATES */
+.nivel-municipal,.nivel-estatal{display:none}
+.nivel-municipal.show,.nivel-estatal.show{display:block}
+.kpi-municipal,.kpi-estatal{display:none}
+.kpi-municipal.show,.kpi-estatal.show{display:grid}
+
+@media(max-width:720px){
+  .grid{grid-template-columns:1fr}
+  .kpi-row,.kpi-municipal,.kpi-estatal{grid-template-columns:repeat(2,1fr)}
+  .detalle-grid,.totales-grid,.filo{grid-template-columns:1fr}
+}
+@media print{
+  .topbar{position:relative}
+  .toggle,.btn-print{display:none}
+  body{background:white;color:#000}
+  .card,.detalle,.totales,.filo-card,.kpi{background:white;border:1px solid #ddd}
+  .kpi-n,.card-amount,.total-n,.det-number,.section-title{color:#000}
+  .conclusión{background:#f5f5f5}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="brand">ConnectX · Océanos Azules · Nayarit</span>
+  <div class="toggle">
+    <button class="active" onclick="setNivel('municipal',this)">Municipal</button>
+    <button onclick="setNivel('estatal',this)">Estatal</button>
+  </div>
+  <button class="btn-print" onclick="window.print()">Imprimir / PDF</button>
+</div>
+
+<div class="wrap">
+
+  <!-- KPI MUNICIPAL -->
+  <div class="kpi-row kpi-municipal show">
+    <div class="kpi"><div class="kpi-n" style="color:var(--m)">$2,838M</div><div class="kpi-label">Presupuesto 20 municipios</div><div class="kpi-sub">Nayarit 2026</div></div>
+    <div class="kpi"><div class="kpi-n" style="color:var(--c)">$870M</div><div class="kpi-label">Recuperable con ConnectX</div><div class="kpi-sub">20 municipios / año</div></div>
+    <div class="kpi"><div class="kpi-n" style="color:var(--s)">30.6%</div><div class="kpi-label">Del presupuesto que se pierde</div><div class="kpi-sub">Por falta de visibilidad</div></div>
+    <div class="kpi"><div class="kpi-n" style="color:var(--v)">5</div><div class="kpi-label">Dependencias críticas</div><div class="kpi-sub">80% del impacto</div></div>
+  </div>
+
+  <!-- KPI ESTATAL -->
+  <div class="kpi-row kpi-estatal">
+    <div class="kpi"><div class="kpi-n" style="color:var(--m)">$32,200M</div><div class="kpi-label">Presupuesto estatal Nayarit</div><div class="kpi-sub">2026 aprobado</div></div>
+    <div class="kpi"><div class="kpi-n" style="color:var(--c)">$1,834M</div><div class="kpi-label">Recuperable a nivel estatal</div><div class="kpi-sub">Con 5 océanos azules</div></div>
+    <div class="kpi"><div class="kpi-n" style="color:var(--s)">$2,704M</div><div class="kpi-label">Total municipal + estatal</div><div class="kpi-sub">Nayarit completo</div></div>
+    <div class="kpi"><div class="kpi-n" style="color:var(--v)">5.7%</div><div class="kpi-label">Del presupuesto estatal</div><div class="kpi-sub">Recuperable año 1</div></div>
+  </div>
+
+  <!-- NIVEL MUNICIPAL -->
+  <div class="nivel-municipal show">
+    <h1 class="section-title">Los 5 océanos azules municipales</h1>
+    <p class="section-sub">Dinero que los municipios ya deberían tener — que ConnectX hace visible y recuperable sin subir impuestos ni endeudarse.</p>
+  </div>
+
+  <!-- NIVEL ESTATAL -->
+  <div class="nivel-estatal">
+    <h1 class="section-title">Los 5 océanos azules a nivel estado</h1>
+    <p class="section-sub">El mismo modelo aplicado a la maquinaria estatal. Los números escalan, la lógica es idéntica. Sin subir impuestos.</p>
+  </div>
+
+  <!-- CARDS -->
+  <div class="grid">
+
+    <!-- 1. CATASTRO -->
+    <div class="card" onclick="toggle('catastro')" id="card-catastro">
+      <div class="card-top">
+        <span class="card-icon">🗺️</span>
+        <span class="badge" style="background:rgba(229,0,122,.15);color:var(--m);border:1px solid rgba(229,0,122,.3)">Mayor ROI</span>
+      </div>
+      <div class="card-name">Catastro + Predial</div>
+      <div class="card-amount nivel-municipal show" style="color:var(--m)">$420M MXN/año</div>
+      <div class="card-amount nivel-estatal" style="color:var(--m)">$252M MXN/año</div>
+      <div class="card-period nivel-municipal show">20 municipios Nayarit</div>
+      <div class="card-period nivel-estatal">Efecto multiplicador federal</div>
+      <div class="card-problem">El 40–60% de propiedades no está en el catastro. El municipio no puede cobrar lo que no ve.</div>
+      <div class="card-cta" style="color:var(--m)">Ver cómo ConnectX lo resuelve →</div>
+    </div>
+
+    <!-- 2. COMPRAS -->
+    <div class="card" onclick="toggle('compras')" id="card-compras">
+      <div class="card-top">
+        <span class="card-icon">📦</span>
+        <span class="badge" style="background:rgba(0,188,212,.15);color:var(--c);border:1px solid rgba(0,188,212,.3)">Más rápido</span>
+      </div>
+      <div class="card-name">Compras y Proveedores</div>
+      <div class="card-amount nivel-municipal show" style="color:var(--c)">$170M MXN/año</div>
+      <div class="card-amount nivel-estatal" style="color:var(--c)">$724M MXN/año</div>
+      <div class="card-period nivel-municipal show">20 municipios Nayarit</div>
+      <div class="card-period nivel-estatal">Compras estatales $32,200M × 15%</div>
+      <div class="card-problem">Sin marketplace transparente, el 15–25% de cada compra se pierde en sobreprecio o corrupción.</div>
+      <div class="card-cta" style="color:var(--c)">Ver cómo ConnectX lo resuelve →</div>
+    </div>
+
+    <!-- 3. NÓMINA -->
+    <div class="card" onclick="toggle('nomina')" id="card-nomina">
+      <div class="card-top">
+        <span class="card-icon">👥</span>
+        <span class="badge" style="background:rgba(255,179,0,.15);color:var(--s);border:1px solid rgba(255,179,0,.3)">Impacto inmediato</span>
+      </div>
+      <div class="card-name">Nómina + Aviadores</div>
+      <div class="card-amount nivel-municipal show" style="color:var(--s)">$90M MXN/año</div>
+      <div class="card-amount nivel-estatal" style="color:var(--s)">$644M MXN/año</div>
+      <div class="card-period nivel-municipal show">20 municipios Nayarit</div>
+      <div class="card-period nivel-estatal">Nómina estatal $12,880M × 5%</div>
+      <div class="card-problem">Empleados fantasma ("aviadores") consumen entre el 5–15% de la nómina en todos los municipios.</div>
+      <div class="card-cta" style="color:var(--s)">Ver cómo ConnectX lo resuelve →</div>
+    </div>
+
+    <!-- 4. LICENCIAS -->
+    <div class="card" onclick="toggle('licencias')" id="card-licencias">
+      <div class="card-top">
+        <span class="card-icon">📋</span>
+        <span class="badge" style="background:rgba(0,135,62,.15);color:var(--v);border:1px solid rgba(0,135,62,.3)">Anti-corrupción</span>
+      </div>
+      <div class="card-name">Licencias y Permisos</div>
+      <div class="card-amount nivel-municipal show" style="color:var(--v)">$80M MXN/año</div>
+      <div class="card-amount nivel-estatal" style="color:var(--v)">$200M MXN/año</div>
+      <div class="card-period nivel-municipal show">Formalización + ISAI</div>
+      <div class="card-period nivel-estatal">Inversión privada + ISAI estatal</div>
+      <div class="card-problem">Trámites opacos = "mordida" obligatoria. Inversión privada se va a donde el permiso es predecible.</div>
+      <div class="card-cta" style="color:var(--v)">Ver cómo ConnectX lo resuelve →</div>
+    </div>
+
+    <!-- 5. AGUA -->
+    <div class="card" onclick="toggle('agua')" id="card-agua">
+      <div class="card-top">
+        <span class="card-icon">💧</span>
+        <span class="badge" style="background:rgba(96,165,250,.15);color:var(--b);border:1px solid rgba(96,165,250,.3)">Ciudadano lo siente</span>
+      </div>
+      <div class="card-name">Agua y Servicios (OOAPAS)</div>
+      <div class="card-amount nivel-municipal show" style="color:var(--b)">$110M MXN/año</div>
+      <div class="card-amount nivel-estatal" style="color:var(--b)">$90M MXN/año</div>
+      <div class="card-period nivel-municipal show">20 organismos de agua</div>
+      <div class="card-period nivel-estatal">Cartera vencida estatal</div>
+      <div class="card-problem">Tasa de cobranza de agua en México: 40–60%. La gente no paga porque el proceso es difícil e inconsistente.</div>
+      <div class="card-cta" style="color:var(--b)">Ver cómo ConnectX lo resuelve →</div>
+    </div>
+
+  </div><!-- /grid -->
+
+  <!-- DETALLES -->
+  <div class="detalle" id="det-catastro">
+    <div class="detalle-grid">
+      <div>
+        <div class="det-label" style="color:var(--m)">Cómo lo resuelve ConnectX</div>
+        <p class="det-text">Satélite + IA detecta toda propiedad construida en el municipio y la compara contra el catastro actual. Genera avalúos automáticos y notificaciones de regularización a propietarios no registrados. El contribuyente recibe el aviso por WhatsApp antes de ser sancionado.</p>
+        <div class="det-box">
+          <div class="det-box-label">Cálculo municipal (Tepic como base)</div>
+          <p class="det-calc">Tepic tiene ~130K propiedades. Si el 45% no está registrada y el predial promedio es $3,500 MXN: 58,500 × $3,500 = $204M mínimo. Para los 20 municipios de Nayarit: ~$420M/año.</p>
+        </div>
+      </div>
+      <div>
+        <div class="det-box">
+          <div class="det-box-label">20 municipios · Nayarit</div>
+          <div class="det-number" style="color:var(--m)">$420M MXN/año</div>
+        </div>
+        <div class="det-box" style="margin-top:.8rem">
+          <div class="det-box-label">Nivel estatal · Efecto multiplicador</div>
+          <div class="det-number" style="color:var(--m)">$252M MXN/año</div>
+          <p class="det-calc" style="margin-top:.4rem">Cada peso de recaudación municipal aumenta las participaciones federales. Efecto multiplicador de 1.4x sobre lo recaudado.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="detalle" id="det-compras">
+    <div class="detalle-grid">
+      <div>
+        <div class="det-label" style="color:var(--c)">Cómo lo resuelve ConnectX</div>
+        <p class="det-text">Marketplace digital de proveedores con licitaciones abiertas y cotizaciones comparables automáticamente. Alerta cuando un proveedor concentra más del 30% de contratos en un período. Historial público de cada empresa contratada.</p>
+        <div class="det-box">
+          <div class="det-box-label">Cálculo</div>
+          <p class="det-calc">Municipal: $2,838M × 30% en compras = $851M. Recuperar 20% de sobrecosto = $170M/año.<br/>Estatal: $32,200M × 15% en compras = $4,830M × 15% sobrecosto = $724M/año.</p>
+        </div>
+      </div>
+      <div>
+        <div class="det-box"><div class="det-box-label">20 municipios</div><div class="det-number" style="color:var(--c)">$170M MXN/año</div></div>
+        <div class="det-box" style="margin-top:.8rem"><div class="det-box-label">Estatal (el más grande)</div><div class="det-number" style="color:var(--c)">$724M MXN/año</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="detalle" id="det-nomina">
+    <div class="detalle-grid">
+      <div>
+        <div class="det-label" style="color:var(--s)">Cómo lo resuelve ConnectX</div>
+        <p class="det-text">Control biométrico de asistencia integrado al dashboard C5. El sistema compara asistencia real contra nómina registrada en tiempo real. Las anomalías aparecen antes del siguiente pago. Sin necesidad de auditorías manuales.</p>
+        <div class="det-box">
+          <div class="det-box-label">Cálculo</div>
+          <p class="det-calc">Municipal: nómina estimada 20 municipios ~$1,134M/año × 8% aviadores = $90M.<br/>Estatal: nómina estatal = 40% de $32,200M = $12,880M × 5% mínimo = $644M/año inmediatamente recuperable.</p>
+        </div>
+      </div>
+      <div>
+        <div class="det-box"><div class="det-box-label">20 municipios</div><div class="det-number" style="color:var(--s)">$90M MXN/año</div></div>
+        <div class="det-box" style="margin-top:.8rem"><div class="det-box-label">Estatal</div><div class="det-number" style="color:var(--s)">$644M MXN/año</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="detalle" id="det-licencias">
+    <div class="detalle-grid">
+      <div>
+        <div class="det-label" style="color:var(--v)">Cómo lo resuelve ConnectX</div>
+        <p class="det-text">Tramitador 100% digital con timestamps inmutables. El ciudadano y el empresario ven en qué paso está su expediente en tiempo real. Sin intermediarios, sin "agilización". Los municipios con permisos digitales atraen 2–3x más inversión formal.</p>
+        <div class="det-box">
+          <div class="det-box-label">Cálculo</div>
+          <p class="det-calc">Formalizando el 20% de negocios informales de Tepic: +$45M en derechos e ISR. 20 municipios: $80M. Estatal: con permisos estandarizados el ISAI y derechos de licencia aumentan conservadoramente $200M/año.</p>
+        </div>
+      </div>
+      <div>
+        <div class="det-box"><div class="det-box-label">20 municipios</div><div class="det-number" style="color:var(--v)">$80M MXN/año</div></div>
+        <div class="det-box" style="margin-top:.8rem"><div class="det-box-label">Estatal</div><div class="det-number" style="color:var(--v)">$200M MXN/año</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="detalle" id="det-agua">
+    <div class="detalle-grid">
+      <div>
+        <div class="det-label" style="color:var(--b)">Cómo lo resuelve ConnectX</div>
+        <p class="det-text">Medidores inteligentes + recordatorios automáticos por WhatsApp + pago digital en 3 clics. Corte remoto para morosos sin necesidad de cuadrillas físicas. El ciudadano ve su consumo en tiempo real y puede pagar sin salir de casa.</p>
+        <div class="det-box">
+          <div class="det-box-label">Cálculo</div>
+          <p class="det-calc">OOAPAS Tepic factura ~$200M/año. Con 40% de no-cobro = $80M perdidos. Recuperar el 75% con digitalización = $60M. Los 20 organismos de agua de Nayarit: $110M/año.</p>
+        </div>
+      </div>
+      <div>
+        <div class="det-box"><div class="det-box-label">20 municipios</div><div class="det-number" style="color:var(--b)">$110M MXN/año</div></div>
+        <div class="det-box" style="margin-top:.8rem"><div class="det-box-label">Estatal</div><div class="det-number" style="color:var(--b)">$90M MXN/año</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOTALES -->
+  <div class="totales">
+    <div class="totales-header"><p>Resumen · Potencial total ConnectX en Nayarit</p></div>
+    <div class="totales-body">
+      <div class="totales-grid">
+        <div class="total-card">
+          <div class="total-n" style="color:var(--m)">$630M</div>
+          <div class="total-label">Solo Tepic</div>
+          <div class="total-sub">MXN / año</div>
+        </div>
+        <div class="total-card">
+          <div class="total-n" style="color:var(--c)">$870M</div>
+          <div class="total-label">20 municipios Nayarit</div>
+          <div class="total-sub">MXN / año</div>
+        </div>
+        <div class="total-card highlight">
+          <div class="total-n" style="color:var(--m)">$2,704M</div>
+          <div class="total-label">Municipal + Estatal · Nayarit completo</div>
+          <div class="total-sub">MXN / año</div>
+        </div>
+      </div>
+      <div class="conclusión">
+        <p>ConnectX no genera gasto — <em>recupera dinero que ya existe.</em></p>
+        <small>Sin subir impuestos &nbsp;·&nbsp; Sin endeudamiento &nbsp;·&nbsp; Solo visibilidad y eficiencia</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOBLE FILO -->
+  <div class="filo">
+    <div class="filo-card">
+      <div class="filo-tag" style="color:var(--m)">Filo #1 · Para el municipio</div>
+      <div class="filo-title">Más recursos sin más impuestos</div>
+      <div class="filo-body">El alcalde llega al siguiente cabildo con $200–400M MXN adicionales recuperados. Sin necesitar autorización federal. Sin deuda. Solo conectando lo que ya existe.</div>
+    </div>
+    <div class="filo-card">
+      <div class="filo-tag" style="color:var(--c)">Filo #2 · Para la gubernatura</div>
+      <div class="filo-title">Control fiscal de todo el estado</div>
+      <div class="filo-body">Con ConnectX en los 20 municipios y el estado, el gobernador recupera $2,704M MXN/año. Eso financia la plataforma 100 veces — sin tocar transferencias federales.</div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+let nivelActual = 'municipal';
+let abierto = null;
+
+function setNivel(n, btn) {
+  nivelActual = n;
+  document.querySelectorAll('.toggle button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  // KPIs
+  document.querySelectorAll('.kpi-municipal').forEach(el => el.classList.toggle('show', n === 'municipal'));
+  document.querySelectorAll('.kpi-estatal').forEach(el => el.classList.toggle('show', n === 'estatal'));
+
+  // Títulos
+  document.querySelectorAll('.nivel-municipal').forEach(el => el.classList.toggle('show', n === 'municipal'));
+  document.querySelectorAll('.nivel-estatal').forEach(el => el.classList.toggle('show', n === 'estatal'));
+
+  // Amounts dentro de cards
+  document.querySelectorAll('.card-amount.nivel-municipal, .card-period.nivel-municipal').forEach(el => el.classList.toggle('show', n === 'municipal'));
+  document.querySelectorAll('.card-amount.nivel-estatal, .card-period.nivel-estatal').forEach(el => el.classList.toggle('show', n === 'estatal'));
+
+  // Cerrar detalle al cambiar nivel
+  if (abierto) {
+    document.getElementById('det-' + abierto).classList.remove('visible');
+    abierto = null;
+  }
+}
+
+function toggle(id) {
+  const det = document.getElementById('det-' + id);
+  const isOpen = det.classList.contains('visible');
+
+  // Cierra todos
+  document.querySelectorAll('.detalle').forEach(d => d.classList.remove('visible'));
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('open'));
+
+  if (!isOpen) {
+    det.classList.add('visible');
+    document.getElementById('card-' + id).classList.add('open');
+    det.style.borderColor = 'var(--border)';
+    det.style.background = 'rgba(255,255,255,.03)';
+    det.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    abierto = id;
+  } else {
+    abierto = null;
+  }
+}
+</script>
+</body>
+</html>
