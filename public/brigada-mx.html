@@ -3,1032 +3,1026 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BrigadaMX — Demo Interactivo</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<title>BrigadaMX · Campo Electoral</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-  :root {
-    --bmx-bg: #0a0f1e;
-    --bmx-surface: #111827;
-    --bmx-card: #1a2235;
-    --bmx-border: #ffffff12;
-    --bmx-teal: #00d4aa;
-    --bmx-teal-dim: #00d4aa22;
-    --bmx-blue: #3b82f6;
-    --bmx-purple: #8b5cf6;
-    --bmx-amber: #f59e0b;
-    --bmx-red: #ef4444;
-    --bmx-green: #22c55e;
-    --bmx-text: #f1f5f9;
-    --bmx-muted: #64748b;
-    --bmx-dim: #94a3b8;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bmx-bg);
-    color: var(--bmx-text);
-    min-height: 100vh;
-  }
+:root {
+  --bg:      #060A14;
+  --s1:      #0C1222;
+  --s2:      #111B30;
+  --s3:      #16213E;
+  --b:       rgba(255,255,255,0.07);
+  --b2:      rgba(255,255,255,0.04);
+  --teal:    #00F0C0;
+  --teal2:   rgba(0,240,192,0.12);
+  --purple:  #8B5CF6;
+  --blue:    #3B82F6;
+  --amber:   #F59E0B;
+  --red:     #EF4444;
+  --green:   #10B981;
+  --text:    #F0F4FF;
+  --dim:     #8896B0;
+  --faint:   #3D4F6E;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
 
-  /* ── HEADER ── */
-  .header {
-    background: var(--bmx-surface);
-    border-bottom: 1px solid var(--bmx-border);
-    padding: 1rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky; top: 0; z-index: 100;
-  }
-  .logo { display: flex; align-items: center; gap: 0.6rem; }
-  .logo-icon {
-    width: 36px; height: 36px;
-    background: linear-gradient(135deg, var(--bmx-teal), var(--bmx-blue));
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.1rem;
-  }
-  .logo-text { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; }
-  .logo-text span { color: var(--bmx-teal); }
-  .header-badge {
-    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
-    background: var(--bmx-teal-dim); color: var(--bmx-teal);
-    border: 1px solid var(--bmx-teal); border-radius: 20px;
-    padding: 0.25rem 0.75rem;
-  }
-  .header-actions { display: flex; gap: 0.75rem; align-items: center; }
-  .btn-pdf {
-    background: var(--bmx-card); border: 1px solid var(--bmx-border);
-    color: var(--bmx-dim); font-size: 0.7rem; font-weight: 600;
-    letter-spacing: 0.05em; padding: 0.4rem 0.9rem; border-radius: 8px;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .btn-pdf:hover { border-color: var(--bmx-teal); color: var(--bmx-teal); }
+/* ── HEADER ── */
+.hdr{position:sticky;top:0;z-index:200;background:rgba(6,10,20,0.9);backdrop-filter:blur(24px);border-bottom:1px solid var(--b);padding:0 2rem;display:flex;align-items:center;gap:0;height:56px;}
+.hdr-logo{display:flex;align-items:center;gap:10px;margin-right:2rem;}
+.hdr-logo-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--teal),#0099FF);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#000;font-family:'Space Grotesk',sans-serif;}
+.hdr-logo-name{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:700;letter-spacing:-0.02em;}
+.hdr-logo-name em{color:var(--teal);font-style:normal;}
+.tabs{display:flex;gap:0;flex:1;}
+.tab{padding:0 1.25rem;height:56px;display:flex;align-items:center;gap:8px;font-size:0.73rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--dim);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;}
+.tab:hover{color:var(--text);}
+.tab.on{color:var(--teal);border-bottom-color:var(--teal);}
+.tab-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+.hdr-right{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.chip{font-size:0.6rem;font-weight:700;letter-spacing:0.1em;padding:4px 10px;border-radius:20px;border:1px solid;cursor:pointer;}
+.chip-live{background:rgba(16,185,129,0.1);border-color:var(--green);color:var(--green);}
+.chip-pdf{background:var(--s2);border-color:var(--b);color:var(--dim);}
+.chip-pdf:hover{border-color:var(--teal);color:var(--teal);}
+.live-pulse{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
 
-  /* ── TAB SWITCHER ── */
-  .tab-bar {
-    display: flex; gap: 0.25rem;
-    background: var(--bmx-surface);
-    border-bottom: 1px solid var(--bmx-border);
-    padding: 0 2rem;
-  }
-  .tab-btn {
-    padding: 0.9rem 1.5rem;
-    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em;
-    color: var(--bmx-muted); background: none; border: none; cursor: pointer;
-    border-bottom: 2px solid transparent; transition: all 0.2s;
-  }
-  .tab-btn.active { color: var(--bmx-teal); border-bottom-color: var(--bmx-teal); }
-  .tab-btn:hover:not(.active) { color: var(--bmx-dim); }
+/* ── VIEWS ── */
+.view{display:none;position:relative;z-index:1;}
+.view.on{display:flex;}
 
-  /* ── MAIN LAYOUT ── */
-  .main {
-    display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 0;
-    min-height: calc(100vh - 110px);
-  }
+/* ══════════════════════════════════════════
+   BRIGADISTA VIEW
+══════════════════════════════════════════ */
+#v-brig{flex-direction:row;min-height:calc(100vh - 56px);}
+.brig-left{width:340px;flex-shrink:0;padding:2rem 1.5rem;display:flex;flex-direction:column;align-items:center;gap:1.25rem;border-right:1px solid var(--b);}
+.brig-label{font-size:0.6rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--faint);align-self:flex-start;}
 
-  /* ── PHONE MOCKUP ── */
-  .phone-panel {
-    background: var(--bmx-surface);
-    border-right: 1px solid var(--bmx-border);
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-  }
-  .phone-label {
-    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em;
-    color: var(--bmx-muted); text-transform: uppercase;
-    align-self: flex-start;
-  }
-  .phone-wrap {
-    width: 280px;
-    background: #000;
-    border-radius: 40px;
-    padding: 12px;
-    box-shadow: 0 30px 80px #000a, 0 0 0 1px #333;
-    position: relative;
-  }
-  .phone-notch {
-    width: 100px; height: 26px;
-    background: #000;
-    border-radius: 0 0 18px 18px;
-    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
-    z-index: 10;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-  }
-  .phone-notch-cam { width: 10px; height: 10px; border-radius: 50%; background: #1a1a1a; border: 1px solid #333; }
-  .phone-screen {
-    background: #f8fafc;
-    border-radius: 30px;
-    min-height: 560px;
-    overflow: hidden;
-    position: relative;
-  }
+/* Phone frame */
+.phone{width:280px;background:#000;border-radius:42px;padding:10px;box-shadow:0 40px 100px rgba(0,0,0,.8),0 0 0 1px #1a2235,inset 0 0 0 1px #0d1626;position:relative;}
+.phone::before{content:'';position:absolute;top:10px;left:50%;transform:translateX(-50%);width:90px;height:24px;background:#000;border-radius:0 0 16px 16px;z-index:10;}
+.phone-screen{background:#F2F4F8;border-radius:33px;overflow:hidden;min-height:580px;position:relative;}
 
-  /* ── APP SCREENS ── */
-  .app-screen {
-    display: none;
-    flex-direction: column;
-    min-height: 560px;
-    background: #f8fafc;
-  }
-  .app-screen.active { display: flex; }
+/* Screens */
+.scr{display:none;flex-direction:column;min-height:580px;position:relative;}
+.scr.on{display:flex;}
 
-  /* Screen 0 - Splash */
-  .screen-splash {
-    background: linear-gradient(160deg, #0a0f1e 0%, #0d1f3c 60%, #003d2e 100%);
-    align-items: center; justify-content: center; text-align: center;
-    padding: 2rem;
-  }
-  .splash-logo { width: 70px; height: 70px; background: linear-gradient(135deg, var(--bmx-teal), var(--bmx-blue)); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1rem; }
-  .splash-title { font-size: 1.6rem; font-weight: 900; color: white; letter-spacing: -0.03em; }
-  .splash-sub { font-size: 0.7rem; color: rgba(255,255,255,0.5); margin: 0.4rem 0 2rem; letter-spacing: 0.08em; text-transform: uppercase; }
-  .splash-campaign { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 1rem; margin-bottom: 2rem; width: 100%; }
-  .splash-campaign-name { font-size: 0.85rem; font-weight: 700; color: white; }
-  .splash-campaign-sub { font-size: 0.65rem; color: rgba(255,255,255,0.4); margin-top: 0.2rem; }
-  .splash-input {
-    width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 12px; padding: 0.75rem 1rem; color: white; font-size: 0.8rem;
-    margin-bottom: 0.75rem; font-family: inherit;
-  }
-  .splash-input::placeholder { color: rgba(255,255,255,0.3); }
-  .btn-primary {
-    width: 100%; background: var(--bmx-teal); color: #000;
-    border: none; border-radius: 12px; padding: 0.85rem;
-    font-size: 0.85rem; font-weight: 800; letter-spacing: 0.02em;
-    cursor: pointer; transition: opacity 0.2s;
-  }
-  .btn-primary:hover { opacity: 0.9; }
+/* S0 – Splash */
+.s-splash{background:linear-gradient(160deg,#060A14 0%,#0D1F3C 55%,#002A20 100%);align-items:center;justify-content:center;text-align:center;padding:2.5rem 1.75rem;gap:0;}
+.sp-logo{width:72px;height:72px;background:linear-gradient(135deg,var(--teal),#0099FF);border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 1.25rem;box-shadow:0 16px 40px rgba(0,240,192,.25);}
+.sp-name{font-family:'Space Grotesk',sans-serif;font-size:1.7rem;font-weight:800;color:#fff;letter-spacing:-0.03em;}
+.sp-tagline{font-size:0.65rem;color:rgba(255,255,255,.35);letter-spacing:0.15em;text-transform:uppercase;margin:.35rem 0 1.75rem;}
+.sp-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:1rem;margin-bottom:1.25rem;width:100%;text-align:left;}
+.sp-card-org{font-size:0.65rem;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.2rem;}
+.sp-card-name{font-size:0.9rem;font-weight:700;color:#fff;}
+.sp-inp{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:.7rem 1rem;color:#fff;font-size:.78rem;font-family:'Inter',sans-serif;margin-bottom:.6rem;outline:none;}
+.sp-inp::placeholder{color:rgba(255,255,255,.25);}
+.btn-cta{width:100%;background:var(--teal);color:#000;border:none;border-radius:13px;padding:.9rem;font-size:.82rem;font-weight:800;letter-spacing:.02em;cursor:pointer;transition:all .2s;margin-top:.25rem;}
+.btn-cta:hover{filter:brightness(1.1);transform:translateY(-1px);}
 
-  /* App top bar */
-  .app-topbar {
-    background: white; border-bottom: 1px solid #e2e8f0;
-    padding: 0.6rem 1rem;
-    display: flex; align-items: center; gap: 0.5rem;
-    padding-top: 2rem;
-  }
-  .app-topbar-back { width: 28px; height: 28px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; font-size: 0.8rem; }
-  .app-topbar-title { font-size: 0.8rem; font-weight: 700; color: #0f172a; flex: 1; }
-  .app-topbar-badge { font-size: 0.6rem; font-weight: 700; background: #ecfdf5; color: #059669; border-radius: 6px; padding: 0.2rem 0.5rem; }
+/* S1 – Zone */
+.s-zone{background:#F2F4F8;}
+.zone-topbar{background:#060A14;padding:2rem .9rem .9rem;display:flex;align-items:center;gap:.6rem;}
+.topbar-back{width:28px;height:28px;background:rgba(255,255,255,.08);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;border:none;color:#fff;cursor:pointer;}
+.topbar-title{font-size:.78rem;font-weight:700;color:#fff;flex:1;}
+.topbar-badge{font-size:.58rem;font-weight:700;padding:3px 8px;border-radius:6px;}
+.badge-active{background:rgba(0,240,192,.15);color:var(--teal);}
 
-  /* Screen 1 - Route */
-  .screen-route { background: #f8fafc; }
-  .route-header { background: linear-gradient(135deg, #0a0f1e, #003d2e); padding: 1.5rem 1rem 1rem; }
-  .route-header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
-  .route-header-greeting { font-size: 0.65rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.08em; }
-  .route-header-name { font-size: 1rem; font-weight: 800; color: white; }
-  .route-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; }
-  .route-stat { background: rgba(255,255,255,0.08); border-radius: 10px; padding: 0.5rem; text-align: center; }
-  .route-stat-n { font-size: 1.1rem; font-weight: 900; color: var(--bmx-teal); }
-  .route-stat-l { font-size: 0.55rem; color: rgba(255,255,255,0.4); }
-  .route-list { padding: 0.75rem; overflow-y: auto; flex: 1; }
-  .route-section-label { font-size: 0.6rem; font-weight: 700; color: var(--bmx-muted); letter-spacing: 0.1em; text-transform: uppercase; margin: 0.5rem 0; }
-  .route-item {
-    background: white; border: 1px solid #e2e8f0; border-radius: 12px;
-    padding: 0.75rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .route-item:hover { border-color: var(--bmx-teal); }
-  .route-item.done { opacity: 0.5; }
-  .route-item.active-house { border-color: var(--bmx-teal); background: #f0fdf9; }
-  .route-num { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; flex-shrink: 0; }
-  .route-num.pending { background: #f1f5f9; color: #64748b; }
-  .route-num.done-n { background: #dcfce7; color: #16a34a; }
-  .route-num.current { background: var(--bmx-teal); color: #000; }
-  .route-addr { font-size: 0.72rem; font-weight: 600; color: #0f172a; }
-  .route-colonia { font-size: 0.6rem; color: #64748b; }
-  .route-check { margin-left: auto; color: #22c55e; font-size: 0.9rem; }
-  .route-arrow { margin-left: auto; color: #94a3b8; font-size: 0.75rem; }
-  .route-start-btn {
-    margin: 0.75rem; background: #0a0f1e; color: white;
-    border: none; border-radius: 12px; padding: 0.85rem;
-    font-size: 0.82rem; font-weight: 800; cursor: pointer; transition: all 0.2s;
-  }
-  .route-start-btn:hover { background: #1a2235; }
+.zone-map-area{height:180px;background:#1a2540;position:relative;overflow:hidden;}
+.zone-map-bg{position:absolute;inset:0;background:linear-gradient(135deg,#1a2540,#0f1d38);}
+.zone-grid-svg{position:absolute;inset:0;opacity:.15;}
+/* District polygon illustration */
+.zone-poly{position:absolute;}
+.zone-info{padding:.9rem;}
+.zone-header{display:flex;align-items:center;gap:.75rem;margin-bottom:.9rem;}
+.zone-icon{width:40px;height:40px;background:rgba(0,240,192,.15);border:1px solid rgba(0,240,192,.3);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+.zone-title{font-size:.9rem;font-weight:800;color:#0F172A;}
+.zone-sub{font-size:.62rem;color:#64748B;}
+.zone-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.9rem;}
+.zstat{background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:.6rem;text-align:center;}
+.zstat-n{font-size:1.1rem;font-weight:900;color:#0F172A;}
+.zstat-n.teal{color:#059669;}
+.zstat-l{font-size:.55rem;color:#94A3B8;text-transform:uppercase;letter-spacing:.07em;}
+/* Progress ring */
+.ring-wrap{display:flex;align-items:center;gap:.9rem;background:#fff;border:1px solid #E2E8F0;border-radius:14px;padding:.75rem;}
+.ring{width:52px;height:52px;border-radius:50%;position:relative;flex-shrink:0;}
+.ring-inner{position:absolute;top:6px;left:6px;right:6px;bottom:6px;border-radius:50%;background:#F2F4F8;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;color:#0F172A;}
+.ring-label{font-size:.72rem;font-weight:600;color:#0F172A;margin-bottom:.15rem;}
+.ring-sub{font-size:.6rem;color:#64748B;}
+.btn-start{width:100%;background:#060A14;color:#fff;border:none;border-radius:13px;padding:.85rem;font-size:.8rem;font-weight:800;cursor:pointer;margin-top:.75rem;}
 
-  /* Screen 2 - At door */
-  .screen-door { background: #f8fafc; }
-  .door-map {
-    height: 160px;
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%);
-    position: relative; overflow: hidden;
-  }
-  .map-grid {
-    position: absolute; inset: 0;
-    background-image: linear-gradient(#93c5fd33 1px, transparent 1px), linear-gradient(90deg, #93c5fd33 1px, transparent 1px);
-    background-size: 20px 20px;
-  }
-  .map-roads { position: absolute; inset: 0; }
-  .map-road-h { position: absolute; background: white; opacity: 0.6; height: 3px; left: 0; right: 0; }
-  .map-road-v { position: absolute; background: white; opacity: 0.6; width: 3px; top: 0; bottom: 0; }
-  .map-pin { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -80%); }
-  .map-pin-dot { width: 20px; height: 20px; background: var(--bmx-teal); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 2px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
-  .map-pin-ring { position: absolute; top: -4px; left: -4px; width: 28px; height: 28px; border: 2px solid var(--bmx-teal); border-radius: 50%; opacity: 0.4; animation: ping 1.5s ease-out infinite; }
-  @keyframes ping { 0% { transform: scale(1); opacity: 0.4; } 100% { transform: scale(2); opacity: 0; } }
-  .door-info { padding: 0.75rem; }
-  .door-address-card {
-    background: white; border: 1px solid #e2e8f0; border-radius: 14px;
-    padding: 0.85rem; margin-bottom: 0.75rem;
-  }
-  .door-address-num { font-size: 0.6rem; color: var(--bmx-muted); text-transform: uppercase; letter-spacing: 0.08em; }
-  .door-address-text { font-size: 0.95rem; font-weight: 800; color: #0f172a; }
-  .door-address-col { font-size: 0.7rem; color: #64748b; }
-  .door-progress { display: flex; gap: 4px; margin: 0.75rem 0; }
-  .door-progress-dot { flex: 1; height: 3px; border-radius: 2px; background: #e2e8f0; }
-  .door-progress-dot.done { background: var(--bmx-teal); }
-  .door-progress-dot.current { background: var(--bmx-blue); }
-  .door-btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem; }
-  .door-btn-absent {
-    background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 10px;
-    padding: 0.6rem; font-size: 0.72rem; font-weight: 600; color: #475569;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .door-btn-knock {
-    background: #0a0f1e; border: none; border-radius: 10px;
-    padding: 0.85rem; font-size: 0.82rem; font-weight: 800; color: white;
-    cursor: pointer; transition: all 0.2s; grid-column: span 2;
-  }
-  .door-btn-knock:hover { background: #1a2235; }
+/* S2 – Route list */
+.s-route{background:#F2F4F8;}
+.route-hdr{background:linear-gradient(135deg,#060A14,#002A20);padding:1.75rem .9rem .9rem;}
+.route-hdr-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem;}
+.route-greeting{font-size:.6rem;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase;}
+.route-name{font-size:.95rem;font-weight:800;color:#fff;}
+.streak{display:flex;align-items:center;gap:4px;font-size:.6rem;font-weight:700;color:var(--amber);background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);padding:3px 8px;border-radius:8px;}
+.route-progress{display:flex;align-items:center;gap:.6rem;}
+.rp-bar-track{flex:1;height:5px;background:rgba(255,255,255,.1);border-radius:3px;}
+.rp-bar-fill{height:100%;background:var(--teal);border-radius:3px;width:25%;}
+.rp-pct{font-size:.65rem;font-weight:700;color:var(--teal);width:30px;text-align:right;}
+.route-list-scroll{flex:1;overflow-y:auto;padding:.75rem;}
+.rsec{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#94A3B8;margin:.5rem 0 .4rem;}
+.ritem{background:#fff;border:1px solid #E2E8F0;border-radius:13px;padding:.7rem .8rem;margin-bottom:.45rem;display:flex;align-items:center;gap:.7rem;cursor:pointer;transition:all .2s;}
+.ritem:hover{border-color:#00D4AA;}
+.ritem.done{opacity:.5;}
+.ritem.cur{border-color:#00D4AA;background:#F0FDF9;}
+.ritem-num{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:800;flex-shrink:0;}
+.n-done{background:#DCFCE7;color:#16A34A;}
+.n-cur{background:var(--teal);color:#000;}
+.n-pend{background:#F1F5F9;color:#64748B;}
+.ritem-addr{font-size:.72rem;font-weight:600;color:#0F172A;}
+.ritem-col{font-size:.58rem;color:#64748B;}
+.ritem-arrow{margin-left:auto;color:#CBD5E1;font-size:.8rem;}
+.btn-go{width:calc(100% - 1.5rem);margin:.75rem;background:#060A14;color:#fff;border:none;border-radius:13px;padding:.85rem;font-size:.78rem;font-weight:800;cursor:pointer;}
 
-  /* Screen 3-6 - Survey */
-  .screen-survey { background: white; }
-  .survey-header { background: #0a0f1e; padding: 2rem 1rem 1.25rem; }
-  .survey-progress-bar { height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-bottom: 0.75rem; }
-  .survey-progress-fill { height: 100%; background: var(--bmx-teal); border-radius: 2px; transition: width 0.4s; }
-  .survey-q-label { font-size: 0.6rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem; }
-  .survey-q-text { font-size: 0.9rem; font-weight: 700; color: white; line-height: 1.3; }
-  .survey-options { padding: 1rem; flex: 1; display: flex; flex-direction: column; gap: 0.6rem; }
-  .survey-option {
-    background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 14px;
-    padding: 0.85rem 1rem; cursor: pointer; transition: all 0.2s;
-    display: flex; align-items: center; gap: 0.75rem;
-  }
-  .survey-option:hover { border-color: var(--bmx-teal); background: #f0fdf9; }
-  .survey-option.selected { border-color: var(--bmx-teal); background: #f0fdf9; }
-  .survey-opt-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
-  .survey-opt-text { font-size: 0.8rem; font-weight: 600; color: #0f172a; }
-  .survey-opt-sub { font-size: 0.65rem; color: #64748b; }
+/* S3 – Navigation / map */
+.s-nav{background:#F2F4F8;}
+.nav-map{height:190px;position:relative;background:#1a2540;overflow:hidden;}
+.nav-map-bg{position:absolute;inset:0;background:linear-gradient(160deg,#1E293B,#0F172A);}
+.nav-streets{position:absolute;inset:0;}
+.nav-pin{position:absolute;top:50%;left:50%;transform:translate(-50%,-80%);}
+.pin-marker{width:18px;height:18px;background:var(--teal);border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 4px 12px rgba(0,240,192,.5);}
+.pin-ring{position:absolute;top:-5px;left:-5px;width:28px;height:28px;border:2px solid var(--teal);border-radius:50%;opacity:.4;animation:ripple 2s ease-out infinite;}
+@keyframes ripple{0%{transform:scale(1);opacity:.4;}100%{transform:scale(2.2);opacity:0;}}
+.you-dot{position:absolute;bottom:35%;left:35%;width:12px;height:12px;background:var(--blue);border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 4px rgba(59,130,246,.25);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 4px rgba(59,130,246,.25);}50%{box-shadow:0 0 0 8px rgba(59,130,246,.1);}}
+.route-line{position:absolute;bottom:35%;left:35%;width:90px;height:2px;background:linear-gradient(90deg,var(--blue),var(--teal));transform-origin:left;transform:rotate(-20deg);}
+.nav-info{padding:.75rem;}
+.nav-card{background:#fff;border:1px solid #E2E8F0;border-radius:14px;padding:.8rem;margin-bottom:.7rem;}
+.nav-dist-label{font-size:.58rem;color:#94A3B8;letter-spacing:.08em;text-transform:uppercase;}
+.nav-addr{font-size:.92rem;font-weight:800;color:#0F172A;}
+.nav-colonia{font-size:.65rem;color:#64748B;}
+.nav-eta{display:flex;align-items:center;gap:.4rem;margin-top:.35rem;}
+.eta-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);}
+.eta-text{font-size:.62rem;color:#64748B;}
+.nav-btns{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;}
+.btn-skip{background:#F1F5F9;border:1px solid #E2E8F0;border-radius:11px;padding:.65rem;font-size:.68rem;font-weight:600;color:#64748B;cursor:pointer;}
+.btn-arrive{background:linear-gradient(135deg,#059669,#00D4AA);border:none;border-radius:11px;padding:.9rem;font-size:.78rem;font-weight:800;color:#fff;cursor:pointer;grid-column:span 2;box-shadow:0 6px 20px rgba(0,212,170,.3);}
 
-  /* Screen 7 - Success */
-  .screen-success {
-    background: linear-gradient(160deg, #0a0f1e 0%, #003d2e 100%);
-    align-items: center; justify-content: center; text-align: center;
-    padding: 2rem;
-  }
-  .success-icon { width: 70px; height: 70px; background: var(--bmx-teal); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1rem; }
-  .success-title { font-size: 1.3rem; font-weight: 900; color: white; margin-bottom: 0.4rem; }
-  .success-sub { font-size: 0.72rem; color: rgba(255,255,255,0.5); margin-bottom: 1.5rem; }
-  .success-results { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 1rem; margin-bottom: 1.5rem; text-align: left; width: 100%; }
-  .success-result-row { display: flex; justify-content: space-between; padding: 0.35rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .success-result-row:last-child { border: none; }
-  .success-result-q { font-size: 0.65rem; color: rgba(255,255,255,0.4); }
-  .success-result-a { font-size: 0.65rem; font-weight: 700; color: var(--bmx-teal); }
-  .success-next-btn {
-    width: 100%; background: var(--bmx-teal); color: #000;
-    border: none; border-radius: 12px; padding: 0.85rem;
-    font-size: 0.82rem; font-weight: 800; cursor: pointer;
-  }
+/* S4 – At door */
+.s-door{background:#F2F4F8;}
+.door-hdr{background:#060A14;padding:1.75rem .9rem 1rem;}
+.door-h-title{font-size:.62rem;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.3rem;}
+.door-addr{font-size:1rem;font-weight:800;color:#fff;}
+.door-body{padding:.85rem;}
+.door-result-label{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;margin-bottom:.6rem;}
+.door-opts{display:flex;flex-direction:column;gap:.5rem;margin-bottom:.75rem;}
+.door-opt{display:flex;align-items:center;gap:.75rem;background:#fff;border:1.5px solid #E2E8F0;border-radius:13px;padding:.75rem .9rem;cursor:pointer;transition:all .2s;}
+.door-opt:hover{border-color:var(--teal);}
+.door-opt.neg:hover{border-color:#E2E8F0;}
+.door-opt-ico{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.door-opt-t{font-size:.78rem;font-weight:700;color:#0F172A;}
+.door-opt-s{font-size:.6rem;color:#64748B;}
+.door-divider{font-size:.58rem;color:#CBD5E1;text-align:center;margin:.25rem 0;font-weight:600;letter-spacing:.08em;}
+.door-row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;}
+.door-mini{background:#F8FAFC;border:1px solid #E2E8F0;border-radius:11px;padding:.6rem;font-size:.68rem;font-weight:600;color:#64748B;text-align:center;cursor:pointer;}
 
-  /* ── FLOW CONTROLS ── */
-  .flow-controls {
-    display: flex; gap: 0.5rem; align-self: stretch;
-  }
-  .flow-btn {
-    flex: 1; background: var(--bmx-card); border: 1px solid var(--bmx-border);
-    color: var(--bmx-dim); font-size: 0.7rem; font-weight: 600;
-    padding: 0.6rem; border-radius: 10px; cursor: pointer; transition: all 0.2s;
-  }
-  .flow-btn:hover { border-color: var(--bmx-teal); color: var(--bmx-teal); }
-  .flow-btn.primary { background: var(--bmx-teal); color: #000; border-color: var(--bmx-teal); font-weight: 800; }
-  .screen-indicator { display: flex; gap: 4px; justify-content: center; }
-  .screen-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--bmx-border); transition: background 0.2s; }
-  .screen-dot.active { background: var(--bmx-teal); }
+/* S5-8 Survey – Typeform style */
+.s-survey{background:#fff;}
+.survey-top{background:linear-gradient(160deg,#060A14,#0D2438);padding:2.5rem .9rem 1.25rem;}
+.sq-progress{height:3px;background:rgba(255,255,255,.1);border-radius:2px;margin-bottom:.9rem;}
+.sq-progress-fill{height:100%;background:var(--teal);border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1);}
+.sq-num{font-size:.58rem;color:rgba(255,255,255,.35);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.4rem;}
+.sq-q{font-size:.92rem;font-weight:700;color:#fff;line-height:1.35;}
+.survey-body{padding:.9rem;flex:1;display:flex;flex-direction:column;gap:.5rem;}
+.sopt{display:flex;align-items:center;gap:.75rem;border:2px solid #E8EDF5;border-radius:14px;padding:.8rem 1rem;cursor:pointer;transition:all .22s;background:#FAFBFD;}
+.sopt:hover{border-color:var(--teal);background:#F0FDFB;}
+.sopt.picked{border-color:var(--teal);background:#F0FDFB;}
+.sopt-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.sopt-t{font-size:.8rem;font-weight:600;color:#0F172A;}
+.sopt-s{font-size:.6rem;color:#64748B;margin-top:1px;}
+.survey-note{font-size:.6rem;color:#CBD5E1;text-align:center;margin-top:auto;padding:.5rem;}
 
-  /* ── DASHBOARD PANEL ── */
-  .dash-panel { padding: 1.5rem 2rem; overflow-y: auto; }
-  .dash-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
-  .dash-title { font-size: 1rem; font-weight: 800; }
-  .dash-live { display: flex; align-items: center; gap: 0.4rem; font-size: 0.65rem; font-weight: 700; color: var(--bmx-green); }
-  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--bmx-green); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+/* S9 – Done */
+.s-done{background:linear-gradient(160deg,#060A14,#002A20);align-items:center;justify-content:center;text-align:center;padding:2rem;}
+.done-ring{width:80px;height:80px;border-radius:50%;background:conic-gradient(var(--teal) 0% 100%,transparent 0);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;box-shadow:0 0 40px rgba(0,240,192,.3);}
+.done-ring-in{width:60px;height:60px;border-radius:50%;background:#060A14;display:flex;align-items:center;justify-content:center;font-size:1.5rem;}
+.done-title{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:.3rem;}
+.done-sub{font-size:.68rem;color:rgba(255,255,255,.4);margin-bottom:1.5rem;}
+.done-results{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:1rem;margin-bottom:1.25rem;text-align:left;width:100%;}
+.dr-row{display:flex;justify-content:space-between;align-items:center;padding:.35rem 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.dr-row:last-child{border:none;}
+.dr-q{font-size:.62rem;color:rgba(255,255,255,.35);}
+.dr-a{font-size:.62rem;font-weight:700;color:var(--teal);}
+.done-counter{background:rgba(0,240,192,.08);border:1px solid rgba(0,240,192,.2);border-radius:12px;padding:.75rem;margin-bottom:1rem;width:100%;}
+.dc-n{font-size:1.6rem;font-weight:900;color:var(--teal);font-family:'Space Grotesk',sans-serif;}
+.dc-l{font-size:.62rem;color:rgba(255,255,255,.4);}
+.btn-next{width:100%;background:var(--teal);color:#000;border:none;border-radius:13px;padding:.9rem;font-size:.8rem;font-weight:800;cursor:pointer;}
 
-  /* KPI strip */
-  .kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
-  .kpi-card { background: var(--bmx-card); border: 1px solid var(--bmx-border); border-radius: 14px; padding: 1rem; }
-  .kpi-label { font-size: 0.6rem; font-weight: 700; color: var(--bmx-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
-  .kpi-val { font-size: 1.6rem; font-weight: 900; line-height: 1; }
-  .kpi-sub { font-size: 0.65rem; color: var(--bmx-muted); margin-top: 0.25rem; }
-  .kpi-teal { color: var(--bmx-teal); }
-  .kpi-blue { color: var(--bmx-blue); }
-  .kpi-amber { color: var(--bmx-amber); }
-  .kpi-green { color: var(--bmx-green); }
+/* ── PHONE CONTROLS ── */
+.phone-ctrl{display:flex;gap:.5rem;align-self:stretch;}
+.pctrl{flex:1;background:var(--s2);border:1px solid var(--b);color:var(--dim);font-size:.68rem;font-weight:600;border-radius:10px;padding:.6rem;cursor:pointer;transition:all .2s;}
+.pctrl:hover{border-color:var(--teal);color:var(--teal);}
+.pctrl.p{background:var(--teal);color:#000;border-color:var(--teal);font-weight:800;}
+.scr-dots{display:flex;gap:4px;justify-content:center;}
+.sd{width:5px;height:5px;border-radius:50%;background:var(--b);transition:background .2s;}
+.sd.on{background:var(--teal);}
 
-  /* Two cols */
-  .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem; }
-  .dash-card { background: var(--bmx-card); border: 1px solid var(--bmx-border); border-radius: 16px; padding: 1.25rem; }
-  .dash-card-title { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bmx-muted); margin-bottom: 1rem; }
+/* ── RIGHT SIDE EXPLAINER ── */
+.brig-right{flex:1;padding:2rem;overflow-y:auto;}
+.expl-title{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:.35rem;}
+.expl-sub{font-size:.73rem;color:var(--dim);margin-bottom:2rem;line-height:1.55;}
+.steps{display:flex;flex-direction:column;gap:.85rem;margin-bottom:2rem;}
+.step{display:flex;gap:1rem;align-items:flex-start;}
+.step-n{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.85rem;flex-shrink:0;}
+.step-t{font-size:.82rem;font-weight:700;margin-bottom:.2rem;}
+.step-d{font-size:.7rem;color:var(--dim);line-height:1.5;}
+.value-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:2rem;}
+.vcard{background:var(--s2);border:1px solid var(--b);border-radius:14px;padding:1rem;}
+.vcard-n{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:.2rem;}
+.vcard-l{font-size:.65rem;color:var(--dim);}
+.teal-t{color:var(--teal);}
+.amber-t{color:var(--amber);}
+.blue-t{color:var(--blue);}
+.green-t{color:var(--green);}
+.insight-box{background:linear-gradient(135deg,rgba(0,240,192,.06),rgba(0,153,255,.06));border:1px solid rgba(0,240,192,.2);border-radius:16px;padding:1.25rem;}
+.ib-label{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--teal);margin-bottom:.5rem;}
+.ib-text{font-size:.78rem;line-height:1.6;color:var(--dim);}
+.ib-text strong{color:var(--text);}
 
-  /* Heat map */
-  .heat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
-  .heat-cell {
-    aspect-ratio: 1; border-radius: 6px; cursor: default;
-    position: relative; font-size: 0.5rem; display: flex; align-items: center; justify-content: center;
-    font-weight: 700; color: rgba(255,255,255,0.8);
-    transition: transform 0.15s;
-  }
-  .heat-cell:hover { transform: scale(1.1); z-index: 1; }
-  .heat-0 { background: #1a2235; }
-  .heat-1 { background: #164e63; }
-  .heat-2 { background: #0e7490; }
-  .heat-3 { background: #0891b2; }
-  .heat-4 { background: #06b6d4; }
-  .heat-5 { background: #00d4aa; color: #000; }
-  .heat-legend { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem; }
-  .heat-legend-bar { flex: 1; height: 6px; border-radius: 3px; background: linear-gradient(90deg, #1a2235, #164e63, #0891b2, #00d4aa); }
-  .heat-legend-label { font-size: 0.55rem; color: var(--bmx-muted); }
+/* ══════════════════════════════════════════
+   COORDINADOR VIEW
+══════════════════════════════════════════ */
+#v-coord{flex-direction:column;min-height:calc(100vh - 56px);}
+.coord-body{display:grid;grid-template-columns:1fr 360px;flex:1;min-height:0;}
 
-  /* Survey results */
-  .survey-result-item { margin-bottom: 1rem; }
-  .survey-result-q { font-size: 0.7rem; font-weight: 600; color: var(--bmx-dim); margin-bottom: 0.5rem; }
-  .survey-bar-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem; }
-  .survey-bar-label { font-size: 0.65rem; color: var(--bmx-muted); width: 80px; text-align: right; flex-shrink: 0; }
-  .survey-bar-track { flex: 1; height: 6px; background: var(--bmx-surface); border-radius: 3px; }
-  .survey-bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
-  .survey-bar-pct { font-size: 0.65rem; font-weight: 700; color: var(--bmx-text); width: 32px; }
+/* KPI strip */
+.coord-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border-bottom:1px solid var(--b);}
+.ck{padding:1rem 1.25rem;border-right:1px solid var(--b);}
+.ck:last-child{border-right:none;}
+.ck-label{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:.35rem;}
+.ck-val{font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:800;line-height:1;}
+.ck-sub{font-size:.6rem;color:var(--dim);margin-top:.2rem;}
 
-  /* Brigadistas */
-  .brigadista-row {
-    display: flex; align-items: center; gap: 0.75rem;
-    padding: 0.6rem 0; border-bottom: 1px solid var(--bmx-border);
-  }
-  .brigadista-row:last-child { border: none; }
-  .brig-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; flex-shrink: 0; }
-  .brig-name { font-size: 0.75rem; font-weight: 600; flex: 1; }
-  .brig-progress-wrap { width: 80px; }
-  .brig-progress-track { height: 4px; background: var(--bmx-surface); border-radius: 2px; }
-  .brig-progress-fill { height: 100%; background: var(--bmx-teal); border-radius: 2px; }
-  .brig-count { font-size: 0.65rem; color: var(--bmx-muted); text-align: right; width: 40px; }
-  .brig-status { font-size: 0.55rem; font-weight: 700; padding: 0.15rem 0.4rem; border-radius: 4px; }
-  .brig-active { background: #dcfce7; color: #16a34a; }
-  .brig-idle { background: #fef3c7; color: #92400e; }
+/* Map column */
+.map-col{position:relative;overflow:hidden;}
+#coord-map{width:100%;height:100%;min-height:520px;}
 
-  /* Top issues */
-  .issue-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid var(--bmx-border); }
-  .issue-row:last-child { border: none; }
-  .issue-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
-  .issue-label { font-size: 0.75rem; font-weight: 600; flex: 1; }
-  .issue-bar-wrap { width: 100px; }
-  .issue-bar-track { height: 4px; background: var(--bmx-surface); border-radius: 2px; }
-  .issue-bar-fill { height: 100%; border-radius: 2px; }
-  .issue-pct { font-size: 0.65rem; font-weight: 700; color: var(--bmx-text); width: 32px; text-align: right; }
+/* Sidebar */
+.coord-sidebar{border-left:1px solid var(--b);overflow-y:auto;background:var(--s1);}
+.sidebar-hdr{padding:1rem 1.25rem;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between;}
+.sidebar-hdr-t{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);}
+.sidebar-hdr-count{font-size:.65rem;font-weight:700;color:var(--teal);}
 
-  /* Dashboard tab hidden */
-  #view-dash, #view-phone { }
-  .view-hidden { display: none !important; }
+/* District cards */
+.dcard{padding:1rem 1.25rem;border-bottom:1px solid var(--b);cursor:pointer;transition:background .2s;}
+.dcard:hover{background:var(--s2);}
+.dcard.sel{background:var(--s2);border-left:2px solid var(--teal);}
+.dcard-top{display:flex;align-items:center;gap:.7rem;margin-bottom:.65rem;}
+.dcard-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.dcard-name{font-size:.78rem;font-weight:700;flex:1;}
+.dcard-status{font-size:.55rem;font-weight:700;padding:3px 7px;border-radius:6px;}
+.st-hot{background:rgba(16,185,129,.12);color:var(--green);}
+.st-active{background:rgba(59,130,246,.12);color:var(--blue);}
+.st-lag{background:rgba(245,158,11,.12);color:var(--amber);}
+.st-crit{background:rgba(239,68,68,.12);color:var(--red);}
+.st-exc{background:rgba(0,240,192,.12);color:var(--teal);}
+.dcard-row{display:flex;gap:.5rem;margin-bottom:.5rem;}
+.dcard-stat{flex:1;background:var(--s3);border-radius:9px;padding:.45rem .6rem;}
+.dcard-stat-n{font-size:.9rem;font-weight:800;line-height:1;}
+.dcard-stat-l{font-size:.55rem;color:var(--faint);margin-top:1px;}
+.dcard-prog-track{height:4px;background:var(--s3);border-radius:2px;}
+.dcard-prog-fill{height:100%;border-radius:2px;transition:width .6s;}
+.dcard-enc{font-size:.6rem;color:var(--faint);margin-top:.45rem;}
 
-  /* Tooltip for heat cells */
-  .heat-tooltip {
-    position: fixed; background: #0f172a; color: white;
-    font-size: 0.65rem; padding: 0.4rem 0.7rem; border-radius: 8px;
-    pointer-events: none; z-index: 1000; border: 1px solid var(--bmx-border);
-    white-space: nowrap; display: none;
-  }
+/* Activity feed */
+.act-feed{padding:1rem 1.25rem;border-top:1px solid var(--b);}
+.act-feed-t{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:.75rem;}
+.act-item{display:flex;gap:.6rem;align-items:flex-start;margin-bottom:.6rem;}
+.act-ava{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:800;flex-shrink:0;}
+.act-body{flex:1;}
+.act-text{font-size:.65rem;color:var(--dim);line-height:1.4;}
+.act-text strong{color:var(--text);}
+.act-time{font-size:.57rem;color:var(--faint);}
 
-  @media print {
-    .tab-bar, .flow-controls, .btn-pdf { display: none !important; }
-    body { background: white; color: black; }
-  }
+/* Leaflet overrides */
+.leaflet-container{background:#0F172A;}
+.leaflet-tile{filter:brightness(.8) saturate(.7);}
+.district-popup .leaflet-popup-content-wrapper{background:rgba(12,18,34,.95);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);border-radius:14px;color:var(--text);box-shadow:0 20px 60px rgba(0,0,0,.6);}
+.district-popup .leaflet-popup-tip{background:rgba(12,18,34,.95);}
+.popup-title{font-family:'Space Grotesk',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:.5rem;}
+.popup-row{display:flex;justify-content:space-between;font-size:.65rem;color:var(--dim);margin-bottom:.2rem;}
+.popup-row span{color:var(--text);font-weight:600;}
+
+@media print{.hdr,.phone-ctrl,.scr-dots{display:none!important;}body{background:#fff;color:#000;}}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="logo">
-    <div class="logo-icon">🗺️</div>
-    <div class="logo-text">Brigada<span>MX</span></div>
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-logo">
+    <div class="hdr-logo-mark">B</div>
+    <div class="hdr-logo-name">Brigada<em>MX</em></div>
   </div>
-  <div class="header-badge">DEMO INTERACTIVO</div>
-  <div class="header-actions">
-    <button class="btn-pdf" onclick="window.print()">⬇ Exportar PDF</button>
+  <div class="tabs">
+    <button class="tab on" onclick="setView('brig',this)">
+      <span class="tab-dot"></span>App Brigadista
+    </button>
+    <button class="tab" onclick="setView('coord',this)">
+      <span class="tab-dot" style="background:var(--purple)"></span>Coordinador de Distrito
+    </button>
+  </div>
+  <div class="hdr-right">
+    <div class="chip chip-live"><span class="live-pulse"></span> &nbsp;EN VIVO</div>
+    <button class="chip chip-pdf" onclick="window.print()">↓ PDF</button>
   </div>
 </div>
 
-<div class="tab-bar">
-  <button class="tab-btn active" onclick="switchTab('phone')">📱 App Brigadista</button>
-  <button class="tab-btn" onclick="switchTab('dash')">📊 Dashboard Coordinador</button>
-</div>
+<!-- ═══════════════════════════════════════
+  VIEW: BRIGADISTA
+═══════════════════════════════════════ -->
+<div class="view on" id="v-brig">
 
-<!-- PHONE VIEW -->
-<div id="view-phone" class="main">
-  <div class="phone-panel">
-    <div class="phone-label">Vista del Brigadista en Campo</div>
-    <div class="phone-wrap">
-      <div class="phone-notch">
-        <div class="phone-notch-cam"></div>
-      </div>
+  <!-- Phone column -->
+  <div class="brig-left">
+    <div class="brig-label">Vista del Brigadista · Campo</div>
+
+    <div class="phone">
       <div class="phone-screen">
 
-        <!-- Screen 0: Splash/Login -->
-        <div class="app-screen screen-splash active" id="screen-0">
-          <div class="splash-logo">🗺️</div>
-          <div class="splash-title">BrigadaMX</div>
-          <div class="splash-sub">Infraestructura de campo</div>
-          <div class="splash-campaign">
-            <div class="splash-campaign-name">Levántate por Nayarit</div>
-            <div class="splash-campaign-sub">Tepic · Temporada de campo 2026</div>
+        <!-- S0: Splash -->
+        <div class="scr s-splash on" id="s0">
+          <div class="sp-logo">🗺️</div>
+          <div class="sp-name">BrigadaMX</div>
+          <div class="sp-tagline">Infraestructura de campo electoral</div>
+          <div class="sp-card">
+            <div class="sp-card-org">Campaña asignada</div>
+            <div class="sp-card-name">Levántate por Nayarit · Tepic 2026</div>
           </div>
-          <input class="splash-input" type="text" placeholder="Tu nombre" value="Carlos Mendoza">
-          <input class="splash-input" type="text" placeholder="Código de brigada" value="NTE-047">
-          <button class="btn-primary" onclick="goScreen(1)">Entrar al Sistema →</button>
+          <input class="sp-inp" value="Carlos Mendoza" placeholder="Nombre completo">
+          <input class="sp-inp" value="NTE-D1-047" placeholder="Código de brigada">
+          <button class="btn-cta" onclick="goS(1)">Entrar al campo →</button>
         </div>
 
-        <!-- Screen 1: My Route -->
-        <div class="app-screen screen-route" id="screen-1">
-          <div class="route-header">
-            <div class="route-header-top">
+        <!-- S1: My zone -->
+        <div class="scr s-zone" id="s1">
+          <div class="zone-topbar">
+            <button class="topbar-back" onclick="goS(0)">‹</button>
+            <div class="topbar-title">Mi Distrito Asignado</div>
+            <div class="topbar-badge badge-active">Activo</div>
+          </div>
+          <div class="zone-map-area">
+            <div class="zone-map-bg"></div>
+            <!-- Street grid SVG -->
+            <svg class="zone-grid-svg" width="100%" height="100%" viewBox="0 0 256 180">
+              <!-- Grid lines (streets) -->
+              <line x1="0" y1="45" x2="256" y2="45" stroke="white" stroke-width="2"/>
+              <line x1="0" y1="90" x2="256" y2="90" stroke="white" stroke-width="2"/>
+              <line x1="0" y1="135" x2="256" y2="135" stroke="white" stroke-width="2"/>
+              <line x1="64" y1="0" x2="64" y2="180" stroke="white" stroke-width="2"/>
+              <line x1="128" y1="0" x2="128" y2="180" stroke="white" stroke-width="2"/>
+              <line x1="192" y1="0" x2="192" y2="180" stroke="white" stroke-width="2"/>
+              <!-- District highlight -->
+              <rect x="64" y="45" width="128" height="90" fill="rgba(0,240,192,0.15)" stroke="rgba(0,240,192,0.6)" stroke-width="2" rx="2"/>
+              <!-- Brigadista dot -->
+              <circle cx="100" cy="80" r="5" fill="#3B82F6">
+                <animate attributeName="r" values="5;8;5" dur="2s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="1;0.5;1" dur="2s" repeatCount="indefinite"/>
+              </circle>
+              <!-- Houses -->
+              <circle cx="80" cy="60" r="3" fill="rgba(0,240,192,0.8)"/>
+              <circle cx="100" cy="60" r="3" fill="rgba(0,240,192,0.8)"/>
+              <circle cx="120" cy="60" r="3" fill="rgba(0,240,192,0.8)"/>
+              <circle cx="140" cy="60" r="3" fill="rgba(239,68,68,0.8)"/>
+              <circle cx="160" cy="60" r="3" fill="rgba(239,68,68,0.8)"/>
+              <circle cx="80" cy="75" r="3" fill="rgba(0,240,192,0.8)"/>
+              <circle cx="140" cy="75" r="3" fill="rgba(239,68,68,0.8)"/>
+              <circle cx="160" cy="75" r="3" fill="rgba(239,68,68,0.8)"/>
+              <circle cx="80" cy="110" r="3" fill="rgba(239,68,68,0.8)"/>
+              <circle cx="100" cy="110" r="3" fill="rgba(239,68,68,0.8)"/>
+              <circle cx="120" cy="110" r="3" fill="rgba(239,68,68,0.8)"/>
+              <!-- Labels -->
+              <text x="10" y="30" fill="rgba(255,255,255,0.3)" font-size="7">Av. Insurgentes</text>
+              <text x="10" y="43" fill="rgba(255,255,255,0.2)" font-size="6">◄</text>
+              <text x="130" y="15" fill="rgba(0,240,192,0.7)" font-size="8" font-weight="bold">D1 · Centro</text>
+            </svg>
+            <!-- Legend -->
+            <div style="position:absolute;bottom:8px;right:8px;display:flex;gap:8px;font-size:9px;color:rgba(255,255,255,0.6);">
+              <span style="display:flex;align-items:center;gap:3px;"><span style="width:8px;height:8px;border-radius:50%;background:#00F0C0;display:inline-block;"></span>Visitada</span>
+              <span style="display:flex;align-items:center;gap:3px;"><span style="width:8px;height:8px;border-radius:50%;background:#EF4444;display:inline-block;"></span>Pendiente</span>
+            </div>
+          </div>
+          <div class="zone-info">
+            <div class="zone-header">
+              <div class="zone-icon">🏛️</div>
               <div>
-                <div class="route-header-greeting">Buenos días,</div>
-                <div class="route-header-name">Carlos Mendoza</div>
+                <div class="zone-title">Distrito 1 · Centro Histórico</div>
+                <div class="zone-sub">Encargado: Lic. Carmen Flores</div>
               </div>
-              <div style="font-size:0.6rem;color:rgba(255,255,255,0.4);">Zona: Norte-B</div>
             </div>
-            <div class="route-stats">
-              <div class="route-stat"><div class="route-stat-n">12</div><div class="route-stat-l">Casas hoy</div></div>
-              <div class="route-stat"><div class="route-stat-n" style="color:#f59e0b;">2</div><div class="route-stat-l">Completadas</div></div>
-              <div class="route-stat"><div class="route-stat-n">10</div><div class="route-stat-l">Pendientes</div></div>
+            <div class="zone-stats">
+              <div class="zstat">
+                <div class="zstat-n">200</div>
+                <div class="zstat-l">Meta casas</div>
+              </div>
+              <div class="zstat">
+                <div class="zstat-n teal">143</div>
+                <div class="zstat-l">Visitadas</div>
+              </div>
+              <div class="zstat">
+                <div class="zstat-n">57</div>
+                <div class="zstat-l">Pendientes</div>
+              </div>
             </div>
-          </div>
-          <div class="route-list">
-            <div class="route-section-label">Tu ruta de hoy</div>
-            <div class="route-item done">
-              <div class="route-num done-n">✓</div>
-              <div><div class="route-addr">Insurgentes 247</div><div class="route-colonia">Col. Centro</div></div>
-              <div class="route-check">✓</div>
+            <div class="ring-wrap">
+              <div class="ring" style="background:conic-gradient(#00F0C0 0% 72%,#E2E8F0 72% 100%);">
+                <div class="ring-inner">72%</div>
+              </div>
+              <div>
+                <div class="ring-label">Cobertura del Distrito</div>
+                <div class="ring-sub">🔥 Racha: 3 días consecutivos</div>
+              </div>
             </div>
-            <div class="route-item done">
-              <div class="route-num done-n">✓</div>
-              <div><div class="route-addr">Morelos 89</div><div class="route-colonia">Col. Centro</div></div>
-              <div class="route-check">✓</div>
-            </div>
-            <div class="route-item active-house" onclick="goScreen(2)">
-              <div class="route-num current">3</div>
-              <div><div class="route-addr">Av. Allende 312</div><div class="route-colonia">Linda Vista</div></div>
-              <div class="route-arrow">▶</div>
-            </div>
-            <div class="route-item">
-              <div class="route-num pending">4</div>
-              <div><div class="route-addr">Juárez 445 Int. B</div><div class="route-colonia">Linda Vista</div></div>
-              <div class="route-arrow" style="color:#e2e8f0;">›</div>
-            </div>
-            <div class="route-item">
-              <div class="route-num pending">5</div>
-              <div><div class="route-addr">Madero 78</div><div class="route-colonia">Miravalles</div></div>
-              <div class="route-arrow" style="color:#e2e8f0;">›</div>
-            </div>
-          </div>
-          <button class="route-start-btn" onclick="goScreen(2)">▶ Ir a casa #3 — Av. Allende 312</button>
-        </div>
-
-        <!-- Screen 2: At door -->
-        <div class="app-screen screen-door" id="screen-2">
-          <div class="app-topbar">
-            <button class="app-topbar-back" onclick="goScreen(1)">‹</button>
-            <div class="app-topbar-title">Casa #3 de 12</div>
-            <div class="app-topbar-badge">En ruta</div>
-          </div>
-          <div class="door-map">
-            <div class="map-grid"></div>
-            <div class="map-roads">
-              <div class="map-road-h" style="top:40%"></div>
-              <div class="map-road-h" style="top:70%"></div>
-              <div class="map-road-v" style="left:30%"></div>
-              <div class="map-road-v" style="left:60%"></div>
-            </div>
-            <div class="map-pin">
-              <div class="map-pin-ring"></div>
-              <div class="map-pin-dot"></div>
-            </div>
-          </div>
-          <div class="door-info">
-            <div class="door-address-card">
-              <div class="door-address-num">Siguiente visita</div>
-              <div class="door-address-text">Av. Allende 312</div>
-              <div class="door-address-col">Col. Linda Vista, Tepic</div>
-            </div>
-            <div class="door-progress">
-              <div class="door-progress-dot done"></div>
-              <div class="door-progress-dot done"></div>
-              <div class="door-progress-dot current"></div>
-              <div class="door-progress-dot"></div>
-              <div class="door-progress-dot"></div>
-              <div class="door-progress-dot"></div>
-            </div>
-            <div class="door-btn-group">
-              <button class="door-btn-absent" onclick="goScreen(1)">🚪 Nadie en casa</button>
-              <button class="door-btn-absent" onclick="goScreen(1)">🚫 No quiso</button>
-              <button class="door-btn-knock" onclick="goScreen(3)">🚪 Tocaron — Registrar visita</button>
-            </div>
+            <button class="btn-start" onclick="goS(2)">Ver mi ruta de hoy →</button>
           </div>
         </div>
 
-        <!-- Screen 3: Survey Q1 -->
-        <div class="app-screen screen-survey" id="screen-3">
-          <div class="survey-header">
-            <div class="survey-progress-bar">
-              <div class="survey-progress-fill" style="width:25%"></div>
+        <!-- S2: Route list -->
+        <div class="scr s-route" id="s2">
+          <div class="route-hdr">
+            <div class="route-hdr-row">
+              <div>
+                <div class="route-greeting">Martes 17 jun — Tarde</div>
+                <div class="route-name">Carlos Mendoza</div>
+              </div>
+              <div class="streak">🔥 3 días</div>
             </div>
-            <div class="survey-q-label">Pregunta 1 de 4</div>
-            <div class="survey-q-text">¿Conoce o ha escuchado del candidato de Levántate?</div>
-          </div>
-          <div class="survey-options">
-            <div class="survey-option" onclick="selectAndGo(this, 4)">
-              <div class="survey-opt-icon" style="background:#dcfce7;">😊</div>
-              <div><div class="survey-opt-text">Sí, lo conozco bien</div><div class="survey-opt-sub">Tiene información del candidato</div></div>
-            </div>
-            <div class="survey-option" onclick="selectAndGo(this, 4)">
-              <div class="survey-opt-icon" style="background:#fef3c7;">🤔</div>
-              <div><div class="survey-opt-text">Algo he escuchado</div><div class="survey-opt-sub">Conocimiento parcial</div></div>
-            </div>
-            <div class="survey-option" onclick="selectAndGo(this, 4)">
-              <div class="survey-opt-icon" style="background:#fee2e2;">❓</div>
-              <div><div class="survey-opt-text">No lo conozco</div><div class="survey-opt-sub">Primera vez que escucha</div></div>
+            <div class="route-progress">
+              <div class="rp-bar-track"><div class="rp-bar-fill"></div></div>
+              <div class="rp-pct">25%</div>
             </div>
           </div>
+          <div class="route-list-scroll">
+            <div class="rsec">Completadas</div>
+            <div class="ritem done">
+              <div class="ritem-num n-done">✓</div>
+              <div><div class="ritem-addr">Insurgentes 247</div><div class="ritem-col">Col. Centro</div></div>
+            </div>
+            <div class="ritem done">
+              <div class="ritem-num n-done">✓</div>
+              <div><div class="ritem-addr">Morelos 89</div><div class="ritem-col">Col. Centro</div></div>
+            </div>
+            <div class="rsec">En curso</div>
+            <div class="ritem cur" onclick="goS(3)">
+              <div class="ritem-num n-cur">3</div>
+              <div><div class="ritem-addr">Allende 312</div><div class="ritem-col">Linda Vista</div></div>
+              <div class="ritem-arrow">▶</div>
+            </div>
+            <div class="rsec">Pendientes</div>
+            <div class="ritem">
+              <div class="ritem-num n-pend">4</div>
+              <div><div class="ritem-addr">Juárez 445 Int. B</div><div class="ritem-col">Linda Vista</div></div>
+              <div class="ritem-arrow" style="color:#E2E8F0;">›</div>
+            </div>
+            <div class="ritem">
+              <div class="ritem-num n-pend">5</div>
+              <div><div class="ritem-addr">Madero 78</div><div class="ritem-col">Miravalles</div></div>
+              <div class="ritem-arrow" style="color:#E2E8F0;">›</div>
+            </div>
+            <div class="ritem">
+              <div class="ritem-num n-pend">6</div>
+              <div><div class="ritem-addr">Reforma 190</div><div class="ritem-col">Miravalles</div></div>
+              <div class="ritem-arrow" style="color:#E2E8F0;">›</div>
+            </div>
+          </div>
+          <button class="btn-go" onclick="goS(3)">▶ Ir a casa #3 — Allende 312</button>
         </div>
 
-        <!-- Screen 4: Survey Q2 -->
-        <div class="app-screen screen-survey" id="screen-4">
-          <div class="survey-header">
-            <div class="survey-progress-bar">
-              <div class="survey-progress-fill" style="width:50%"></div>
-            </div>
-            <div class="survey-q-label">Pregunta 2 de 4</div>
-            <div class="survey-q-text">¿Cuál es el problema que más le preocupa en su colonia?</div>
+        <!-- S3: Navigation -->
+        <div class="scr s-nav" id="s3">
+          <div class="zone-topbar" style="padding-top:1.75rem;">
+            <button class="topbar-back" onclick="goS(2)">‹</button>
+            <div class="topbar-title">En camino · Casa #3</div>
+            <div class="topbar-badge" style="background:rgba(59,130,246,.15);color:#3B82F6;">3/12</div>
           </div>
-          <div class="survey-options">
-            <div class="survey-option" onclick="selectAndGo(this, 5)">
-              <div class="survey-opt-icon" style="background:#fee2e2;">🚨</div>
-              <div><div class="survey-opt-text">Seguridad</div></div>
+          <div class="nav-map">
+            <div class="nav-map-bg"></div>
+            <svg style="position:absolute;inset:0;opacity:0.2" width="100%" height="100%" viewBox="0 0 256 190">
+              <line x1="0" y1="60" x2="256" y2="60" stroke="white" stroke-width="2"/>
+              <line x1="0" y1="120" x2="256" y2="120" stroke="white" stroke-width="2"/>
+              <line x1="0" y1="160" x2="256" y2="160" stroke="white" stroke-width="2"/>
+              <line x1="70" y1="0" x2="70" y2="190" stroke="white" stroke-width="2"/>
+              <line x1="140" y1="0" x2="140" y2="190" stroke="white" stroke-width="2"/>
+              <line x1="200" y1="0" x2="200" y2="190" stroke="white" stroke-width="2"/>
+            </svg>
+            <div class="route-line"></div>
+            <div class="you-dot"></div>
+            <div class="nav-pin">
+              <div class="pin-ring"></div>
+              <div class="pin-marker"></div>
             </div>
-            <div class="survey-option" onclick="selectAndGo(this, 5)">
-              <div class="survey-opt-icon" style="background:#fef3c7;">💼</div>
-              <div><div class="survey-opt-text">Empleo / Economía</div></div>
+            <div style="position:absolute;top:10px;left:50%;transform:translateX(-50%);background:rgba(0,240,192,0.9);color:#000;font-size:10px;font-weight:800;padding:4px 12px;border-radius:20px;">↑ 180m · Av. Allende</div>
+          </div>
+          <div class="nav-info">
+            <div class="nav-card">
+              <div class="nav-dist-label">Siguiente parada</div>
+              <div class="nav-addr">Av. Allende 312</div>
+              <div class="nav-colonia">Col. Linda Vista, Tepic, Nay.</div>
+              <div class="nav-eta"><div class="eta-dot"></div><div class="eta-text">~2 min caminando · 180 metros</div></div>
             </div>
-            <div class="survey-option" onclick="selectAndGo(this, 5)">
-              <div class="survey-opt-icon" style="background:#dbeafe;">💧</div>
-              <div><div class="survey-opt-text">Agua / Servicios</div></div>
-            </div>
-            <div class="survey-option" onclick="selectAndGo(this, 5)">
-              <div class="survey-opt-icon" style="background:#dcfce7;">🏥</div>
-              <div><div class="survey-opt-text">Salud / Educación</div></div>
+            <div class="nav-btns">
+              <button class="btn-skip" onclick="goS(2)">Saltar</button>
+              <button class="btn-skip" onclick="goS(2)">Sin señal GPS</button>
+              <button class="btn-arrive" onclick="goS(4)">✓ Llegué — Registrar visita</button>
             </div>
           </div>
         </div>
 
-        <!-- Screen 5: Survey Q3 -->
-        <div class="app-screen screen-survey" id="screen-5">
-          <div class="survey-header">
-            <div class="survey-progress-bar">
-              <div class="survey-progress-fill" style="width:75%"></div>
-            </div>
-            <div class="survey-q-label">Pregunta 3 de 4</div>
-            <div class="survey-q-text">¿Cómo evalúa la gestión del gobierno municipal actual?</div>
+        <!-- S4: At door -->
+        <div class="scr s-door" id="s4">
+          <div class="door-hdr">
+            <div class="door-h-title">Casa #3 de 12</div>
+            <div class="door-addr">Av. Allende 312</div>
           </div>
-          <div class="survey-options">
-            <div class="survey-option" onclick="selectAndGo(this, 6)">
-              <div class="survey-opt-icon" style="background:#dcfce7;">👍</div>
-              <div><div class="survey-opt-text">Bien</div><div class="survey-opt-sub">Satisfecho con la gestión</div></div>
+          <div class="door-body">
+            <div class="door-result-label">¿Qué pasó al tocar?</div>
+            <div class="door-opts">
+              <div class="door-opt" onclick="goS(5)">
+                <div class="door-opt-ico" style="background:#DCFCE7;">🚪</div>
+                <div><div class="door-opt-t">Abrieron · Hacer encuesta</div><div class="door-opt-s">4 preguntas · 30 segundos</div></div>
+              </div>
             </div>
-            <div class="survey-option" onclick="selectAndGo(this, 6)">
-              <div class="survey-opt-icon" style="background:#fef3c7;">😐</div>
-              <div><div class="survey-opt-text">Regular</div><div class="survey-opt-sub">Ni bien ni mal</div></div>
-            </div>
-            <div class="survey-option" onclick="selectAndGo(this, 6)">
-              <div class="survey-opt-icon" style="background:#fee2e2;">👎</div>
-              <div><div class="survey-opt-text">Mal</div><div class="survey-opt-sub">Insatisfecho</div></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Screen 6: Survey Q4 -->
-        <div class="app-screen screen-survey" id="screen-6">
-          <div class="survey-header">
-            <div class="survey-progress-bar">
-              <div class="survey-progress-fill" style="width:100%"></div>
-            </div>
-            <div class="survey-q-label">Pregunta 4 de 4 — Última</div>
-            <div class="survey-q-text">¿Tiene pensado salir a votar en las próximas elecciones?</div>
-          </div>
-          <div class="survey-options">
-            <div class="survey-option" onclick="selectAndGo(this, 7)">
-              <div class="survey-opt-icon" style="background:#dcfce7;">✅</div>
-              <div><div class="survey-opt-text">Sí, definitivamente</div></div>
-            </div>
-            <div class="survey-option" onclick="selectAndGo(this, 7)">
-              <div class="survey-opt-icon" style="background:#fef3c7;">🤷</div>
-              <div><div class="survey-opt-text">Quizás</div></div>
-            </div>
-            <div class="survey-option" onclick="selectAndGo(this, 7)">
-              <div class="survey-opt-icon" style="background:#fee2e2;">❌</div>
-              <div><div class="survey-opt-text">No pienso votar</div></div>
+            <div class="door-divider">— o registrar sin encuesta —</div>
+            <div class="door-row">
+              <div class="door-mini" onclick="goS(2)">🔕 No contestaron</div>
+              <div class="door-mini" onclick="goS(2)">🚫 No quiso hablar</div>
+              <div class="door-mini" onclick="goS(2)">🏠 Nadie en casa</div>
+              <div class="door-mini" onclick="goS(2)">📅 Volver después</div>
             </div>
           </div>
         </div>
 
-        <!-- Screen 7: Success -->
-        <div class="app-screen screen-success" id="screen-7">
-          <div class="success-icon">✓</div>
-          <div class="success-title">¡Visita registrada!</div>
-          <div class="success-sub">Los datos van al dashboard en tiempo real</div>
-          <div class="success-results">
-            <div class="success-result-row">
-              <span class="success-result-q">Conocimiento</span>
-              <span class="success-result-a">Algo he escuchado</span>
+        <!-- S5: Survey Q1 -->
+        <div class="scr s-survey" id="s5">
+          <div class="survey-top">
+            <div class="sq-progress"><div class="sq-progress-fill" style="width:25%"></div></div>
+            <div class="sq-num">Pregunta 1 de 4</div>
+            <div class="sq-q">¿Ha escuchado hablar del candidato de Levántate?</div>
+          </div>
+          <div class="survey-body">
+            <div class="sopt" onclick="pick(this,6)">
+              <div class="sopt-ico" style="background:#DCFCE7;">😊</div>
+              <div><div class="sopt-t">Sí, lo conozco bien</div><div class="sopt-s">Tiene información</div></div>
             </div>
-            <div class="success-result-row">
-              <span class="success-result-q">Preocupación</span>
-              <span class="success-result-a">Seguridad</span>
+            <div class="sopt" onclick="pick(this,6)">
+              <div class="sopt-ico" style="background:#FEF3C7;">🤔</div>
+              <div><div class="sopt-t">Algo he escuchado</div><div class="sopt-s">Conocimiento parcial</div></div>
             </div>
-            <div class="success-result-row">
-              <span class="success-result-q">Evaluación</span>
-              <span class="success-result-a">Regular</span>
-            </div>
-            <div class="success-result-row">
-              <span class="success-result-q">¿Votará?</span>
-              <span class="success-result-a">Sí, definitivamente</span>
+            <div class="sopt" onclick="pick(this,6)">
+              <div class="sopt-ico" style="background:#FEE2E2;">❓</div>
+              <div><div class="sopt-t">No lo conozco</div><div class="sopt-s">Primera vez que escucha</div></div>
             </div>
           </div>
-          <button class="success-next-btn" onclick="goScreen(1)">→ Siguiente casa (#4)</button>
+          <div class="survey-note">Toca una opción para continuar</div>
+        </div>
+
+        <!-- S6: Survey Q2 -->
+        <div class="scr s-survey" id="s6">
+          <div class="survey-top">
+            <div class="sq-progress"><div class="sq-progress-fill" style="width:50%"></div></div>
+            <div class="sq-num">Pregunta 2 de 4</div>
+            <div class="sq-q">¿Cuál problema le preocupa más en su colonia?</div>
+          </div>
+          <div class="survey-body">
+            <div class="sopt" onclick="pick(this,7)">
+              <div class="sopt-ico" style="background:#FEE2E2;">🚨</div>
+              <div><div class="sopt-t">Seguridad</div></div>
+            </div>
+            <div class="sopt" onclick="pick(this,7)">
+              <div class="sopt-ico" style="background:#FEF3C7;">💼</div>
+              <div><div class="sopt-t">Empleo / Economía</div></div>
+            </div>
+            <div class="sopt" onclick="pick(this,7)">
+              <div class="sopt-ico" style="background:#DBEAFE;">💧</div>
+              <div><div class="sopt-t">Agua / Servicios</div></div>
+            </div>
+            <div class="sopt" onclick="pick(this,7)">
+              <div class="sopt-ico" style="background:#DCFCE7;">🏥</div>
+              <div><div class="sopt-t">Salud / Educación</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- S7: Survey Q3 -->
+        <div class="scr s-survey" id="s7">
+          <div class="survey-top">
+            <div class="sq-progress"><div class="sq-progress-fill" style="width:75%"></div></div>
+            <div class="sq-num">Pregunta 3 de 4</div>
+            <div class="sq-q">¿Cómo evalúa la gestión del gobierno actual?</div>
+          </div>
+          <div class="survey-body">
+            <div class="sopt" onclick="pick(this,8)">
+              <div class="sopt-ico" style="background:#DCFCE7;">👍</div>
+              <div><div class="sopt-t">Bien</div><div class="sopt-s">Satisfecho con la gestión</div></div>
+            </div>
+            <div class="sopt" onclick="pick(this,8)">
+              <div class="sopt-ico" style="background:#FEF3C7;">😐</div>
+              <div><div class="sopt-t">Regular</div></div>
+            </div>
+            <div class="sopt" onclick="pick(this,8)">
+              <div class="sopt-ico" style="background:#FEE2E2;">👎</div>
+              <div><div class="sopt-t">Mal</div><div class="sopt-s">Insatisfecho</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- S8: Survey Q4 -->
+        <div class="scr s-survey" id="s8">
+          <div class="survey-top">
+            <div class="sq-progress"><div class="sq-progress-fill" style="width:100%"></div></div>
+            <div class="sq-num">Pregunta 4 de 4 · Última</div>
+            <div class="sq-q">¿Piensa salir a votar en las próximas elecciones?</div>
+          </div>
+          <div class="survey-body">
+            <div class="sopt" onclick="pick(this,9)">
+              <div class="sopt-ico" style="background:#DCFCE7;">✅</div>
+              <div><div class="sopt-t">Sí, definitivamente</div></div>
+            </div>
+            <div class="sopt" onclick="pick(this,9)">
+              <div class="sopt-ico" style="background:#FEF3C7;">🤷</div>
+              <div><div class="sopt-t">Quizás, depende</div></div>
+            </div>
+            <div class="sopt" onclick="pick(this,9)">
+              <div class="sopt-ico" style="background:#FEE2E2;">❌</div>
+              <div><div class="sopt-t">No pienso votar</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- S9: Done -->
+        <div class="scr s-done" id="s9">
+          <div class="done-ring"><div class="done-ring-in">✓</div></div>
+          <div class="done-title">¡Registrada!</div>
+          <div class="done-sub">Los datos ya están en el dashboard</div>
+          <div class="done-counter">
+            <div class="dc-n">Visita #48</div>
+            <div class="dc-l">Del distrito hoy · Eres el #3 más activo</div>
+          </div>
+          <div class="done-results">
+            <div class="dr-row"><span class="dr-q">Conocimiento</span><span class="dr-a">Algo ha escuchado</span></div>
+            <div class="dr-row"><span class="dr-q">Preocupación</span><span class="dr-a">Seguridad</span></div>
+            <div class="dr-row"><span class="dr-q">Evaluación</span><span class="dr-a">Regular</span></div>
+            <div class="dr-row"><span class="dr-q">¿Votará?</span><span class="dr-a">Sí, definitivamente</span></div>
+          </div>
+          <button class="btn-next" onclick="goS(2)">→ Casa #4</button>
         </div>
 
       </div><!-- /phone-screen -->
-    </div><!-- /phone-wrap -->
+    </div><!-- /phone -->
 
-    <!-- Screen dots -->
-    <div class="screen-indicator" id="screen-dots">
-      <div class="screen-dot active"></div>
-      <div class="screen-dot"></div>
-      <div class="screen-dot"></div>
-      <div class="screen-dot"></div>
-      <div class="screen-dot"></div>
-      <div class="screen-dot"></div>
-      <div class="screen-dot"></div>
-      <div class="screen-dot"></div>
+    <div class="scr-dots" id="dots">
+      <div class="sd on"></div>
+      <div class="sd"></div><div class="sd"></div><div class="sd"></div>
+      <div class="sd"></div><div class="sd"></div><div class="sd"></div>
+      <div class="sd"></div><div class="sd"></div><div class="sd"></div>
     </div>
 
-    <!-- Flow controls -->
-    <div class="flow-controls">
-      <button class="flow-btn" onclick="prevScreen()">‹ Anterior</button>
-      <button class="flow-btn primary" onclick="nextScreen()">Siguiente →</button>
+    <div class="phone-ctrl">
+      <button class="pctrl" onclick="prevS()">‹ Anterior</button>
+      <button class="pctrl p" onclick="nextS()">Siguiente ›</button>
     </div>
+  </div><!-- /brig-left -->
 
-    <!-- Context note -->
-    <div style="font-size:0.65rem;color:var(--bmx-muted);text-align:center;line-height:1.5;max-width:260px;">
-      Toca las opciones de la encuesta para avanzar.<br>
-      Funciona offline · Sincroniza al recuperar señal.
-    </div>
-  </div>
+  <!-- Right explainer -->
+  <div class="brig-right">
+    <div class="expl-title">Del papel a datos en tiempo real</div>
+    <div class="expl-sub">BrigadaMX convierte cada toque de puerta en inteligencia electoral medible. Sin apps que descargar, sin capacitación técnica, funciona offline.</div>
 
-  <!-- Right side explainer -->
-  <div style="padding:2rem;overflow-y:auto;">
-    <div style="max-width:560px;margin:0 auto;">
-      <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.12em;color:var(--bmx-muted);text-transform:uppercase;margin-bottom:1.5rem;">¿Qué ven los brigadistas?</div>
-
-      <!-- Steps -->
-      <div style="display:flex;flex-direction:column;gap:1rem;">
-
-        <div style="display:flex;gap:1rem;align-items:flex-start;">
-          <div style="width:36px;height:36px;background:var(--bmx-teal);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#000;flex-shrink:0;">1</div>
-          <div>
-            <div style="font-size:0.85rem;font-weight:700;margin-bottom:0.25rem;">Login con código de brigada</div>
-            <div style="font-size:0.72rem;color:var(--bmx-muted);line-height:1.5;">Sin correo ni contraseña complicada. El coordinador les da un código. En 10 segundos ya están dentro. Funciona en cualquier celular con Chrome — sin descargar nada.</div>
-          </div>
-        </div>
-
-        <div style="display:flex;gap:1rem;align-items:flex-start;">
-          <div style="width:36px;height:36px;background:var(--bmx-blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;flex-shrink:0;">2</div>
-          <div>
-            <div style="font-size:0.85rem;font-weight:700;margin-bottom:0.25rem;">Ruta asignada automáticamente</div>
-            <div style="font-size:0.72rem;color:var(--bmx-muted);line-height:1.5;">El coordinador carga las casas, el sistema las distribuye entre brigadistas por zona. Sin papel, sin confusión. El brigadista ve exactamente a dónde ir y en qué orden.</div>
-          </div>
-        </div>
-
-        <div style="display:flex;gap:1rem;align-items:flex-start;">
-          <div style="width:36px;height:36px;background:var(--bmx-purple);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;flex-shrink:0;">3</div>
-          <div>
-            <div style="font-size:0.85rem;font-weight:700;margin-bottom:0.25rem;">Toque de puerta → 4 preguntas</div>
-            <div style="font-size:0.72rem;color:var(--bmx-muted);line-height:1.5;">Abre la puerta → brigadista toca 4 botones en 30 segundos. Sin escribir nada. Sin saber leer y escribir bien. Resultados van al dashboard del coordinador en tiempo real.</div>
-          </div>
-        </div>
-
-        <div style="display:flex;gap:1rem;align-items:flex-start;">
-          <div style="width:36px;height:36px;background:var(--bmx-amber);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#000;flex-shrink:0;">4</div>
-          <div>
-            <div style="font-size:0.85rem;font-weight:700;margin-bottom:0.25rem;">Offline-first</div>
-            <div style="font-size:0.72rem;color:var(--bmx-muted);line-height:1.5;">Sin señal en la colonia, sigue funcionando. Los datos se guardan en el celular y sincronizan automáticamente cuando regresa la señal. Nada se pierde.</div>
-          </div>
-        </div>
-
+    <div class="steps">
+      <div class="step">
+        <div class="step-n" style="background:rgba(0,240,192,.12);color:var(--teal);">1</div>
+        <div><div class="step-t">Login con código de brigada</div><div class="step-d">Sin registro, sin correo. El coordinador comparte un código. El brigadista abre Chrome en su celular y empieza. Sin instalar nada.</div></div>
       </div>
-
-      <div style="margin-top:2rem;background:var(--bmx-card);border:1px solid var(--bmx-border);border-radius:16px;padding:1.25rem;">
-        <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--bmx-muted);margin-bottom:0.75rem;">El argumento de venta en números</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
-          <div style="background:var(--bmx-surface);border-radius:10px;padding:0.75rem;">
-            <div style="font-size:1.3rem;font-weight:900;color:var(--bmx-teal);">800</div>
-            <div style="font-size:0.65rem;color:var(--bmx-muted);">encuestas en un solo día<br>(40 brigadistas × 20 casas)</div>
-          </div>
-          <div style="background:var(--bmx-surface);border-radius:10px;padding:0.75rem;">
-            <div style="font-size:1.3rem;font-weight:900;color:var(--bmx-amber);">$120K</div>
-            <div style="font-size:0.65rem;color:var(--bmx-muted);">lo que costaría<br>esa encuesta con empresa</div>
-          </div>
-          <div style="background:var(--bmx-surface);border-radius:10px;padding:0.75rem;">
-            <div style="font-size:1.3rem;font-weight:900;color:var(--bmx-blue);">30 seg</div>
-            <div style="font-size:0.65rem;color:var(--bmx-muted);">por visita adicional<br>sobre el tiempo base</div>
-          </div>
-          <div style="background:var(--bmx-surface);border-radius:10px;padding:0.75rem;">
-            <div style="font-size:1.3rem;font-weight:900;color:var(--bmx-green);">$0</div>
-            <div style="font-size:0.65rem;color:var(--bmx-muted);">costo para el partido<br>en versión gratuita</div>
-          </div>
-        </div>
+      <div class="step">
+        <div class="step-n" style="background:rgba(139,92,246,.12);color:var(--purple);">2</div>
+        <div><div class="step-t">Distrito y ruta asignados automáticamente</div><div class="step-d">La ciudad se divide en distritos. Cada brigadista tiene su zona clara. El sistema le asigna las casas más cercanas en orden óptimo. Sin papel, sin confusion.</div></div>
       </div>
+      <div class="step">
+        <div class="step-n" style="background:rgba(59,130,246,.12);color:var(--blue);">3</div>
+        <div><div class="step-t">Toque → 4 preguntas → 30 segundos</div><div class="step-d">Abre la puerta, el brigadista toca 4 botones. Sin escribir nada. El vecino no siente que lo "encuestan" — es conversación natural guiada.</div></div>
+      </div>
+      <div class="step">
+        <div class="step-n" style="background:rgba(245,158,11,.12);color:var(--amber);">4</div>
+        <div><div class="step-t">Funciona sin señal · Offline-first</div><div class="step-d">En colonias sin internet el app sigue funcionando. Los datos se guardan localmente y sincronizan cuando regresa la señal. Nada se pierde.</div></div>
+      </div>
+      <div class="step">
+        <div class="step-n" style="background:rgba(16,185,129,.12);color:var(--green);">5</div>
+        <div><div class="step-t">Gamificación que motiva al brigadista</div><div class="step-d">Racha de días consecutivos, contador de visitas, ranking dentro de la brigada. El brigadista quiere llegar al #1. La productividad sube sola.</div></div>
+      </div>
+    </div>
 
+    <div class="value-grid">
+      <div class="vcard"><div class="vcard-n teal-t">800</div><div class="vcard-l">encuestas en un solo día con 40 brigadistas</div></div>
+      <div class="vcard"><div class="vcard-n amber-t">$120K</div><div class="vcard-l">lo que cuesta eso con encuestadora tradicional</div></div>
+      <div class="vcard"><div class="vcard-n blue-t">30 seg</div><div class="vcard-l">tiempo extra por visita vs. solo tocar puerta</div></div>
+      <div class="vcard"><div class="vcard-n green-t">$0</div><div class="vcard-l">costo para el partido · modelo freemium</div></div>
+    </div>
+
+    <div class="insight-box">
+      <div class="ib-label">🎯 Conexión con Geraldine · Nayarit ID</div>
+      <div class="ib-text">Cuando implementemos <strong>Nayarit ID</strong> con Geraldine, este mismo módulo de campo se convierte en el arma de territorio. Cada brigadista casa por casa en Tepic no solo levanta encuesta — <strong>identifica y registra al votante seguro</strong>. El mapa de calor te dice exactamente en qué colonias está la mayoría para el día de la elección. <strong>Tepic asegurado antes de la campaña estatal.</strong></div>
     </div>
   </div>
 </div>
 
-<!-- DASHBOARD VIEW -->
-<div id="view-dash" class="view-hidden" style="padding:0;">
-  <div class="dash-panel" style="min-height:calc(100vh - 110px);max-width:100%;">
+<!-- ═══════════════════════════════════════
+  VIEW: COORDINADOR
+═══════════════════════════════════════ -->
+<div class="view" id="v-coord">
+  <!-- KPI strip -->
+  <div class="coord-kpis">
+    <div class="ck">
+      <div class="ck-label">Visitas hoy</div>
+      <div class="ck-val" style="color:var(--teal);">483</div>
+      <div class="ck-sub">↑ 89 última hora</div>
+    </div>
+    <div class="ck">
+      <div class="ck-label">Brigadistas activos</div>
+      <div class="ck-val" style="color:var(--blue);">31 / 38</div>
+      <div class="ck-sub">7 sin señal GPS</div>
+    </div>
+    <div class="ck">
+      <div class="ck-label">Cobertura global</div>
+      <div class="ck-val" style="color:var(--amber);">54%</div>
+      <div class="ck-sub">de 6 distritos</div>
+    </div>
+    <div class="ck">
+      <div class="ck-label">Encuestas capturadas</div>
+      <div class="ck-val" style="color:var(--green);">391</div>
+      <div class="ck-sub">≈ $47K de valor</div>
+    </div>
+    <div class="ck">
+      <div class="ck-label">Problema #1</div>
+      <div class="ck-val" style="color:var(--red);font-size:1rem;margin-top:.2rem;">Seguridad</div>
+      <div class="ck-sub">43% de los encuestados</div>
+    </div>
+  </div>
 
-    <div class="dash-topbar">
-      <div>
-        <div class="dash-title">Dashboard — Levántate por Nayarit</div>
-        <div style="font-size:0.65rem;color:var(--bmx-muted);">Temporada de campo · Martes 17 Jun 2026 · 16:43 hrs</div>
-      </div>
-      <div class="dash-live"><div class="live-dot"></div> EN VIVO</div>
+  <div class="coord-body">
+    <!-- MAP -->
+    <div class="map-col">
+      <div id="coord-map"></div>
     </div>
 
-    <!-- KPI strip -->
-    <div class="kpi-strip">
-      <div class="kpi-card">
-        <div class="kpi-label">Visitas hoy</div>
-        <div class="kpi-val kpi-teal">347</div>
-        <div class="kpi-sub">+89 última hora</div>
+    <!-- SIDEBAR -->
+    <div class="coord-sidebar">
+      <div class="sidebar-hdr">
+        <div class="sidebar-hdr-t">Distritos de Tepic</div>
+        <div class="sidebar-hdr-count">6 activos</div>
       </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Brigadistas activos</div>
-        <div class="kpi-val kpi-blue">23 / 28</div>
-        <div class="kpi-sub">5 sin señal</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Cobertura</div>
-        <div class="kpi-val kpi-amber">68%</div>
-        <div class="kpi-sub">de ruta asignada</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Encuestas capturadas</div>
-        <div class="kpi-val kpi-green">284</div>
-        <div class="kpi-sub">≈ $34K de valor</div>
-      </div>
-    </div>
 
-    <!-- Row 1 -->
-    <div class="dash-grid">
-
-      <!-- Heat map -->
-      <div class="dash-card">
-        <div class="dash-card-title">Mapa de Calor por Colonia</div>
-        <div class="heat-grid" id="heatmap">
-          <!-- Generated by JS -->
+      <!-- District cards -->
+      <div class="dcard sel" id="dc1" onclick="focusDistrict(0)">
+        <div class="dcard-top">
+          <div class="dcard-dot" style="background:#00F0C0;"></div>
+          <div class="dcard-name">D1 · Centro Histórico</div>
+          <div class="dcard-status st-hot">CALIENTE</div>
         </div>
-        <div class="heat-legend">
-          <div class="heat-legend-label">Frío</div>
-          <div class="heat-legend-bar"></div>
-          <div class="heat-legend-label">Caliente</div>
+        <div class="dcard-row">
+          <div class="dcard-stat"><div class="dcard-stat-n" style="color:var(--teal);">143</div><div class="dcard-stat-l">Visitas</div></div>
+          <div class="dcard-stat"><div class="dcard-stat-n">9</div><div class="dcard-stat-l">Brigadistas</div></div>
+          <div class="dcard-stat"><div class="dcard-stat-n" style="color:var(--teal);">72%</div><div class="dcard-stat-l">Cobertura</div></div>
         </div>
-        <div style="margin-top:0.75rem;display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;">
-          <div style="font-size:0.65rem;background:var(--bmx-surface);padding:0.4rem 0.6rem;border-radius:8px;color:var(--bmx-teal);">🔥 Linda Vista — 71% recep.</div>
-          <div style="font-size:0.65rem;background:var(--bmx-surface);padding:0.4rem 0.6rem;border-radius:8px;color:var(--bmx-red);">❄ Centro — 18% recep.</div>
-        </div>
+        <div class="dcard-prog-track"><div class="dcard-prog-fill" style="width:72%;background:#00F0C0;"></div></div>
+        <div class="dcard-enc">Lic. Carmen Flores · 200 casas meta</div>
       </div>
 
-      <!-- Survey results -->
-      <div class="dash-card">
-        <div class="dash-card-title">Resultados de Encuesta (284 resp.)</div>
+      <div class="dcard" id="dc2" onclick="focusDistrict(1)">
+        <div class="dcard-top">
+          <div class="dcard-dot" style="background:#8B5CF6;"></div>
+          <div class="dcard-name">D2 · Linda Vista Norte</div>
+          <div class="dcard-status st-active">EN CAMPO</div>
+        </div>
+        <div class="dcard-row">
+          <div class="dcard-stat"><div class="dcard-stat-n" style="color:var(--purple);">89</div><div class="dcard-stat-l">Visitas</div></div>
+          <div class="dcard-stat"><div class="dcard-stat-n">6</div><div class="dcard-stat-l">Brigadistas</div></div>
+          <div class="dcard-stat"><div class="dcard-stat-n" style="color:var(--purple);">58%</div><div class="dcard-stat-l">Cobertura</div></div>
+        </div>
+        <div class="dcard-prog-track"><div class="dcard-prog-fill" style="width:58%;background:#8B5CF6;"></div></div>
+        <div class="dcard-enc">Prof. Roberto Jiménez · 150 casas meta</div>
+      </div>
 
-        <div class="survey-result-item">
-          <div class="survey-result-q">¿Conoce al candidato?</div>
-          <div class="survey-bar-row">
-            <div class="survey-bar-label">Sí</div>
-            <div class="survey-bar-track"><div class="survey-bar-fill" style="width:38%;background:#22c55e;"></div></div>
-            <div class="survey-bar-pct">38%</div>
+      <div class="dcard" id="dc3" onclick="focusDistrict(2)">
+        <div class="dcard-top">
+          <div class="dcard-dot" style="background:#3B82F6;"></div>
+          <div class="dcard-name">D3 · Las Brisas Oriente</div>
+          <div class="dcard-status st-lag">REZAGADO</div>
+        </div>
+        <div class="dcard-row">
+          <div class="dcard-stat"><div class="dcard-stat-n" style="color:var(--blue);">52</div><div class="dcard-stat-l">Visitas</div></div>
+          <div class="dcard-stat"><div class="dcard-stat-n">4</div><div class="dcard-stat-l">Brigadistas</div></div>
+          <div class="dcard-stat"><div class="dcard-stat-n" style="color:var(--blue);">34%</div><div class="dcard-stat-l">Cobertura</div></div>
+        </div>
+        <div class="dcard-prog-track"><div class="dcard-prog-fill" style="width:34%;background:#3B82F6;"></div></div>
+        <div class="dcard-enc">C. Mónica Ruiz · 150 casas meta</div>
+      </div>
+
+      <div class="dcard" id="dc4" onclick="focusDistrict(3)">
+        <div class="dcard-top">
+          <div class="dcard-dot" style="background:#F59E0B;"></div>
+          <div class="dcard-name">D4 · Industrial Poniente</div>
+          <div class="dcard-status st-crit">⚠ CRÍTICO</div>
+        </div>
+        <div class="dcard-row">
+          <div class="dcard-stat"><div class="dcard-stat-n" style="color:var(--amber);">31</div><div class="dcard-stat-l">Visitas</div></div>
+          <div class="dcard-stat"><div class="dcard-stat-n">3</div><div class="dcard-stat-l">Brigadistas</div></div>
+          <div class="dcard-stat"><div class="dcard-stat-n" style="color:var(--amber);">21%</div><div class="dcard-stat-l">Cobertura</div></div>
+        </div>
+        <div class="dcard-prog-track"><div class="dcard-prog-fill" style="width:21%;background:#F59E0B;"></div></div>
+        <div class="dcard-enc">Mtro. Álvaro Vega · 140 casas meta</div>
+      </div>
+
+      <div class="dcard" id="dc5" onclick="focusDistrict(4)">
+        <div class="dcard-top">
+          <div class="dcard-dot" style="background:#10B981;"></div>
+          <div class="dcard-name">D5 · Miravalles Sur</div>
+          <div class="dcard-status st-exc">✓ EXCELENTE</div>
+        </div>
+        <div class="dcard-row">
+          <div class="dcard-stat"><div class="dcard-stat-n" style="color:var(--green);">178</div><div class="dcard-stat-l">Visitas</div></div>
+          <div class="dcard-stat"><div class="dcard-stat-n">11</div><div class="dcard-stat-l">Brigadistas</div></div>
+          <div class="dcard-stat"><div class="dcard-stat-n" style="color:var(--green);">81%</div><div class="dcard-stat-l">Cobertura</div></div>
+        </div>
+        <div class="dcard-prog-track"><div class="dcard-prog-fill" style="width:81%;background:#10B981;"></div></div>
+        <div class="dcard-enc">Ing. Patricia Soto · 220 casas meta</div>
+      </div>
+
+      <div class="dcard" id="dc6" onclick="focusDistrict(5)">
+        <div class="dcard-top">
+          <div class="dcard-dot" style="background:#EF4444;"></div>
+          <div class="dcard-name">D6 · Periférico Este</div>
+          <div class="dcard-status st-crit">⚠ URGENTE</div>
+        </div>
+        <div class="dcard-row">
+          <div class="dcard-stat"><div class="dcard-stat-n" style="color:var(--red);">18</div><div class="dcard-stat-l">Visitas</div></div>
+          <div class="dcard-stat"><div class="dcard-stat-n">2</div><div class="dcard-stat-l">Brigadistas</div></div>
+          <div class="dcard-stat"><div class="dcard-stat-n" style="color:var(--red);">12%</div><div class="dcard-stat-l">Cobertura</div></div>
+        </div>
+        <div class="dcard-prog-track"><div class="dcard-prog-fill" style="width:12%;background:#EF4444;"></div></div>
+        <div class="dcard-enc">Sin encargado asignado · 120 casas meta</div>
+      </div>
+
+      <!-- Activity feed -->
+      <div class="act-feed">
+        <div class="act-feed-t">Actividad reciente</div>
+        <div class="act-item">
+          <div class="act-ava" style="background:rgba(0,240,192,.15);color:var(--teal);">CM</div>
+          <div class="act-body">
+            <div class="act-text"><strong>Carlos M.</strong> registró visita en Allende 312 · <em>Seguridad</em> como preocupación</div>
+            <div class="act-time">hace 2 min · D1 Centro</div>
           </div>
-          <div class="survey-bar-row">
-            <div class="survey-bar-label">Algo</div>
-            <div class="survey-bar-track"><div class="survey-bar-fill" style="width:41%;background:#3b82f6;"></div></div>
-            <div class="survey-bar-pct">41%</div>
-          </div>
-          <div class="survey-bar-row">
-            <div class="survey-bar-label">No</div>
-            <div class="survey-bar-track"><div class="survey-bar-fill" style="width:21%;background:#ef4444;"></div></div>
-            <div class="survey-bar-pct">21%</div>
+        </div>
+        <div class="act-item">
+          <div class="act-ava" style="background:rgba(16,185,129,.15);color:var(--green);">PS</div>
+          <div class="act-body">
+            <div class="act-text"><strong>Patricia S.</strong> completó D5 · <strong>81% de cobertura alcanzado</strong></div>
+            <div class="act-time">hace 8 min · D5 Miravalles</div>
           </div>
         </div>
-
-        <div class="survey-result-item">
-          <div class="survey-result-q">¿Piensa votar?</div>
-          <div class="survey-bar-row">
-            <div class="survey-bar-label">Sí</div>
-            <div class="survey-bar-track"><div class="survey-bar-fill" style="width:62%;background:#22c55e;"></div></div>
-            <div class="survey-bar-pct">62%</div>
-          </div>
-          <div class="survey-bar-row">
-            <div class="survey-bar-label">Quizás</div>
-            <div class="survey-bar-track"><div class="survey-bar-fill" style="width:27%;background:#f59e0b;"></div></div>
-            <div class="survey-bar-pct">27%</div>
-          </div>
-          <div class="survey-bar-row">
-            <div class="survey-bar-label">No</div>
-            <div class="survey-bar-track"><div class="survey-bar-fill" style="width:11%;background:#ef4444;"></div></div>
-            <div class="survey-bar-pct">11%</div>
+        <div class="act-item">
+          <div class="act-ava" style="background:rgba(239,68,68,.15);color:var(--red);">⚠</div>
+          <div class="act-body">
+            <div class="act-text"><strong>D6 Periférico</strong> no tiene encargado. Solo 2 brigadistas para 120 casas.</div>
+            <div class="act-time">Alerta automática · hace 15 min</div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Row 2 -->
-    <div class="dash-grid">
-
-      <!-- Top issues -->
-      <div class="dash-card">
-        <div class="dash-card-title">Problemas Más Mencionados</div>
-        <div class="issue-row">
-          <div class="issue-icon" style="background:#fee2e2;">🚨</div>
-          <div class="issue-label">Seguridad</div>
-          <div class="issue-bar-wrap"><div class="issue-bar-track"><div class="issue-bar-fill" style="width:43%;background:#ef4444;"></div></div></div>
-          <div class="issue-pct">43%</div>
-        </div>
-        <div class="issue-row">
-          <div class="issue-icon" style="background:#fef3c7;">💼</div>
-          <div class="issue-label">Empleo / Economía</div>
-          <div class="issue-bar-wrap"><div class="issue-bar-track"><div class="issue-bar-fill" style="width:28%;background:#f59e0b;"></div></div></div>
-          <div class="issue-pct">28%</div>
-        </div>
-        <div class="issue-row">
-          <div class="issue-icon" style="background:#dbeafe;">💧</div>
-          <div class="issue-label">Agua / Servicios</div>
-          <div class="issue-bar-wrap"><div class="issue-bar-track"><div class="issue-bar-fill" style="width:18%;background:#3b82f6;"></div></div></div>
-          <div class="issue-pct">18%</div>
-        </div>
-        <div class="issue-row">
-          <div class="issue-icon" style="background:#dcfce7;">🏥</div>
-          <div class="issue-label">Salud / Educación</div>
-          <div class="issue-bar-wrap"><div class="issue-bar-track"><div class="issue-bar-fill" style="width:11%;background:#22c55e;"></div></div></div>
-          <div class="issue-pct">11%</div>
-        </div>
-      </div>
-
-      <!-- Brigadistas -->
-      <div class="dash-card">
-        <div class="dash-card-title">Brigadistas en Campo</div>
-        <div class="brigadista-row">
-          <div class="brig-avatar" style="background:#dcfce7;color:#16a34a;">CM</div>
-          <div class="brig-name">Carlos Mendoza</div>
-          <div class="brig-progress-wrap"><div class="brig-progress-track"><div class="brig-progress-fill" style="width:25%;"></div></div></div>
-          <div class="brig-count">3/12</div>
-          <div class="brig-status brig-active">EN CAMPO</div>
-        </div>
-        <div class="brigadista-row">
-          <div class="brig-avatar" style="background:#dbeafe;color:#1d4ed8;">LG</div>
-          <div class="brig-name">Laura García</div>
-          <div class="brig-progress-wrap"><div class="brig-progress-track"><div class="brig-progress-fill" style="width:75%;"></div></div></div>
-          <div class="brig-count">9/12</div>
-          <div class="brig-status brig-active">EN CAMPO</div>
-        </div>
-        <div class="brigadista-row">
-          <div class="brig-avatar" style="background:#f3e8ff;color:#7c3aed;">MR</div>
-          <div class="brig-name">Miguel Ruiz</div>
-          <div class="brig-progress-wrap"><div class="brig-progress-track"><div class="brig-progress-fill" style="width:58%;"></div></div></div>
-          <div class="brig-count">7/12</div>
-          <div class="brig-status brig-active">EN CAMPO</div>
-        </div>
-        <div class="brigadista-row">
-          <div class="brig-avatar" style="background:#fef3c7;color:#92400e;">AP</div>
-          <div class="brig-name">Ana Pérez</div>
-          <div class="brig-progress-wrap"><div class="brig-progress-track"><div class="brig-progress-fill" style="width:42%;background:#f59e0b;"></div></div></div>
-          <div class="brig-count">5/12</div>
-          <div class="brig-status brig-idle">PAUSA</div>
-        </div>
-        <div class="brigadista-row">
-          <div class="brig-avatar" style="background:#fee2e2;color:#b91c1c;">JL</div>
-          <div class="brig-name">Jorge López</div>
-          <div class="brig-progress-wrap"><div class="brig-progress-track"><div class="brig-progress-fill" style="width:100%;background:#22c55e;"></div></div></div>
-          <div class="brig-count">12/12 ✓</div>
-          <div class="brig-status brig-active">COMPLETO</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bottom banner -->
-    <div style="background:linear-gradient(135deg,#003d2e,#0a0f1e);border:1px solid var(--bmx-border);border-radius:16px;padding:1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
-      <div>
-        <div style="font-size:0.7rem;color:var(--bmx-teal);font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.3rem;">BrigadaMX — Infraestructura neutral de campo</div>
-        <div style="font-size:0.78rem;color:rgba(255,255,255,0.7);">Todos los partidos ven solo sus datos. Tú ves el agregado completo.</div>
-      </div>
-      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
-        <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.6rem 1rem;text-align:center;">
-          <div style="font-size:1rem;font-weight:900;color:var(--bmx-teal);">$0</div>
-          <div style="font-size:0.6rem;color:rgba(255,255,255,0.4);">para el partido</div>
-        </div>
-        <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.6rem 1rem;text-align:center;">
-          <div style="font-size:1rem;font-weight:900;color:var(--bmx-amber);">∞</div>
-          <div style="font-size:0.6rem;color:rgba(255,255,255,0.4);">valor del dato</div>
-        </div>
-        <div style="background:rgba(0,212,170,0.1);border:1px solid var(--bmx-teal);border-radius:10px;padding:0.6rem 1rem;text-align:center;">
-          <div style="font-size:1rem;font-weight:900;color:var(--bmx-teal);">100%</div>
-          <div style="font-size:0.6rem;color:rgba(255,255,255,0.6);">datos para ti</div>
+        <div class="act-item">
+          <div class="act-ava" style="background:rgba(139,92,246,.15);color:var(--purple);">LG</div>
+          <div class="act-body">
+            <div class="act-text"><strong>Laura G.</strong> reportó 9/12 casas · Zona Linda Vista completada al norte</div>
+            <div class="act-time">hace 22 min · D2</div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<div class="heat-tooltip" id="tooltip"></div>
 
 <script>
-  // ── SCREEN NAVIGATION ──
-  let currentScreen = 0;
-  const totalScreens = 8;
+// ── SCREEN NAV ──
+let cur = 0;
+const N = 10;
 
-  function goScreen(n) {
-    document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
-    document.getElementById('screen-' + n).classList.add('active');
-    currentScreen = n;
-    updateDots();
-  }
+function goS(n) {
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById('s'+n).classList.add('on');
+  cur = n;
+  document.querySelectorAll('.sd').forEach((d,i)=>d.classList.toggle('on',i===n));
+}
+function nextS(){if(cur<N-1)goS(cur+1);}
+function prevS(){if(cur>0)goS(cur-1);}
+function pick(el,next){
+  el.closest('.survey-body').querySelectorAll('.sopt').forEach(o=>o.classList.remove('picked'));
+  el.classList.add('picked');
+  setTimeout(()=>goS(next),300);
+}
 
-  function nextScreen() {
-    if (currentScreen < totalScreens - 1) goScreen(currentScreen + 1);
-  }
+// ── TAB SWITCH ──
+function setView(id, btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.getElementById('v-'+id).classList.add('on');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  if(id==='coord') setTimeout(initMap, 100);
+}
 
-  function prevScreen() {
-    if (currentScreen > 0) goScreen(currentScreen - 1);
-  }
+// ── LEAFLET MAP ──
+let mapInited = false;
+let leafMap, districtLayers=[], selectedIdx=0;
 
-  function selectAndGo(el, nextScreen) {
-    el.closest('.survey-options').querySelectorAll('.survey-option').forEach(o => o.classList.remove('selected'));
-    el.classList.add('selected');
-    setTimeout(() => goScreen(nextScreen), 350);
-  }
+const districts = [
+  {name:"D1 · Centro Histórico",   color:"#00F0C0", fill:"rgba(0,240,192,0.18)",  coords:[[21.510,-104.910],[21.510,-104.885],[21.495,-104.885],[21.495,-104.910]], cov:72, vis:143, brig:9,  enc:"Lic. Carmen Flores"},
+  {name:"D2 · Linda Vista Norte",   color:"#8B5CF6", fill:"rgba(139,92,246,0.18)", coords:[[21.530,-104.920],[21.530,-104.895],[21.510,-104.895],[21.510,-104.920]], cov:58, vis:89,  brig:6,  enc:"Prof. Roberto Jiménez"},
+  {name:"D3 · Las Brisas Oriente",  color:"#3B82F6", fill:"rgba(59,130,246,0.18)", coords:[[21.530,-104.895],[21.530,-104.865],[21.510,-104.865],[21.510,-104.895]], cov:34, vis:52,  brig:4,  enc:"C. Mónica Ruiz"},
+  {name:"D4 · Industrial Poniente", color:"#F59E0B", fill:"rgba(245,158,11,0.18)", coords:[[21.495,-104.920],[21.495,-104.895],[21.475,-104.895],[21.475,-104.920]], cov:21, vis:31,  brig:3,  enc:"Mtro. Álvaro Vega"},
+  {name:"D5 · Miravalles Sur",      color:"#10B981", fill:"rgba(16,185,129,0.18)", coords:[[21.495,-104.895],[21.495,-104.865],[21.475,-104.865],[21.475,-104.895]], cov:81, vis:178, brig:11, enc:"Ing. Patricia Soto"},
+  {name:"D6 · Periférico Este",     color:"#EF4444", fill:"rgba(239,68,68,0.18)",  coords:[[21.520,-104.865],[21.520,-104.840],[21.480,-104.840],[21.480,-104.865]], cov:12, vis:18,  brig:2,  enc:"Sin asignar"}
+];
 
-  function updateDots() {
-    const dots = document.querySelectorAll('.screen-dot');
-    dots.forEach((d, i) => d.classList.toggle('active', i === currentScreen));
-  }
+function initMap(){
+  if(mapInited) return;
+  mapInited = true;
 
-  // ── TAB SWITCHING ──
-  function switchTab(tab) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
-    if (tab === 'phone') {
-      document.getElementById('view-phone').classList.remove('view-hidden');
-      document.getElementById('view-dash').classList.add('view-hidden');
-    } else {
-      document.getElementById('view-phone').classList.add('view-hidden');
-      document.getElementById('view-dash').classList.remove('view-hidden');
-    }
-  }
+  leafMap = L.map('coord-map',{zoomControl:true,attributionControl:false}).setView([21.503,-104.892],13);
 
-  // ── HEAT MAP ──
-  const colonias = [
-    'Linda Vista','Miravalles','Cd. del Valle','Las Brisas','Centro',
-    'Industrial','San Juan','Versalles','Altamira','Santa Fe',
-    'Los Fresnos','El Maguey','Cd. Industrial','Reforma','Pedregal',
-    'La Loma','Vista Hermosa','El Rosario','Jacarandas','La Cantera',
-    'Tepic Centro','Cd. Comercial','El Esfuerzo','La Florida','Las Palmas'
-  ];
-  const heat = [5,4,4,3,1, 1,3,4,2,3, 2,3,1,4,3, 2,4,2,3,2, 2,3,1,3,2];
+  // Dark tile layer (CartoDB Dark Matter)
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+    subdomains:'abcd', maxZoom:19
+  }).addTo(leafMap);
 
-  const heatmap = document.getElementById('heatmap');
-  const tooltip = document.getElementById('tooltip');
-  colonias.forEach((name, i) => {
-    const cell = document.createElement('div');
-    cell.className = `heat-cell heat-${heat[i]}`;
-    const vis = heat[i] * 17 + Math.floor(Math.random() * 10);
-    cell.addEventListener('mousemove', (e) => {
-      tooltip.style.display = 'block';
-      tooltip.style.left = (e.clientX + 12) + 'px';
-      tooltip.style.top = (e.clientY - 30) + 'px';
-      tooltip.textContent = `${name} · ${vis} visitas`;
+  // Attribution small
+  L.control.attribution({position:'bottomleft'}).addTo(leafMap);
+
+  // Draw districts
+  districts.forEach((d,i)=>{
+    const poly = L.polygon(d.coords, {
+      color: d.color,
+      weight: 2,
+      opacity: 0.9,
+      fillColor: d.color,
+      fillOpacity: 0.15,
+      className: 'district-poly'
+    }).addTo(leafMap);
+
+    // Label
+    const center = poly.getBounds().getCenter();
+    const icon = L.divIcon({
+      className:'',
+      html:`<div style="background:rgba(12,18,34,0.85);border:1px solid ${d.color};color:#fff;padding:4px 8px;border-radius:8px;font-size:11px;font-weight:700;white-space:nowrap;backdrop-filter:blur(10px);">
+        <span style="color:${d.color};margin-right:4px;">●</span>${d.name.split(' · ')[0]}
+        <span style="color:${d.color};margin-left:4px;">${d.cov}%</span>
+      </div>`,
+      iconAnchor:[40,15]
     });
-    cell.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
-    heatmap.appendChild(cell);
+    L.marker(center,{icon}).addTo(leafMap);
+
+    // Popup
+    poly.bindPopup(`
+      <div class="popup-title">${d.name}</div>
+      <div class="popup-row">Cobertura <span>${d.cov}%</span></div>
+      <div class="popup-row">Visitas hoy <span>${d.vis}</span></div>
+      <div class="popup-row">Brigadistas <span>${d.brig}</span></div>
+      <div class="popup-row">Encargado <span>${d.enc}</span></div>
+    `, {className:'district-popup'});
+
+    poly.on('click', ()=>focusDistrict(i));
+    districtLayers.push(poly);
   });
+
+  // Add brigadista dots
+  const brigPos = [
+    [21.503,-104.898],[21.506,-104.891],[21.501,-104.902],
+    [21.519,-104.908],[21.521,-104.900],[21.523,-104.897],
+    [21.525,-104.878],[21.527,-104.870],[21.516,-104.868],
+    [21.484,-104.912],[21.488,-104.905],[21.491,-104.898],
+    [21.487,-104.890],[21.481,-104.878],[21.485,-104.872],
+    [21.489,-104.868],[21.484,-104.862],[21.492,-104.876],
+    [21.512,-104.858],[21.508,-104.848]
+  ];
+  brigPos.forEach(pos=>{
+    const dotIcon = L.divIcon({
+      className:'',
+      html:`<div style="width:10px;height:10px;border-radius:50%;background:#3B82F6;border:2px solid #fff;box-shadow:0 0 8px rgba(59,130,246,.6);"></div>`,
+      iconAnchor:[5,5]
+    });
+    L.marker(pos,{icon:dotIcon}).addTo(leafMap);
+  });
+}
+
+function focusDistrict(i){
+  selectedIdx = i;
+  // Highlight poly
+  districtLayers.forEach((p,j)=>{
+    p.setStyle({fillOpacity: j===i ? 0.35 : 0.15, weight: j===i ? 3 : 2});
+  });
+  leafMap.flyToBounds(districtLayers[i].getBounds(), {padding:[60,60], duration:.8});
+  // Highlight card
+  document.querySelectorAll('.dcard').forEach((c,j)=>c.classList.toggle('sel',j===i));
+}
 </script>
 </body>
 </html>
