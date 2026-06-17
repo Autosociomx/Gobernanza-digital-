@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrigadaMX — Demo Interactivo</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bmx-bg: #0a0f1e;
+    --bmx-surface: #111827;
+    --bmx-card: #1a2235;
+    --bmx-border: #ffffff12;
+    --bmx-teal: #00d4aa;
+    --bmx-teal-dim: #00d4aa22;
+    --bmx-blue: #3b82f6;
+    --bmx-purple: #8b5cf6;
+    --bmx-amber: #f59e0b;
+    --bmx-red: #ef4444;
+    --bmx-green: #22c55e;
+    --bmx-text: #f1f5f9;
+    --bmx-muted: #64748b;
+    --bmx-dim: #94a3b8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bmx-bg);
+    color: var(--bmx-text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--bmx-surface);
+    border-bottom: 1px solid var(--bmx-border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo { display: flex; align-items: center; gap: 0.6rem; }
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--bmx-teal), var(--bmx-blue));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+  }
+  .logo-text { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; }
+  .logo-text span { color: var(--bmx-teal); }
+  .header-badge {
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+    background: var(--bmx-teal-dim); color: var(--bmx-teal);
+    border: 1px solid var(--bmx-teal); border-radius: 20px;
+    padding: 0.25rem 0.75rem;
+  }
+  .header-actions { display: flex; gap: 0.75rem; align-items: center; }
+  .btn-pdf {
+    background: var(--bmx-card); border: 1px solid var(--bmx-border);
+    color: var(--bmx-dim); font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.05em; padding: 0.4rem 0.9rem; border-radius: 8px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-pdf:hover { border-color: var(--bmx-teal); color: var(--bmx-teal); }
+
+  /* ── TAB SWITCHER ── */
+  .tab-bar {
+    display: flex; gap: 0.25rem;
+    background: var(--bmx-surface);
+    border-bottom: 1px solid var(--bmx-border);
+    padding: 0 2rem;
+  }
+  .tab-btn {
+    padding: 0.9rem 1.5rem;
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em;
+    color: var(--bmx-muted); background: none; border: none; cursor: pointer;
+    border-bottom: 2px solid transparent; transition: all 0.2s;
+  }
+  .tab-btn.active { color: var(--bmx-teal); border-bottom-color: var(--bmx-teal); }
+  .tab-btn:hover:not(.active) { color: var(--bmx-dim); }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 0;
+    min-height: calc(100vh - 110px);
+  }
+
+  /* ── PHONE MOCKUP ── */
+  .phone-panel {
+    background: var(--bmx-surface);
+    border-right: 1px solid var(--bmx-border);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .phone-label {
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em;
+    color: var(--bmx-muted); text-transform: uppercase;
+    align-self: flex-start;
+  }
+  .phone-wrap {
+    width: 280px;
+    background: #000;
+    border-radius: 40px;
+    padding: 12px;
+    box-shadow: 0 30px 80px #000a, 0 0 0 1px #333;
+    position: relative;
+  }
+  .phone-notch {
+    width: 100px; height: 26px;
+    background: #000;
+    border-radius: 0 0 18px 18px;
+    position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+    z-index: 10;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .phone-notch-cam { width: 10px; height: 10px; border-radius: 50%; background: #1a1a1a; border: 1px solid #333; }
+  .phone-screen {
+    background: #f8fafc;
+    border-radius: 30px;
+    min-height: 560px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ── APP SCREENS ── */
+  .app-screen {
+    display: none;
+    flex-direction: column;
+    min-height: 560px;
+    background: #f8fafc;
+  }
+  .app-screen.active { display: flex; }
+
+  /* Screen 0 - Splash */
+  .screen-splash {
+    background: linear-gradient(160deg, #0a0f1e 0%, #0d1f3c 60%, #003d2e 100%);
+    align-items: center; justify-content: center; text-align: center;
+    padding: 2rem;
+  }
+  .splash-logo { width: 70px; height: 70px; background: linear-gradient(135deg, var(--bmx-teal), var(--bmx-blue)); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1rem; }
+  .splash-title { font-size: 1.6rem; font-weight: 900; color: white; letter-spacing: -0.03em; }
+  .splash-sub { font-size: 0.7rem; color: rgba(255,255,255,0.5); margin: 0.4rem 0 2rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .splash-campaign { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 1rem; margin-bottom: 2rem; width: 100%; }
+  .splash-campaign-name { font-size: 0.85rem; font-weight: 700; color: white; }
+  .splash-campaign-sub { font-size: 0.65rem; color: rgba(255,255,255,0.4); margin-top: 0.2rem; }
+  .splash-input {
+    width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px; padding: 0.75rem 1rem; color: white; font-size: 0.8rem;
+    margin-bottom: 0.75rem; font-family: inherit;
+  }
+  .splash-input::placeholder { color: rgba(255,255,255,0.3); }
+  .btn-primary {
+    width: 100%; background: var(--bmx-teal); color: #000;
+    border: none; border-radius: 12px; padding: 0.85rem;
+    font-size: 0.85rem; font-weight: 800; letter-spacing: 0.02em;
+    cursor: pointer; transition: opacity 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.9; }
+
+  /* App top bar */
+  .app-topbar {
+    background: white; border-bottom: 1px solid #e2e8f0;
+    padding: 0.6rem 1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+    padding-top: 2rem;
+  }
+  .app-topbar-back { width: 28px; height: 28px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; font-size: 0.8rem; }
+  .app-topbar-title { font-size: 0.8rem; font-weight: 700; color: #0f172a; flex: 1; }
+  .app-topbar-badge { font-size: 0.6rem; font-weight: 700; background: #ecfdf5; color: #059669; border-radius: 6px; padding: 0.2rem 0.5rem; }
+
+  /* Screen 1 - Route */
+  .screen-route { background: #f8fafc; }
+  .route-header { background: linear-gradient(135deg, #0a0f1e, #003d2e); padding: 1.5rem 1rem 1rem; }
+  .route-header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+  .route-header-greeting { font-size: 0.65rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.08em; }
+  .route-header-name { font-size: 1rem; font-weight: 800; color: white; }
+  .route-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; }
+  .route-stat { background: rgba(255,255,255,0.08); border-radius: 10px; padding: 0.5rem; text-align: center; }
+  .route-stat-n { font-size: 1.1rem; font-weight: 900; color: var(--bmx-teal); }
+  .route-stat-l { font-size: 0.55rem; color: rgba(255,255,255,0.4); }
+  .route-list { padding: 0.75rem; overflow-y: auto; flex: 1; }
+  .route-section-label { font-size: 0.6rem; font-weight: 700; color: var(--bmx-muted); letter-spacing: 0.1em; text-transform: uppercase; margin: 0.5rem 0; }
+  .route-item {
+    background: white; border: 1px solid #e2e8f0; border-radius: 12px;
+    padding: 0.75rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .route-item:hover { border-color: var(--bmx-teal); }
+  .route-item.done { opacity: 0.5; }
+  .route-item.active-house { border-color: var(--bmx-teal); background: #f0fdf9; }
+  .route-num { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; flex-shrink: 0; }
+  .route-num.pending { background: #f1f5f9; color: #64748b; }
+  .route-num.done-n { background: #dcfce7; color: #16a34a; }
+  .route-num.current { background: var(--bmx-teal); color: #000; }
+  .route-addr { font-size: 0.72rem; font-weight: 600; color: #0f172a; }
+  .route-colonia { font-size: 0.6rem; color: #64748b; }
+  .route-check { margin-left: auto; color: #22c55e; font-size: 0.9rem; }
+  .route-arrow { margin-left: auto; color: #94a3b8; font-size: 0.75rem; }
+  .route-start-btn {
+    margin: 0.75rem; background: #0a0f1e; color: white;
+    border: none; border-radius: 12px; padding: 0.85rem;
+    font-size: 0.82rem; font-weight: 800; cursor: pointer; transition: all 0.2s;
+  }
+  .route-start-btn:hover { background: #1a2235; }
+
+  /* Screen 2 - At door */
+  .screen-door { background: #f8fafc; }
+  .door-map {
+    height: 160px;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%);
+    position: relative; overflow: hidden;
+  }
+  .map-grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(#93c5fd33 1px, transparent 1px), linear-gradient(90deg, #93c5fd33 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  .map-roads { position: absolute; inset: 0; }
+  .map-road-h { position: absolute; background: white; opacity: 0.6; height: 3px; left: 0; right: 0; }
+  .map-road-v { position: absolute; background: white; opacity: 0.6; width: 3px; top: 0; bottom: 0; }
+  .map-pin { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -80%); }
+  .map-pin-dot { width: 20px; height: 20px; background: var(--bmx-teal); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 2px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+  .map-pin-ring { position: absolute; top: -4px; left: -4px; width: 28px; height: 28px; border: 2px solid var(--bmx-teal); border-radius: 50%; opacity: 0.4; animation: ping 1.5s ease-out infinite; }
+  @keyframes ping { 0% { transform: scale(1); opacity: 0.4; } 100% { transform: scale(2); opacity: 0; } }
+  .door-info { padding: 0.75rem; }
+  .door-address-card {
+    background: white; border: 1px solid #e2e8f0; border-radius: 14px;
+    padding: 0.85rem; margin-bottom: 0.75rem;
+  }
+  .door-address-num { font-size: 0.6rem; color: var(--bmx-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  .door-address-text { font-size: 0.95rem; font-weight: 800; color: #0f172a; }
+  .door-address-col { font-size: 0.7rem; color: #64748b; }
+  .door-progress { display: flex; gap: 4px; margin: 0.75rem 0; }
+  .door-progress-dot { flex: 1; height: 3px; border-radius: 2px; background: #e2e8f0; }
+  .door-progress-dot.done { background: var(--bmx-teal); }
+  .door-progress-dot.current { background: var(--bmx-blue); }
+  .door-btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem; }
+  .door-btn-absent {
+    background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 10px;
+    padding: 0.6rem; font-size: 0.72rem; font-weight: 600; color: #475569;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .door-btn-knock {
+    background: #0a0f1e; border: none; border-radius: 10px;
+    padding: 0.85rem; font-size: 0.82rem; font-weight: 800; color: white;
+    cursor: pointer; transition: all 0.2s; grid-column: span 2;
+  }
+  .door-btn-knock:hover { background: #1a2235; }
+
+  /* Screen 3-6 - Survey */
+  .screen-survey { background: white; }
+  .survey-header { background: #0a0f1e; padding: 2rem 1rem 1.25rem; }
+  .survey-progress-bar { height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-bottom: 0.75rem; }
+  .survey-progress-fill { height: 100%; background: var(--bmx-teal); border-radius: 2px; transition: width 0.4s; }
+  .survey-q-label { font-size: 0.6rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem; }
+  .survey-q-text { font-size: 0.9rem; font-weight: 700; color: white; line-height: 1.3; }
+  .survey-options { padding: 1rem; flex: 1; display: flex; flex-direction: column; gap: 0.6rem; }
+  .survey-option {
+    background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 14px;
+    padding: 0.85rem 1rem; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .survey-option:hover { border-color: var(--bmx-teal); background: #f0fdf9; }
+  .survey-option.selected { border-color: var(--bmx-teal); background: #f0fdf9; }
+  .survey-opt-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+  .survey-opt-text { font-size: 0.8rem; font-weight: 600; color: #0f172a; }
+  .survey-opt-sub { font-size: 0.65rem; color: #64748b; }
+
+  /* Screen 7 - Success */
+  .screen-success {
+    background: linear-gradient(160deg, #0a0f1e 0%, #003d2e 100%);
+    align-items: center; justify-content: center; text-align: center;
+    padding: 2rem;
+  }
+  .success-icon { width: 70px; height: 70px; background: var(--bmx-teal); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1rem; }
+  .success-title { font-size: 1.3rem; font-weight: 900; color: white; margin-bottom: 0.4rem; }
+  .success-sub { font-size: 0.72rem; color: rgba(255,255,255,0.5); margin-bottom: 1.5rem; }
+  .success-results { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 1rem; margin-bottom: 1.5rem; text-align: left; width: 100%; }
+  .success-result-row { display: flex; justify-content: space-between; padding: 0.35rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .success-result-row:last-child { border: none; }
+  .success-result-q { font-size: 0.65rem; color: rgba(255,255,255,0.4); }
+  .success-result-a { font-size: 0.65rem; font-weight: 700; color: var(--bmx-teal); }
+  .success-next-btn {
+    width: 100%; background: var(--bmx-teal); color: #000;
+    border: none; border-radius: 12px; padding: 0.85rem;
+    font-size: 0.82rem; font-weight: 800; cursor: pointer;
+  }
+
+  /* ── FLOW CONTROLS ── */
+  .flow-controls {
+    display: flex; gap: 0.5rem; align-self: stretch;
+  }
+  .flow-btn {
+    flex: 1; background: var(--bmx-card); border: 1px solid var(--bmx-border);
+    color: var(--bmx-dim); font-size: 0.7rem; font-weight: 600;
+    padding: 0.6rem; border-radius: 10px; cursor: pointer; transition: all 0.2s;
+  }
+  .flow-btn:hover { border-color: var(--bmx-teal); color: var(--bmx-teal); }
+  .flow-btn.primary { background: var(--bmx-teal); color: #000; border-color: var(--bmx-teal); font-weight: 800; }
+  .screen-indicator { display: flex; gap: 4px; justify-content: center; }
+  .screen-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--bmx-border); transition: background 0.2s; }
+  .screen-dot.active { background: var(--bmx-teal); }
+
+  /* ── DASHBOARD PANEL ── */
+  .dash-panel { padding: 1.5rem 2rem; overflow-y: auto; }
+  .dash-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+  .dash-title { font-size: 1rem; font-weight: 800; }
+  .dash-live { display: flex; align-items: center; gap: 0.4rem; font-size: 0.65rem; font-weight: 700; color: var(--bmx-green); }
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--bmx-green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* KPI strip */
+  .kpi-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+  .kpi-card { background: var(--bmx-card); border: 1px solid var(--bmx-border); border-radius: 14px; padding: 1rem; }
+  .kpi-label { font-size: 0.6rem; font-weight: 700; color: var(--bmx-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
+  .kpi-val { font-size: 1.6rem; font-weight: 900; line-height: 1; }
+  .kpi-sub { font-size: 0.65rem; color: var(--bmx-muted); margin-top: 0.25rem; }
+  .kpi-teal { color: var(--bmx-teal); }
+  .kpi-blue { color: var(--bmx-blue); }
+  .kpi-amber { color: var(--bmx-amber); }
+  .kpi-green { color: var(--bmx-green); }
+
+  /* Two cols */
+  .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem; }
+  .dash-card { background: var(--bmx-card); border: 1px solid var(--bmx-border); border-radius: 16px; padding: 1.25rem; }
+  .dash-card-title { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--bmx-muted); margin-bottom: 1rem; }
+
+  /* Heat map */
+  .heat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+  .heat-cell {
+    aspect-ratio: 1; border-radius: 6px; cursor: default;
+    position: relative; font-size: 0.5rem; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: rgba(255,255,255,0.8);
+    transition: transform 0.15s;
+  }
+  .heat-cell:hover { transform: scale(1.1); z-index: 1; }
+  .heat-0 { background: #1a2235; }
+  .heat-1 { background: #164e63; }
+  .heat-2 { background: #0e7490; }
+  .heat-3 { background: #0891b2; }
+  .heat-4 { background: #06b6d4; }
+  .heat-5 { background: #00d4aa; color: #000; }
+  .heat-legend { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem; }
+  .heat-legend-bar { flex: 1; height: 6px; border-radius: 3px; background: linear-gradient(90deg, #1a2235, #164e63, #0891b2, #00d4aa); }
+  .heat-legend-label { font-size: 0.55rem; color: var(--bmx-muted); }
+
+  /* Survey results */
+  .survey-result-item { margin-bottom: 1rem; }
+  .survey-result-q { font-size: 0.7rem; font-weight: 600; color: var(--bmx-dim); margin-bottom: 0.5rem; }
+  .survey-bar-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem; }
+  .survey-bar-label { font-size: 0.65rem; color: var(--bmx-muted); width: 80px; text-align: right; flex-shrink: 0; }
+  .survey-bar-track { flex: 1; height: 6px; background: var(--bmx-surface); border-radius: 3px; }
+  .survey-bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+  .survey-bar-pct { font-size: 0.65rem; font-weight: 700; color: var(--bmx-text); width: 32px; }
+
+  /* Brigadistas */
+  .brigadista-row {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.6rem 0; border-bottom: 1px solid var(--bmx-border);
+  }
+  .brigadista-row:last-child { border: none; }
+  .brig-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; flex-shrink: 0; }
+  .brig-name { font-size: 0.75rem; font-weight: 600; flex: 1; }
+  .brig-progress-wrap { width: 80px; }
+  .brig-progress-track { height: 4px; background: var(--bmx-surface); border-radius: 2px; }
+  .brig-progress-fill { height: 100%; background: var(--bmx-teal); border-radius: 2px; }
+  .brig-count { font-size: 0.65rem; color: var(--bmx-muted); text-align: right; width: 40px; }
+  .brig-status { font-size: 0.55rem; font-weight: 700; padding: 0.15rem 0.4rem; border-radius: 4px; }
+  .brig-active { background: #dcfce7; color: #16a34a; }
+  .brig-idle { background: #fef3c7; color: #92400e; }
+
+  /* Top issues */
+  .issue-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid var(--bmx-border); }
+  .issue-row:last-child { border: none; }
+  .issue-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+  .issue-label { font-size: 0.75rem; font-weight: 600; flex: 1; }
+  .issue-bar-wrap { width: 100px; }
+  .issue-bar-track { height: 4px; background: var(--bmx-surface); border-radius: 2px; }
+  .issue-bar-fill { height: 100%; border-radius: 2px; }
+  .issue-pct { font-size: 0.65rem; font-weight: 700; color: var(--bmx-text); width: 32px; text-align: right; }
+
+  /* Dashboard tab hidden */
+  #view-dash, #view-phone { }
+  .view-hidden { display: none !important; }
+
+  /* Tooltip for heat cells */
+  .heat-tooltip {
+    position: fixed; background: #0f172a; color: white;
+    font-size: 0.65rem; padding: 0.4rem 0.7rem; border-radius: 8px;
+    pointer-events: none; z-index: 1000; border: 1px solid var(--bmx-border);
+    white-space: nowrap; display: none;
+  }
+
+  @media print {
+    .tab-bar, .flow-controls, .btn-pdf { display: none !important; }
+    body { background: white; color: black; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">🗺️</div>
+    <div class="logo-text">Brigada<span>MX</span></div>
+  </div>
+  <div class="header-badge">DEMO INTERACTIVO</div>
+  <div class="header-actions">
+    <button class="btn-pdf" onclick="window.print()">⬇ Exportar PDF</button>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('phone')">📱 App Brigadista</button>
+  <button class="tab-btn" onclick="switchTab('dash')">📊 Dashboard Coordinador</button>
+</div>
+
+<!-- PHONE VIEW -->
+<div id="view-phone" class="main">
+  <div class="phone-panel">
+    <div class="phone-label">Vista del Brigadista en Campo</div>
+    <div class="phone-wrap">
+      <div class="phone-notch">
+        <div class="phone-notch-cam"></div>
+      </div>
+      <div class="phone-screen">
+
+        <!-- Screen 0: Splash/Login -->
+        <div class="app-screen screen-splash active" id="screen-0">
+          <div class="splash-logo">🗺️</div>
+          <div class="splash-title">BrigadaMX</div>
+          <div class="splash-sub">Infraestructura de campo</div>
+          <div class="splash-campaign">
+            <div class="splash-campaign-name">Levántate por Nayarit</div>
+            <div class="splash-campaign-sub">Tepic · Temporada de campo 2026</div>
+          </div>
+          <input class="splash-input" type="text" placeholder="Tu nombre" value="Carlos Mendoza">
+          <input class="splash-input" type="text" placeholder="Código de brigada" value="NTE-047">
+          <button class="btn-primary" onclick="goScreen(1)">Entrar al Sistema →</button>
+        </div>
+
+        <!-- Screen 1: My Route -->
+        <div class="app-screen screen-route" id="screen-1">
+          <div class="route-header">
+            <div class="route-header-top">
+              <div>
+                <div class="route-header-greeting">Buenos días,</div>
+                <div class="route-header-name">Carlos Mendoza</div>
+              </div>
+              <div style="font-size:0.6rem;color:rgba(255,255,255,0.4);">Zona: Norte-B</div>
+            </div>
+            <div class="route-stats">
+              <div class="route-stat"><div class="route-stat-n">12</div><div class="route-stat-l">Casas hoy</div></div>
+              <div class="route-stat"><div class="route-stat-n" style="color:#f59e0b;">2</div><div class="route-stat-l">Completadas</div></div>
+              <div class="route-stat"><div class="route-stat-n">10</div><div class="route-stat-l">Pendientes</div></div>
+            </div>
+          </div>
+          <div class="route-list">
+            <div class="route-section-label">Tu ruta de hoy</div>
+            <div class="route-item done">
+              <div class="route-num done-n">✓</div>
+              <div><div class="route-addr">Insurgentes 247</div><div class="route-colonia">Col. Centro</div></div>
+              <div class="route-check">✓</div>
+            </div>
+            <div class="route-item done">
+              <div class="route-num done-n">✓</div>
+              <div><div class="route-addr">Morelos 89</div><div class="route-colonia">Col. Centro</div></div>
+              <div class="route-check">✓</div>
+            </div>
+            <div class="route-item active-house" onclick="goScreen(2)">
+              <div class="route-num current">3</div>
+              <div><div class="route-addr">Av. Allende 312</div><div class="route-colonia">Linda Vista</div></div>
+              <div class="route-arrow">▶</div>
+            </div>
+            <div class="route-item">
+              <div class="route-num pending">4</div>
+              <div><div class="route-addr">Juárez 445 Int. B</div><div class="route-colonia">Linda Vista</div></div>
+              <div class="route-arrow" style="color:#e2e8f0;">›</div>
+            </div>
+            <div class="route-item">
+              <div class="route-num pending">5</div>
+              <div><div class="route-addr">Madero 78</div><div class="route-colonia">Miravalles</div></div>
+              <div class="route-arrow" style="color:#e2e8f0;">›</div>
+            </div>
+          </div>
+          <button class="route-start-btn" onclick="goScreen(2)">▶ Ir a casa #3 — Av. Allende 312</button>
+        </div>
+
+        <!-- Screen 2: At door -->
+        <div class="app-screen screen-door" id="screen-2">
+          <div class="app-topbar">
+            <button class="app-topbar-back" onclick="goScreen(1)">‹</button>
+            <div class="app-topbar-title">Casa #3 de 12</div>
+            <div class="app-topbar-badge">En ruta</div>
+          </div>
+          <div class="door-map">
+            <div class="map-grid"></div>
+            <div class="map-roads">
+              <div class="map-road-h" style="top:40%"></div>
+              <div class="map-road-h" style="top:70%"></div>
+              <div class="map-road-v" style="left:30%"></div>
+              <div class="map-road-v" style="left:60%"></div>
+            </div>
+            <div class="map-pin">
+              <div class="map-pin-ring"></div>
+              <div class="map-pin-dot"></div>
+            </div>
+          </div>
+          <div class="door-info">
+            <div class="door-address-card">
+              <div class="door-address-num">Siguiente visita</div>
+              <div class="door-address-text">Av. Allende 312</div>
+              <div class="door-address-col">Col. Linda Vista, Tepic</div>
+            </div>
+            <div class="door-progress">
+              <div class="door-progress-dot done"></div>
+              <div class="door-progress-dot done"></div>
+              <div class="door-progress-dot current"></div>
+              <div class="door-progress-dot"></div>
+              <div class="door-progress-dot"></div>
+              <div class="door-progress-dot"></div>
+            </div>
+            <div class="door-btn-group">
+              <button class="door-btn-absent" onclick="goScreen(1)">🚪 Nadie en casa</button>
+              <button class="door-btn-absent" onclick="goScreen(1)">🚫 No quiso</button>
+              <button class="door-btn-knock" onclick="goScreen(3)">🚪 Tocaron — Registrar visita</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Screen 3: Survey Q1 -->
+        <div class="app-screen screen-survey" id="screen-3">
+          <div class="survey-header">
+            <div class="survey-progress-bar">
+              <div class="survey-progress-fill" style="width:25%"></div>
+            </div>
+            <div class="survey-q-label">Pregunta 1 de 4</div>
+            <div class="survey-q-text">¿Conoce o ha escuchado del candidato de Levántate?</div>
+          </div>
+          <div class="survey-options">
+            <div class="survey-option" onclick="selectAndGo(this, 4)">
+              <div class="survey-opt-icon" style="background:#dcfce7;">😊</div>
+              <div><div class="survey-opt-text">Sí, lo conozco bien</div><div class="survey-opt-sub">Tiene información del candidato</div></div>
+            </div>
+            <div class="survey-option" onclick="selectAndGo(this, 4)">
+              <div class="survey-opt-icon" style="background:#fef3c7;">🤔</div>
+              <div><div class="survey-opt-text">Algo he escuchado</div><div class="survey-opt-sub">Conocimiento parcial</div></div>
+            </div>
+            <div class="survey-option" onclick="selectAndGo(this, 4)">
+              <div class="survey-opt-icon" style="background:#fee2e2;">❓</div>
+              <div><div class="survey-opt-text">No lo conozco</div><div class="survey-opt-sub">Primera vez que escucha</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Screen 4: Survey Q2 -->
+        <div class="app-screen screen-survey" id="screen-4">
+          <div class="survey-header">
+            <div class="survey-progress-bar">
+              <div class="survey-progress-fill" style="width:50%"></div>
+            </div>
+            <div class="survey-q-label">Pregunta 2 de 4</div>
+            <div class="survey-q-text">¿Cuál es el problema que más le preocupa en su colonia?</div>
+          </div>
+          <div class="survey-options">
+            <div class="survey-option" onclick="selectAndGo(this, 5)">
+              <div class="survey-opt-icon" style="background:#fee2e2;">🚨</div>
+              <div><div class="survey-opt-text">Seguridad</div></div>
+            </div>
+            <div class="survey-option" onclick="selectAndGo(this, 5)">
+              <div class="survey-opt-icon" style="background:#fef3c7;">💼</div>
+              <div><div class="survey-opt-text">Empleo / Economía</div></div>
+            </div>
+            <div class="survey-option" onclick="selectAndGo(this, 5)">
+              <div class="survey-opt-icon" style="background:#dbeafe;">💧</div>
+              <div><div class="survey-opt-text">Agua / Servicios</div></div>
+            </div>
+            <div class="survey-option" onclick="selectAndGo(this, 5)">
+              <div class="survey-opt-icon" style="background:#dcfce7;">🏥</div>
+              <div><div class="survey-opt-text">Salud / Educación</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Screen 5: Survey Q3 -->
+        <div class="app-screen screen-survey" id="screen-5">
+          <div class="survey-header">
+            <div class="survey-progress-bar">
+              <div class="survey-progress-fill" style="width:75%"></div>
+            </div>
+            <div class="survey-q-label">Pregunta 3 de 4</div>
+            <div class="survey-q-text">¿Cómo evalúa la gestión del gobierno municipal actual?</div>
+          </div>
+          <div class="survey-options">
+            <div class="survey-option" onclick="selectAndGo(this, 6)">
+              <div class="survey-opt-icon" style="background:#dcfce7;">👍</div>
+              <div><div class="survey-opt-text">Bien</div><div class="survey-opt-sub">Satisfecho con la gestión</div></div>
+            </div>
+            <div class="survey-option" onclick="selectAndGo(this, 6)">
+              <div class="survey-opt-icon" style="background:#fef3c7;">😐</div>
+              <div><div class="survey-opt-text">Regular</div><div class="survey-opt-sub">Ni bien ni mal</div></div>
+            </div>
+            <div class="survey-option" onclick="selectAndGo(this, 6)">
+              <div class="survey-opt-icon" style="background:#fee2e2;">👎</div>
+              <div><div class="survey-opt-text">Mal</div><div class="survey-opt-sub">Insatisfecho</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Screen 6: Survey Q4 -->
+        <div class="app-screen screen-survey" id="screen-6">
+          <div class="survey-header">
+            <div class="survey-progress-bar">
+              <div class="survey-progress-fill" style="width:100%"></div>
+            </div>
+            <div class="survey-q-label">Pregunta 4 de 4 — Última</div>
+            <div class="survey-q-text">¿Tiene pensado salir a votar en las próximas elecciones?</div>
+          </div>
+          <div class="survey-options">
+            <div class="survey-option" onclick="selectAndGo(this, 7)">
+              <div class="survey-opt-icon" style="background:#dcfce7;">✅</div>
+              <div><div class="survey-opt-text">Sí, definitivamente</div></div>
+            </div>
+            <div class="survey-option" onclick="selectAndGo(this, 7)">
+              <div class="survey-opt-icon" style="background:#fef3c7;">🤷</div>
+              <div><div class="survey-opt-text">Quizás</div></div>
+            </div>
+            <div class="survey-option" onclick="selectAndGo(this, 7)">
+              <div class="survey-opt-icon" style="background:#fee2e2;">❌</div>
+              <div><div class="survey-opt-text">No pienso votar</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Screen 7: Success -->
+        <div class="app-screen screen-success" id="screen-7">
+          <div class="success-icon">✓</div>
+          <div class="success-title">¡Visita registrada!</div>
+          <div class="success-sub">Los datos van al dashboard en tiempo real</div>
+          <div class="success-results">
+            <div class="success-result-row">
+              <span class="success-result-q">Conocimiento</span>
+              <span class="success-result-a">Algo he escuchado</span>
+            </div>
+            <div class="success-result-row">
+              <span class="success-result-q">Preocupación</span>
+              <span class="success-result-a">Seguridad</span>
+            </div>
+            <div class="success-result-row">
+              <span class="success-result-q">Evaluación</span>
+              <span class="success-result-a">Regular</span>
+            </div>
+            <div class="success-result-row">
+              <span class="success-result-q">¿Votará?</span>
+              <span class="success-result-a">Sí, definitivamente</span>
+            </div>
+          </div>
+          <button class="success-next-btn" onclick="goScreen(1)">→ Siguiente casa (#4)</button>
+        </div>
+
+      </div><!-- /phone-screen -->
+    </div><!-- /phone-wrap -->
+
+    <!-- Screen dots -->
+    <div class="screen-indicator" id="screen-dots">
+      <div class="screen-dot active"></div>
+      <div class="screen-dot"></div>
+      <div class="screen-dot"></div>
+      <div class="screen-dot"></div>
+      <div class="screen-dot"></div>
+      <div class="screen-dot"></div>
+      <div class="screen-dot"></div>
+      <div class="screen-dot"></div>
+    </div>
+
+    <!-- Flow controls -->
+    <div class="flow-controls">
+      <button class="flow-btn" onclick="prevScreen()">‹ Anterior</button>
+      <button class="flow-btn primary" onclick="nextScreen()">Siguiente →</button>
+    </div>
+
+    <!-- Context note -->
+    <div style="font-size:0.65rem;color:var(--bmx-muted);text-align:center;line-height:1.5;max-width:260px;">
+      Toca las opciones de la encuesta para avanzar.<br>
+      Funciona offline · Sincroniza al recuperar señal.
+    </div>
+  </div>
+
+  <!-- Right side explainer -->
+  <div style="padding:2rem;overflow-y:auto;">
+    <div style="max-width:560px;margin:0 auto;">
+      <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.12em;color:var(--bmx-muted);text-transform:uppercase;margin-bottom:1.5rem;">¿Qué ven los brigadistas?</div>
+
+      <!-- Steps -->
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+
+        <div style="display:flex;gap:1rem;align-items:flex-start;">
+          <div style="width:36px;height:36px;background:var(--bmx-teal);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#000;flex-shrink:0;">1</div>
+          <div>
+            <div style="font-size:0.85rem;font-weight:700;margin-bottom:0.25rem;">Login con código de brigada</div>
+            <div style="font-size:0.72rem;color:var(--bmx-muted);line-height:1.5;">Sin correo ni contraseña complicada. El coordinador les da un código. En 10 segundos ya están dentro. Funciona en cualquier celular con Chrome — sin descargar nada.</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:1rem;align-items:flex-start;">
+          <div style="width:36px;height:36px;background:var(--bmx-blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;flex-shrink:0;">2</div>
+          <div>
+            <div style="font-size:0.85rem;font-weight:700;margin-bottom:0.25rem;">Ruta asignada automáticamente</div>
+            <div style="font-size:0.72rem;color:var(--bmx-muted);line-height:1.5;">El coordinador carga las casas, el sistema las distribuye entre brigadistas por zona. Sin papel, sin confusión. El brigadista ve exactamente a dónde ir y en qué orden.</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:1rem;align-items:flex-start;">
+          <div style="width:36px;height:36px;background:var(--bmx-purple);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;flex-shrink:0;">3</div>
+          <div>
+            <div style="font-size:0.85rem;font-weight:700;margin-bottom:0.25rem;">Toque de puerta → 4 preguntas</div>
+            <div style="font-size:0.72rem;color:var(--bmx-muted);line-height:1.5;">Abre la puerta → brigadista toca 4 botones en 30 segundos. Sin escribir nada. Sin saber leer y escribir bien. Resultados van al dashboard del coordinador en tiempo real.</div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:1rem;align-items:flex-start;">
+          <div style="width:36px;height:36px;background:var(--bmx-amber);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#000;flex-shrink:0;">4</div>
+          <div>
+            <div style="font-size:0.85rem;font-weight:700;margin-bottom:0.25rem;">Offline-first</div>
+            <div style="font-size:0.72rem;color:var(--bmx-muted);line-height:1.5;">Sin señal en la colonia, sigue funcionando. Los datos se guardan en el celular y sincronizan automáticamente cuando regresa la señal. Nada se pierde.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="margin-top:2rem;background:var(--bmx-card);border:1px solid var(--bmx-border);border-radius:16px;padding:1.25rem;">
+        <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--bmx-muted);margin-bottom:0.75rem;">El argumento de venta en números</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+          <div style="background:var(--bmx-surface);border-radius:10px;padding:0.75rem;">
+            <div style="font-size:1.3rem;font-weight:900;color:var(--bmx-teal);">800</div>
+            <div style="font-size:0.65rem;color:var(--bmx-muted);">encuestas en un solo día<br>(40 brigadistas × 20 casas)</div>
+          </div>
+          <div style="background:var(--bmx-surface);border-radius:10px;padding:0.75rem;">
+            <div style="font-size:1.3rem;font-weight:900;color:var(--bmx-amber);">$120K</div>
+            <div style="font-size:0.65rem;color:var(--bmx-muted);">lo que costaría<br>esa encuesta con empresa</div>
+          </div>
+          <div style="background:var(--bmx-surface);border-radius:10px;padding:0.75rem;">
+            <div style="font-size:1.3rem;font-weight:900;color:var(--bmx-blue);">30 seg</div>
+            <div style="font-size:0.65rem;color:var(--bmx-muted);">por visita adicional<br>sobre el tiempo base</div>
+          </div>
+          <div style="background:var(--bmx-surface);border-radius:10px;padding:0.75rem;">
+            <div style="font-size:1.3rem;font-weight:900;color:var(--bmx-green);">$0</div>
+            <div style="font-size:0.65rem;color:var(--bmx-muted);">costo para el partido<br>en versión gratuita</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD VIEW -->
+<div id="view-dash" class="view-hidden" style="padding:0;">
+  <div class="dash-panel" style="min-height:calc(100vh - 110px);max-width:100%;">
+
+    <div class="dash-topbar">
+      <div>
+        <div class="dash-title">Dashboard — Levántate por Nayarit</div>
+        <div style="font-size:0.65rem;color:var(--bmx-muted);">Temporada de campo · Martes 17 Jun 2026 · 16:43 hrs</div>
+      </div>
+      <div class="dash-live"><div class="live-dot"></div> EN VIVO</div>
+    </div>
+
+    <!-- KPI strip -->
+    <div class="kpi-strip">
+      <div class="kpi-card">
+        <div class="kpi-label">Visitas hoy</div>
+        <div class="kpi-val kpi-teal">347</div>
+        <div class="kpi-sub">+89 última hora</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Brigadistas activos</div>
+        <div class="kpi-val kpi-blue">23 / 28</div>
+        <div class="kpi-sub">5 sin señal</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Cobertura</div>
+        <div class="kpi-val kpi-amber">68%</div>
+        <div class="kpi-sub">de ruta asignada</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Encuestas capturadas</div>
+        <div class="kpi-val kpi-green">284</div>
+        <div class="kpi-sub">≈ $34K de valor</div>
+      </div>
+    </div>
+
+    <!-- Row 1 -->
+    <div class="dash-grid">
+
+      <!-- Heat map -->
+      <div class="dash-card">
+        <div class="dash-card-title">Mapa de Calor por Colonia</div>
+        <div class="heat-grid" id="heatmap">
+          <!-- Generated by JS -->
+        </div>
+        <div class="heat-legend">
+          <div class="heat-legend-label">Frío</div>
+          <div class="heat-legend-bar"></div>
+          <div class="heat-legend-label">Caliente</div>
+        </div>
+        <div style="margin-top:0.75rem;display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;">
+          <div style="font-size:0.65rem;background:var(--bmx-surface);padding:0.4rem 0.6rem;border-radius:8px;color:var(--bmx-teal);">🔥 Linda Vista — 71% recep.</div>
+          <div style="font-size:0.65rem;background:var(--bmx-surface);padding:0.4rem 0.6rem;border-radius:8px;color:var(--bmx-red);">❄ Centro — 18% recep.</div>
+        </div>
+      </div>
+
+      <!-- Survey results -->
+      <div class="dash-card">
+        <div class="dash-card-title">Resultados de Encuesta (284 resp.)</div>
+
+        <div class="survey-result-item">
+          <div class="survey-result-q">¿Conoce al candidato?</div>
+          <div class="survey-bar-row">
+            <div class="survey-bar-label">Sí</div>
+            <div class="survey-bar-track"><div class="survey-bar-fill" style="width:38%;background:#22c55e;"></div></div>
+            <div class="survey-bar-pct">38%</div>
+          </div>
+          <div class="survey-bar-row">
+            <div class="survey-bar-label">Algo</div>
+            <div class="survey-bar-track"><div class="survey-bar-fill" style="width:41%;background:#3b82f6;"></div></div>
+            <div class="survey-bar-pct">41%</div>
+          </div>
+          <div class="survey-bar-row">
+            <div class="survey-bar-label">No</div>
+            <div class="survey-bar-track"><div class="survey-bar-fill" style="width:21%;background:#ef4444;"></div></div>
+            <div class="survey-bar-pct">21%</div>
+          </div>
+        </div>
+
+        <div class="survey-result-item">
+          <div class="survey-result-q">¿Piensa votar?</div>
+          <div class="survey-bar-row">
+            <div class="survey-bar-label">Sí</div>
+            <div class="survey-bar-track"><div class="survey-bar-fill" style="width:62%;background:#22c55e;"></div></div>
+            <div class="survey-bar-pct">62%</div>
+          </div>
+          <div class="survey-bar-row">
+            <div class="survey-bar-label">Quizás</div>
+            <div class="survey-bar-track"><div class="survey-bar-fill" style="width:27%;background:#f59e0b;"></div></div>
+            <div class="survey-bar-pct">27%</div>
+          </div>
+          <div class="survey-bar-row">
+            <div class="survey-bar-label">No</div>
+            <div class="survey-bar-track"><div class="survey-bar-fill" style="width:11%;background:#ef4444;"></div></div>
+            <div class="survey-bar-pct">11%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="dash-grid">
+
+      <!-- Top issues -->
+      <div class="dash-card">
+        <div class="dash-card-title">Problemas Más Mencionados</div>
+        <div class="issue-row">
+          <div class="issue-icon" style="background:#fee2e2;">🚨</div>
+          <div class="issue-label">Seguridad</div>
+          <div class="issue-bar-wrap"><div class="issue-bar-track"><div class="issue-bar-fill" style="width:43%;background:#ef4444;"></div></div></div>
+          <div class="issue-pct">43%</div>
+        </div>
+        <div class="issue-row">
+          <div class="issue-icon" style="background:#fef3c7;">💼</div>
+          <div class="issue-label">Empleo / Economía</div>
+          <div class="issue-bar-wrap"><div class="issue-bar-track"><div class="issue-bar-fill" style="width:28%;background:#f59e0b;"></div></div></div>
+          <div class="issue-pct">28%</div>
+        </div>
+        <div class="issue-row">
+          <div class="issue-icon" style="background:#dbeafe;">💧</div>
+          <div class="issue-label">Agua / Servicios</div>
+          <div class="issue-bar-wrap"><div class="issue-bar-track"><div class="issue-bar-fill" style="width:18%;background:#3b82f6;"></div></div></div>
+          <div class="issue-pct">18%</div>
+        </div>
+        <div class="issue-row">
+          <div class="issue-icon" style="background:#dcfce7;">🏥</div>
+          <div class="issue-label">Salud / Educación</div>
+          <div class="issue-bar-wrap"><div class="issue-bar-track"><div class="issue-bar-fill" style="width:11%;background:#22c55e;"></div></div></div>
+          <div class="issue-pct">11%</div>
+        </div>
+      </div>
+
+      <!-- Brigadistas -->
+      <div class="dash-card">
+        <div class="dash-card-title">Brigadistas en Campo</div>
+        <div class="brigadista-row">
+          <div class="brig-avatar" style="background:#dcfce7;color:#16a34a;">CM</div>
+          <div class="brig-name">Carlos Mendoza</div>
+          <div class="brig-progress-wrap"><div class="brig-progress-track"><div class="brig-progress-fill" style="width:25%;"></div></div></div>
+          <div class="brig-count">3/12</div>
+          <div class="brig-status brig-active">EN CAMPO</div>
+        </div>
+        <div class="brigadista-row">
+          <div class="brig-avatar" style="background:#dbeafe;color:#1d4ed8;">LG</div>
+          <div class="brig-name">Laura García</div>
+          <div class="brig-progress-wrap"><div class="brig-progress-track"><div class="brig-progress-fill" style="width:75%;"></div></div></div>
+          <div class="brig-count">9/12</div>
+          <div class="brig-status brig-active">EN CAMPO</div>
+        </div>
+        <div class="brigadista-row">
+          <div class="brig-avatar" style="background:#f3e8ff;color:#7c3aed;">MR</div>
+          <div class="brig-name">Miguel Ruiz</div>
+          <div class="brig-progress-wrap"><div class="brig-progress-track"><div class="brig-progress-fill" style="width:58%;"></div></div></div>
+          <div class="brig-count">7/12</div>
+          <div class="brig-status brig-active">EN CAMPO</div>
+        </div>
+        <div class="brigadista-row">
+          <div class="brig-avatar" style="background:#fef3c7;color:#92400e;">AP</div>
+          <div class="brig-name">Ana Pérez</div>
+          <div class="brig-progress-wrap"><div class="brig-progress-track"><div class="brig-progress-fill" style="width:42%;background:#f59e0b;"></div></div></div>
+          <div class="brig-count">5/12</div>
+          <div class="brig-status brig-idle">PAUSA</div>
+        </div>
+        <div class="brigadista-row">
+          <div class="brig-avatar" style="background:#fee2e2;color:#b91c1c;">JL</div>
+          <div class="brig-name">Jorge López</div>
+          <div class="brig-progress-wrap"><div class="brig-progress-track"><div class="brig-progress-fill" style="width:100%;background:#22c55e;"></div></div></div>
+          <div class="brig-count">12/12 ✓</div>
+          <div class="brig-status brig-active">COMPLETO</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom banner -->
+    <div style="background:linear-gradient(135deg,#003d2e,#0a0f1e);border:1px solid var(--bmx-border);border-radius:16px;padding:1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <div style="font-size:0.7rem;color:var(--bmx-teal);font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.3rem;">BrigadaMX — Infraestructura neutral de campo</div>
+        <div style="font-size:0.78rem;color:rgba(255,255,255,0.7);">Todos los partidos ven solo sus datos. Tú ves el agregado completo.</div>
+      </div>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+        <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.6rem 1rem;text-align:center;">
+          <div style="font-size:1rem;font-weight:900;color:var(--bmx-teal);">$0</div>
+          <div style="font-size:0.6rem;color:rgba(255,255,255,0.4);">para el partido</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:0.6rem 1rem;text-align:center;">
+          <div style="font-size:1rem;font-weight:900;color:var(--bmx-amber);">∞</div>
+          <div style="font-size:0.6rem;color:rgba(255,255,255,0.4);">valor del dato</div>
+        </div>
+        <div style="background:rgba(0,212,170,0.1);border:1px solid var(--bmx-teal);border-radius:10px;padding:0.6rem 1rem;text-align:center;">
+          <div style="font-size:1rem;font-weight:900;color:var(--bmx-teal);">100%</div>
+          <div style="font-size:0.6rem;color:rgba(255,255,255,0.6);">datos para ti</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="heat-tooltip" id="tooltip"></div>
+
+<script>
+  // ── SCREEN NAVIGATION ──
+  let currentScreen = 0;
+  const totalScreens = 8;
+
+  function goScreen(n) {
+    document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + n).classList.add('active');
+    currentScreen = n;
+    updateDots();
+  }
+
+  function nextScreen() {
+    if (currentScreen < totalScreens - 1) goScreen(currentScreen + 1);
+  }
+
+  function prevScreen() {
+    if (currentScreen > 0) goScreen(currentScreen - 1);
+  }
+
+  function selectAndGo(el, nextScreen) {
+    el.closest('.survey-options').querySelectorAll('.survey-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    setTimeout(() => goScreen(nextScreen), 350);
+  }
+
+  function updateDots() {
+    const dots = document.querySelectorAll('.screen-dot');
+    dots.forEach((d, i) => d.classList.toggle('active', i === currentScreen));
+  }
+
+  // ── TAB SWITCHING ──
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    if (tab === 'phone') {
+      document.getElementById('view-phone').classList.remove('view-hidden');
+      document.getElementById('view-dash').classList.add('view-hidden');
+    } else {
+      document.getElementById('view-phone').classList.add('view-hidden');
+      document.getElementById('view-dash').classList.remove('view-hidden');
+    }
+  }
+
+  // ── HEAT MAP ──
+  const colonias = [
+    'Linda Vista','Miravalles','Cd. del Valle','Las Brisas','Centro',
+    'Industrial','San Juan','Versalles','Altamira','Santa Fe',
+    'Los Fresnos','El Maguey','Cd. Industrial','Reforma','Pedregal',
+    'La Loma','Vista Hermosa','El Rosario','Jacarandas','La Cantera',
+    'Tepic Centro','Cd. Comercial','El Esfuerzo','La Florida','Las Palmas'
+  ];
+  const heat = [5,4,4,3,1, 1,3,4,2,3, 2,3,1,4,3, 2,4,2,3,2, 2,3,1,3,2];
+
+  const heatmap = document.getElementById('heatmap');
+  const tooltip = document.getElementById('tooltip');
+  colonias.forEach((name, i) => {
+    const cell = document.createElement('div');
+    cell.className = `heat-cell heat-${heat[i]}`;
+    const vis = heat[i] * 17 + Math.floor(Math.random() * 10);
+    cell.addEventListener('mousemove', (e) => {
+      tooltip.style.display = 'block';
+      tooltip.style.left = (e.clientX + 12) + 'px';
+      tooltip.style.top = (e.clientY - 30) + 'px';
+      tooltip.textContent = `${name} · ${vis} visitas`;
+    });
+    cell.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+    heatmap.appendChild(cell);
+  });
+</script>
+</body>
+</html>
