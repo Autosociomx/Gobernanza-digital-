@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrigadaMX · Analista IA</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#05080F; --s1:#0A0F1C; --s2:#0F1628; --s3:#141D35;
+  --b:rgba(255,255,255,0.07); --b2:rgba(255,255,255,0.04);
+  --teal:#00F0C0; --t2:rgba(0,240,192,0.1); --t3:rgba(0,240,192,0.04);
+  --purple:#8B5CF6; --blue:#3B82F6; --amber:#F59E0B;
+  --red:#EF4444; --green:#10B981; --rose:#F43F5E;
+  --text:#EFF4FF; --dim:#7A8BA8; --faint:#2D3D58;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(ellipse at 20% 50%,rgba(0,240,192,0.03) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(139,92,246,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+
+/* ── HEADER ── */
+.hdr{flex-shrink:0;background:rgba(5,8,15,0.95);backdrop-filter:blur(24px);border-bottom:1px solid var(--b);display:flex;align-items:center;height:52px;padding:0 1.5rem;gap:1rem;z-index:100;}
+.logo{display:flex;align-items:center;gap:8px;margin-right:1rem;}
+.logo-mark{width:28px;height:28px;background:linear-gradient(135deg,var(--teal),#0099FF);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#000;font-family:'Space Grotesk',sans-serif;}
+.logo-name{font-family:'Space Grotesk',sans-serif;font-size:.9rem;font-weight:700;letter-spacing:-.02em;white-space:nowrap;}
+.logo-name em{color:var(--teal);font-style:normal;}
+.logo-div{width:1px;height:20px;background:var(--b);}
+.logo-sub{font-size:.65rem;font-weight:600;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;}
+.tabs{display:flex;gap:0;flex:1;height:52px;}
+.tab{padding:0 1.1rem;height:100%;display:flex;align-items:center;gap:6px;font-size:.7rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--dim);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+.tab:hover{color:var(--text);}
+.tab.on{color:var(--teal);border-bottom-color:var(--teal);}
+.tab-ico{font-size:.8rem;}
+.hdr-right{margin-left:auto;display:flex;gap:.5rem;align-items:center;}
+.chip{font-size:.58rem;font-weight:700;letter-spacing:.08em;padding:4px 10px;border-radius:20px;border:1px solid;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:4px;}
+.chip-live{background:rgba(16,185,129,.08);border-color:rgba(16,185,129,.4);color:var(--green);}
+.chip-owner{background:rgba(244,63,94,.08);border-color:rgba(244,63,94,.3);color:var(--rose);}
+.chip-owner.on{background:rgba(244,63,94,.15);border-color:var(--rose);}
+.pulse{width:5px;height:5px;border-radius:50%;background:currentColor;animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+/* ── LAYOUT ── */
+.body{flex:1;overflow:hidden;display:flex;position:relative;z-index:1;}
+.view{display:none;width:100%;height:100%;overflow:hidden;}
+.view.on{display:flex;}
+
+/* ══════════════════════
+   TAB 1: AI ANALYST
+══════════════════════ */
+#v-ai{flex-direction:row;}
+
+/* Chat panel */
+.chat-wrap{display:flex;flex-direction:column;width:440px;flex-shrink:0;border-right:1px solid var(--b);height:100%;}
+.chat-header{padding:1rem 1.25rem;border-bottom:1px solid var(--b);flex-shrink:0;}
+.chat-title{font-family:'Space Grotesk',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:.2rem;display:flex;align-items:center;gap:.5rem;}
+.ai-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);animation:blink 2s infinite;}
+.chat-sub{font-size:.62rem;color:var(--dim);}
+
+.chat-msgs{flex:1;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.75rem;scroll-behavior:smooth;}
+.msg{max-width:92%;animation:fadeUp .3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.msg-user{align-self:flex-end;}
+.msg-ai{align-self:flex-start;}
+.msg-bubble-user{background:var(--teal);color:#000;border-radius:16px 16px 4px 16px;padding:.65rem 1rem;font-size:.75rem;font-weight:600;}
+.msg-bubble-ai{background:var(--s2);border:1px solid var(--b);border-radius:16px 16px 16px 4px;padding:.75rem 1rem;font-size:.75rem;line-height:1.55;color:var(--text);}
+.msg-bubble-ai strong{color:var(--teal);}
+.msg-time{font-size:.55rem;color:var(--faint);margin-top:.3rem;text-align:right;}
+.msg-time.left{text-align:left;}
+.typing{display:flex;gap:3px;align-items:center;padding:.6rem .9rem;}
+.typing span{width:6px;height:6px;border-radius:50%;background:var(--dim);animation:bounce .9s infinite;}
+.typing span:nth-child(2){animation-delay:.2s;}
+.typing span:nth-child(3){animation-delay:.4s;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-5px);}}
+#typing-ind{display:none;background:var(--s2);border:1px solid var(--b);border-radius:16px 16px 16px 4px;width:fit-content;}
+
+/* Data cards inline in AI response */
+.inline-card{background:var(--s3);border:1px solid var(--b);border-radius:10px;padding:.65rem .85rem;margin-top:.5rem;}
+.ic-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:.25rem;}
+.ic-label{font-size:.62rem;color:var(--dim);}
+.ic-val{font-size:.78rem;font-weight:800;}
+.ic-bar{height:4px;background:var(--s1);border-radius:2px;margin-top:.2rem;}
+.ic-fill{height:100%;border-radius:2px;}
+
+/* Suggested questions */
+.suggestions{padding:.75rem 1rem;border-top:1px solid var(--b);flex-shrink:0;}
+.sug-label{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:.5rem;}
+.sug-chips{display:flex;flex-wrap:wrap;gap:.4rem;}
+.sug-chip{background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:.4rem .75rem;font-size:.68rem;font-weight:500;color:var(--dim);cursor:pointer;transition:all .2s;}
+.sug-chip:hover{border-color:var(--teal);color:var(--teal);}
+.sug-chip.used{opacity:.4;pointer-events:none;}
+
+/* Chat input */
+.chat-input-area{padding:.75rem 1rem;border-top:1px solid var(--b);display:flex;gap:.5rem;flex-shrink:0;}
+.chat-inp{flex:1;background:var(--s2);border:1px solid var(--b);border-radius:12px;padding:.6rem .9rem;color:var(--text);font-size:.75rem;font-family:'Inter',sans-serif;outline:none;transition:border-color .2s;}
+.chat-inp:focus{border-color:var(--teal);}
+.chat-inp::placeholder{color:var(--faint);}
+.chat-send{background:var(--teal);border:none;border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;transition:all .2s;flex-shrink:0;}
+.chat-send:hover{filter:brightness(1.1);}
+
+/* Right panel: live insights */
+.insights-panel{flex:1;overflow-y:auto;padding:1.25rem;}
+.ip-section{margin-bottom:1.5rem;}
+.ip-section-title{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:.75rem;}
+
+/* Insight cards */
+.insight-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-bottom:1rem;}
+.icard{background:var(--s2);border:1px solid var(--b);border-radius:14px;padding:1rem;position:relative;overflow:hidden;}
+.icard::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.icard.teal::after{background:var(--teal);}
+.icard.purple::after{background:var(--purple);}
+.icard.amber::after{background:var(--amber);}
+.icard.red::after{background:var(--red);}
+.icard.green::after{background:var(--green);}
+.icard.blue::after{background:var(--blue);}
+.icard-label{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:.4rem;}
+.icard-val{font-family:'Space Grotesk',sans-serif;font-size:1.6rem;font-weight:800;line-height:1;margin-bottom:.25rem;}
+.icard-sub{font-size:.62rem;color:var(--dim);}
+.icard-delta{font-size:.62rem;font-weight:700;padding:2px 6px;border-radius:5px;display:inline-flex;align-items:center;gap:3px;margin-top:.3rem;}
+.delta-up{background:rgba(16,185,129,.1);color:var(--green);}
+.delta-dn{background:rgba(239,68,68,.1);color:var(--red);}
+.delta-neu{background:var(--s3);color:var(--dim);}
+
+/* Bar chart */
+.bar-chart{display:flex;flex-direction:column;gap:.5rem;}
+.bar-row{display:flex;align-items:center;gap:.6rem;}
+.bar-label{font-size:.65rem;color:var(--dim);width:90px;text-align:right;flex-shrink:0;}
+.bar-track{flex:1;height:6px;background:var(--s3);border-radius:3px;}
+.bar-fill{height:100%;border-radius:3px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.bar-pct{font-size:.65rem;font-weight:700;width:36px;}
+
+/* District table */
+.dtable{width:100%;border-collapse:collapse;}
+.dtable th{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--b);}
+.dtable td{font-size:.7rem;padding:.6rem .75rem;border-bottom:1px solid var(--b2);vertical-align:middle;}
+.dtable tr:last-child td{border-bottom:none;}
+.dtable tr:hover td{background:var(--s2);}
+.d-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:.4rem;}
+.d-name{font-weight:600;}
+.pill{font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:5px;}
+.p-exc{background:rgba(0,240,192,.1);color:var(--teal);}
+.p-hot{background:rgba(16,185,129,.1);color:var(--green);}
+.p-act{background:rgba(59,130,246,.1);color:var(--blue);}
+.p-lag{background:rgba(245,158,11,.1);color:var(--amber);}
+.p-crit{background:rgba(239,68,68,.1);color:var(--red);}
+.mini-bar{height:4px;background:var(--s3);border-radius:2px;width:80px;}
+.mini-fill{height:100%;border-radius:2px;}
+
+/* ══════════════════════
+   TAB 2: METRICS
+══════════════════════ */
+#v-metrics{flex-direction:column;overflow-y:auto;padding:1.5rem;}
+.metrics-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;margin-bottom:1.5rem;}
+.mk{background:var(--s2);border:1px solid var(--b);border-radius:14px;padding:1rem;}
+.mk-label{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:.4rem;}
+.mk-val{font-family:'Space Grotesk',sans-serif;font-size:1.5rem;font-weight:800;line-height:1;}
+.mk-sub{font-size:.6rem;color:var(--dim);margin-top:.25rem;}
+
+.metrics-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.85rem;margin-bottom:1rem;}
+.mcard{background:var(--s2);border:1px solid var(--b);border-radius:16px;padding:1.25rem;}
+.mcard-title{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:1rem;}
+
+/* Donut rings */
+.donut-row{display:flex;gap:1rem;justify-content:space-around;margin-bottom:.75rem;}
+.donut-wrap{text-align:center;}
+.donut{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto .4rem;}
+.donut-inner{width:46px;height:46px;border-radius:50%;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;}
+.donut-label{font-size:.58rem;color:var(--dim);}
+
+/* Week trend */
+.trend-chart{display:flex;align-items:flex-end;gap:4px;height:60px;margin-bottom:.5rem;}
+.trend-bar{flex:1;border-radius:3px 3px 0 0;min-height:4px;position:relative;}
+.trend-label{display:flex;justify-content:space-between;}
+.tl{font-size:.55rem;color:var(--faint);}
+
+/* ══════════════════════
+   TAB 3: REPORT
+══════════════════════ */
+#v-report{flex-direction:column;overflow-y:auto;}
+.report-wrap{max-width:740px;margin:0 auto;padding:2rem;}
+.report-hdr{border-bottom:2px solid var(--teal);padding-bottom:1rem;margin-bottom:1.5rem;}
+.report-badge{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:.5rem;}
+.report-title{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:.3rem;}
+.report-date{font-size:.65rem;color:var(--dim);}
+.report-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.5rem;}
+.rk{background:var(--s2);border:1px solid var(--b);border-radius:12px;padding:.85rem;text-align:center;}
+.rk-n{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;font-weight:800;}
+.rk-l{font-size:.6rem;color:var(--dim);margin-top:.15rem;}
+.report-section{margin-bottom:1.5rem;}
+.rs-title{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);margin-bottom:.75rem;display:flex;align-items:center;gap:.4rem;}
+.rs-title::after{content:'';flex:1;height:1px;background:rgba(0,240,192,.15);}
+.report-p{font-size:.78rem;line-height:1.7;color:var(--dim);margin-bottom:.75rem;}
+.report-p strong{color:var(--text);}
+.findings{display:flex;flex-direction:column;gap:.5rem;}
+.finding{display:flex;gap:.75rem;align-items:flex-start;background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:.65rem .85rem;}
+.finding-ico{font-size:1rem;flex-shrink:0;}
+.finding-text{font-size:.72rem;line-height:1.5;color:var(--dim);}
+.finding-text strong{color:var(--text);}
+.actions{display:flex;flex-direction:column;gap:.5rem;}
+.action{display:flex;gap:.75rem;align-items:center;padding:.5rem 0;border-bottom:1px solid var(--b2);}
+.action:last-child{border:none;}
+.action-n{width:20px;height:20px;border-radius:6px;background:var(--t2);color:var(--teal);font-size:.65rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.action-text{font-size:.72rem;color:var(--dim);}
+.action-text strong{color:var(--text);}
+.action-tag{margin-left:auto;font-size:.58rem;font-weight:700;padding:2px 7px;border-radius:5px;background:rgba(245,158,11,.1);color:var(--amber);white-space:nowrap;}
+.btn-print{background:var(--teal);color:#000;border:none;border-radius:10px;padding:.65rem 1.25rem;font-size:.72rem;font-weight:800;cursor:pointer;margin-top:1rem;}
+
+/* ══════════════════════
+   OWNER VIEW OVERLAY
+══════════════════════ */
+.owner-overlay{display:none;position:fixed;inset:0;background:rgba(5,8,15,.97);z-index:500;flex-direction:column;animation:fadeIn .3s;}
+.owner-overlay.on{display:flex;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.oo-header{padding:1.25rem 2rem;border-bottom:1px solid rgba(244,63,94,.2);display:flex;align-items:center;gap:1rem;}
+.oo-title{font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:800;color:var(--rose);}
+.oo-sub{font-size:.65rem;color:rgba(244,63,94,.5);margin-top:.1rem;}
+.oo-close{margin-left:auto;background:rgba(244,63,94,.1);border:1px solid rgba(244,63,94,.3);color:var(--rose);border-radius:8px;padding:.4rem .9rem;font-size:.7rem;font-weight:700;cursor:pointer;}
+.oo-body{flex:1;overflow-y:auto;padding:1.5rem 2rem;}
+.oo-warning{background:rgba(244,63,94,.06);border:1px solid rgba(244,63,94,.2);border-radius:14px;padding:1rem 1.25rem;margin-bottom:1.5rem;}
+.oo-warning-t{font-size:.7rem;font-weight:700;color:var(--rose);margin-bottom:.3rem;}
+.oo-warning-d{font-size:.65rem;color:rgba(244,63,94,.6);line-height:1.5;}
+.oo-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+.oo-card{background:var(--s2);border:1px solid var(--b);border-radius:14px;padding:1.1rem;}
+.oo-card-title{font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:.85rem;}
+.party-row{display:flex;align-items:center;gap:.65rem;padding:.45rem 0;border-bottom:1px solid var(--b2);}
+.party-row:last-child{border:none;}
+.party-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.party-name{font-size:.7rem;font-weight:600;flex:1;}
+.party-val{font-size:.7rem;font-weight:800;}
+.party-bar-track{width:80px;height:4px;background:var(--s3);border-radius:2px;}
+.party-bar-fill{height:100%;border-radius:2px;}
+.oo-meta{background:linear-gradient(135deg,rgba(244,63,94,.05),rgba(139,92,246,.05));border:1px solid rgba(244,63,94,.15);border-radius:14px;padding:1.1rem;}
+.oo-meta-title{font-size:.65rem;font-weight:700;color:var(--rose);margin-bottom:.75rem;display:flex;align-items:center;gap:.4rem;}
+.oo-insight{display:flex;gap:.6rem;align-items:flex-start;margin-bottom:.6rem;}
+.oo-insight-ico{font-size:.9rem;flex-shrink:0;margin-top:.1rem;}
+.oo-insight-text{font-size:.7rem;line-height:1.5;color:var(--dim);}
+.oo-insight-text strong{color:var(--text);}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="logo">
+    <div class="logo-mark">B</div>
+    <div class="logo-name">Brigada<em>MX</em></div>
+  </div>
+  <div class="logo-div"></div>
+  <div class="logo-sub">Analista de Inteligencia</div>
+
+  <div class="tabs">
+    <button class="tab on" onclick="setTab('ai',this)"><span class="tab-ico">🤖</span>Analista IA</button>
+    <button class="tab" onclick="setTab('metrics',this)"><span class="tab-ico">📊</span>Métricas</button>
+    <button class="tab" onclick="setTab('report',this)"><span class="tab-ico">📋</span>Reporte Semanal</button>
+  </div>
+
+  <div class="hdr-right">
+    <div class="chip chip-live"><span class="pulse"></span>EN VIVO · Semana 2</div>
+    <button class="chip chip-owner" id="owner-btn" onclick="toggleOwner()">
+      <span>👁</span>Vista BrigadaMX
+    </button>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="body">
+
+  <!-- ═══ TAB 1: AI ANALYST ═══ -->
+  <div class="view on" id="v-ai">
+
+    <!-- Chat -->
+    <div class="chat-wrap">
+      <div class="chat-header">
+        <div class="chat-title"><span class="ai-dot"></span>Analista IA · BrigadaMX</div>
+        <div class="chat-sub">Pregunta sobre tus datos de campo · 483 visitas · Semana 2</div>
+      </div>
+
+      <div class="chat-msgs" id="chat-msgs">
+        <!-- Welcome message -->
+        <div class="msg msg-ai">
+          <div class="msg-bubble-ai">
+            Hola. Tengo acceso a los datos de campo de tu campaña en tiempo real.<br><br>
+            Esta semana registramos <strong>483 visitas</strong> en <strong>6 distritos</strong> de Tepic. Puedo ayudarte a entender qué dicen esos datos y qué hacer con ellos.<br><br>
+            ¿Qué quieres saber?
+          </div>
+          <div class="msg-time left">Analista IA · hace 2 min</div>
+        </div>
+      </div>
+
+      <div id="typing-ind" class="msg msg-ai" style="margin:0 1rem 0;">
+        <div class="typing"><span></span><span></span><span></span></div>
+      </div>
+
+      <!-- Suggested questions -->
+      <div class="suggestions">
+        <div class="sug-label">Preguntas sugeridas</div>
+        <div class="sug-chips">
+          <div class="sug-chip" onclick="askQ(this,'¿Dónde tengo más votos duros?')">🗳️ ¿Votos duros?</div>
+          <div class="sug-chip" onclick="askQ(this,'¿Cuántos votos probables tengo hoy?')">🔢 ¿Cuántos votos?</div>
+          <div class="sug-chip" onclick="askQ(this,'¿Cuál es el problema más mencionado?')">⚠️ Problema #1</div>
+          <div class="sug-chip" onclick="askQ(this,'¿A dónde mando brigadistas mañana?')">📍 ¿A dónde ir mañana?</div>
+          <div class="sug-chip" onclick="askQ(this,'¿Qué tan bien me conoce la gente?')">👤 Reconocimiento</div>
+          <div class="sug-chip" onclick="askQ(this,'¿Cuál distrito necesita más atención urgente?')">🚨 Distrito urgente</div>
+        </div>
+      </div>
+
+      <!-- Input -->
+      <div class="chat-input-area">
+        <input class="chat-inp" id="chat-inp" placeholder="Pregunta sobre tus datos de campo…" onkeydown="if(event.key==='Enter')sendQ()">
+        <button class="chat-send" onclick="sendQ()">➤</button>
+      </div>
+    </div>
+
+    <!-- Insights panel -->
+    <div class="insights-panel">
+      <div class="ip-section">
+        <div class="ip-section-title">Métricas clave · Semana 2</div>
+        <div class="insight-row">
+          <div class="icard teal">
+            <div class="icard-label">Votos probables</div>
+            <div class="icard-val" style="color:var(--teal);">2,847</div>
+            <div class="icard-sub">Tepic · proyección actual</div>
+            <div class="icard-delta delta-up">↑ +412 esta semana</div>
+          </div>
+          <div class="icard green">
+            <div class="icard-label">Reconocimiento</div>
+            <div class="icard-val" style="color:var(--green);">38%</div>
+            <div class="icard-sub">conoce al candidato</div>
+            <div class="icard-delta delta-up">↑ +12% vs. semana 1</div>
+          </div>
+          <div class="icard purple">
+            <div class="icard-label">Intención de voto</div>
+            <div class="icard-val" style="color:var(--purple);">62%</div>
+            <div class="icard-sub">piensan votar</div>
+            <div class="icard-delta delta-neu">= igual semana anterior</div>
+          </div>
+        </div>
+        <div class="insight-row">
+          <div class="icard amber">
+            <div class="icard-label">Indecisos id.</div>
+            <div class="icard-val" style="color:var(--amber);">131</div>
+            <div class="icard-sub">dijeron "quizás votar"</div>
+            <div class="icard-delta delta-up">↑ para seguimiento</div>
+          </div>
+          <div class="icard red">
+            <div class="icard-label">D6 Periférico</div>
+            <div class="icard-val" style="color:var(--red);">12%</div>
+            <div class="icard-sub">cobertura crítica</div>
+            <div class="icard-delta delta-dn">⚠ Sin encargado</div>
+          </div>
+          <div class="icard blue">
+            <div class="icard-label">Visitas totales</div>
+            <div class="icard-val" style="color:var(--blue);">483</div>
+            <div class="icard-sub">esta semana</div>
+            <div class="icard-delta delta-up">↑ +89 ayer</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ip-section">
+        <div class="ip-section-title">Problemas más mencionados en campo</div>
+        <div style="background:var(--s2);border:1px solid var(--b);border-radius:14px;padding:1rem;">
+          <div class="bar-chart">
+            <div class="bar-row">
+              <div class="bar-label">Seguridad</div>
+              <div class="bar-track"><div class="bar-fill" style="width:43%;background:var(--red);"></div></div>
+              <div class="bar-pct" style="color:var(--red);">43%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Empleo</div>
+              <div class="bar-track"><div class="bar-fill" style="width:28%;background:var(--amber);"></div></div>
+              <div class="bar-pct" style="color:var(--amber);">28%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Agua/Servicios</div>
+              <div class="bar-track"><div class="bar-fill" style="width:18%;background:var(--blue);"></div></div>
+              <div class="bar-pct" style="color:var(--blue);">18%</div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-label">Salud/Educación</div>
+              <div class="bar-track"><div class="bar-fill" style="width:11%;background:var(--green);"></div></div>
+              <div class="bar-pct" style="color:var(--green);">11%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ip-section">
+        <div class="ip-section-title">Cobertura por distrito</div>
+        <div style="background:var(--s2);border:1px solid var(--b);border-radius:14px;overflow:hidden;">
+          <table class="dtable">
+            <thead>
+              <tr>
+                <th>Distrito</th>
+                <th>Cobertura</th>
+                <th>Visitas</th>
+                <th>Brigadistas</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="d-dot" style="background:#00F0C0;"></span><span class="d-name">D1 Centro</span></td><td><div class="mini-bar"><div class="mini-fill" style="width:72%;background:#00F0C0;"></div></div></td><td>143</td><td>9</td><td><span class="pill p-hot">72%</span></td></tr>
+              <tr><td><span class="d-dot" style="background:#10B981;"></span><span class="d-name">D5 Miravalles</span></td><td><div class="mini-bar"><div class="mini-fill" style="width:81%;background:#10B981;"></div></div></td><td>178</td><td>11</td><td><span class="pill p-exc">81% ✓</span></td></tr>
+              <tr><td><span class="d-dot" style="background:#8B5CF6;"></span><span class="d-name">D2 Linda Vista</span></td><td><div class="mini-bar"><div class="mini-fill" style="width:58%;background:#8B5CF6;"></div></div></td><td>89</td><td>6</td><td><span class="pill p-act">58%</span></td></tr>
+              <tr><td><span class="d-dot" style="background:#3B82F6;"></span><span class="d-name">D3 Las Brisas</span></td><td><div class="mini-bar"><div class="mini-fill" style="width:34%;background:#3B82F6;"></div></div></td><td>52</td><td>4</td><td><span class="pill p-lag">34% ↓</span></td></tr>
+              <tr><td><span class="d-dot" style="background:#F59E0B;"></span><span class="d-name">D4 Industrial</span></td><td><div class="mini-bar"><div class="mini-fill" style="width:21%;background:#F59E0B;"></div></div></td><td>31</td><td>3</td><td><span class="pill p-lag">21% ⚠</span></td></tr>
+              <tr><td><span class="d-dot" style="background:#EF4444;"></span><span class="d-name">D6 Periférico</span></td><td><div class="mini-bar"><div class="mini-fill" style="width:12%;background:#EF4444;"></div></div></td><td>18</td><td>2</td><td><span class="pill p-crit">12% 🚨</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB 2: METRICS ═══ -->
+  <div class="view" id="v-metrics">
+    <div class="metrics-grid">
+      <div class="mk"><div class="mk-label">Votos probables</div><div class="mk-val" style="color:var(--teal);">2,847</div><div class="mk-sub">↑ +412 esta semana</div></div>
+      <div class="mk"><div class="mk-label">Reconocimiento</div><div class="mk-val" style="color:var(--green);">38%</div><div class="mk-sub">+12% desde inicio</div></div>
+      <div class="mk"><div class="mk-label">Indecisos</div><div class="mk-val" style="color:var(--amber);">131</div><div class="mk-sub">Para seguimiento</div></div>
+      <div class="mk"><div class="mk-label">Cobertura global</div><div class="mk-val" style="color:var(--blue);">54%</div><div class="mk-sub">de 6 distritos</div></div>
+      <div class="mk"><div class="mk-label">Días restantes</div><div class="mk-val" style="color:var(--purple);">18</div><div class="mk-sub">Para fin de campaña</div></div>
+    </div>
+
+    <div class="metrics-row">
+      <div class="mcard">
+        <div class="mcard-title">Intención de voto</div>
+        <div class="donut-row">
+          <div class="donut-wrap">
+            <div class="donut" style="background:conic-gradient(var(--green) 0% 62%,var(--s3) 62% 100%);">
+              <div class="donut-inner" style="color:var(--green);">62%</div>
+            </div>
+            <div class="donut-label">Sí votará</div>
+          </div>
+          <div class="donut-wrap">
+            <div class="donut" style="background:conic-gradient(var(--amber) 0% 27%,var(--s3) 27% 100%);">
+              <div class="donut-inner" style="color:var(--amber);">27%</div>
+            </div>
+            <div class="donut-label">Quizás</div>
+          </div>
+          <div class="donut-wrap">
+            <div class="donut" style="background:conic-gradient(var(--red) 0% 11%,var(--s3) 11% 100%);">
+              <div class="donut-inner" style="color:var(--red);">11%</div>
+            </div>
+            <div class="donut-label">No votará</div>
+          </div>
+        </div>
+        <div style="font-size:.65rem;color:var(--dim);background:var(--s3);border-radius:8px;padding:.5rem .75rem;">💡 El 27% indeciso sobre votar = <strong style="color:var(--text);">130 personas</strong> que pueden ser activadas con seguimiento</div>
+      </div>
+
+      <div class="mcard">
+        <div class="mcard-title">Reconocimiento del candidato por semana</div>
+        <div class="trend-chart">
+          <div class="trend-bar" style="height:30%;background:rgba(0,240,192,.2);border:1px solid rgba(0,240,192,.3);"></div>
+          <div class="trend-bar" style="height:38%;background:rgba(0,240,192,.3);border:1px solid rgba(0,240,192,.4);"></div>
+          <div class="trend-bar" style="height:52%;background:rgba(0,240,192,.5);border:1px solid rgba(0,240,192,.6);"></div>
+          <div class="trend-bar" style="height:65%;background:rgba(0,240,192,.65);border:1px solid rgba(0,240,192,.7);"></div>
+          <div class="trend-bar" style="height:80%;background:var(--teal);"></div>
+          <div class="trend-bar" style="height:38%;background:rgba(0,240,192,.2);border:1px dashed rgba(0,240,192,.3);"></div>
+          <div class="trend-bar" style="height:20%;background:rgba(0,240,192,.1);border:1px dashed rgba(0,240,192,.2);"></div>
+        </div>
+        <div class="trend-label">
+          <span class="tl">S-4</span><span class="tl">S-3</span><span class="tl">S-2</span><span class="tl">S-1</span><span class="tl" style="color:var(--teal);">HOY</span><span class="tl" style="font-style:italic;">S+1</span><span class="tl" style="font-style:italic;">S+2</span>
+        </div>
+        <div style="font-size:.6rem;color:var(--dim);margin-top:.5rem;font-style:italic;">Las semanas futuras son proyección basada en ritmo actual</div>
+      </div>
+
+      <div class="mcard">
+        <div class="mcard-title">Prioridad GOTV (día de elección)</div>
+        <div style="display:flex;flex-direction:column;gap:.5rem;">
+          <div style="background:var(--s3);border-radius:10px;padding:.6rem .85rem;display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-size:.7rem;font-weight:600;"><span style="color:#10B981;">●</span> D5 Miravalles</div>
+            <div style="font-size:.72rem;font-weight:800;color:#10B981;">Alta prioridad</div>
+          </div>
+          <div style="background:var(--s3);border-radius:10px;padding:.6rem .85rem;display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-size:.7rem;font-weight:600;"><span style="color:#00F0C0;">●</span> D1 Centro</div>
+            <div style="font-size:.72rem;font-weight:800;color:#00F0C0;">Alta prioridad</div>
+          </div>
+          <div style="background:var(--s3);border-radius:10px;padding:.6rem .85rem;display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-size:.7rem;font-weight:600;"><span style="color:#8B5CF6;">●</span> D2 Linda Vista</div>
+            <div style="font-size:.72rem;font-weight:800;color:#8B5CF6;">Media</div>
+          </div>
+          <div style="background:var(--s3);border-radius:10px;padding:.6rem .85rem;display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-size:.7rem;font-weight:600;"><span style="color:#EF4444;">●</span> D6 Periférico</div>
+            <div style="font-size:.72rem;font-weight:800;color:#EF4444;">No priorizar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TAB 3: REPORT ═══ -->
+  <div class="view" id="v-report">
+    <div class="report-wrap">
+      <div class="report-hdr">
+        <div class="report-badge">📋 Reporte Generado Automáticamente por BrigadaMX IA</div>
+        <div class="report-title">Inteligencia de Campo — Semana 2</div>
+        <div class="report-date">Tepic, Nayarit · 17 junio 2026 · Campaña: Levántate por Nayarit</div>
+      </div>
+
+      <div class="report-kpis">
+        <div class="rk"><div class="rk-n" style="color:var(--teal);">483</div><div class="rk-l">Visitas realizadas</div></div>
+        <div class="rk"><div class="rk-n" style="color:var(--green);">2,847</div><div class="rk-l">Votos probables</div></div>
+        <div class="rk"><div class="rk-n" style="color:var(--amber);">131</div><div class="rk-l">Indecisos a activar</div></div>
+        <div class="rk"><div class="rk-n" style="color:var(--blue);">54%</div><div class="rk-l">Cobertura territorial</div></div>
+      </div>
+
+      <div class="report-section">
+        <div class="rs-title">Resumen Ejecutivo</div>
+        <div class="report-p">La campaña de campo de la semana 2 muestra un <strong>avance significativo en reconocimiento</strong>: el candidato pasó del 26% al 38% de reconocimiento espontáneo en las colonias visitadas, un crecimiento de 12 puntos en 7 días. A este ritmo, se proyecta alcanzar <strong>60% de reconocimiento en las colonias cubiertas</strong> para la semana 4.</div>
+        <div class="report-p">El problema de <strong>Seguridad domina el discurso ciudadano</strong> con 43% de menciones espontáneas, significativamente por encima de Empleo (28%) y Agua/Servicios (18%). Esto debe reflejarse en el discurso del candidato en todos los actos de campaña de la siguiente semana.</div>
+      </div>
+
+      <div class="report-section">
+        <div class="rs-title">Hallazgos Clave</div>
+        <div class="findings">
+          <div class="finding"><div class="finding-ico">🔥</div><div class="finding-text"><strong>D5 Miravalles</strong> es el distrito más sólido: 81% de cobertura, alta receptividad. Concentrar aquí la presencia del candidato genera el mayor ROI electoral.</div></div>
+          <div class="finding"><div class="finding-ico">🚨</div><div class="finding-text"><strong>D6 Periférico</strong> tiene cobertura crítica del 12% y carece de encargado asignado. Con 18 días restantes, si no se interviene esta semana se pierde el territorio.</div></div>
+          <div class="finding"><div class="finding-ico">💡</div><div class="finding-text"><strong>131 hogares</strong> dijeron "quizás" al ser preguntados si piensan votar. Una segunda visita a estos hogares, con argumentos específicos sobre seguridad, puede convertir ~60% en votos seguros (+78 votos).</div></div>
+          <div class="finding"><div class="finding-ico">📈</div><div class="finding-text">El ritmo actual de <strong>89 visitas diarias</strong> proyecta completar la cobertura de Tepic en 38 días. Con 18 días disponibles, necesitamos aumentar a <strong>127 visitas/día</strong> o reasignar brigadistas.</div></div>
+        </div>
+      </div>
+
+      <div class="report-section">
+        <div class="rs-title">Acciones Recomendadas · Semana 3</div>
+        <div class="actions">
+          <div class="action"><div class="action-n">1</div><div class="action-text">Asignar encargado a <strong>D6 Periférico</strong> y doblar brigadistas esta semana</div><div class="action-tag">⚡ URGENTE</div></div>
+          <div class="action"><div class="action-n">2</div><div class="action-text">Programar segunda visita a <strong>131 indecisos</strong> identificados — con mensaje específico en seguridad</div><div class="action-tag">↑ ROI alto</div></div>
+          <div class="action"><div class="action-n">3</div><div class="action-text">El candidato debe incluir propuesta de <strong>seguridad concreta</strong> en todos los eventos de la semana</div><div class="action-tag">🎯 Estratégico</div></div>
+          <div class="action"><div class="action-n">4</div><div class="action-text">Aumentar ritmo de campo de 89 a 127 visitas/día para completar cobertura antes del cierre</div><div class="action-tag">📅 Urgente</div></div>
+          <div class="action"><div class="action-n">5</div><div class="action-text">Concentrar actos del candidato en <strong>D1 Centro y D5 Miravalles</strong> — mayor densidad de voto seguro</div><div class="action-tag">✓ Recomendado</div></div>
+        </div>
+      </div>
+
+      <button class="btn-print" onclick="window.print()">⬇ Descargar Reporte PDF</button>
+    </div>
+  </div>
+
+</div><!-- /body -->
+
+<!-- ═══ OWNER OVERLAY ═══ -->
+<div class="owner-overlay" id="owner-overlay">
+  <div class="oo-header">
+    <div>
+      <div class="oo-title">👁 Vista Propietario BrigadaMX — CONFIDENCIAL</div>
+      <div class="oo-sub">Inteligencia agregada de todos los partidos · Solo visible para el operador del sistema</div>
+    </div>
+    <button class="oo-close" onclick="toggleOwner()">✕ Cerrar</button>
+  </div>
+  <div class="oo-body">
+    <div class="oo-warning">
+      <div class="oo-warning-t">⚠ Capa de inteligencia multi-partido — Uso interno exclusivo</div>
+      <div class="oo-warning-d">Esta vista agrega datos anonimizados de todos los partidos que operan BrigadaMX en Tepic. Cubierto por los Términos de Servicio (§4.2 Mejora del Servicio y Análisis Agregado). Cada partido accede únicamente a sus propios datos.</div>
+    </div>
+
+    <div class="oo-grid">
+      <div class="oo-card">
+        <div class="oo-card-title">Visitas por partido esta semana</div>
+        <div class="party-row"><div class="party-dot" style="background:#00F0C0;"></div><div class="party-name">Levántate por Nayarit</div><div class="party-val" style="color:var(--teal);">483</div><div class="party-bar-track"><div class="party-bar-fill" style="width:75%;background:#00F0C0;"></div></div></div>
+        <div class="party-row"><div class="party-dot" style="background:#3B82F6;"></div><div class="party-name">Partido Acción Nacional</div><div class="party-val" style="color:var(--blue);">312</div><div class="party-bar-track"><div class="party-bar-fill" style="width:48%;background:#3B82F6;"></div></div></div>
+        <div class="party-row"><div class="party-dot" style="background:#EF4444;"></div><div class="party-name">Morena Nayarit</div><div class="party-val" style="color:var(--red);">218</div><div class="party-bar-track"><div class="party-bar-fill" style="width:34%;background:#EF4444;"></div></div></div>
+        <div class="party-row"><div class="party-dot" style="background:#F59E0B;"></div><div class="party-name">PRI Nayarit</div><div class="party-val" style="color:var(--amber);">97</div><div class="party-bar-track"><div class="party-bar-fill" style="width:15%;background:#F59E0B;"></div></div></div>
+      </div>
+
+      <div class="oo-card">
+        <div class="oo-card-title">Zonas más disputadas (todos los partidos)</div>
+        <div class="party-row"><div class="party-dot" style="background:#FF6B6B;"></div><div class="party-name">D1 Centro Histórico</div><div class="party-val" style="color:#FF6B6B;">4 partidos</div></div>
+        <div class="party-row"><div class="party-dot" style="background:#FF6B6B;"></div><div class="party-name">D5 Miravalles Sur</div><div class="party-val" style="color:#FF6B6B;">3 partidos</div></div>
+        <div class="party-row"><div class="party-dot" style="background:var(--amber);"></div><div class="party-name">D2 Linda Vista</div><div class="party-val" style="color:var(--amber);">2 partidos</div></div>
+        <div class="party-row"><div class="party-dot" style="background:var(--green);"></div><div class="party-name">D6 Periférico</div><div class="party-val" style="color:var(--green);">Solo Lev.</div></div>
+      </div>
+
+      <div class="oo-card">
+        <div class="oo-card-title">Sentimiento ciudadano · Agregado todos los partidos</div>
+        <div class="bar-chart" style="gap:.4rem;">
+          <div class="bar-row"><div class="bar-label">Gobierno actual</div><div class="bar-track"><div class="bar-fill" style="width:31%;background:var(--red);"></div></div><div class="bar-pct" style="color:var(--red);font-size:.6rem;">Mal 31%</div></div>
+          <div class="bar-row"><div class="bar-label">Votará</div><div class="bar-track"><div class="bar-fill" style="width:58%;background:var(--green);"></div></div><div class="bar-pct" style="color:var(--green);font-size:.6rem;">Sí 58%</div></div>
+          <div class="bar-row"><div class="bar-label">Prob. #1</div><div class="bar-track"><div class="bar-fill" style="width:43%;background:var(--red);"></div></div><div class="bar-pct" style="color:var(--red);font-size:.6rem;">Seg 43%</div></div>
+        </div>
+        <div style="font-size:.6rem;color:var(--faint);margin-top:.5rem;">Basado en 1,110 encuestas agregadas (4 partidos)</div>
+      </div>
+
+      <div class="oo-card">
+        <div class="oo-card-title">Proyección electoral · Tepic (modelo BrigadaMX)</div>
+        <div class="party-row"><div class="party-dot" style="background:#00F0C0;"></div><div class="party-name">Levántate</div><div class="party-val" style="color:var(--teal);">34%</div><div class="party-bar-track"><div class="party-bar-fill" style="width:68%;background:#00F0C0;"></div></div></div>
+        <div class="party-row"><div class="party-dot" style="background:#3B82F6;"></div><div class="party-name">PAN</div><div class="party-val" style="color:var(--blue);">28%</div><div class="party-bar-track"><div class="party-bar-fill" style="width:56%;background:#3B82F6;"></div></div></div>
+        <div class="party-row"><div class="party-dot" style="background:#EF4444;"></div><div class="party-name">Morena</div><div class="party-val" style="color:var(--red);">22%</div><div class="party-bar-track"><div class="party-bar-fill" style="width:44%;background:#EF4444;"></div></div></div>
+        <div class="party-row"><div class="party-dot" style="background:#F59E0B;"></div><div class="party-name">PRI + otros</div><div class="party-val" style="color:var(--amber);">16%</div><div class="party-bar-track"><div class="party-bar-fill" style="width:32%;background:#F59E0B;"></div></div></div>
+        <div style="font-size:.58rem;color:var(--faint);margin-top:.6rem;">⚠ Proyección experimental · Solo datos de campo BrigadaMX</div>
+      </div>
+    </div>
+
+    <div class="oo-meta">
+      <div class="oo-meta-title">🧠 Insights del operador — Lo que ningún partido sabe</div>
+      <div class="oo-insight"><div class="oo-insight-ico">💰</div><div class="oo-insight-text"><strong>D6 Periférico está sin cubrir por 3 partidos.</strong> Solo Levántate envió 2 brigadistas. Si Levántate duplica esfuerzo ahí esta semana, captura territorio virgen antes de que otros lleguen.</div></div>
+      <div class="oo-insight"><div class="oo-insight-ico">📊</div><div class="oo-insight-text"><strong>Levántate lleva 483 visitas vs. 312 del PAN.</strong> La ventaja de campo es real — si mantiene el ritmo, termina cobertura antes que cualquier rival.</div></div>
+      <div class="oo-insight"><div class="oo-insight-ico">🗳️</div><div class="oo-insight-text"><strong>58% declara que sí votará (agregado 4 partidos).</strong> Alta participación esperada = elección competitiva. El candidato con mejor GOTV gana. El mapa de votos seguros de Levántate ya está generado.</div></div>
+      <div class="oo-insight"><div class="oo-insight-ico">⚡</div><div class="oo-insight-text">Esta proyección electoral con datos reales de campo es <strong>más precisa que cualquier encuesta telefónica</strong>. Las encuestadoras cobran $150K por esto. Tú lo tienes como subproducto gratuito del sistema.</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── TAB SWITCH ──
+function setTab(id,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.getElementById('v-'+id).classList.add('on');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+// ── OWNER OVERLAY ──
+function toggleOwner(){
+  const ov=document.getElementById('owner-overlay');
+  const btn=document.getElementById('owner-btn');
+  ov.classList.toggle('on');
+  btn.classList.toggle('on');
+}
+
+// ── AI CHAT ──
+const QA = {
+  '¿Dónde tengo más votos duros?': `Analizando los datos de las 483 visitas, los <strong>votos duros</strong> (intención positiva + piensa votar) se concentran en:
+<div class="inline-card">
+  <div class="ic-row"><div class="ic-label">D5 Miravalles</div><div class="ic-val" style="color:#10B981;">178 visitas · 81% cobertura</div></div>
+  <div class="ic-bar"><div class="ic-fill" style="width:81%;background:#10B981;"></div></div>
+  <div class="ic-row" style="margin-top:.5rem;"><div class="ic-label">D1 Centro Histórico</div><div class="ic-val" style="color:#00F0C0;">143 visitas · 72% cobertura</div></div>
+  <div class="ic-bar"><div class="ic-fill" style="width:72%;background:#00F0C0;"></div></div>
+</div>
+Recomendación: concentra los actos del candidato en D5 y D1. El esfuerzo de GOTV el día de la elección debe priorizar estas dos zonas.`,
+
+  '¿Cuántos votos probables tengo hoy?': `Con base en las 483 visitas registradas esta semana, el modelo calcula:
+<div class="inline-card">
+  <div class="ic-row"><div class="ic-label">Votos duros confirmados</div><div class="ic-val" style="color:#00F0C0;">2,847</div></div>
+  <div class="ic-row"><div class="ic-label">Indecisos activables</div><div class="ic-val" style="color:#F59E0B;">+131</div></div>
+  <div class="ic-row"><div class="ic-label">Proyección con cobertura completa</div><div class="ic-val" style="color:#8B5CF6;">~8,400</div></div>
+</div>
+Los 2,847 son votos <em>probables</em>: personas que dijeron conocer al candidato + piensa votar. A este ritmo de campo, la proyección final es ~8,400 votos en Tepic si se completa la cobertura.`,
+
+  '¿Cuál es el problema más mencionado?': `El análisis de 391 encuestas capturadas muestra un resultado claro:
+<div class="inline-card">
+  <div class="ic-row"><div class="ic-label">🚨 Seguridad</div><div class="ic-val" style="color:#EF4444;">43%</div></div>
+  <div class="ic-bar"><div class="ic-fill" style="width:43%;background:#EF4444;"></div></div>
+  <div class="ic-row" style="margin-top:.4rem;"><div class="ic-label">💼 Empleo</div><div class="ic-val" style="color:#F59E0B;">28%</div></div>
+  <div class="ic-bar"><div class="ic-fill" style="width:28%;background:#F59E0B;"></div></div>
+  <div class="ic-row" style="margin-top:.4rem;"><div class="ic-label">💧 Agua/Servicios</div><div class="ic-val" style="color:#3B82F6;">18%</div></div>
+  <div class="ic-bar"><div class="ic-fill" style="width:18%;background:#3B82F6;"></div></div>
+</div>
+<strong>Seguridad gana por más de 15 puntos</strong>. Cualquier discurso o evento esta semana debe abrir con una propuesta concreta en seguridad — no hacerlo es desperdiciar el insight más valioso de campo.`,
+
+  '¿A dónde mando brigadistas mañana?': `Basado en cobertura actual y urgencia territorial:
+<div class="inline-card">
+  <div class="ic-row"><div class="ic-label">🚨 D6 Periférico — URGENTE</div><div class="ic-val" style="color:#EF4444;">12% cob.</div></div>
+  <div class="ic-bar"><div class="ic-fill" style="width:12%;background:#EF4444;"></div></div>
+  <div class="ic-row" style="margin-top:.5rem;"><div class="ic-label">⚠ D3 Las Brisas — REZAGADO</div><div class="ic-val" style="color:#F59E0B;">34% cob.</div></div>
+  <div class="ic-bar"><div class="ic-fill" style="width:34%;background:#F59E0B;"></div></div>
+</div>
+Acción: mueve <strong>4 brigadistas de D5</strong> (ya está al 81%) hacia D6 mañana. D3 necesita refuerzo esta semana o no se completa antes del cierre. D1 y D5 pueden seguir con su ritmo actual.`,
+
+  '¿Qué tan bien me conoce la gente?': `Evolución del reconocimiento espontáneo semana a semana:
+<div class="inline-card">
+  <div class="ic-row"><div class="ic-label">Semana 1</div><div class="ic-val" style="color:#7A8BA8;">26%</div></div>
+  <div class="ic-row"><div class="ic-label">Semana 2 (hoy)</div><div class="ic-val" style="color:#00F0C0;">38% ↑+12pts</div></div>
+  <div class="ic-row"><div class="ic-label">Proyección semana 4</div><div class="ic-val" style="color:#8B5CF6;">~58%</div></div>
+</div>
+El crecimiento de <strong>12 puntos en una semana</strong> es sólido. El 21% que "no lo conoce" sigue siendo el mayor segmento de oportunidad — una segunda visita a esos hogares tiene alto retorno.`,
+
+  '¿Cuál distrito necesita más atención urgente?': `Sin duda: <strong style="color:#EF4444;">D6 Periférico</strong>.
+<div class="inline-card">
+  <div class="ic-row"><div class="ic-label">Cobertura actual</div><div class="ic-val" style="color:#EF4444;">12%</div></div>
+  <div class="ic-row"><div class="ic-label">Brigadistas asignados</div><div class="ic-val" style="color:#EF4444;">Solo 2</div></div>
+  <div class="ic-row"><div class="ic-label">Encargado</div><div class="ic-val" style="color:#EF4444;">Sin asignar</div></div>
+  <div class="ic-row"><div class="ic-label">Riesgo</div><div class="ic-val" style="color:#EF4444;">Territorio perdido</div></div>
+</div>
+Con 18 días restantes, si no se actúa esta semana ese territorio no se recupera. Pasos: (1) asignar encargado hoy, (2) reubicar 4 brigadistas de D5, (3) el candidato debe visitar D6 personalmente esta semana.`
+};
+
+function addMsg(text, isUser){
+  const msgs = document.getElementById('chat-msgs');
+  const div = document.createElement('div');
+  div.className = 'msg ' + (isUser ? 'msg-user' : 'msg-ai');
+  const bubble = document.createElement('div');
+  bubble.className = isUser ? 'msg-bubble-user' : 'msg-bubble-ai';
+  bubble.innerHTML = text;
+  const time = document.createElement('div');
+  time.className = 'msg-time' + (isUser ? '' : ' left');
+  time.textContent = isUser ? 'Tú' : 'Analista IA · ahora';
+  div.appendChild(bubble);
+  div.appendChild(time);
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping(){ document.getElementById('typing-ind').style.display='block'; }
+function hideTyping(){ document.getElementById('typing-ind').style.display='none'; }
+
+function askQ(chip, question){
+  chip.classList.add('used');
+  document.getElementById('chat-inp').value = question;
+  sendQ();
+}
+
+function sendQ(){
+  const inp = document.getElementById('chat-inp');
+  const q = inp.value.trim();
+  if(!q) return;
+  inp.value = '';
+  addMsg(q, true);
+  showTyping();
+  document.getElementById('chat-msgs').scrollTop = 99999;
+  setTimeout(()=>{
+    hideTyping();
+    const ans = QA[q] || `Esa pregunta requiere más datos de campo para responder con precisión. Con una semana más de visitas puedo darte una respuesta más exacta. Por ahora te recomiendo revisar el Reporte Semanal automático en la pestaña de reportes.`;
+    addMsg(ans, false);
+  }, 1200 + Math.random()*600);
+}
+</script>
+</body>
+</html>
