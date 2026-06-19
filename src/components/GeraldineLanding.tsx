@@ -308,7 +308,7 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
             <div className="absolute -inset-4 bg-gradient-to-r from-[var(--magenta)] to-[var(--solar)] opacity-30 blur-2xl rounded-full transition-all group-hover:opacity-50"></div>
             <img 
               className="w-full aspect-[3/4] object-cover object-top rounded-[1rem] saturate-[1.1] contrast-[1.05] shadow-[0_20px_50px_rgba(0,0,0,0.3)] border-[3px] border-white relative z-10" 
-              src="/geraldine_official.png" 
+              src="/geraldine_official.jpg"
               alt="Geraldine Ponce — Presidenta Municipal de Tepic y Candidata a Gobernadora" 
             />
             {/* Slogan Badge */}
