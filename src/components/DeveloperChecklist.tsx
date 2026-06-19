@@ -94,9 +94,9 @@ export function DeveloperChecklist({ onLogout }: { onLogout: () => void }) {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.8)]"></div>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-cyan-400">Developer Environment</span>
+              <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-cyan-400">Entorno de Desarrollo</span>
             </div>
-            <h1 className="text-4xl font-black text-white tracking-tight">ConnectX Roadmap</h1>
+            <h1 className="text-4xl font-black text-white tracking-tight">Hoja de Ruta ConnectX</h1>
             <p className="text-slate-500 text-sm mt-1">Checklist de implementación estratégica para Nayarit Digital.</p>
           </div>
           <button 
@@ -136,7 +136,7 @@ export function DeveloperChecklist({ onLogout }: { onLogout: () => void }) {
                 </div>
                 <div className="text-right">
                    <span className="text-2xl font-black text-white">{module.progress}%</span>
-                   <p className="text-[9px] text-slate-500 font-bold uppercase tracking-tighter">Advancement</p>
+                   <p className="text-[9px] text-slate-500 font-bold uppercase tracking-tighter">Progreso</p>
                 </div>
               </div>
 
@@ -169,7 +169,7 @@ export function DeveloperChecklist({ onLogout }: { onLogout: () => void }) {
                       </span>
                     </div>
                     {task.status === 'complete' && (
-                      <span className="text-[10px] font-mono text-emerald-500/50 bg-emerald-500/5 px-2 py-0.5 rounded">DONE</span>
+                      <span className="text-[10px] font-mono text-emerald-500/50 bg-emerald-500/5 px-2 py-0.5 rounded">LISTO</span>
                     )}
                   </div>
                 ))}
@@ -177,7 +177,7 @@ export function DeveloperChecklist({ onLogout }: { onLogout: () => void }) {
 
               <div className="px-6 py-4 bg-slate-900/50 border-t border-slate-800 flex justify-between items-center">
                  <button className="text-[10px] font-bold text-cyan-400 hover:text-cyan-300 transition-colors uppercase tracking-widest">
-                   Update Sprint
+                   Actualizar Sprint
                  </button>
                  <div className="flex gap-1">
                     {[1,2,3].map(dot => <div key={dot} className="w-1.5 h-1.5 rounded-full bg-slate-700"></div>)}

@@ -35,7 +35,7 @@ const SUBSYSTEMS: SubSystem[] = [
     icon: <Database size={24} />,
     color: 'bg-slate-950',
     description: 'Base única de verdad de todo activo estatal: carreteras, puentes, escuelas y servicios. Georreferenciación absoluta.',
-    outputs: ['Catálogo de Activos', 'Ubicación GNSS', 'Score de Condición']
+    outputs: ['Catálogo de Activos', 'Ubicación GNSS', 'Índice de Condición']
   },
   {
     id: 'api-gov',
@@ -53,7 +53,7 @@ const SUBSYSTEMS: SubSystem[] = [
     icon: <TrendingUp size={24} />,
     color: 'bg-nayarit-orange',
     description: 'Algoritmos que asignan prioridades basados en riesgo, impacto social y costo de no intervención.',
-    outputs: ['Fórmula de Scoring', 'Cartera Priorizada', 'Simulación de Impacto']
+    outputs: ['Fórmula de Calificación', 'Cartera Priorizada', 'Simulación de Impacto']
   },
   {
     id: 'citizen-os',
@@ -62,7 +62,7 @@ const SUBSYSTEMS: SubSystem[] = [
     icon: <Users size={24} />,
     color: 'bg-blue-600',
     description: 'Canal unificado (App/Web/WhatsApp) para reportes ciudadanos y seguimiento de obras en tiempo real.',
-    outputs: ['Sistema de Quejas', 'Tracking de Servicios', 'Dashboard Público']
+    outputs: ['Sistema de Quejas', 'Seguimiento de Servicios', 'Panel Público']
   }
 ];
 
@@ -180,20 +180,20 @@ export const ModularBrain: React.FC = () => {
               )}
               {activeId === 'api-gov' && (
                 <div className="space-y-4">
-                  <p className="text-indigo-400">// API Gov Endpoints</p>
+                  <p className="text-indigo-400">// Endpoints API Gobierno</p>
                   <p>GET /api/v1/sovereignty/assets</p>
                   <p>POST /api/v1/audit/report</p>
                   <p>PATCH /api/v1/decision/allocate</p>
-                  <p className="text-white/20 mt-4">// Auth: OAuth2 + Sovereign Token</p>
+                  <p className="text-white/20 mt-4">// Autenticación: OAuth2 + Token Soberano</p>
                 </div>
               )}
               {activeId === 'decision-engine' && (
                 <div className="space-y-4">
-                  <p className="text-nayarit-orange">// Scoring Formula</p>
-                  <p>Score = (Risk * 0.4) + (Impact * 0.3) + (Usage * 0.2) + (Cost_Non_Intervention * 0.1)</p>
+                  <p className="text-nayarit-orange">// Fórmula de Calificación</p>
+                  <p>Calificación = (Riesgo * 0.4) + (Impacto * 0.3) + (Uso * 0.2) + (Costo_No_Intervención * 0.1)</p>
                   <div className="mt-4 p-4 rounded-xl bg-white/5 border border-white/10">
                     <p className="text-white font-bold">Simulación: Carretera Tepic-Vallarta</p>
-                    <p className="text-emerald-400">Priority: CRITICAL (9.2/10)</p>
+                    <p className="text-emerald-400">Prioridad: CRÍTICA (9.2/10)</p>
                   </div>
                 </div>
               )}
@@ -208,19 +208,19 @@ export const ModularBrain: React.FC = () => {
               )}
               {activeId === 'citizen-os' && (
                 <div className="space-y-4">
-                  <p className="text-purple-400">// Citizen Experience Flow</p>
-                  <p>User {'->'} Report Problem (WhatsApp/App)</p>
-                  <p>System {'->'} Validate via Data Core</p>
-                  <p>System {'->'} Notify Decision Engine</p>
-                  <p>User {'->'} Track Resolution in Real-time</p>
+                  <p className="text-purple-400">// Flujo de Experiencia Ciudadana</p>
+                  <p>Usuario {'->'} Reportar Problema (WhatsApp/App)</p>
+                  <p>Sistema {'->'} Validar vía Registro Maestro</p>
+                  <p>Sistema {'->'} Notificar Motor de Decisión</p>
+                  <p>Usuario {'->'} Seguimiento en Tiempo Real</p>
                 </div>
               )}
               {activeId === 'monetization' && (
                 <div className="space-y-4">
-                  <p className="text-white/40">// Revenue Streams</p>
-                  <p>- API Premium for Logistics Companies</p>
-                  <p>- GovTech SaaS Licensing</p>
-                  <p>- Advanced Analytics for Real Estate</p>
+                  <p className="text-white/40">// Fuentes de Ingresos</p>
+                  <p>- API Premium para Empresas de Logística</p>
+                  <p>- Licenciamiento SaaS GovTech</p>
+                  <p>- Analítica Avanzada para Inmobiliarias</p>
                   <p className="text-nayarit-orange mt-4">ROI Proyectado: 15% Ahorro Operativo</p>
                 </div>
               )}

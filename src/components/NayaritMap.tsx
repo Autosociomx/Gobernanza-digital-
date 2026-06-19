@@ -17,16 +17,16 @@ export function NayaritMap({
     return (
       <div className="flex items-center justify-center h-full bg-slate-900 rounded-xl border border-white/10 p-6 text-center">
         <div className="max-w-md">
-          <h2 className="text-xl font-bold text-white mb-4">Google Maps API Key Required</h2>
+          <h2 className="text-xl font-bold text-white mb-4">Se requiere una clave de API de Google Maps</h2>
           <p className="text-slate-400 text-sm mb-6">
             Para ver la trazabilidad real de Nayarit Digital, por favor añade tu API Key de Google Maps en 
             <strong> Settings {'->'} Secrets</strong> con el nombre <code>VITE_GOOGLE_MAPS_API_KEY</code>.
           </p>
           <div className="text-xs text-slate-500 bg-black/40 p-3 rounded text-left font-mono">
-            1. Consigue tu clave en Google Cloud Console.<br/>
+            1. Obtén tu clave en Google Cloud Console.<br/>
             2. Ve a Settings (⚙️) {'->'} Secrets.<br/>
             3. Añade VITE_GOOGLE_MAPS_API_KEY.<br/>
-            4. La app se reiniciará automáticamente.
+            4. La aplicación se reiniciará automáticamente.
           </div>
         </div>
       </div>

@@ -130,7 +130,7 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700/50">
               <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse"></div>
-              <span className="text-xs font-mono text-emerald-400">STATE: ONLINE</span>
+              <span className="text-xs font-mono text-emerald-400">ESTADO: EN LÍNEA</span>
             </div>
             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-rose-400 to-orange-400 border-2 border-slate-800 overflow-hidden">
                <img src="/geraldine-perfil.jpg" alt="Profile" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1586996292898-71f4036c4e07?w=100&h=100&fit=crop&crop=faces" }}/>
@@ -658,7 +658,7 @@ function AgrovisionView() {
             <div className="absolute inset-0 opacity-20" style={{backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='28' height='49' viewBox='0 0 28 49' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5z' fill='none' stroke='%234ADE80' stroke-width='1'/%3E%3C/svg%3E\")"}}></div>
 
             <div className="relative z-10 p-4 bg-black/60 backdrop-blur-sm border border-white/10 rounded-lg text-center">
-              <p className="text-xs font-mono text-emerald-400 mb-2 tracking-widest">ANALYZING CROP HEALTH</p>
+              <p className="text-xs font-mono text-emerald-400 mb-2 tracking-widest">ANALIZANDO SALUD DE CULTIVOS</p>
               <div className="flex gap-4">
                 <div className="text-center">
                   <div className="text-lg font-bold text-white">0.82</div>
@@ -673,7 +673,7 @@ function AgrovisionView() {
             </div>
             
             {/* 3D Mock Overlay */}
-            <div className="absolute bottom-4 right-4 bg-black/80 px-2 py-1 rounded text-[10px] font-mono text-slate-400 border border-white/10">RENDER: OCTANE 3D ENGINE</div>
+            <div className="absolute bottom-4 right-4 bg-black/80 px-2 py-1 rounded text-[10px] font-mono text-slate-400 border border-white/10">RENDER: MOTOR 3D OCTANE</div>
           </div>
         </div>
 

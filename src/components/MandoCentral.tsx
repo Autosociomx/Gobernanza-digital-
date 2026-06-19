@@ -223,7 +223,11 @@ export const MandoCentral: React.FC = () => {
                     riskAnalysis.level === 'CRITICAL' ? "bg-red-500/20 text-red-500" : 
                     riskAnalysis.level === 'HIGH' ? "bg-orange-500/20 text-orange-500" : "bg-emerald-500/20 text-emerald-500"
                   )}>
-                    RIESGO: {riskAnalysis.level}
+                    RIESGO: {
+                      riskAnalysis.level === 'CRITICAL' ? 'CRÍTICO' :
+                      riskAnalysis.level === 'HIGH' ? 'ALTO' :
+                      riskAnalysis.level === 'MEDIUM' ? 'MEDIO' : 'BAJO'
+                    }
                   </div>
                 </div>
 

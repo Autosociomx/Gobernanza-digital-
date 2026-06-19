@@ -179,7 +179,7 @@ export const SovereignMap: React.FC = () => {
             )}
           >
             <HardHat size={14} />
-            <span className="hidden md:inline">Consola Ingeniería</span>
+            <span className="hidden md:inline">Consola de Ingeniería</span>
             <span className="md:hidden">Ingeniero</span>
           </button>
         </div>
@@ -407,4 +407,3 @@ export const SovereignMap: React.FC = () => {
     </div>
   );
 };
-
