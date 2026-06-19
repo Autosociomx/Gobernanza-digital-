@@ -35,7 +35,7 @@ type MapMode = 'ENGINEER' | 'DRIVER';
 export const SovereignMap: React.FC = () => {
   const { isLoaded, loadError } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY || "",
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
     mapIds: [MAP_ID]
   });
 
