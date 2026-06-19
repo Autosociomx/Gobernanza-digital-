@@ -1,7 +1,7 @@
 import React from 'react';
 import { APIProvider, Map, AdvancedMarker, Pin } from '@vis.gl/react-google-maps';
 
-const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '';
+const API_KEY = process.env.GOOGLE_MAPS_PLATFORM_KEY || '';
 const hasValidKey = Boolean(API_KEY) && API_KEY !== 'YOUR_API_KEY';
 
 export function NayaritMap({ 
@@ -20,12 +20,12 @@ export function NayaritMap({
           <h2 className="text-xl font-bold text-white mb-4">Google Maps API Key Required</h2>
           <p className="text-slate-400 text-sm mb-6">
             Para ver la trazabilidad real de Nayarit Digital, por favor añade tu API Key de Google Maps en 
-            <strong> Settings {'->'} Secrets</strong> con el nombre <code>VITE_GOOGLE_MAPS_API_KEY</code>.
+            <strong> Settings {'->'} Secrets</strong> con el nombre <code>GOOGLE_MAPS_PLATFORM_KEY</code>.
           </p>
           <div className="text-xs text-slate-500 bg-black/40 p-3 rounded text-left font-mono">
             1. Consigue tu clave en Google Cloud Console.<br/>
             2. Ve a Settings (⚙️) {'->'} Secrets.<br/>
-            3. Añade VITE_GOOGLE_MAPS_API_KEY.<br/>
+            3. Añade GOOGLE_MAPS_PLATFORM_KEY.<br/>
             4. La app se reiniciará automáticamente.
           </div>
         </div>

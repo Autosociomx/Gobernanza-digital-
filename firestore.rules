@@ -45,13 +45,13 @@ service cloud.firestore {
 
     function isAdmin() {
       return isAuthenticated() &&
-        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+        ((exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') ||
           (request.auth.token.email == "autosociomx@gmail.com" && request.auth.token.email_verified == true));
     }
 
     function isEditor() {
       return isAuthenticated() &&
-        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'editor' || isAdmin());
+        ((exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'editor') || isAdmin());
     }
 
     function isValidEmail(email) {
@@ -71,10 +71,17 @@ service cloud.firestore {
     // ===============================================================
 
     function isValidUser(data) {
-      return hasOnlyAllowedFields(['name', 'email', 'role']) &&
+      return hasOnlyAllowedFields(['name', 'email', 'role', 'documentId', 'phone', 'address', 'neighborhood', 'createdAt', 'updatedAt', 'registrationVerified', 'verifiedBy']) &&
              data.name is string && data.name.size() > 0 && data.name.size() < 100 &&
              data.email is string && isValidEmail(data.email) &&
-             data.role in ['admin', 'editor', 'viewer'];
+             data.role in ['admin', 'editor', 'viewer', 'citizen'];
+    }
+
+    function isValidNeighborhoodNetwork(data) {
+      return hasRequiredFields(['name', 'colony', 'leaderId', 'leaderName', 'createdAt']) &&
+             data.name is string && data.colony is string &&
+             data.leaderId is string &&
+             data.createdAt is timestamp;
     }
 
     function isValidDepartment(data) {
@@ -134,7 +141,7 @@ service cloud.firestore {
 
     match /users/{userId} {
       allow read: if isOwner(userId) || isAdmin();
-      allow create: if isAuthenticated() && isValidUser(request.resource.data) && (isOwner(userId) && request.resource.data.role == 'viewer' || isAdmin());
+      allow create: if isAuthenticated() && isValidUser(request.resource.data) && (isOwner(userId) && request.resource.data.role == 'citizen' || isAdmin());
       allow update: if isAuthenticated() && isValidUser(request.resource.data) && (isOwner(userId) && request.resource.data.role == resource.data.role || isAdmin());
     }
 
@@ -151,8 +158,8 @@ service cloud.firestore {
     }
 
     match /forum_threads/{threadId} {
-      allow read: if isAuthenticated();
-      allow create: if isAuthenticated() && isValidForumThread(request.resource.data);
+      allow read: if true;
+      allow create: if true;
       allow update: if isAuthenticated() && (
         (isOwner(resource.data.authorId) && isValidForumThread(request.resource.data)) ||
         isAdmin() ||
@@ -161,10 +168,16 @@ service cloud.firestore {
       allow delete: if isAdmin() || (isAuthenticated() && isOwner(resource.data.authorId));
 
       match /comments/{commentId} {
-        allow read: if isAuthenticated();
-        allow create: if isAuthenticated() && isValidForumComment(request.resource.data);
+        allow read: if true;
+        allow create: if true;
         allow delete: if isAdmin() || (isAuthenticated() && isOwner(resource.data.authorId));
       }
+    }
+
+    match /neighborhood_networks/{networkId} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
     }
 
     // Default deny

@@ -1,6 +1,6 @@
 {
   "name": "Nayarit Digital",
-  "description": "Ecosistema de Gobernanza 2.0. El Sistema Operativo Municipal de Tepic: Infraestructura digital para la transparencia, eficiencia y atención ciudadana mediante Inteligencia Artificial.",
-  "requestFramePermissions": ["geolocation"],
+  "description": "Estándar de Gestión Pública y Gobernanza Digital Certificada. Ecosistema municipal de alto impacto respaldado por Google Cloud, Gemini y Claude AI para una administración transparente y eficiente.",
+  "requestFramePermissions": ["geolocation", "camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

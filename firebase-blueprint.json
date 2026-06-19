@@ -80,11 +80,61 @@
         },
         "role": {
           "type": "string",
-          "enum": ["admin", "editor", "viewer"],
+          "enum": ["admin", "editor", "viewer", "citizen"],
           "description": "The user's role in the system."
-        }
+        },
+        "documentId": { "type": "string", "description": "INE or CURP" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "neighborhood": { "type": "string", "description": "The colony or neighborhood name." },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "registrationVerified": { "type": "boolean" },
+        "verifiedBy": { "type": "string", "description": "UID of the person who registered them house-to-house." }
       },
       "required": ["name", "email", "role"]
+    },
+    "NeighborhoodNetwork": {
+      "title": "NeighborhoodNetwork",
+      "description": "A community group organized by neighborhood for local digital governance.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "colony": { "type": "string" },
+        "description": { "type": "string" },
+        "leaderId": { "type": "string" },
+        "leaderName": { "type": "string" },
+        "memberCount": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "activeProposals": { "type": "number" }
+      },
+      "required": ["name", "colony", "leaderId", "leaderName", "createdAt"]
+    },
+    "Payment": {
+      "title": "Payment",
+      "description": "A payment record for a user.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "concept": { "type": "string" },
+        "amount": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "completed", "failed"] },
+        "date": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "concept", "amount", "status", "date"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "A push notification for a user.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "isRead": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "title", "message", "isRead", "createdAt"]
     },
     "InfrastructureAsset": {
       "title": "InfrastructureAsset",
@@ -185,6 +235,18 @@
     "forum_threads/{threadId}/comments": {
       "schema": "ForumComment",
       "description": "Subcollection of comments for a specific thread."
+    },
+    "users/{userId}/payments": {
+      "schema": "Payment",
+      "description": "User's payment history."
+    },
+    "users/{userId}/notifications": {
+      "schema": "Notification",
+      "description": "User's push notifications."
+    },
+    "neighborhood_networks": {
+      "schema": "NeighborhoodNetwork",
+      "description": "Collection of neighborhood-organized community groups."
     }
   }
 }

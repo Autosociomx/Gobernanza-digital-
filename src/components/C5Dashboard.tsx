@@ -15,7 +15,15 @@ import {
   CheckCircle2,
   Users,
   Send,
-  Loader2
+  Loader2,
+  Shield,
+  Briefcase,
+  AppWindow,
+  Package,
+  Coins,
+  FileText,
+  ShieldCheck,
+  ChevronLeft
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
@@ -32,10 +40,14 @@ import {
   Tooltip,
   ResponsiveContainer,
   BarChart,
-  Bar
+  Bar,
+  Cell,
+  PieChart,
+  Pie,
+  Legend
 } from 'recharts';
 
-type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio';
+type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio' | 'interoperabilidad';
 
 export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
   const [activeModule, setActiveModule] = useState<ModuleType>('tesoreria');
@@ -50,6 +62,7 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
     { id: 'ia', name: 'Asistente IA', icon: Bot, color: 'text-purple-500', bg: 'bg-purple-500/10' },
     { id: 'agrovision', name: 'Agrovisión 3D', icon: TrendingUp, color: 'text-green-500', bg: 'bg-green-500/10' },
     { id: 'observatorio', name: 'Observatorio Digital', icon: Activity, color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
+    { id: 'interoperabilidad', name: 'Nodo Transparencia', icon: Building2, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
   ] as const;
 
   return (
@@ -157,6 +170,7 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
               {activeModule === 'ia' && <IAView />}
               {activeModule === 'agrovision' && <AgrovisionView />}
               {activeModule === 'observatorio' && <ObservatorioView />}
+              {activeModule === 'interoperabilidad' && <InteroperabilidadView />}
             </motion.div>
           </AnimatePresence>
         </main>
@@ -166,6 +180,93 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
 }
 
 // --- SUB-VIEWS --- //
+
+function InteroperabilidadView() {
+  return (
+    <div className="space-y-8">
+      <div>
+        <h3 className="text-2xl font-black text-white tracking-tight uppercase">Nodo de Transparencia Activa</h3>
+        <p className="text-slate-400 text-sm mt-1">Bus de servicios e interoperabilidad. Cumplimiento de Ley de Gobierno Digital del Estado de Nayarit.</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+         <div className="bg-[#161920] border border-emerald-500/20 p-6 rounded-2xl relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Endpoints de API Activos</p>
+            <p className="text-4xl font-serif font-black text-white">12<span className="text-sm text-emerald-400 ml-2">REST / SOAP</span></p>
+         </div>
+         <div className="bg-[#161920] border border-cyan-500/20 p-6 rounded-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Identidades Validadas</p>
+            <p className="text-4xl font-serif font-black text-white">14.2k<span className="text-sm text-cyan-400 ml-2">Nayarit ID</span></p>
+         </div>
+         <div className="bg-[#161920] border border-purple-500/20 p-6 rounded-2xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Mensajes de Datos (Sellados)</p>
+            <p className="text-4xl font-serif font-black text-white">8,401<span className="text-sm text-purple-400 ml-2">Folios</span></p>
+         </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+         <div className="bg-[#161920] border border-slate-800 rounded-2xl p-6">
+            <div className="flex items-center gap-3 mb-6">
+               <ShieldCheck className="w-5 h-5 text-emerald-400" />
+               <h4 className="text-sm font-semibold text-white uppercase">Trazabilidad Inter-Institucional</h4>
+            </div>
+            <div className="space-y-4">
+               {[
+                 { target: 'Tesorería Municipal', status: 'Sincronizado', ping: '12ms', query: 'GET /api/v1/taxpayer' },
+                 { target: 'Registro Público Federal', status: 'Sincronizado', ping: '45ms', query: 'POST /api/v2/verify_identity' },
+                 { target: 'Padrón de Obras', status: 'Sincronizado', ping: '18ms', query: 'GET /api/v1/projects' },
+                 { target: 'Sistema DIF Estatal', status: 'Sincronizado', ping: '30ms', query: 'POST /api/v2/benefits' },
+               ].map((api, i) => (
+                 <div key={i} className="flex items-center justify-between p-3 bg-slate-900 border border-slate-800 rounded-xl">
+                    <div>
+                       <p className="text-xs font-bold text-white mb-1">{api.target}</p>
+                       <p className="text-[9px] font-mono text-slate-500">{api.query}</p>
+                    </div>
+                    <div className="text-right">
+                       <span className="px-2 py-1 bg-emerald-500/10 text-emerald-400 text-[8px] font-black uppercase rounded block mb-1">
+                          {api.status}
+                       </span>
+                       <span className="text-[9px] font-mono text-slate-400">{api.ping}</span>
+                    </div>
+                 </div>
+               ))}
+            </div>
+         </div>
+
+         <div className="bg-[#161920] border border-slate-800 rounded-2xl p-6">
+            <div className="flex items-center gap-3 mb-6">
+               <Briefcase className="w-5 h-5 text-purple-400" />
+               <h4 className="text-sm font-semibold text-white uppercase">Blockchain Municipal (Hashes)</h4>
+            </div>
+            <p className="text-[11px] text-slate-400 mb-4 pr-8">
+               Muestreo en tiempo real de Mensajes de Datos sellados criptográficamente para auditoría federal.
+            </p>
+            <div className="space-y-2 h-[240px] overflow-hidden relative">
+               <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#161920] to-transparent z-10"></div>
+               {[
+                 { id: 'TPC-2026-9902', hash: 'e3b0c44298fc1c149afbf4c8996fb924', date: '2 min ago' },
+                 { id: 'TPC-2026-9901', hash: '4a0a19218e082a343a1b17e5333409af', date: '5 min ago' },
+                 { id: 'TPC-2026-9900', hash: '8f14e45fceea167a5a36dedd4bea2543', date: '12 min ago' },
+                 { id: 'TPC-2026-9899', hash: 'f2c7a407e324efdc4cf611daaaa5a1f2', date: '18 min ago' },
+                 { id: 'TPC-2026-9898', hash: 'bb18a5df1ab03994e410a56f6aa6a0e6', date: '21 min ago' },
+               ].map((log, i) => (
+                 <div key={i} className="flex gap-4 p-3 bg-[#0f1115] border border-slate-800/50 rounded-lg">
+                    <div className="text-[10px] font-mono text-magenta-400 border-r border-slate-800 pr-3">{log.id}</div>
+                    <div className="flex-1 text-[8px] font-mono text-slate-500 truncate leading-relaxed">
+                       SHA256: {log.hash}...<br/>
+                       {log.date}
+                    </div>
+                 </div>
+               ))}
+            </div>
+         </div>
+      </div>
+    </div>
+  );
+}
 
 function TesoreriaView() {
   const data = [
@@ -716,35 +817,302 @@ function AgrovisionView() {
 
 function ObservatorioView() {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [activeStrategyTab, setActiveStrategyTab] = useState<'federal' | 'blueocean' | 'business'>('federal');
+
+  const citizenData = [
+    { name: 'Ene', total: 12400 },
+    { name: 'Feb', total: 18900 },
+    { name: 'Mar', total: 24500 },
+    { name: 'Abr', total: 31200 },
+    { name: 'May', total: 38700 },
+    { name: 'Jun', total: 45210 },
+  ];
+
+  const worksData = [
+    { name: 'Libramiento', progress: 84 },
+    { name: 'Mercado Centro', progress: 62 },
+    { name: 'CD. Salud', progress: 92 },
+    { name: 'Red Agua Nayar', progress: 45 },
+    { name: 'Parque Lineal', progress: 30 },
+  ];
+
+  const oceanData = [
+    { category: 'Agrotech', potential: 95, stability: 80, color: '#06b6d4' },
+    { category: 'Fintech Local', potential: 88, stability: 70, color: '#a855f7' },
+    { category: 'Eco-Luxury', potential: 82, stability: 65, color: '#10b981' },
+    { category: 'Health-Gov', potential: 91, stability: 85, color: '#f59e0b' },
+  ];
 
   const handleReport = () => {
     setIsGenerating(true);
     setTimeout(() => {
       setIsGenerating(false);
-      alert('Informe de Gobernanza generado. Descarga completa en formato Ejecutivo.');
-    }, 1500);
+      alert('Informe de Gobernanza estratégica 2026 generado. El mapa prospectivo de Océanos Azules para Tepic está listo para visualización presidencial.');
+    }, 2000);
   };
 
   return (
     <div className="space-y-6">
        <div>
-        <h3 className="text-2xl font-bold text-white tracking-tight">Observatorio Digital de Nayarit</h3>
-        <p className="text-slate-400 text-sm mt-1">Central de Inteligencia Territorial para la toma de decisiones basada en datos longitudinales.</p>
+        <h3 className="text-2xl font-bold text-white tracking-tight">Mando Estratégico & Proyección 2026</h3>
+        <p className="text-slate-400 text-sm mt-1">Inteligencia territorial aplicada a la Ley de Gobierno Digital y Fondos Federales de Desarrollo.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Índice Madurez (IMDM)', val: '68/100', status: '+4 pts este mes', color: 'text-cyan-400' },
-          { label: 'Gobernanza Abierta', val: '92.1%', status: 'Nivel: Transparente', color: 'text-emerald-400' },
-          { label: 'Confianza Ciudadana', val: '74%', status: '↑ 12% vs 2021', color: 'text-purple-400' },
-          { label: 'Ahorro Operativo', val: '$14.2M', status: 'Corte semestral', color: 'text-amber-400' },
+          { label: 'Índice Madurez (IMDM)', val: '72/100', status: '+4 pts este mes', color: 'text-cyan-400' },
+          { label: 'Gobernanza Digital', val: 'Ley Art. 42', status: 'Firma E. Activa', color: 'text-emerald-400' },
+          { label: 'Ciudadanos Registrados', val: '45,210', status: '↑ 14% vs mayo', color: 'text-purple-400' },
+          { label: 'Presupuesto Federal', val: 'FORTAMUN', status: 'Ejecución: 92%', color: 'text-amber-400' },
         ].map((kpi, i) => (
           <div key={i} className="bg-[#161920] border border-slate-800 rounded-xl p-5 border-b-[3px] border-b-cyan-500/50">
             <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-1">{kpi.label}</p>
             <p className={cn("text-2xl font-black mb-1", kpi.color)}>{kpi.val}</p>
-            <p className="text-[10px] text-slate-400 font-medium">{kpi.status}</p>
+            <p className="text-[10px] text-slate-400 font-medium tracking-tighter uppercase">{kpi.status}</p>
           </div>
         ))}
+      </div>
+
+      {/* Main Strategy Panel */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        
+        {/* Navigation / Strategy Tabs */}
+        <div className="bg-[#161920] border border-slate-800 rounded-2xl p-6 lg:col-span-2">
+           <div className="flex gap-4 border-b border-slate-800 mb-6 pb-2 overflow-x-auto no-scrollbar">
+              <button 
+                onClick={() => setActiveStrategyTab('federal')}
+                className={cn("text-[10px] font-black uppercase tracking-widest pb-3 px-2 transition-all whitespace-nowrap", activeStrategyTab === 'federal' ? "text-cyan-400 border-b-2 border-cyan-400" : "text-slate-500 hover:text-slate-300")}
+              >
+                Gobernanza & Leyes
+              </button>
+              <button 
+                onClick={() => setActiveStrategyTab('blueocean')}
+                className={cn("text-[10px] font-black uppercase tracking-widest pb-3 px-2 transition-all whitespace-nowrap", activeStrategyTab === 'blueocean' ? "text-indigo-400 border-b-2 border-indigo-400" : "text-slate-500 hover:text-slate-300")}
+              >
+                Océanos Azules (Oro 20%)
+              </button>
+              <button 
+                onClick={() => setActiveStrategyTab('business')}
+                className={cn("text-[10px] font-black uppercase tracking-widest pb-3 px-2 transition-all whitespace-nowrap", activeStrategyTab === 'business' ? "text-emerald-400 border-b-2 border-emerald-400" : "text-slate-500 hover:text-slate-300")}
+              >
+                Negocios Escalables
+              </button>
+           </div>
+
+           <AnimatePresence mode="wait">
+              {activeStrategyTab === 'federal' && (
+                <motion.div key="federal" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="bg-slate-900/50 rounded-xl p-5 border border-slate-800 hover:border-cyan-500/50 transition-colors group">
+                         <div className="flex items-center gap-3 mb-4">
+                            <Shield className="w-5 h-5 text-cyan-400" />
+                            <h5 className="text-sm font-bold text-white uppercase tracking-tight">Ley de Gobierno Digital Nayarit</h5>
+                         </div>
+                         <p className="text-[11px] text-slate-400 leading-relaxed">
+                            Marco legal vigente que habilita la interoperabilidad entre dependencias municipales y estatales. El 100% de los trámites deben ser digitales para el cierre de 2026.
+                         </p>
+                         <div className="mt-4 flex flex-wrap gap-2">
+                            <span className="text-[8px] bg-cyan-500/10 text-cyan-400 px-2 py-1 rounded font-bold uppercase">Art. 12: Firma Electrónica</span>
+                            <span className="text-[8px] bg-cyan-500/10 text-cyan-400 px-2 py-1 rounded font-bold uppercase">Art. 45: Pagos Digitales</span>
+                         </div>
+                      </div>
+                      <div className="bg-slate-900/50 rounded-xl p-5 border border-slate-800 hover:border-amber-500/50 transition-colors group">
+                         <div className="flex items-center gap-3 mb-4">
+                            <Briefcase className="w-5 h-5 text-amber-400" />
+                            <h5 className="text-sm font-bold text-white uppercase tracking-tight">Recursos Federales (PND)</h5>
+                         </div>
+                         <p className="text-[11px] text-slate-400 leading-relaxed">
+                            Fondos **FORTAMUN** y **FAIS** reasignados a seguridad preventiva (drones/C5) y salud pública digital. Presupuesto escalable mediante ahorros operativos.
+                         </p>
+                         <div className="mt-4 flex flex-wrap gap-2">
+                            <span className="text-[8px] bg-amber-500/10 text-amber-400 px-2 py-1 rounded font-bold uppercase">FORTAMUN: Modernización</span>
+                            <span className="text-[8px] bg-amber-500/10 text-amber-400 px-2 py-1 rounded font-bold uppercase">FAIS: Digitalización Social</span>
+                         </div>
+                      </div>
+                   </div>
+                </motion.div>
+              )}
+
+              {activeStrategyTab === 'blueocean' && (
+                <motion.div key="blueocean" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
+                   <div className="flex flex-col lg:flex-row gap-8 items-center">
+                      <div className="w-full lg:w-1/2 h-[260px]">
+                         <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                               <Pie
+                                 data={oceanData}
+                                 cx="50%"
+                                 cy="50%"
+                                 innerRadius={60}
+                                 outerRadius={80}
+                                 paddingAngle={5}
+                                 dataKey="potential"
+                               >
+                                 {oceanData.map((entry, index) => (
+                                   <Cell key={`cell-${index}`} fill={entry.color} />
+                                 ))}
+                               </Pie>
+                               <Tooltip 
+                                 contentStyle={{ backgroundColor: '#0f1115', border: '1px solid #334155', borderRadius: '8px', fontSize: '10px' }}
+                                 itemStyle={{ color: '#fff' }}
+                               />
+                               <Legend verticalAlign="bottom" height={36} wrapperStyle={{fontSize: '10px', textTransform: 'uppercase'}}/>
+                            </PieChart>
+                         </ResponsiveContainer>
+                      </div>
+                      <div className="w-full lg:w-1/2 space-y-4">
+                         <div className="p-4 bg-indigo-500/5 rounded-xl border border-indigo-500/20">
+                            <h5 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                               <TrendingUp className="w-3 h-3" /> Salud-Turismo Inteligente
+                            </h5>
+                            <p className="text-[11px] text-slate-300 leading-relaxed">
+                               Tepic como el **Hub de Salud Preventiva** de occidente. Telemedicina para comunidades rurales integrada a la red de turismo salud certificada.
+                            </p>
+                         </div>
+                         <div className="p-4 bg-emerald-500/5 rounded-xl border border-emerald-500/20">
+                            <h5 className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                               <Activity className="w-3 h-3" /> Agrotech (Oro de Océanos)
+                            </h5>
+                            <p className="text-[11px] text-slate-300 leading-relaxed">
+                               Digitalización del 20% de los productores que generan el 80% del valor. Marketplace directo al consumidor eliminando intermediarios físicos.
+                            </p>
+                         </div>
+                      </div>
+                   </div>
+                </motion.div>
+              )}
+
+              {activeStrategyTab === 'business' && (
+                <motion.div key="business" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="space-y-6">
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {[
+                        { title: 'Municipio as a Service', icon: AppWindow, desc: 'Franquiciar el modelo Nayarit ID a otros municipios de la región occidente.', roi: '6.2x', color: 'bg-blue-500' },
+                        { title: 'Tepic Logistics ID', icon: Package, desc: 'Red de entrega y mensajería oficial certificando domicilios con Nayarit ID.', roi: '4.8x', color: 'bg-indigo-500' },
+                        { title: 'Agro Tokenization', icon: Coins, desc: 'Esquema de inversión digital en cosechas mediante contratos inteligentes.', roi: '12.5x', color: 'bg-emerald-500' },
+                      ].map((item, i) => (
+                        <div key={i} className="bg-slate-900/50 border border-slate-800 p-5 rounded-2xl relative overflow-hidden group cursor-pointer hover:border-slate-700 transition-all">
+                           <div className={`w-8 h-8 ${item.color} rounded-lg flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
+                              <item.icon className="w-4 h-4 text-white" />
+                           </div>
+                           <h6 className="text-xs font-black text-white mb-2 uppercase tracking-tight leading-tight">{item.title}</h6>
+                           <p className="text-[10px] text-slate-400 leading-relaxed mb-4">{item.desc}</p>
+                           <div className="flex justify-between items-center text-[8px] font-bold uppercase tracking-widest">
+                              <span className="text-slate-500">ROI Proyectado</span>
+                              <span className="text-emerald-400">{item.roi}</span>
+                           </div>
+                        </div>
+                      ))}
+                   </div>
+                </motion.div>
+              )}
+           </AnimatePresence>
+        </div>
+
+        {/* Global Performance Radar / Quick Actions */}
+        <div className="space-y-6">
+           <div className="bg-[#161920] border border-slate-800 rounded-2xl p-6">
+              <h4 className="text-sm font-semibold text-slate-200 mb-6">Eficiencia de Gobernanza</h4>
+              <div className="space-y-4">
+                 {[
+                   { label: 'Transparencia Fiscal', pct: 94, color: 'bg-cyan-500' },
+                   { label: 'Digitalización Pagos', pct: 82, status: '↑ 12%', color: 'bg-purple-500' },
+                   { label: 'Confianza Ciudadana', pct: 76, color: 'bg-emerald-500' },
+                   { label: 'Respuesta Servicios', pct: 89, color: 'bg-amber-500' },
+                 ].map((stat, i) => (
+                   <div key={i} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{stat.label}</span>
+                         <span className="text-[10px] font-black text-white">{stat.pct}%</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                         <motion.div initial={{ width: 0 }} animate={{ width: `${stat.pct}%` }} transition={{ duration: 1.5, ease: "easeOut" }} className={`h-full ${stat.color} rounded-full`} />
+                      </div>
+                   </div>
+                 ))}
+              </div>
+           </div>
+
+           <button 
+             onClick={handleReport}
+             disabled={isGenerating}
+             className="w-full bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl py-4 flex items-center justify-center gap-3 transition-colors shadow-lg shadow-cyan-900/40 active:scale-[0.98] disabled:opacity-50"
+           >
+             {isGenerating ? (
+               <Loader2 className="w-4 h-4 animate-spin" />
+             ) : (
+               <>
+                 <FileText className="w-4 h-4" />
+                 <span className="text-[10px] font-black uppercase tracking-widest">Generar Reporte Estratégico 2026</span>
+               </>
+             )}
+           </button>
+        </div>
+      </div>
+
+      {/* Real-time Visualization Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-[#161920] border border-slate-800 rounded-2xl p-6">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h4 className="text-sm font-semibold text-slate-200">Adopción Nayarit ID</h4>
+              <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest mt-1">Crecimiento Mensual de Usuarios</p>
+            </div>
+            <div className="flex items-center gap-2 text-purple-400 bg-purple-500/10 px-2 py-1 rounded text-[10px] font-bold">
+              <Users className="w-3 h-3" />
+              LIVE
+            </div>
+          </div>
+          <div className="h-[220px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={citizenData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                <XAxis dataKey="name" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
+                <YAxis stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#0f1115', border: '1px solid #334155', borderRadius: '8px', fontSize: '10px' }}
+                  cursor={{ fill: 'rgba(168, 85, 247, 0.05)' }}
+                />
+                <Bar dataKey="total" radius={[4, 4, 0, 0]}>
+                  {citizenData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={index === citizenData.length - 1 ? '#a855f7' : '#3b4252'} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="bg-[#161920] border border-slate-800 rounded-2xl p-6">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h4 className="text-sm font-semibold text-slate-200">Avance de Infraestructura</h4>
+              <p className="text-[10px] text-slate-500 uppercase font-black tracking-widest mt-1">Cumplimiento de Metas por Proyecto</p>
+            </div>
+            <div className="flex items-center gap-2 text-cyan-400 bg-cyan-500/10 px-2 py-1 rounded text-[10px] font-bold">
+              <Activity className="w-3 h-3" />
+              89.2% GLOBAL
+            </div>
+          </div>
+          <div className="h-[220px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={worksData} layout="vertical" margin={{ left: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={false} />
+                <XAxis type="number" domain={[0, 100]} hide />
+                <YAxis dataKey="name" type="category" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} width={80} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#0f1115', border: '1px solid #334155', borderRadius: '8px', fontSize: '10px' }}
+                  cursor={{ fill: 'rgba(6, 182, 212, 0.05)' }}
+                  formatter={(value: any) => [`${value}%`, 'Avance']}
+                />
+                <Bar dataKey="progress" radius={[0, 4, 4, 0]} barSize={12}>
+                  {worksData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.progress > 80 ? '#06b6d4' : entry.progress > 50 ? '#0891b2' : '#1e293b'} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -776,21 +1144,31 @@ function ObservatorioView() {
         </div>
 
         <div className="bg-[#161920] border border-slate-800 rounded-xl p-6">
-          <h4 className="text-sm font-semibold text-slate-300 mb-6">Últimas Decisiones Data-Driven</h4>
+          <h4 className="text-sm font-semibold text-slate-300 mb-6">Implementación Territorial (Top Colonias)</h4>
           <div className="space-y-4">
-            {[
-              { id: 'OD-401', action: 'Reasignación de cuadrilla de bacheo a zona norte por pico de reportes IA.', date: 'Hoy' },
-              { id: 'OD-402', action: 'Ajuste de presupuesto TEPICTU Salud en sierra de El Nayar.', date: 'Ayer' },
-              { id: 'OD-403', action: 'Apertura de ventanilla digital en Jala por baja penetración IMDM.', date: '2 días' },
-            ].map((decision, i) => (
-              <div key={i} className="p-4 rounded-lg bg-slate-800/40 border border-slate-700/50">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-[10px] font-mono text-cyan-400">{decision.id}</span>
-                  <span className="text-[10px] text-slate-500 uppercase font-bold">{decision.date}</span>
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed">{decision.action}</p>
-              </div>
-            ))}
+             {[
+               { name: 'Linda Vista', growth: 88, status: 'Saturado', color: 'bg-emerald-500' },
+               { name: 'San Juan', growth: 64, status: 'Campaña', color: 'bg-cyan-500' },
+               { name: 'Lomas Altas', growth: 42, status: 'Alerta', color: 'bg-rose-500' },
+               { name: 'Puga', growth: 28, status: 'Pendiente', color: 'bg-slate-700' },
+             ].map((col, i) => (
+               <div key={i} className="space-y-2 p-3 bg-slate-900/40 rounded-xl border border-slate-800/50">
+                  <div className="flex justify-between items-center mb-1">
+                     <p className="text-[11px] font-bold text-white">{col.name}</p>
+                     <span className={cn(
+                       "text-[8px] font-black uppercase px-2 py-1 rounded",
+                       col.status === 'Saturado' ? "bg-emerald-500/10 text-emerald-400" : 
+                       col.status === 'Alerta' ? "bg-rose-500/10 text-rose-400" : "bg-cyan-500/10 text-cyan-400"
+                     )}>{col.status}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                     <div className="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                        <motion.div initial={{ width: 0 }} animate={{ width: `${col.growth}%` }} className={`h-full ${col.color}`} />
+                     </div>
+                     <span className="text-[10px] font-black text-white">{col.growth}%</span>
+                  </div>
+               </div>
+             ))}
           </div>
           <button 
             onClick={handleReport}
@@ -798,7 +1176,7 @@ function ObservatorioView() {
             className="w-full mt-6 py-2.5 rounded-lg bg-cyan-500 text-white text-xs font-bold hover:bg-cyan-600 shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2"
           >
             {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-            {isGenerating ? 'Generando...' : 'Ver Informe de Gobernanza'}
+            {isGenerating ? 'Generando...' : 'Desbloquear Estrategia Barrio'}
           </button>
         </div>
       </div>

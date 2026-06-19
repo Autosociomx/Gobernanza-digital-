@@ -62,7 +62,7 @@ export function TepictuSalud({ onClose }: { onClose: () => void }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           message: userMsg,
-          context: `MODO_SALUD: Eres TepictuSalud en modo ${rol}. Clasifica según sistema Manchester al final con [TRIAJE:ROJO/AMARILLO/VERDE]`
+          context: `MODO_SALUD_CONECTAX: Eres ConectaX en modo ${rol} con estándar CIE-11. Clasifica según sistema Manchester al final con [TRIAJE:ROJO/AMARILLO/VERDE]. Si el síntoma sugiere gravedad (Rojo o Amarillo, ej. dolor intenso de cabeza y luces), DEBES omitir el consejo genérico de 've a un centro de salud' y en su lugar informar brevemente el criterio neurológico o de urgencia y ofrecer conectar con un especialista del Centro de Salud Digital por videollamada.`
         })
       });
       const data = await response.json();
@@ -87,9 +87,9 @@ export function TepictuSalud({ onClose }: { onClose: () => void }) {
 
   const initChat = () => {
     const greetings = {
-      paciente: '¡Hola! Soy el asistente de salud del Municipio de Tepic 👋\n\nEstoy aquí para ayudarte a entender qué tan urgente es lo que sientes. ¿Qué molestia principal tienes ahorita?',
-      familiar: '¡Hola! Entiendo que estás describiendo los síntomas de alguien más. ¿Quién es la persona que necesita atención y qué está sintiendo?',
-      promotor: 'TepictuSalud — Modo Promotor activado ✓\n\nDescribe los síntomas principales del ciudadano que estás evaluando. Incluye edad y tiempo de evolución.'
+      paciente: '¡Hola! Soy el asistente ConectaX para la salud de Tepic 👋\n\nEstoy aquí para realizar tu triaje médico CIE-11. ¿Qué molestia principal tienes ahorita?',
+      familiar: '¡Hola! Entiendo que estás describiendo los síntomas de alguien más para el sistema ConectaX. ¿Quién necesita atención?',
+      promotor: 'ConectaX — Modo Promotor de Campo activado ✓\n\nDescribe los síntomas según el protocolo CIE-11 para determinar prioridad de traslado.'
     };
     
     setMessages([{ role: 'assistant', content: greetings[rol || 'paciente'] }]);
@@ -115,19 +115,35 @@ export function TepictuSalud({ onClose }: { onClose: () => void }) {
     <div className="fixed inset-0 z-[100] bg-[#fafaf8] flex flex-col font-sans overflow-hidden">
       
       {/* HEADER DINÁMICO */}
-      {screen !== 'splash' && (
-        <header className="bg-[#1a6b3c] px-6 py-4 flex items-center gap-4 text-white shadow-lg shrink-0">
+      {screen !== 'splash' ? (
+        <header className="bg-[#1a6b3c] px-6 py-6 flex items-center gap-4 text-white shadow-lg shrink-0 z-[110]">
+          <button onClick={() => {
+            if (screen === 'chat') setScreen('input');
+            else if (screen === 'input') setScreen('rol');
+            else if (screen === 'rol') setScreen('splash');
+          }} className="p-2 bg-white/10 rounded-full">
+            <ChevronLeft className="w-6 h-6" />
+          </button>
           <div className="w-10 h-10 shrink-0">
             <MedicalAvatar />
           </div>
           <div>
-            <h1 className="font-serif font-black text-lg leading-none">Tepictu<span className="text-[#c9952a]">Salud</span></h1>
-            <p className="text-[10px] uppercase font-bold tracking-widest text-white/60">Municipio de Tepic · Triaje IA</p>
+            <h1 className="font-serif font-black text-lg leading-none">Conecta<span className="text-[#c9952a]">X</span></h1>
+            <p className="text-[10px] uppercase font-bold tracking-widest text-white/60">Municipio de Tepic · Salud CIE-11</p>
           </div>
-          <button onClick={onClose} className="ml-auto p-2 bg-white/10 rounded-full">
-            <X className="w-5 h-5" />
+          <button onClick={onClose} className="ml-auto flex items-center gap-1.5 bg-red-500/20 px-4 py-2 rounded-full border border-red-500/30 font-black text-[10px] uppercase tracking-widest">
+            <X className="w-4 h-4" /> Finalizar
           </button>
         </header>
+      ) : (
+        <div className="fixed top-8 left-8 z-[110]">
+          <button 
+            onClick={onClose}
+            className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-6 py-3 rounded-full border border-white/20 text-white font-black text-xs uppercase tracking-widest hover:bg-white/20 transition-all"
+          >
+            <ChevronLeft className="w-5 h-5" /> Regresar al Menú
+          </button>
+        </div>
       )}
 
       <main className="flex-1 flex flex-col items-center overflow-y-auto">
@@ -144,16 +160,16 @@ export function TepictuSalud({ onClose }: { onClose: () => void }) {
               </div>
             </motion.div>
             
-            <h1 className="font-serif font-black text-5xl text-white mb-2 leading-tight">Tepictu<span className="text-[#c9952a]">Salud</span></h1>
-            <p className="text-[#c9952a] font-black uppercase tracking-[0.2em] text-xs mb-4">Ecosistema Nayarit Digital</p>
+            <h1 className="font-serif font-black text-5xl text-white mb-2 leading-tight">Conecta<span className="text-[#c9952a]">X</span></h1>
+            <p className="text-[#c9952a] font-black uppercase tracking-[0.2em] text-xs mb-4">Salud Inteligente CIE-11</p>
             
             <div className="bg-[#c9952a]/10 border border-[#c9952a]/30 rounded-full px-4 py-2 flex items-center gap-2 text-[#c9952a] text-xs font-bold mb-8">
               <span className="w-2 h-2 rounded-full bg-[#c9952a] animate-pulse"></span>
-              Gobernanza de Bienestar 2.0
+              ConnectX Infrastructure 2027
             </div>
 
             <p className="text-white/80 text-lg leading-relaxed max-w-sm mb-12">
-              Evalúa tus síntomas con IA estratégica antes de acudir al hospital. Orientación inmediata para Tepic.
+              Triaje médico con IA bajo estándar internacional CIE-11. Orientación inmediata, incluso sin internet.
             </p>
 
             <button 
@@ -249,7 +265,7 @@ export function TepictuSalud({ onClose }: { onClose: () => void }) {
 
             <div className="mt-auto p-4 bg-[#e8f5ed] border border-[#2d9e5f]/20 rounded-2xl flex items-center gap-3 text-[#1a6b3c] text-xs font-bold uppercase tracking-wider">
               <Info className="w-5 h-5 shrink-0" />
-              TepictuSalud funciona con tecnología offline-first para emergencias.
+              ConectaX es infraestructura ya construida, diseñada para funcionar offline.
             </div>
           </motion.div>
         )}
@@ -273,17 +289,32 @@ export function TepictuSalud({ onClose }: { onClose: () => void }) {
                     {msg.content}
                     
                     {msg.triage && (
-                      <div className={cn(
-                        "mt-5 p-5 rounded-2xl flex items-center gap-4 font-black text-xs uppercase tracking-[0.15em] border-2",
-                        msg.triage === 'ROJO' ? "bg-red-50 text-red-700 border-red-200 shadow-lg shadow-red-500/10" :
-                        msg.triage === 'AMARILLO' ? "bg-amber-50 text-amber-700 border-amber-200 shadow-lg shadow-amber-500/10" :
-                        "bg-emerald-50 text-emerald-700 border-emerald-200 shadow-lg shadow-emerald-500/10"
-                      )}>
+                      <div className="flex flex-col gap-3 mt-5">
                         <div className={cn(
-                          "w-3 h-3 rounded-full animate-pulse",
-                          msg.triage === 'ROJO' ? "bg-red-600" : msg.triage === 'AMARILLO' ? "bg-amber-600" : "bg-emerald-600"
-                        )} />
-                        TRIAJE: {msg.triage === 'ROJO' ? 'URGENCIA ABSOLUTA' : msg.triage === 'AMARILLO' ? 'URGENTE — ATENCIÓN PRONTO' : 'PUEDE ESPERAR'}
+                          "p-5 rounded-2xl flex items-center gap-4 font-black text-xs uppercase tracking-[0.15em] border-2",
+                          msg.triage === 'ROJO' ? "bg-red-50 text-red-700 border-red-200 shadow-lg shadow-red-500/10" :
+                          msg.triage === 'AMARILLO' ? "bg-amber-50 text-amber-700 border-amber-200 shadow-lg shadow-amber-500/10" :
+                          "bg-emerald-50 text-emerald-700 border-emerald-200 shadow-lg shadow-emerald-500/10"
+                        )}>
+                          <div className={cn(
+                            "w-3 h-3 rounded-full animate-pulse shrink-0",
+                            msg.triage === 'ROJO' ? "bg-red-600" : msg.triage === 'AMARILLO' ? "bg-amber-600" : "bg-emerald-600"
+                          )} />
+                          <span>TRIAJE: {msg.triage === 'ROJO' ? 'URGENCIA ABSOLUTA' : msg.triage === 'AMARILLO' ? 'URGENTE — ATENCIÓN PRONTO' : 'PUEDE ESPERAR'}</span>
+                        </div>
+                        {(msg.triage === 'ROJO' || msg.triage === 'AMARILLO') && (
+                          <motion.button 
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="w-full bg-slate-900 border border-slate-700 text-white rounded-2xl py-4 font-bold flex items-center justify-center gap-3 shadow-xl active:scale-95 transition-transform"
+                          >
+                            <span className="relative flex h-3 w-3">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                            </span>
+                            <span>INICIAR VIDEOLLAMADA MÉDICA</span>
+                          </motion.button>
+                        )}
                       </div>
                     )}
                   </div>

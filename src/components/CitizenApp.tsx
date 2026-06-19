@@ -9,6 +9,7 @@ import {
   Bell,
   Search,
   ChevronRight,
+  ChevronLeft,
   Stethoscope,
   Lightbulb,
   Droplets,
@@ -18,17 +19,28 @@ import {
   QrCode,
   Heart,
   X,
-  Users
+  Users,
+  ShieldCheck,
+  LayoutGrid,
+  Bot,
+  Sparkles
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
-import { cn } from '../lib/utils';
-import { NayaritMap } from './NayaritMap';
+  import { motion, AnimatePresence } from 'motion/react';
+  import { cn } from '../lib/utils';
+  import { NayaritMap } from './NayaritMap';
 import { TepictuSalud } from './TepictuSalud';
 import { ForumView } from './ForumView';
+import { NotificationView } from './NotificationView';
+import { LoginView } from './LoginView';
+import { CompleteProfileView } from './CompleteProfileView';
 import { QRCodeSVG } from 'qrcode.react';
 import JsBarcode from 'jsbarcode';
 
-type TabType = 'home' | 'forum' | 'payments' | 'services' | 'profile';
+import { db, auth, handleFirestoreError, OperationType } from '../firebase';
+import { doc, getDoc, setDoc, onSnapshot, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
+import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+
+type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'notifications';
 type Language = 'es' | 'cora' | 'wixarika';
 
 export function CitizenApp({ 
@@ -41,6 +53,54 @@ export function CitizenApp({
   initialAction?: 'chat' | 'triage' | 'map' | null
 }) {
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
+  const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [profile, setProfile] = useState({
+    name: "",
+    documentId: "",
+    phone: "",
+    email: "",
+    address: "",
+    neighborhood: "",
+    registrationVerified: false
+  });
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const isProfileComplete = profile.name && profile.address && profile.documentId;
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+      if (u) {
+        // Fetch real profile
+        const userDoc = doc(db, 'users', u.uid);
+        const unsubDoc = onSnapshot(userDoc, (docSnap) => {
+          if (docSnap.exists()) {
+            setProfile(docSnap.data() as any);
+          } else {
+            // Initial profile if not exists
+            const initial = {
+              name: u.displayName || "Usuario Nayarit",
+              email: u.email || "",
+              role: 'citizen',
+              documentId: "",
+              phone: u.phoneNumber || "",
+              address: "",
+              neighborhood: "",
+              registrationVerified: false,
+              createdAt: new Date().toISOString()
+            };
+            setProfile(initial as any);
+            setDoc(userDoc, initial).catch(err => handleFirestoreError(err, OperationType.UPDATE, `users/${u.uid}`));
+          }
+          setLoadingProfile(false);
+        });
+        return () => unsubDoc();
+      } else {
+        setLoadingProfile(false);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
   const [showChat, setShowChat] = useState(initialAction === 'chat');
   const [showMap, setShowMap] = useState(initialAction === 'map');
   const [showTriage, setShowTriage] = useState(initialAction === 'triage');
@@ -53,14 +113,15 @@ export function CitizenApp({
   
   const translations = {
     es: {
-      welcome: "Hola, Juan Pérez",
-      ai_greet: "¡Hola Juan! Soy tu Asistente de Nayarit Digital. Puedo ayudarte con tus reportes, pagos o cualquier duda sobre los servicios de Tepic. ¿En qué te puedo apoyar hoy?",
+      welcome: `Hola, ${profile.name.split(' ')[0]}`,
+      ai_greet: `¡Hola ${profile.name.split(' ')[0]}! Soy tu Asistente de Nayarit Digital Certificado. Puedo ayudarte con tus reportes técnicos, salud preventiva o cualquier duda sobre los Comités Ciudadanos. ¿En qué te puedo apoyar hoy?`,
       home: "Inicio",
-      forum: "Foro",
-      payments: "Pagos",
-      services: "Trámites",
-      profile: "Perfil",
-      assistant_online: "Online · Wixárika Support",
+      forum: "Campaña",
+      networks: "Redes",
+      payments: "Tesorería",
+      services: "Gobierno",
+      profile: "Mi NayaritID",
+      assistant_online: "Online · Soporte Regional",
     },
     cora: {
       welcome: "Tyu'un, Juan Pérez",
@@ -92,6 +153,17 @@ export function CitizenApp({
   useEffect(() => {
     setMessages([{ role: 'assistant', content: translations[lang].ai_greet }]);
   }, [lang]);
+
+  const updateProfile = async (updatedData: any) => {
+    if (!user) return;
+    try {
+      const userDoc = doc(db, 'users', user.uid);
+      await setDoc(userDoc, { ...updatedData, updatedAt: new Date().toISOString() }, { merge: true });
+    } catch (err) {
+      console.error("Error updating profile:", err);
+    }
+  };
+
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
@@ -159,11 +231,22 @@ export function CitizenApp({
   }, [paymentStep, paymentRef]);
 
   return (
-    <div className="flex justify-center bg-slate-100 min-h-screen">
-      {/* Mobile Frame Simulation */}
-      <div className="w-full max-w-[430px] bg-white min-h-screen shadow-2xl relative flex flex-col overflow-hidden border-x border-slate-200">
-        
-        {/* StatusBar Mock */}
+    <>
+      {loadingProfile ? (
+        <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
+          <Loader2 className="w-8 h-8 animate-spin text-magenta-500" />
+          <p className="mt-4 font-bold text-slate-400">Verificando sesión...</p>
+        </div>
+      ) : !user ? (
+        <LoginView onLogin={() => {}} />
+      ) : !isProfileComplete ? (
+        <CompleteProfileView profile={profile} onUpdate={updateProfile} />
+      ) : (
+        <div className="flex justify-center bg-slate-100 min-h-screen">
+          {/* Mobile Frame Simulation */}
+          <div className="w-full max-w-[430px] bg-white min-h-screen shadow-2xl relative flex flex-col overflow-hidden border-x border-slate-200">
+            
+            {/* StatusBar Mock */}
         <div className="px-6 pt-4 pb-2 flex justify-between items-center text-[10px] font-bold text-slate-800">
           <span>9:41</span>
           <div className="flex gap-1.5 items-center">
@@ -194,9 +277,9 @@ export function CitizenApp({
             </div>
           </div>
           <div className="relative">
-             <div className="w-10 h-10 rounded-full bg-slate-100 border-2 border-white shadow-sm overflow-hidden flex items-center justify-center">
-                <User className="w-5 h-5 text-slate-400" />
-             </div>
+             <button onClick={() => setActiveTab('notifications')} className="w-10 h-10 rounded-full bg-slate-100 border-2 border-white shadow-sm overflow-hidden flex items-center justify-center cursor-pointer transition-colors hover:bg-slate-200">
+                <Bell className="w-5 h-5 text-slate-400" />
+             </button>
              <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white flex items-center justify-center text-[8px] text-white font-bold">2</div>
           </div>
         </header>
@@ -213,36 +296,45 @@ export function CitizenApp({
             >
               {activeTab === 'home' && (
                 <HomeView 
+                  profile={profile}
                   onShowMap={() => setShowMap(true)} 
                   onShowTriage={() => setShowTriage(true)}
                   onGoToForum={() => setActiveTab('forum')}
+                  onGoToProfile={() => setActiveTab('profile')}
+                  onGoToPayments={() => setActiveTab('payments')}
+                  onGoToServices={() => setActiveTab('services')}
                 />
               )}
-              {activeTab === 'forum' && <ForumView />}
-              {activeTab === 'payments' && <PaymentsView onPay={(item: any) => setPayingItem(item)} />}
-              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} />}
-              {activeTab === 'profile' && <ProfileView onLogout={onLogout} />}
+              {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} />}
+              {activeTab === 'forum' && <ForumView onBack={() => setActiveTab('home')} />}
+              {activeTab === 'payments' && <PaymentsView onPay={(item: any) => setPayingItem(item)} onBack={() => setActiveTab('home')} />}
+              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} onBack={() => setActiveTab('home')} />}
+              {activeTab === 'profile' && <ProfileView profile={profile} onUpdate={updateProfile} onLogout={onLogout} onBack={() => setActiveTab('home')} onGoToSecurity={() => setActiveTab('security')} />}
+              {activeTab === 'security' && <SecurityCenterView onBack={() => setActiveTab('profile')} />}
+              {activeTab === 'notifications' && <NotificationView onBack={() => setActiveTab('home')} />}
+
             </motion.div>
           </AnimatePresence>
 
           {/* Floating AI Assistant Button */}
           <button 
             onClick={() => setShowChat(true)}
-            className="fixed bottom-24 right-8 w-14 h-14 bg-magenta-500 rounded-full flex items-center justify-center text-2xl shadow-xl shadow-magenta-500/30 transform hover:scale-110 transition-transform active:scale-95 z-40"
+            className="fixed bottom-24 right-8 w-14 h-14 bg-magenta-500 rounded-full flex items-center justify-center text-white shadow-xl shadow-magenta-500/30 transform hover:scale-110 transition-transform active:scale-95 z-40"
             style={{backgroundColor:'var(--magenta)'}}
           >
-            🌽
+            <Bot className="w-6 h-6" />
           </button>
         </main>
 
         {/* Navigation Bar */}
         <nav className="absolute bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-100 px-2 py-3 pb-8 flex justify-around items-center z-40">
            <TabButton icon={Home} label={translations[lang].home} active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
-           <TabButton icon={Users} label={translations[lang].forum} active={activeTab === 'forum'} onClick={() => setActiveTab('forum')} />
+           <TabButton icon={Users} label={translations[lang].networks} active={activeTab === 'networks'} onClick={() => setActiveTab('networks')} />
+           <TabButton icon={MessageSquare} label={translations[lang].forum} active={activeTab === 'forum'} onClick={() => setActiveTab('forum')} />
            <TabButton icon={CreditCard} label={translations[lang].payments} active={activeTab === 'payments'} onClick={() => setActiveTab('payments')} />
-           <TabButton icon={FileText} label={translations[lang].services} active={activeTab === 'services'} onClick={() => setActiveTab('services')} />
            <TabButton icon={User} label={translations[lang].profile} active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} />
         </nav>
+
 
         {/* AI Chat Overlay */}
         <AnimatePresence>
@@ -257,7 +349,7 @@ export function CitizenApp({
                {/* Chat Header */}
                <div className="px-6 py-8 border-b border-slate-100 flex justify-between items-center bg-slate-900 text-white">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-magenta-500 flex items-center justify-center text-xl shadow-lg ring-2 ring-white/20">🌽</div>
+                    <div className="w-12 h-12 rounded-full bg-magenta-500 flex items-center justify-center text-white shadow-lg ring-2 ring-white/20"><Bot className="w-6 h-6" /></div>
                     <div>
                       <p className="text-[1.1rem] font-black uppercase tracking-tight leading-none mb-1">Nayarit IA Assistant</p>
                       <p className="text-[10px] text-emerald-400 font-bold uppercase flex items-center gap-1">
@@ -637,6 +729,8 @@ export function CitizenApp({
         </AnimatePresence>
       </div>
     </div>
+    )}
+    </>
   );
 }
 
@@ -649,187 +743,679 @@ function TabButton({ icon: Icon, label, active, onClick }: { icon: any, label: s
   );
 }
 
-function HomeView({ onShowMap, onShowTriage, onGoToForum }: { onShowMap: () => void, onShowTriage: () => void, onGoToForum: () => void }) {
+function HomeView({ 
+  profile,
+  onShowMap, 
+  onShowTriage, 
+  onGoToForum, 
+  onGoToProfile, 
+  onGoToPayments, 
+  onGoToServices 
+}: { 
+  profile: any,
+  onShowMap: () => void, 
+  onShowTriage: () => void, 
+  onGoToForum: () => void, 
+  onGoToProfile: () => void, 
+  onGoToPayments: () => void, 
+  onGoToServices: () => void 
+}) {
   return (
     <div className="space-y-6 pt-2">
-      {/* RUTA Digitial Card */}
-      <div className="bg-gradient-to-br from-slate-900 to-indigo-900 rounded-[2rem] p-6 text-white relative overflow-hidden shadow-xl shadow-indigo-900/20">
-         <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-10 -mt-10 blur-2xl"></div>
-         <div className="flex justify-between items-start">
-            <p className="text-[10px] font-mono text-white/50 uppercase tracking-widest mb-4">RUTA Digital Ciudadana</p>
-            <span className="bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded text-[8px] font-black tracking-widest uppercase border border-blue-500/30">Transportista Acceso</span>
-         </div>
-         <div className="flex justify-between items-end">
-            <div>
-              <p className="text-2xl font-serif font-bold">JUAN PÉREZ G.</p>
-              <p className="text-xs font-mono text-white/60 mt-1">CURP: PEGJ900101HNT...</p>
+      {/* Nayarit ID Secure Card */}
+      <div 
+        onClick={onGoToProfile}
+        className="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-indigo-900/40 cursor-pointer group transition-all hover:scale-[1.02]"
+      >
+         <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-indigo-500/10 transition-colors"></div>
+         <div className="flex justify-between items-start relative z-10 mb-8">
+            <div className="flex flex-col gap-1">
+               <p className="text-[10px] font-mono text-indigo-300 uppercase font-black tracking-[0.3em]">NAYARIT ID · SOBERANÍA DIGITAL</p>
+               <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <span className="text-[9px] font-bold text-white/50 uppercase tracking-widest">Identidad Cifrada en Tiempo Real</span>
+               </div>
             </div>
-            <div className="w-12 h-12 bg-white rounded-lg p-1.5">
-               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=JuanPerez" alt="QR" className="w-full h-full" />
+            <div className="bg-blue-500/20 backdrop-blur-md text-blue-300 px-3 py-1 rounded-full text-[9px] font-black tracking-widest uppercase border border-blue-500/30">
+               {profile.registrationVerified ? 'CIUDADANO VERIFICADO' : 'PENDIENTE VERIFICACIÓN'}
+            </div>
+         </div>
+         
+         <div className="flex justify-between items-end relative z-10">
+            <div className="space-y-1">
+              <p className="text-sm font-mono text-white/40 mb-1">PROPIETARIO:</p>
+              <h2 className="text-3xl font-serif font-black tracking-tight group-hover:text-indigo-200 transition-colors uppercase leading-none">{profile.name}</h2>
+              <div className="flex items-center gap-3 pt-4">
+                 <p className="text-[11px] font-mono text-white/60">COLONIA: {profile.neighborhood || 'NO ASIGNADA'}</p>
+                 <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse", profile.registrationVerified ? "bg-emerald-400" : "bg-amber-400")}></span>
+              </div>
+            </div>
+            <div className="w-16 h-16 bg-white rounded-2xl p-2 shadow-2xl group-hover:rotate-3 transition-transform">
+               <QRCodeSVG value={`https://ais-pre-jvb66uvbgg3wdzh3ns63hv.run.app/verify/${auth.currentUser?.uid}`} size={64} level="L" />
             </div>
          </div>
       </div>
 
-      {/* Forum CTA for Transportistas */}
+
+      {/* Primary Services Grid */}
+      <div>
+        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+           <LayoutGrid className="w-3 h-3" />
+           Servicios Prioritarios
+        </h2>
+        <div className="grid grid-cols-2 gap-4">
+           <QuickAction icon={Droplets} label="Mi Agua" color="bg-blue-50 text-blue-600" onClick={onGoToPayments} description="Recibos y Pagos" />
+           <QuickAction icon={CreditCard} label="Mi Predial" color="bg-emerald-50 text-emerald-600" onClick={onGoToPayments} description="Estado de Cuenta" />
+           <QuickAction icon={Stethoscope} label="Salud ConectaX" color="bg-rose-50 text-rose-600" onClick={onShowTriage} description="Triaje CIE-11" />
+           <QuickAction icon={Lightbulb} label="Reportar Falla" color="bg-amber-50 text-amber-600" onClick={onGoToServices} description="Servicios Urbanos" />
+        </div>
+      </div>
+
+      {/* Forum CTA for Neighborhood Networks */}
       <button 
         onClick={onGoToForum}
-        className="w-full bg-[var(--verde)] rounded-2xl p-5 flex items-center justify-between text-white shadow-lg overflow-hidden relative group"
-        style={{backgroundColor: 'var(--verde)'}}
+        className="w-full bg-slate-900 rounded-[2rem] p-6 flex items-center justify-between text-white shadow-xl overflow-hidden relative group"
       >
         <div className="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform">
            <Users className="w-24 h-24" />
         </div>
-        <div className="flex items-center gap-4 relative z-10">
-           <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-2xl">🚛</div>
+        <div className="flex items-center gap-5 relative z-10">
+           <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-2xl shadow-inner">🤝</div>
            <div className="text-left">
-              <p className="font-serif font-black text-lg leading-tight">Foro Comunitario Alianza</p>
-              <p className="text-[10px] text-white/70 font-bold uppercase tracking-widest">Panel de Transportistas</p>
+              <p className="font-serif font-black text-xl leading-tight">Redes Ciudadanas</p>
+              <p className="text-[10px] text-white/50 font-bold uppercase tracking-widest">Foros por Colonia y Comités</p>
            </div>
         </div>
-        <ChevronRight className="w-5 h-5 relative z-10" />
+        <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-white/10 transition-colors">
+          <ChevronRight className="w-5 h-5" />
+        </div>
       </button>
 
-      {/* Quick Actions */}
-      <div>
-        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Servicios Frecuentes</h2>
-        <div className="grid grid-cols-2 gap-4">
-           <QuickAction icon={Droplets} label="Pago de Agua" color="bg-blue-50 text-blue-600" />
-           <QuickAction icon={CreditCard} label="Predial 2026" color="bg-emerald-50 text-emerald-600" />
-           <QuickAction icon={Stethoscope} label="Triaje Médico" color="bg-rose-50 text-rose-600" onClick={onShowTriage} />
-           <QuickAction icon={Lightbulb} label="Luminarias" color="bg-amber-50 text-amber-600" />
-        </div>
-      </div>
-
-      {/* News / Notifications */}
-      <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100">
-         <div className="flex justify-between items-center mb-3">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Novedades Tepic</span>
-            <Bell className="w-4 h-4 text-slate-400" />
+      {/* Transparency / Obras */}
+      <div className="bg-slate-50 rounded-[2rem] p-6 border border-slate-100 shadow-inner">
+         <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center gap-2">
+               <div className="w-2 h-2 rounded-full bg-magenta-500 animate-pulse"></div>
+               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Trazabilidad en Tiempo Real</span>
+            </div>
+            <Bell className="w-4 h-4 text-slate-300" />
          </div>
-         <p className="text-sm font-bold text-slate-900 leading-tight">Nueva obra de reencarpetamiento en tu colonia (San Juan).</p>
-         <p className="text-xs text-slate-500 mt-2">Inversión: $1.2M. Haz clic para ver el avance en vivo.</p>
+         <p className="text-sm font-bold text-slate-900 leading-tight">Reencarpetamiento San Juan: 65% de avance.</p>
          <button 
            onClick={onShowMap}
-           className="mt-4 text-xs font-bold text-magenta-500 flex items-center gap-1" style={{color:'var(--magenta)'}}
+           className="mt-5 w-full py-3 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-900 flex items-center justify-center gap-2 transition-all hover:bg-slate-100"
          >
-           Ver Trazabilidad <ChevronRight className="w-3 h-3" />
+           AUDITAR OBRA PÚBLICA <ChevronRight className="w-3 h-3" />
          </button>
       </div>
     </div>
   );
 }
 
-function QuickAction({ icon: Icon, label, color, onClick }: { icon: any, label: string, color: string, onClick?: () => void }) {
+function QuickAction({ icon: Icon, label, color, description, onClick }: { icon: any, label: string, color: string, description?: string, onClick?: () => void }) {
   return (
-    <div 
+    <button 
       onClick={onClick}
-      className={cn("p-4 rounded-2xl flex flex-col gap-3 transition-transform active:scale-95 cursor-pointer", color)}
+      className={cn(
+        "p-5 rounded-[2rem] flex flex-col items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-sm border border-transparent hover:border-slate-200 text-left",
+        color
+      )}
     >
-       <Icon className="w-6 h-6" />
-       <span className="text-xs font-bold leading-tight">{label}</span>
+      <Icon className="w-8 h-8" />
+      <div className="text-center">
+        <p className="text-[11px] font-black uppercase tracking-tight leading-none mb-1">{label}</p>
+        {description && <p className="text-[8px] opacity-60 font-bold uppercase tracking-tighter leading-none">{description}</p>}
+      </div>
+    </button>
+  );
+}
+
+function ViewHeader({ title, onBack }: { title: string, onBack?: () => void }) {
+  return (
+    <div className="flex items-center gap-4 py-4 mb-2">
+      {onBack && (
+        <button onClick={onBack} className="p-2 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors">
+          <ChevronLeft className="w-5 h-5 text-slate-600" />
+        </button>
+      )}
+      <h2 className="text-2xl font-serif font-black text-slate-900 tracking-tight">{title}</h2>
     </div>
   );
 }
 
-function PaymentsView({ onPay }: { onPay: (item: any) => void }) {
+function RedesCiudadanasView({ profile, onBack }: { profile: any, onBack: () => void }) {
+  const [networks, setNetworks] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const q = collection(db, 'neighborhood_networks');
+    const unsub = onSnapshot(q, (snap) => {
+      const docs = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setNetworks(docs);
+      
+      // Auto-seed if empty
+      if (snap.empty && !loading) {
+        const seedData = [
+          { name: 'Comité San Juan Unido', colony: 'Col. San Juan', memberCount: 156, leaderName: 'M. Lozano', createdAt: new Date() },
+          { name: 'Red Vecinal Centro', colony: 'Centro Tepic', memberCount: 89, leaderName: 'R. Garcia', createdAt: new Date() },
+          { name: 'Comité Ciudad del Valle', colony: 'Cd. del Valle', memberCount: 210, leaderName: 'S. Peña', createdAt: new Date() }
+        ];
+        seedData.forEach(async (d) => {
+          await addDoc(collection(db, 'neighborhood_networks'), d);
+        });
+      }
+      
+      setLoading(false);
+    });
+    return () => unsub();
+  }, [loading]);
+
+  const joinNetwork = async (networkId: string) => {
+    if (!auth.currentUser) return;
+    try {
+      // In a real app we'd update a members subcollection
+      // For now we just link the user's profile neighborhood if they want
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  return (
+    <div className="pt-2 pb-10 space-y-6">
+      <ViewHeader title="Red de Apoyo" onBack={onBack} />
+      
+      {/* Intro Stats */}
+      <div className="p-8 bg-slate-900 rounded-[2.5rem] text-white relative overflow-hidden shadow-xl">
+         <div className="absolute top-0 right-0 w-32 h-32 bg-magenta-500/10 rounded-full blur-3xl"></div>
+         <div className="flex justify-between items-center mb-6">
+            <h3 className="text-2xl font-serif font-black">{profile.neighborhood || 'Tepic'} Unida</h3>
+            <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+               <Users className="w-5 h-5 text-magenta-300" />
+            </div>
+         </div>
+         <div className="grid grid-cols-2 gap-4">
+            <div>
+               <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Miembros en {profile.neighborhood || 'Tepic'}</p>
+               <p className="text-xl font-black">2,410</p>
+            </div>
+            <div>
+               <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Metas Alcanzadas</p>
+               <p className="text-xl font-black">94%</p>
+            </div>
+         </div>
+      </div>
+
+      {/* Neighborhood List */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center px-4">
+           <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Comités en Tepic</h3>
+           <button className="text-[10px] font-black text-magenta-500 uppercase tracking-widest">Ver Mapa</button>
+        </div>
+
+        <div className="space-y-3">
+           {loading ? (
+             <div className="flex justify-center p-12">
+                <Loader2 className="w-6 h-6 animate-spin text-slate-300" />
+             </div>
+           ) : (
+             <>
+               {networks.length === 0 && (
+                 <div className="p-8 bg-white border border-slate-100 rounded-[2rem] text-center">
+                    <p className="text-sm font-bold text-slate-900 mb-2">Aún no hay comités registrados</p>
+                    <p className="text-xs text-slate-400">Sé el primero en organizar tu colonia.</p>
+                 </div>
+               )}
+               {networks.map((net: any) => (
+                 <div key={net.id} className="p-6 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm hover:shadow-md transition-shadow group cursor-pointer">
+                    <div className="flex justify-between items-start mb-4">
+                       <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-xl shadow-inner group-hover:bg-magenta-50 transition-colors">
+                             🏘️
+                          </div>
+                          <div>
+                             <p className="text-sm font-black text-slate-900 mb-0.5">{net.name}</p>
+                             <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{net.colony}</p>
+                          </div>
+                       </div>
+                       <div className="text-right">
+                          <p className="text-xs font-black text-magenta-500">{net.memberCount || 0} Miembros</p>
+                       </div>
+                    </div>
+                    <div className="flex justify-between items-center pt-4 border-t border-slate-50">
+                       <div className="flex -space-x-2">
+                          {[1,2,3].map(i => (
+                            <div key={i} className="w-6 h-6 rounded-full border-2 border-white bg-slate-200 overflow-hidden">
+                               <img src={`https://i.pravatar.cc/100?img=${i+10}`} className="w-full h-full object-cover" />
+                            </div>
+                          ))}
+                          <div className="w-6 h-6 rounded-full border-2 border-white bg-magenta-500 flex items-center justify-center text-[8px] text-white font-bold">
+                             +
+                          </div>
+                       </div>
+                       <button onClick={() => joinNetwork(net.id)} className="px-5 py-2 bg-slate-900 border border-slate-900 rounded-full text-[10px] font-black text-white uppercase tracking-widest hover:bg-slate-800 transition-colors">
+                          Unirme al Comité
+                       </button>
+                    </div>
+                 </div>
+               ))}
+             </>
+           )}
+        </div>
+      </div>
+
+      {/* Campaign Support CTA */}
+      <div className="bg-emerald-50 rounded-[2rem] p-6 border border-emerald-100 shadow-inner">
+         <div className="flex items-center gap-4 mb-4">
+            <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
+               <Plus className="w-6 h-6 text-white" />
+            </div>
+            <div>
+               <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Súmate al Cambio</p>
+               <h4 className="text-sm font-black text-emerald-900">Registrar a un nuevo Nayarita</h4>
+            </div>
+         </div>
+         <p className="text-xs text-emerald-700 leading-relaxed mb-5">
+            ¿Tienes familiares o vecinos que aún no tienen su Nayarit ID? Ayúdalos a registrarse y intégralos a la red ciudadana.
+         </p>
+         <button className="w-full py-4 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg hover:bg-emerald-700 transition-colors active:scale-95">
+            Comenzar Registro Externo
+         </button>
+      </div>
+    </div>
+  );
+}
+
+
+function PaymentsView({ onPay, onBack }: { onPay: (item: any) => void, onBack: () => void }) {
   return (
     <div className="pt-2 space-y-6">
-      <h2 className="text-xl font-serif font-black text-slate-900">Pagos y Facturas</h2>
+      <ViewHeader title="Tesorería" onBack={onBack} />
+      
+      <div className="bg-magenta-500 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-magenta-500/30">
+         <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10 blur-2xl"></div>
+         <p className="text-[10px] font-bold uppercase tracking-widest text-white/80 mb-2">Total a Pagar</p>
+         <h3 className="text-4xl font-serif font-black mb-1">$240.00</h3>
+         <p className="text-xs text-white/90">Vence en 14 días</p>
+      </div>
+
       <div className="space-y-4">
+        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Pendientes</h3>
         {[
-          { icon: Droplets, title: 'Servicio de Agua', val: '$240.00', status: 'Pendiente', color: 'text-blue-500' },
-          { icon: CreditCard, title: 'Predial Anual', val: '$1,850.00', status: 'Pagado', color: 'text-emerald-500' },
+          { icon: Droplets, title: 'Servicio de Agua - Junio 2026', val: '$240.00', status: 'Pendiente', color: 'text-blue-500' },
         ].map((item, i) => (
-          <div key={i} className="flex items-center justify-between p-4 bg-white border border-slate-100 rounded-2xl shadow-sm">
+          <div key={i} className="flex items-center justify-between p-5 bg-white border border-slate-100 rounded-[2rem] shadow-sm">
              <div className="flex items-center gap-4">
-                <div className={cn("p-2 rounded-xl bg-slate-50", item.color)}>
+                <div className={cn("p-3 rounded-2xl bg-slate-50", item.color)}>
                    <item.icon className="w-5 h-5" />
                 </div>
                 <div>
                    <p className="text-sm font-bold text-slate-900">{item.title}</p>
-                   <p className="text-[10px] text-slate-400 uppercase font-bold">{item.status}</p>
+                   <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest">{item.status}</p>
                 </div>
              </div>
              <div className="text-right">
-                <p className="text-sm font-black text-slate-900">{item.val}</p>
-                {item.status === 'Pendiente' && (
-                  <button 
-                    onClick={() => onPay(item)}
-                    className="text-[10px] font-bold text-magenta-500 uppercase mt-1" 
-                    style={{color:'var(--magenta)'}}
-                  >
-                    Pagar Ahora
-                  </button>
-                )}
+                <p className="text-sm font-black text-slate-900 mb-2">{item.val}</p>
+                <button 
+                  onClick={() => onPay(item)}
+                  className="px-4 py-1.5 bg-slate-900 text-white rounded-full text-[10px] font-bold uppercase tracking-widest active:scale-95 transition-transform" 
+                >
+                  Pagar
+                </button>
              </div>
           </div>
         ))}
       </div>
-      <div className="p-6 bg-slate-900 rounded-[2rem] text-center text-white">
-         <p className="text-xs font-mono text-white/50 uppercase tracking-widest mb-2">Descuento Pronto Pago</p>
-         <p className="text-2xl font-black text-solar-500" style={{color:'var(--solar)'}}>-15% EXTRA</p>
-         <p className="text-[10px] text-white/70 mt-2">Válido hasta el 31 de Marzo de 2026</p>
+
+      <div className="space-y-4 pt-4">
+        <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Historial de Pagos</h3>
+        <div className="bg-white rounded-[2rem] border border-slate-100 divide-y divide-slate-50 overflow-hidden shadow-sm">
+           {[
+             { title: 'Predial Anual 2026', val: '$1,850.00', date: '12 Ene 2026', receipt: '#REC-0921' },
+             { title: 'Servicio de Agua - Mayo', val: '$240.00', date: '05 May 2026', receipt: '#REC-0844' },
+             { title: 'Servicio de Agua - Abril', val: '$240.00', date: '04 Abr 2026', receipt: '#REC-0711' },
+           ].map((item, i) => (
+             <div key={i} className="p-5 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                <div>
+                   <p className="text-sm font-bold text-slate-900">{item.title}</p>
+                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{item.date} · {item.receipt}</p>
+                </div>
+                <div className="text-right">
+                   <p className="text-sm font-black text-slate-900">{item.val}</p>
+                   <p className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest">Pagado</p>
+                </div>
+             </div>
+           ))}
+        </div>
       </div>
     </div>
   );
 }
 
-function ServicesView({ onShowTriage }: { onShowTriage: () => void }) {
+function ServicesView({ onShowTriage, onBack }: { onShowTriage: () => void, onBack: () => void }) {
   return (
-    <div className="pt-2 space-y-6">
-      <h2 className="text-xl font-serif font-black text-slate-900">Trámites y Reportes</h2>
+    <div className="pt-2 space-y-8">
+      <ViewHeader title="Centro de Servicios" onBack={onBack} />
+      
       <div className="relative">
-         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-         <input type="text" placeholder="Buscar trámite o reporte..." className="w-full bg-slate-100 border-none rounded-2xl pl-12 pr-4 py-4 text-sm outline-none" />
+         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+         <input 
+           type="text" 
+           placeholder="¿Qué trámite o reporte buscas?" 
+           className="w-full bg-slate-50 border-2 border-slate-100/50 rounded-[1.5rem] pl-12 pr-4 py-5 text-sm outline-none focus:border-magenta-500/30 transition-colors" 
+         />
       </div>
-      <div className="space-y-3">
-         <div 
-            onClick={onShowTriage}
-            className="flex justify-between items-center p-4 bg-rose-50 border border-rose-100 rounded-2xl cursor-pointer"
-         >
-            <div className="flex items-center gap-3">
-              <Stethoscope className="w-4 h-4 text-rose-600" />
-              <span className="text-sm font-bold text-rose-700">Triaje Médico TepictuSalud</span>
+
+      <div className="space-y-6">
+         {/* Salud Inteligente Priority */}
+         <div>
+            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4 mb-3">Prioridad Ciudadana</h3>
+            <div 
+               onClick={onShowTriage}
+               className="flex justify-between items-center p-6 bg-slate-900 rounded-[2rem] cursor-pointer group shadow-xl shadow-slate-900/10"
+            >
+               <div className="flex items-center gap-4">
+                 <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
+                   <Stethoscope className="w-6 h-6 text-white" />
+                 </div>
+                 <div>
+                    <span className="text-lg font-black text-white block">Salud ConectaX</span>
+                    <span className="text-[9px] text-white/50 font-bold uppercase tracking-widest">Triaje IA CIE-11</span>
+                 </div>
+               </div>
+               <ChevronRight className="w-5 h-5 text-white/30 group-hover:text-white transition-colors" />
             </div>
-            <ChevronRight className="w-4 h-4 text-rose-300" />
          </div>
-         {['Licencia de Funcionamiento', 'Permiso de Construcción', 'Uso de Suelo', 'Reporte de Bache', 'Falla de Alumbrado'].map(s => (
-           <div key={s} className="flex justify-between items-center p-4 bg-white border border-slate-100 rounded-2xl">
-              <span className="text-sm font-medium text-slate-700">{s}</span>
-              <ChevronRight className="w-4 h-4 text-slate-300" />
-           </div>
-         ))}
+
+         {/* Urban Services */}
+         <div className="space-y-3">
+            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Reportes Urbanos</h3>
+            <div className="grid grid-cols-1 gap-3">
+               {[
+                 { label: 'Reportar Luminaria', desc: 'Fallos de alumbrado público', icon: Lightbulb, color: 'text-amber-500' },
+                 { label: 'Reportar Bache', desc: 'Daños en la cinta asfáltica', icon: ShieldCheck, color: 'text-blue-500' },
+                 { label: 'Falla de Agua / Fuga', desc: 'Reporte de fugas en red', icon: Droplets, color: 'text-sky-500' }
+               ].map((s, i) => (
+                 <div key={i} className="flex justify-between items-center p-5 bg-white border border-slate-100 rounded-[1.5rem] hover:bg-slate-50 transition-colors cursor-pointer group">
+                    <div className="flex items-center gap-4">
+                       <div className={cn("w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center", s.color)}>
+                          <s.icon className="w-5 h-5" />
+                       </div>
+                       <div>
+                          <p className="text-sm font-black text-slate-900 mb-0.5">{s.label}</p>
+                          <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter leading-none">{s.desc}</p>
+                       </div>
+                    </div>
+                    <Plus className="w-4 h-4 text-slate-300 group-hover:text-slate-900 transition-colors" />
+                 </div>
+               ))}
+            </div>
+         </div>
+
+         {/* Administrative Trámites */}
+         <div className="space-y-4">
+            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Trámites Administrativos</h3>
+            <div className="bg-white rounded-[2rem] border border-slate-100 divide-y divide-slate-50 overflow-hidden">
+               {['Licencia de Funcionamiento', 'Permiso de Construcción', 'Uso de Suelo', 'Actas de Nacimiento'].map(s => (
+                 <div key={s} className="px-8 py-5 flex justify-between items-center hover:bg-slate-50 cursor-pointer transition-colors">
+                    <span className="text-sm font-bold text-slate-700">{s}</span>
+                    <ChevronRight className="w-4 h-4 text-slate-300" />
+                 </div>
+               ))}
+            </div>
+         </div>
       </div>
     </div>
   );
 }
 
-function ProfileView({ onLogout }: { onLogout: () => void }) {
+function ProfileView({ 
+  profile, 
+  onLogout, 
+  onBack, 
+  onGoToSecurity,
+  onUpdate
+}: { 
+  profile: any,
+  onLogout: () => void, 
+  onBack: () => void, 
+  onGoToSecurity: () => void,
+  onUpdate: (data: any) => void
+}) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [localProfile, setLocalProfile] = useState(profile);
+
+  useEffect(() => {
+    setLocalProfile(profile);
+  }, [profile]);
+
+  const handleSave = () => {
+    onUpdate(localProfile);
+    setIsEditing(false);
+  };
+
   return (
-    <div className="pt-2 space-y-6">
-      <div className="flex flex-col items-center gap-3 py-6">
-         <div className="w-24 h-24 rounded-full bg-slate-100 border-4 border-white shadow-xl overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1541614101331-1a5a3a194e92?w=300&h=300" alt="Avatar" className="w-full h-full object-cover" />
-         </div>
-         <div className="text-center">
-            <h2 className="text-xl font-black text-slate-900">Juan Pérez González</h2>
-            <p className="text-xs font-mono text-slate-500 mt-1 uppercase tracking-widest">Nivel de Ciudadanía: Oro</p>
+    <div className="pt-2 pb-10 space-y-6">
+      <ViewHeader title="Mi Perfil Nayarit ID" onBack={onBack} />
+      
+      {/* Block 1: Profile Header & Stats */}
+      <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100/50 flex flex-col items-center relative">
+        <button 
+           onClick={() => setIsEditing(!isEditing)}
+           className="absolute top-6 right-6 p-2 bg-slate-50 text-slate-400 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors"
+        >
+           {isEditing ? <ChevronLeft className="w-5 h-5 text-slate-900" /> : <ShieldCheck className="w-5 h-5" />}
+        </button>
+
+        <div className="w-28 h-28 rounded-full bg-slate-100 border-4 border-white shadow-2xl overflow-hidden mb-6 ring-1 ring-slate-100">
+           <img src={auth.currentUser?.photoURL || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&q=80"} alt="Avatar" className="w-full h-full object-cover" />
+        </div>
+        <div className="text-center mb-10 w-full">
+           {isEditing ? (
+             <div className="space-y-3 w-full text-left">
+                <div>
+                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Nombre Completo</label>
+                   <input type="text" value={localProfile.name} onChange={e => setLocalProfile({...localProfile, name: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold mt-1" />
+                </div>
+                <div>
+                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Documento de Identidad (INE/CURP)</label>
+                   <input type="text" value={localProfile.documentId} onChange={e => setLocalProfile({...localProfile, documentId: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold mt-1" />
+                </div>
+                <div>
+                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Teléfono</label>
+                   <input type="text" value={localProfile.phone} onChange={e => setLocalProfile({...localProfile, phone: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold mt-1" />
+                </div>
+                <div>
+                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Correo Electrónico</label>
+                   <input type="email" value={localProfile.email} onChange={e => setLocalProfile({...localProfile, email: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold mt-1" />
+                </div>
+                <div>
+                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Dirección (Domicilio)</label>
+                   <input type="text" value={localProfile.address} onChange={e => setLocalProfile({...localProfile, address: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold mt-1" />
+                </div>
+                <div>
+                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Colonia / Barrio</label>
+                   <input type="text" value={localProfile.neighborhood} onChange={e => setLocalProfile({...localProfile, neighborhood: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold mt-1" />
+                </div>
+                <button 
+                  onClick={handleSave}
+                  className="w-full bg-slate-900 text-white rounded-xl py-4 text-xs font-black uppercase tracking-widest mt-4 shadow-lg active:scale-[0.98] transition-transform"
+                >
+                  Confirmar Datos Nayarit ID
+                </button>
+             </div>
+           ) : (
+             <>
+               <h2 className="text-2xl font-serif font-black text-slate-900 tracking-tight">{profile.name}</h2>
+               <p className="text-xs font-mono text-slate-500 mt-1">{profile.documentId || 'ID No Registrada'}</p>
+               <p className="text-xs text-slate-600 mt-2">{profile.email} · {profile.phone}</p>
+               <p className="text-xs text-slate-600 mt-1 italic">{profile.neighborhood || 'Sin Colonia Asignada'}</p>
+               <p className="text-xs text-slate-600 mt-1">{profile.address}</p>
+               <p className="text-[10px] font-mono text-emerald-500 mt-3 uppercase tracking-[0.2em] font-bold inline-flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded">
+                 <ShieldCheck className="w-3 h-3" /> Estado: {profile.registrationVerified ? 'Identidad Verificada' : 'Pendiente de Verificación'}
+               </p>
+             </>
+           )}
+        </div>
+
+        
+        <div className="w-full">
+           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1 mb-3 text-left">Panel de Métricas Ciudadanas</p>
+           <div className="grid grid-cols-2 gap-4 w-full">
+              <div className="p-6 bg-slate-50/50 rounded-3xl text-center border border-slate-100">
+                <p className="text-3xl font-black text-slate-900 mb-1">12</p>
+                <p className="text-[9px] text-slate-400 uppercase font-black tracking-widest leading-tight">Reportes Urbanos Resueltos</p>
+              </div>
+              <div className="p-6 bg-magenta-50/50 rounded-3xl text-center border border-magenta-100">
+                <p className="text-3xl font-black text-magenta-500 mb-1">450</p>
+                <p className="text-[9px] text-magenta-400 uppercase font-black tracking-widest leading-tight">Puntos Recompensa Conecta</p>
+              </div>
+           </div>
+        </div>
+
+        {/* AI Certification Badge */}
+        <div className="w-full mt-8 p-4 bg-slate-900 rounded-3xl border border-slate-800 flex items-center justify-between group cursor-help transition-all hover:bg-slate-800">
+           <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center shadow-inner">
+                 <Sparkles className="w-5 h-5 text-magenta-500" />
+              </div>
+              <div>
+                 <p className="text-[10px] font-black text-white uppercase tracking-tight">Estándar de Gestión Pública</p>
+                 <p className="text-[9px] text-white/40 font-bold uppercase tracking-widest leading-tight">Certificado: Google Cloud · Gemini · Claude</p>
+              </div>
+           </div>
+           <div className="px-3 py-1 bg-magenta-500/10 rounded-full border border-magenta-500/20">
+              <span className="text-[8px] font-black text-magenta-500 uppercase">Auditado</span>
+           </div>
+        </div>
+      </div>
+
+      {/* Block 2: Menu Items */}
+      <div className="space-y-3">
+         <button 
+           onClick={onGoToSecurity}
+           className="w-full bg-white px-8 py-6 rounded-[2rem] shadow-sm border border-slate-100/50 text-left flex items-center justify-between group transition-all hover:bg-slate-50"
+         >
+            <span className="text-lg font-bold text-slate-800">Seguridad y Nayarit ID</span>
+            <ShieldCheck className="w-5 h-5 text-emerald-500" />
+         </button>
+      </div>
+
+      {/* Block 3: Navigation Actions */}
+      <div className="space-y-4 pt-4">
+         <button 
+           onClick={onLogout}
+           className="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black text-center shadow-lg transition-transform active:scale-[0.98]"
+         >
+           VOLVER AL PORTAL DE ESTRATEGIA
+         </button>
+         
+         <button 
+           onClick={() => window.location.reload()} 
+           className="w-full py-6 bg-red-50 text-red-500 rounded-[2rem] font-black text-center border border-red-100/50 transition-colors hover:bg-red-100"
+         >
+           CERRAR SESIÓN NAYARIT ID
+         </button>
+      </div>
+    </div>
+  );
+}
+
+function SecurityCenterView({ onBack }: { onBack: () => void }) {
+  return (
+    <div className="pt-2 pb-10 space-y-6">
+      <ViewHeader title="Seguridad y Nayarit ID" onBack={onBack} />
+      
+      {/* Block 1: Technical Certification - The Proof */}
+      <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl">
+         <div className="absolute top-0 right-0 w-32 h-32 bg-magenta-500/20 rounded-full -mr-10 -mt-10 blur-3xl"></div>
+         <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-4">
+               <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+                  <ShieldCheck className="w-5 h-5 text-magenta-400" />
+               </div>
+               <p className="text-[10px] font-black uppercase tracking-widest text-white/50">Certificado de Gobernanza Digital</p>
+            </div>
+            <h3 className="text-xl font-serif font-black mb-6 leading-tight">Ecosistema Público Auditado por Google Cloud & Gemini AI</h3>
+            
+            <div className="space-y-4">
+               <div className="flex items-center justify-between py-2 border-b border-white/10">
+                  <span className="text-[10px] font-bold text-white/40 uppercase">Infraestructura</span>
+                  <span className="text-xs font-mono text-magenta-400">Google Cloud Platform</span>
+               </div>
+               <div className="flex items-center justify-between py-2 border-b border-white/10">
+                  <span className="text-[10px] font-bold text-white/40 uppercase">Base de Datos</span>
+                  <span className="text-xs font-mono text-magenta-400">Firestore (GCP Instance)</span>
+               </div>
+               <div className="flex items-center justify-between py-2 border-b border-white/10">
+                  <span className="text-[10px] font-bold text-white/40 uppercase">Inteligencia</span>
+                  <span className="text-xs font-mono text-magenta-400">G:3.1 | C:3.5 | L:70B</span>
+               </div>
+               <div className="flex items-center justify-between py-2">
+                  <span className="text-[10px] font-bold text-white/40 uppercase">Protocolo ID</span>
+                  <span className="text-xs font-mono text-magenta-400">Hybrid Trust Nayarit</span>
+               </div>
+            </div>
          </div>
       </div>
-      <div className="grid grid-cols-2 gap-3">
-         <div className="p-4 bg-slate-50 rounded-2xl text-center">
-           <p className="text-xl font-black text-slate-900">12</p>
-           <p className="text-[10px] text-slate-400 uppercase font-bold">Reportes Resueltos</p>
+
+      {/* Block 2: House-to-House Protocol (New) */}
+      <div className="bg-emerald-50 rounded-[2.5rem] p-8 border border-emerald-100">
+         <div className="flex items-center gap-4 mb-4">
+            <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
+               <Users className="w-6 h-6" />
+            </div>
+            <div>
+               <h4 className="text-sm font-black text-emerald-900 uppercase tracking-tight">Validación Casa por Casa</h4>
+               <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Protocolo de Registro 2026</p>
+            </div>
          </div>
-         <div className="p-4 bg-slate-50 rounded-2xl text-center">
-           <p className="text-xl font-black text-slate-900">450</p>
-           <p className="text-[10px] text-slate-400 uppercase font-bold">Conecta Puntos</p>
+         <div className="space-y-3">
+            <div className="flex items-start gap-3">
+               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></div>
+               <p className="text-[11px] text-emerald-800 font-medium leading-relaxed">
+                  Los datos de **Identificación, Teléfono, Correo y Domicilio** son validados físicamente por personal certificado.
+               </p>
+            </div>
+            <div className="flex items-start gap-3">
+               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></div>
+               <p className="text-[11px] text-emerald-800 font-medium leading-relaxed">
+                  **Sincronización segura**: La información se vincula directamente a la red de gobernanza para servicios de emergencia inmediatos.
+               </p>
+            </div>
          </div>
       </div>
-      <div className="space-y-2">
-         <button className="w-full p-4 bg-slate-50 hover:bg-slate-100 transition-colors rounded-2xl text-left text-sm font-medium text-slate-700">Configuración de Seguridad</button>
-         <button className="w-full p-4 bg-slate-50 hover:bg-slate-100 transition-colors rounded-2xl text-left text-sm font-medium text-slate-700">Mis Notificaciones</button>
-         <button onClick={onLogout} className="w-full p-4 bg-red-50 text-red-600 rounded-2xl text-left text-sm font-bold mt-4">Cerrar Sesión</button>
+
+      <div className="space-y-4">
+         <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Configuración de Acceso</h4>
+         <div className="bg-white rounded-[2rem] border border-slate-100 divide-y divide-slate-50 overflow-hidden shadow-sm">
+            {[
+              { label: 'Autenticación Biométrica', status: 'Activado', color: 'text-emerald-500' },
+              { label: 'Cifrado de Extremo a Extremo', status: 'Activo', color: 'text-emerald-500' },
+              { label: 'Verificación en Dos Pasos', status: 'Configurado', color: 'text-emerald-500' },
+              { label: 'Nivel de Privacidad', status: 'Máximo', color: 'text-blue-500' }
+            ].map((item, i) => (
+              <div key={i} className="px-8 py-6 flex justify-between items-center">
+                 <span className="font-bold text-slate-700">{item.label}</span>
+                 <span className={cn("text-[10px] font-black uppercase tracking-widest", item.color)}>{item.status}</span>
+              </div>
+            ))}
+         </div>
+      </div>
+
+      <div className="space-y-4">
+         <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Sesiones Activas</h4>
+         <div className="bg-slate-50 rounded-[2rem] p-6 space-y-4">
+            <div className="flex justify-between items-center">
+               <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm">📱</div>
+                  <div>
+                     <p className="text-sm font-bold text-slate-900">Este Dispositivo (Tepic)</p>
+                     <p className="text-[10px] text-slate-400">Hace un momento</p>
+                  </div>
+               </div>
+               <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+            </div>
+         </div>
       </div>
     </div>
   );

@@ -2,10 +2,29 @@ import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
 import fs from "fs/promises";
-import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+import Database from "better-sqlite3";
+import { GoogleGenAI } from "@google/genai";
 
 // Initialize AI
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY || "",
+  httpOptions: {
+    headers: {
+      'User-Agent': 'aistudio-build',
+    }
+  }
+});
+
+// Initialize Database
+const db = new Database("government_data.db");
+db.exec(`
+  CREATE TABLE IF NOT EXISTS departments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT,
+    contact_email TEXT
+  )
+`);
 
 async function startServer() {
   const app = express();
@@ -26,6 +45,34 @@ async function startServer() {
     console.warn("Could not read CONNECTX_SYSTEM_PROMPT.md, using default fallback.", error);
   }
 
+  // API routes
+  app.get("/api/departments", (req, res) => {
+    const stmt = db.prepare("SELECT * FROM departments");
+    res.json(stmt.all());
+  });
+
+  app.post("/api/departments", (req, res) => {
+    const { name, description, contact_email } = req.body;
+    const stmt = db.prepare("INSERT INTO departments (name, description, contact_email) VALUES (?, ?, ?)");
+    const info = stmt.run(name, description, contact_email);
+    res.json({ id: info.lastInsertRowid });
+  });
+
+  app.delete("/api/departments/:id", (req, res) => {
+    const { id } = req.params;
+    const stmt = db.prepare("DELETE FROM departments WHERE id = ?");
+    stmt.run(id);
+    res.json({ success: true });
+  });
+
+  app.put("/api/departments/:id", (req, res) => {
+    const { id } = req.params;
+    const { name, description, contact_email } = req.body;
+    const stmt = db.prepare("UPDATE departments SET name = ?, description = ?, contact_email = ? WHERE id = ?");
+    stmt.run(name, description, contact_email, id);
+    res.json({ success: true });
+  });
+
   // AI Assistant Endpoint
   app.post("/api/ai/chat", async (req, res) => {
     const { message, context } = req.body;
@@ -39,94 +86,18 @@ async function startServer() {
     try {
       const finalPrompt = context ? `${context}\n\nPregunta del usuario: ${message}` : message;
       
-      const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
-        systemInstruction: systemPrompt,
+      const response = await ai.models.generateContent({
+        model: "gemini-3.5-flash",
+        contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
+        config: {
+          systemInstruction: systemPrompt,
+        },
       });
-
-      const result = await model.generateContent(finalPrompt);
       
-      res.json({ response: result.response.text() });
+      res.json({ response: response.text });
     } catch (error: any) {
       console.error("AI Assistant Error:", error);
       res.status(500).json({ error: error.message || "Error procesando la solicitud de IA" });
-    }
-  });
-
-  // AI Risk Analysis Endpoint
-  app.post("/api/ai/analyze-risks", async (req, res) => {
-    const { departments, logs } = req.body;
-
-    if (!process.env.GEMINI_API_KEY) {
-      return res.status(500).json({
-        error: "GEMINI_API_KEY no configurada."
-      });
-    }
-
-    try {
-      const prompt = `
-        IDENTIDAD: Actúa como el G-Agente CX, el Oráculo de Gobernanza Digital de Élite y Auditor Forense de Grado Industrial.
-        MISIÓN: Realizar un análisis exhaustivo de la infraestructura de datos gubernamentales para garantizar la soberanía digital y la integridad sistémica.
-
-        CONTEXTO OPERATIVO:
-        - 48 Dependencias Gubernamentales bajo monitoreo.
-        - Registros de auditoría inmutables.
-
-        DATOS DE ENTRADA (DEPENDENCIAS):
-        ${JSON.stringify(departments, null, 2)}
-
-        DATOS DE ENTRADA (LOGS DE AUDITORÍA):
-        ${JSON.stringify(logs, null, 2)}
-
-        DIRECTIVAS DE ANÁLISIS:
-        1. Evaluar la coherencia estratégica de las misiones de las dependencias.
-        2. Detectar anomalías en la frecuencia y tipo de operaciones (CREATE, UPDATE, DELETE).
-        3. Identificar riesgos de colusión o manipulación de datos mediante patrones de acceso.
-        4. Calcular el Índice de Soberanía Digital basado en la integridad y trazabilidad de los datos.
-        5. Determinar la Madurez de Gobernanza (INITIAL, DEVELOPING, OPTIMIZED, ELITE).
-
-        REQUERIMIENTOS DE SALIDA:
-        Responde estrictamente en formato JSON con la siguiente estructura técnica:
-        {
-          "score": (número 0-100, donde 100 es riesgo crítico),
-          "level": "LOW" | "MEDIUM" | "HIGH" | "CRITICAL",
-          "findings": ["hallazgo estratégico 1", "hallazgo estratégico 2"],
-          "recommendations": ["acción táctica 1", "acción táctica 2"],
-          "anomaliesDetected": boolean,
-          "summary": "resumen ejecutivo de alto nivel",
-          "strategicOutlook": "proyección estratégica a largo plazo",
-          "sovereigntyIndex": (número 0-100, donde 100 es soberanía total),
-          "governanceMaturity": "INITIAL" | "DEVELOPING" | "OPTIMIZED" | "ELITE"
-        }
-      `;
-
-      const model = genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
-        generationConfig: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: SchemaType.OBJECT,
-            properties: {
-              score: { type: SchemaType.NUMBER },
-              level: { type: SchemaType.STRING, enum: ["LOW", "MEDIUM", "HIGH", "CRITICAL"] },
-              findings: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
-              recommendations: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
-              anomaliesDetected: { type: SchemaType.BOOLEAN },
-              summary: { type: SchemaType.STRING },
-              strategicOutlook: { type: SchemaType.STRING },
-              sovereigntyIndex: { type: SchemaType.NUMBER },
-              governanceMaturity: { type: SchemaType.STRING, enum: ["INITIAL", "DEVELOPING", "OPTIMIZED", "ELITE"] }
-            },
-            required: ["score", "level", "findings", "recommendations", "anomaliesDetected", "summary", "strategicOutlook", "sovereigntyIndex", "governanceMaturity"]
-          }
-        }
-      });
-
-      const result = await model.generateContent(prompt);
-      res.json(JSON.parse(result.response.text()));
-    } catch (error: any) {
-      console.error("AI Risk Analysis Error:", error);
-      res.status(500).json({ error: error.message || "Error procesando el análisis de riesgos" });
     }
   });
 

@@ -29,7 +29,7 @@ import { db, auth, handleFirestoreError, OperationType } from '../firebase';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 
-type Category = 'PROBLEMAS_TECNICOS' | 'CONSEJOS_OPERACION' | 'DISCUSION_OBRAS' | 'GENERAL';
+type Category = 'SEGURIDAD_VECINAL' | 'REDES_APOYO' | 'PROPUESTAS_COLONIA' | 'GENERAL';
 
 interface Thread {
   id: string;
@@ -51,7 +51,7 @@ interface Comment {
   createdAt: any;
 }
 
-export function ForumView() {
+export function ForumView({ onBack }: { onBack?: () => void }) {
   const [view, setView] = useState<'list' | 'create' | 'detail'>('list');
   const [selectedThread, setSelectedThread] = useState<Thread | null>(null);
   const [threads, setThreads] = useState<Thread[]>([]);
@@ -117,19 +117,29 @@ export function ForumView() {
             className="flex flex-col h-full"
           >
             <div className="px-6 py-4 bg-white border-b border-slate-100 flex justify-between items-center sticky top-0 z-10">
-              <h2 className="text-xl font-serif font-black text-slate-900">Foro Alianza Nayarit</h2>
-              <button 
-                onClick={() => setView('create')}
-                className="p-2 bg-magenta-500 text-white rounded-full shadow-lg"
-                style={{backgroundColor:'var(--magenta)'}}
-              >
-                <Plus className="w-5 h-5" />
-              </button>
+               <div className="flex items-center gap-4">
+                  {onBack && (
+                     <button onClick={onBack} className="p-2 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors">
+                        <ChevronLeft className="w-5 h-5 text-slate-600" />
+                     </button>
+                   )}
+                  <div className="flex flex-col">
+                     <h2 className="text-xl font-serif font-black text-slate-900 tracking-tight">Foro Ciudadano</h2>
+                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Nayarit ID · Comunidad</p>
+                  </div>
+               </div>
+               <button 
+                 onClick={() => setView('create')}
+                 className="w-10 h-10 bg-magenta-500 text-white rounded-2xl shadow-lg flex items-center justify-center transition-transform active:scale-90"
+                 style={{backgroundColor:'var(--magenta)'}}
+               >
+                 <Plus className="w-6 h-6" />
+               </button>
             </div>
 
             {/* Filter Chips */}
             <div className="px-6 py-3 flex gap-2 overflow-x-auto no-scrollbar bg-white">
-              {(['ALL', 'PROBLEMAS_TECNICOS', 'CONSEJOS_OPERACION', 'DISCUSION_OBRAS', 'GENERAL'] as const).map(cat => (
+              {(['ALL', 'SEGURIDAD_VECINAL', 'REDES_APOYO', 'PROPUESTAS_COLONIA', 'GENERAL'] as const).map(cat => (
                 <button
                   key={cat}
                   onClick={() => setFilter(cat)}
@@ -191,7 +201,7 @@ export function ForumView() {
               <div>
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Categoría</label>
                 <div className="grid grid-cols-1 gap-2">
-                  {(['PROBLEMAS_TECNICOS', 'CONSEJOS_OPERACION', 'DISCUSION_OBRAS', 'GENERAL'] as Category[]).map(cat => (
+                  {(['SEGURIDAD_VECINAL', 'REDES_APOYO', 'PROPUESTAS_COLONIA', 'GENERAL'] as Category[]).map(cat => (
                     <button
                       key={cat}
                       type="button"
@@ -473,18 +483,18 @@ function ThreadDetail({ thread, onBack }: { thread: Thread, onBack: () => void }
 // Utils
 function getCategoryIcon(cat: Category) {
   switch(cat) {
-    case 'DISCUSION_OBRAS': return <Construction className="w-4 h-4" />;
-    case 'CONSEJOS_OPERACION': return <HardHat className="w-4 h-4" />;
-    case 'PROBLEMAS_TECNICOS': return <AlertCircle className="w-4 h-4" />;
+    case 'PROPUESTAS_COLONIA': return <Construction className="w-4 h-4" />;
+    case 'REDES_APOYO': return <HardHat className="w-4 h-4" />;
+    case 'SEGURIDAD_VECINAL': return <AlertCircle className="w-4 h-4" />;
     case 'GENERAL': return <MessageSquare className="w-4 h-4" />;
   }
 }
 
 function getCategoryColor(cat: Category) {
   switch(cat) {
-    case 'DISCUSION_OBRAS': return 'bg-blue-50 text-blue-600';
-    case 'CONSEJOS_OPERACION': return 'bg-amber-50 text-amber-600';
-    case 'PROBLEMAS_TECNICOS': return 'bg-red-50 text-red-600';
+    case 'PROPUESTAS_COLONIA': return 'bg-blue-50 text-blue-600';
+    case 'REDES_APOYO': return 'bg-amber-50 text-amber-600';
+    case 'SEGURIDAD_VECINAL': return 'bg-red-50 text-red-600';
     case 'GENERAL': return 'bg-slate-50 text-slate-600';
   }
 }
