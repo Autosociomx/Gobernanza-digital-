@@ -33,6 +33,7 @@ import { ForumView } from './ForumView';
 import { NotificationView } from './NotificationView';
 import { LoginView } from './LoginView';
 import { CompleteProfileView } from './CompleteProfileView';
+import { CredentialScannerView } from './CredentialScannerView';
 import { QRCodeSVG } from 'qrcode.react';
 import JsBarcode from 'jsbarcode';
 
@@ -1183,6 +1184,7 @@ function ProfileView({
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [localProfile, setLocalProfile] = useState(profile);
+  const [showScanner, setShowScanner] = useState(false);
 
   useEffect(() => {
     setLocalProfile(profile);
@@ -1195,6 +1197,16 @@ function ProfileView({
 
   return (
     <div className="pt-2 pb-10 space-y-6">
+      {showScanner && (
+         <CredentialScannerView 
+            onBack={() => setShowScanner(false)}
+            onScanComplete={(data) => {
+               console.log("Scan Data:", data);
+               setShowScanner(false);
+               // Here we could update the profile
+            }}
+         />
+      )}
       <ViewHeader title="Mi Perfil Nayarit ID" onBack={onBack} />
       
       {/* Block 1: Profile Header & Stats */}
@@ -1217,8 +1229,9 @@ function ProfileView({
                    <input type="text" value={localProfile.name} onChange={e => setLocalProfile({...localProfile, name: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold mt-1" />
                 </div>
                 <div>
-                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Documento de Identidad (INE/CURP)</label>
-                   <input type="text" value={localProfile.documentId} onChange={e => setLocalProfile({...localProfile, documentId: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold mt-1" />
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Documento de Identidad (INE/CURP)</label>
+                    <button onClick={() => setShowScanner(true)} className="w-full bg-magenta-100 text-magenta-700 py-3 rounded-xl text-xs font-bold my-2">Escanear INE / OCR</button>
+                    <input type="text" value={localProfile.documentId} onChange={e => setLocalProfile({...localProfile, documentId: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold mt-1" />
                 </div>
                 <div>
                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Teléfono</label>
