@@ -39,7 +39,7 @@ import JsBarcode from 'jsbarcode';
 import { QRMagicoView } from './QRMagicoView';
 import { ReporteIncidenciaView } from './ReporteIncidenciaView';
 
-import { db, auth, handleFirestoreError, OperationType } from '../firebase';
+import { db, auth, handleFirestoreError, OperationType, getRedirectResult } from '../firebase';
 import { doc, getDoc, setDoc, onSnapshot, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 
@@ -72,6 +72,9 @@ export function CitizenApp({
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   useEffect(() => {
+    // Captura resultado de signInWithRedirect (móvil / Netlify)
+    getRedirectResult(auth).catch(() => {});
+
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
       if (u) {

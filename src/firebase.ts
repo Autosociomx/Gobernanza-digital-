@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut } from 'firebase/auth';
 import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
 
@@ -60,5 +60,13 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   throw new Error(JSON.stringify(errInfo));
 }
 
-export const login = () => signInWithPopup(auth, googleProvider);
+export async function login() {
+  try {
+    return await signInWithPopup(auth, googleProvider);
+  } catch {
+    return signInWithRedirect(auth, googleProvider);
+  }
+}
+
+export { getRedirectResult };
 export const logout = () => signOut(auth);
