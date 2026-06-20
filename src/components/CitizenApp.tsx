@@ -37,6 +37,7 @@ import { CredentialScannerView } from './CredentialScannerView';
 import { QRCodeSVG } from 'qrcode.react';
 import JsBarcode from 'jsbarcode';
 import { QRMagicoView } from './QRMagicoView';
+import { ReporteIncidenciaView } from './ReporteIncidenciaView';
 
 import { db, auth, handleFirestoreError, OperationType } from '../firebase';
 import { doc, getDoc, setDoc, onSnapshot, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
@@ -128,6 +129,8 @@ export function CitizenApp({
   const [showMap, setShowMap] = useState(initialAction === 'map');
   const [showTriage, setShowTriage] = useState(initialAction === 'triage');
   const [showQRMagico, setShowQRMagico] = useState(false);
+  const [showReporteIncidencia, setShowReporteIncidencia] = useState(false);
+  const [reporteIncidenciaInitialType, setReporteIncidenciaInitialType] = useState<string | undefined>(undefined);
   const [selectedWork, setSelectedWork] = useState<any>(null);
   const [payingItem, setPayingItem] = useState<any>(null);
   const [paymentStep, setPaymentStep] = useState<'idle' | 'processing' | 'success' | 'cash_instructions'>('idle');
@@ -340,7 +343,7 @@ export function CitizenApp({
               {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} />}
               {activeTab === 'forum' && <ParlamentoView onBack={() => setActiveTab('home')} />}
               {activeTab === 'payments' && <PaymentsView onPay={(item: any) => setPayingItem(item)} onBack={() => setActiveTab('home')} onOpenQRMagico={() => setShowQRMagico(true)} />}
-              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} onBack={() => setActiveTab('home')} />}
+              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} onBack={() => setActiveTab('home')} onOpenReporte={(type) => { setReporteIncidenciaInitialType(type); setShowReporteIncidencia(true); }} />}
               {activeTab === 'profile' && <ProfileView profile={profile} onUpdate={updateProfile} onLogout={onLogout} onBack={() => setActiveTab('home')} onGoToSecurity={() => setActiveTab('security')} />}
               {activeTab === 'security' && <SecurityCenterView onBack={() => setActiveTab('profile')} />}
               {activeTab === 'notifications' && <NotificationView onBack={() => setActiveTab('home')} />}
@@ -559,6 +562,17 @@ export function CitizenApp({
         <AnimatePresence>
           {showQRMagico && (
             <QRMagicoView onClose={() => setShowQRMagico(false)} profile={profile} />
+          )}
+        </AnimatePresence>
+
+        {/* Reporte Incidencia Overlay */}
+        <AnimatePresence>
+          {showReporteIncidencia && (
+            <ReporteIncidenciaView
+              onClose={() => { setShowReporteIncidencia(false); setReporteIncidenciaInitialType(undefined); }}
+              profile={profile}
+              initialIncidentType={reporteIncidenciaInitialType}
+            />
           )}
         </AnimatePresence>
 
@@ -1178,7 +1192,7 @@ function PaymentsView({ onPay, onBack, onOpenQRMagico }: { onPay: (item: any) =>
   );
 }
 
-function ServicesView({ onShowTriage, onBack }: { onShowTriage: () => void, onBack: () => void }) {
+function ServicesView({ onShowTriage, onBack, onOpenReporte }: { onShowTriage: () => void, onBack: () => void, onOpenReporte: (type?: string) => void }) {
   return (
     <div className="pt-2 space-y-8">
       <ViewHeader title="Centro de Servicios" onBack={onBack} />
@@ -1218,11 +1232,11 @@ function ServicesView({ onShowTriage, onBack }: { onShowTriage: () => void, onBa
             <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Reportes Urbanos</h3>
             <div className="grid grid-cols-1 gap-3">
                {[
-                 { label: 'Reportar Luminaria', desc: 'Fallos de alumbrado público', icon: Lightbulb, color: 'text-amber-500' },
-                 { label: 'Reportar Bache', desc: 'Daños en la cinta asfáltica', icon: ShieldCheck, color: 'text-blue-500' },
-                 { label: 'Falla de Agua / Fuga', desc: 'Reporte de fugas en red', icon: Droplets, color: 'text-sky-500' }
+                 { label: 'Reportar Luminaria', desc: 'Fallos de alumbrado público', icon: Lightbulb, color: 'text-amber-500', type: 'LUMINARIA' },
+                 { label: 'Reportar Bache', desc: 'Daños en la cinta asfáltica', icon: ShieldCheck, color: 'text-blue-500', type: 'BACHE' },
+                 { label: 'Falla de Agua / Fuga', desc: 'Reporte de fugas en red', icon: Droplets, color: 'text-sky-500', type: 'FUGA_AGUA' }
                ].map((s, i) => (
-                 <div key={i} className="flex justify-between items-center p-5 bg-white border border-slate-100 rounded-[1.5rem] hover:bg-slate-50 transition-colors cursor-pointer group">
+                 <div key={i} onClick={() => onOpenReporte(s.type)} className="flex justify-between items-center p-5 bg-white border border-slate-100 rounded-[1.5rem] hover:bg-slate-50 transition-colors cursor-pointer group active:scale-[0.98]">
                     <div className="flex items-center gap-4">
                        <div className={cn("w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center", s.color)}>
                           <s.icon className="w-5 h-5" />

@@ -110,12 +110,45 @@ export function QRMagicoView({ onClose, profile }: QRMagicoProps) {
     }
   };
 
+  const [paymentIntentId, setPaymentIntentId] = useState<string>('');
+  const [stripeError, setStripeError] = useState<string>('');
+
   const handleProcess = async () => {
     if (!selectedPayment) return;
     setStep('process');
-    await new Promise(r => setTimeout(r, 2500));
+    setStripeError('');
 
-    const folio = `NAY-${Date.now().toString().slice(-8)}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+    try {
+      // Call Stripe Payment Intent backend
+      const res = await fetch('/api/payments/intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: computedAmount,
+          tramite: selectedPayment.label,
+          referencia: accountRef,
+          ciudadanoId: profile?.documentId || 'anonymous',
+          ciudadanoNombre: profile?.name || 'Ciudadano',
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        // Stripe not configured → graceful fallback for demo
+        console.warn('Stripe not configured, running demo mode:', data.error);
+      } else {
+        setPaymentIntentId(data.paymentIntentId || '');
+      }
+    } catch {
+      // Network error → demo fallback
+      console.warn('Payment API unreachable, running demo mode.');
+    }
+
+    // Brief processing animation
+    await new Promise(r => setTimeout(r, 2000));
+
+    const folio = paymentIntentId || `NAY-${Date.now().toString().slice(-8)}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
     setReceiptData({
       folio,
       payment: selectedPayment,
