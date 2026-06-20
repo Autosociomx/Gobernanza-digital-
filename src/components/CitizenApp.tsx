@@ -38,6 +38,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import JsBarcode from 'jsbarcode';
 import { QRMagicoView } from './QRMagicoView';
 import { ReporteIncidenciaView } from './ReporteIncidenciaView';
+import { ActasInstantaneasView } from './ActasInstantaneasView';
 
 import { db, auth, handleFirestoreError, OperationType, getRedirectResult } from '../firebase';
 import { doc, getDoc, setDoc, onSnapshot, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
@@ -134,6 +135,7 @@ export function CitizenApp({
   const [showQRMagico, setShowQRMagico] = useState(false);
   const [showReporteIncidencia, setShowReporteIncidencia] = useState(false);
   const [reporteIncidenciaInitialType, setReporteIncidenciaInitialType] = useState<string | undefined>(undefined);
+  const [showActas, setShowActas] = useState(false);
   const [selectedWork, setSelectedWork] = useState<any>(null);
   const [payingItem, setPayingItem] = useState<any>(null);
   const [paymentStep, setPaymentStep] = useState<'idle' | 'processing' | 'success' | 'cash_instructions'>('idle');
@@ -346,7 +348,7 @@ export function CitizenApp({
               {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} />}
               {activeTab === 'forum' && <ParlamentoView onBack={() => setActiveTab('home')} />}
               {activeTab === 'payments' && <PaymentsView onPay={(item: any) => setPayingItem(item)} onBack={() => setActiveTab('home')} onOpenQRMagico={() => setShowQRMagico(true)} />}
-              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} onBack={() => setActiveTab('home')} onOpenReporte={(type) => { setReporteIncidenciaInitialType(type); setShowReporteIncidencia(true); }} />}
+              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} onBack={() => setActiveTab('home')} onOpenReporte={(type) => { setReporteIncidenciaInitialType(type); setShowReporteIncidencia(true); }} onOpenActas={() => setShowActas(true)} />}
               {activeTab === 'profile' && <ProfileView profile={profile} onUpdate={updateProfile} onLogout={onLogout} onBack={() => setActiveTab('home')} onGoToSecurity={() => setActiveTab('security')} />}
               {activeTab === 'security' && <SecurityCenterView onBack={() => setActiveTab('profile')} />}
               {activeTab === 'notifications' && <NotificationView onBack={() => setActiveTab('home')} />}
@@ -565,6 +567,13 @@ export function CitizenApp({
         <AnimatePresence>
           {showQRMagico && (
             <QRMagicoView onClose={() => setShowQRMagico(false)} profile={profile} />
+          )}
+        </AnimatePresence>
+
+        {/* Actas Instantáneas Overlay */}
+        <AnimatePresence>
+          {showActas && (
+            <ActasInstantaneasView onClose={() => setShowActas(false)} profile={profile} />
           )}
         </AnimatePresence>
 
@@ -1195,7 +1204,7 @@ function PaymentsView({ onPay, onBack, onOpenQRMagico }: { onPay: (item: any) =>
   );
 }
 
-function ServicesView({ onShowTriage, onBack, onOpenReporte }: { onShowTriage: () => void, onBack: () => void, onOpenReporte: (type?: string) => void }) {
+function ServicesView({ onShowTriage, onBack, onOpenReporte, onOpenActas }: { onShowTriage: () => void, onBack: () => void, onOpenReporte: (type?: string) => void, onOpenActas: () => void }) {
   return (
     <div className="pt-2 space-y-8">
       <ViewHeader title="Centro de Servicios" onBack={onBack} />
@@ -1255,11 +1264,28 @@ function ServicesView({ onShowTriage, onBack, onOpenReporte }: { onShowTriage: (
             </div>
          </div>
 
+         {/* Actas Instantáneas CTA */}
+         <button
+           onClick={onOpenActas}
+           className="w-full flex items-center justify-between p-5 rounded-[2rem] border-2 border-slate-900 bg-white group hover:bg-slate-900 transition-all active:scale-[0.98]"
+         >
+           <div className="flex items-center gap-4">
+             <div className="w-12 h-12 bg-slate-900 group-hover:bg-white/10 rounded-2xl flex items-center justify-center transition-colors">
+               <FileText className="w-6 h-6 text-white" />
+             </div>
+             <div className="text-left">
+               <p className="text-sm font-black text-slate-900 group-hover:text-white transition-colors">Actas Instantáneas</p>
+               <p className="text-[9px] text-slate-400 font-bold uppercase tracking-tight group-hover:text-white/60 transition-colors">6 documentos · PDF oficial · Sin filas</p>
+             </div>
+           </div>
+           <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-white transition-colors" />
+         </button>
+
          {/* Administrative Trámites */}
          <div className="space-y-4">
             <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Trámites Administrativos</h3>
             <div className="bg-white rounded-[2rem] border border-slate-100 divide-y divide-slate-50 overflow-hidden">
-               {['Licencia de Funcionamiento', 'Permiso de Construcción', 'Uso de Suelo', 'Actas de Nacimiento'].map(s => (
+               {['Licencia de Funcionamiento', 'Permiso de Construcción', 'Uso de Suelo'].map(s => (
                  <div key={s} className="px-8 py-5 flex justify-between items-center hover:bg-slate-50 cursor-pointer transition-colors">
                     <span className="text-sm font-bold text-slate-700">{s}</span>
                     <ChevronRight className="w-4 h-4 text-slate-300" />
