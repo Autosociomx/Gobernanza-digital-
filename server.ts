@@ -16,10 +16,14 @@ const ai = new GoogleGenAI({
   }
 });
 
-// Initialize Stripe (graceful no-op if key missing)
-const stripe = process.env.STRIPE_SECRET_KEY
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: "2025-05-28.basil" })
-  : null;
+// Initialize Stripe
+let stripeClient: Stripe | null = null;
+function getStripe() {
+    if (!stripeClient && process.env.STRIPE_SECRET_KEY) {
+        stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY);
+    }
+    return stripeClient;
+}
 
 // Initialize Database
 const db = new Database("government_data.db");
@@ -35,30 +39,6 @@ db.exec(`
 async function startServer() {
   const app = express();
   const PORT = 3000;
-
-  // Stripe webhook must receive raw body BEFORE express.json()
-  app.post("/api/payments/webhook", express.raw({ type: "application/json" }), (req, res) => {
-    if (!stripe) return res.status(200).json({ received: true });
-
-    const sig = req.headers["stripe-signature"] as string;
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-    if (!webhookSecret) return res.json({ received: true });
-
-    try {
-      const event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
-
-      if (event.type === "payment_intent.succeeded") {
-        const intent = event.data.object as Stripe.PaymentIntent;
-        console.log(`✅ Pago exitoso | ${intent.metadata.tramite} | $${(intent.amount / 100).toFixed(2)} MXN | ${intent.id}`);
-      }
-
-      res.json({ received: true });
-    } catch (err: any) {
-      console.error("Stripe webhook error:", err.message);
-      res.status(400).send(`Webhook Error: ${err.message}`);
-    }
-  });
 
   app.use(express.json());
 
@@ -103,63 +83,6 @@ async function startServer() {
     res.json({ success: true });
   });
 
-  // ── Stripe Payment Intents ────────────────────────────────────
-
-  // Create Payment Intent → returns clientSecret for Stripe.js
-  app.post("/api/payments/intent", async (req, res) => {
-    if (!stripe) {
-      return res.status(503).json({
-        error: "STRIPE_SECRET_KEY no configurada. Añádela en Settings > Secrets."
-      });
-    }
-
-    const { amount, tramite, referencia, ciudadanoId, ciudadanoNombre } = req.body;
-
-    if (!amount || amount <= 0) {
-      return res.status(400).json({ error: "Monto inválido." });
-    }
-
-    try {
-      const intent = await stripe.paymentIntents.create({
-        amount: Math.round(Number(amount) * 100), // centavos MXN
-        currency: "mxn",
-        metadata: {
-          tramite: tramite || "Trámite Municipal",
-          referencia: referencia || "",
-          ciudadanoId: ciudadanoId || "anonymous",
-          ciudadanoNombre: ciudadanoNombre || "",
-          sistema: "NayaritDigital-ConnectX",
-        },
-        automatic_payment_methods: { enabled: true },
-      });
-
-      res.json({
-        clientSecret: intent.client_secret,
-        paymentIntentId: intent.id,
-        amount: intent.amount / 100,
-      });
-    } catch (err: any) {
-      console.error("Stripe intent error:", err.message);
-      res.status(400).json({ error: err.message });
-    }
-  });
-
-  // Get Payment Intent status
-  app.get("/api/payments/:intentId", async (req, res) => {
-    if (!stripe) return res.status(503).json({ error: "Stripe no configurado." });
-
-    try {
-      const intent = await stripe.paymentIntents.retrieve(req.params.intentId);
-      res.json({
-        status: intent.status,
-        amount: intent.amount / 100,
-        metadata: intent.metadata,
-      });
-    } catch (err: any) {
-      res.status(404).json({ error: "Pago no encontrado." });
-    }
-  });
-
   // AI Assistant Endpoint
   app.post("/api/ai/chat", async (req, res) => {
     const { message, context } = req.body;
@@ -174,7 +97,7 @@ async function startServer() {
       const finalPrompt = context ? `${context}\n\nPregunta del usuario: ${message}` : message;
       
       const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-3.5-flash",
         contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
         config: {
           systemInstruction: systemPrompt,
@@ -185,6 +108,25 @@ async function startServer() {
     } catch (error: any) {
       console.error("AI Assistant Error:", error);
       res.status(500).json({ error: error.message || "Error procesando la solicitud de IA" });
+    }
+  });
+
+  // Payment Intent Route
+  app.post("/api/create-payment-intent", async (req, res) => {
+    const { amount, currency } = req.body;
+    const stripe = getStripe();
+    if (!stripe) {
+      return res.status(500).json({ error: "Stripe no configurado." });
+    }
+    
+    try {
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount, // amount in cents
+        currency: currency || 'mxn',
+      });
+      res.json({ clientSecret: paymentIntent.client_secret });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
   });
 
