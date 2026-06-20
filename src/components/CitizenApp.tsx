@@ -23,7 +23,8 @@ import {
   ShieldCheck,
   LayoutGrid,
   Bot,
-  Sparkles
+  Sparkles,
+  Store
 } from 'lucide-react';
   import { motion, AnimatePresence } from 'motion/react';
   import { cn } from '../lib/utils';
@@ -39,6 +40,7 @@ import JsBarcode from 'jsbarcode';
 import { QRMagicoView } from './QRMagicoView';
 import { ReporteIncidenciaView } from './ReporteIncidenciaView';
 import { ActasInstantaneasView } from './ActasInstantaneasView';
+import { LicenciasDigitalesView } from './LicenciasDigitalesView';
 
 import { db, auth, handleFirestoreError, OperationType, getRedirectResult } from '../firebase';
 import { doc, getDoc, setDoc, onSnapshot, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
@@ -136,6 +138,7 @@ export function CitizenApp({
   const [showReporteIncidencia, setShowReporteIncidencia] = useState(false);
   const [reporteIncidenciaInitialType, setReporteIncidenciaInitialType] = useState<string | undefined>(undefined);
   const [showActas, setShowActas] = useState(false);
+  const [showLicencias, setShowLicencias] = useState(false);
   const [selectedWork, setSelectedWork] = useState<any>(null);
   const [payingItem, setPayingItem] = useState<any>(null);
   const [paymentStep, setPaymentStep] = useState<'idle' | 'processing' | 'success' | 'cash_instructions'>('idle');
@@ -348,7 +351,7 @@ export function CitizenApp({
               {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} />}
               {activeTab === 'forum' && <ParlamentoView onBack={() => setActiveTab('home')} />}
               {activeTab === 'payments' && <PaymentsView onPay={(item: any) => setPayingItem(item)} onBack={() => setActiveTab('home')} onOpenQRMagico={() => setShowQRMagico(true)} />}
-              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} onBack={() => setActiveTab('home')} onOpenReporte={(type) => { setReporteIncidenciaInitialType(type); setShowReporteIncidencia(true); }} onOpenActas={() => setShowActas(true)} />}
+              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} onBack={() => setActiveTab('home')} onOpenReporte={(type) => { setReporteIncidenciaInitialType(type); setShowReporteIncidencia(true); }} onOpenActas={() => setShowActas(true)} onOpenLicencias={() => setShowLicencias(true)} />}
               {activeTab === 'profile' && <ProfileView profile={profile} onUpdate={updateProfile} onLogout={onLogout} onBack={() => setActiveTab('home')} onGoToSecurity={() => setActiveTab('security')} />}
               {activeTab === 'security' && <SecurityCenterView onBack={() => setActiveTab('profile')} />}
               {activeTab === 'notifications' && <NotificationView onBack={() => setActiveTab('home')} />}
@@ -574,6 +577,13 @@ export function CitizenApp({
         <AnimatePresence>
           {showActas && (
             <ActasInstantaneasView onClose={() => setShowActas(false)} profile={profile} />
+          )}
+        </AnimatePresence>
+
+        {/* Licencias Digitales Overlay */}
+        <AnimatePresence>
+          {showLicencias && (
+            <LicenciasDigitalesView onClose={() => setShowLicencias(false)} profile={profile} />
           )}
         </AnimatePresence>
 
@@ -1204,7 +1214,7 @@ function PaymentsView({ onPay, onBack, onOpenQRMagico }: { onPay: (item: any) =>
   );
 }
 
-function ServicesView({ onShowTriage, onBack, onOpenReporte, onOpenActas }: { onShowTriage: () => void, onBack: () => void, onOpenReporte: (type?: string) => void, onOpenActas: () => void }) {
+function ServicesView({ onShowTriage, onBack, onOpenReporte, onOpenActas, onOpenLicencias }: { onShowTriage: () => void, onBack: () => void, onOpenReporte: (type?: string) => void, onOpenActas: () => void, onOpenLicencias: () => void }) {
   return (
     <div className="pt-2 space-y-8">
       <ViewHeader title="Centro de Servicios" onBack={onBack} />
@@ -1263,6 +1273,23 @@ function ServicesView({ onShowTriage, onBack, onOpenReporte, onOpenActas }: { on
                ))}
             </div>
          </div>
+
+         {/* Licencias Digitales CTA */}
+         <button
+           onClick={onOpenLicencias}
+           className="w-full flex items-center justify-between p-5 rounded-[2rem] border-2 border-amber-200 bg-amber-50 group hover:bg-amber-500 transition-all active:scale-[0.98]"
+         >
+           <div className="flex items-center gap-4">
+             <div className="w-12 h-12 bg-amber-500 group-hover:bg-white/20 rounded-2xl flex items-center justify-center transition-colors">
+               <Store className="w-6 h-6 text-white" />
+             </div>
+             <div className="text-left">
+               <p className="text-sm font-black text-amber-900 group-hover:text-white transition-colors">Licencias Digitales</p>
+               <p className="text-[9px] text-amber-700 font-bold uppercase tracking-tight group-hover:text-white/70 transition-colors">6 permisos · 3 inmediatos · Sin ventanilla</p>
+             </div>
+           </div>
+           <ChevronRight className="w-5 h-5 text-amber-400 group-hover:text-white transition-colors" />
+         </button>
 
          {/* Actas Instantáneas CTA */}
          <button
