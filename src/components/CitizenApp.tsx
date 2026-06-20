@@ -36,6 +36,8 @@ import { CompleteProfileView } from './CompleteProfileView';
 import { CredentialScannerView } from './CredentialScannerView';
 import { QRCodeSVG } from 'qrcode.react';
 import JsBarcode from 'jsbarcode';
+import { QRMagicoView } from './QRMagicoView';
+import { ReporteIncidenciaView } from './ReporteIncidenciaView';
 
 import { db, auth, handleFirestoreError, OperationType } from '../firebase';
 import { doc, getDoc, setDoc, onSnapshot, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
@@ -126,6 +128,9 @@ export function CitizenApp({
   const [showChat, setShowChat] = useState(initialAction === 'chat');
   const [showMap, setShowMap] = useState(initialAction === 'map');
   const [showTriage, setShowTriage] = useState(initialAction === 'triage');
+  const [showQRMagico, setShowQRMagico] = useState(false);
+  const [showReporteIncidencia, setShowReporteIncidencia] = useState(false);
+  const [reporteIncidenciaInitialType, setReporteIncidenciaInitialType] = useState<string | undefined>(undefined);
   const [selectedWork, setSelectedWork] = useState<any>(null);
   const [payingItem, setPayingItem] = useState<any>(null);
   const [paymentStep, setPaymentStep] = useState<'idle' | 'processing' | 'success' | 'cash_instructions'>('idle');
@@ -324,20 +329,21 @@ export function CitizenApp({
               transition={{ duration: 0.2 }}
             >
               {activeTab === 'home' && (
-                <HomeView 
+                <HomeView
                   profile={profile}
-                  onShowMap={() => setShowMap(true)} 
+                  onShowMap={() => setShowMap(true)}
                   onShowTriage={() => setShowTriage(true)}
                   onGoToForum={() => setActiveTab('forum')}
                   onGoToProfile={() => setActiveTab('profile')}
                   onGoToPayments={() => setActiveTab('payments')}
                   onGoToServices={() => setActiveTab('services')}
+                  onOpenQRMagico={() => setShowQRMagico(true)}
                 />
               )}
               {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} />}
               {activeTab === 'forum' && <ParlamentoView onBack={() => setActiveTab('home')} />}
-              {activeTab === 'payments' && <PaymentsView onPay={(item: any) => setPayingItem(item)} onBack={() => setActiveTab('home')} />}
-              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} onBack={() => setActiveTab('home')} />}
+              {activeTab === 'payments' && <PaymentsView onPay={(item: any) => setPayingItem(item)} onBack={() => setActiveTab('home')} onOpenQRMagico={() => setShowQRMagico(true)} />}
+              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} onBack={() => setActiveTab('home')} onOpenReporte={(type) => { setReporteIncidenciaInitialType(type); setShowReporteIncidencia(true); }} />}
               {activeTab === 'profile' && <ProfileView profile={profile} onUpdate={updateProfile} onLogout={onLogout} onBack={() => setActiveTab('home')} onGoToSecurity={() => setActiveTab('security')} />}
               {activeTab === 'security' && <SecurityCenterView onBack={() => setActiveTab('profile')} />}
               {activeTab === 'notifications' && <NotificationView onBack={() => setActiveTab('home')} />}
@@ -549,6 +555,24 @@ export function CitizenApp({
                    </motion.div>
                 )}
              </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* QR Mágico Overlay */}
+        <AnimatePresence>
+          {showQRMagico && (
+            <QRMagicoView onClose={() => setShowQRMagico(false)} profile={profile} />
+          )}
+        </AnimatePresence>
+
+        {/* Reporte Incidencia Overlay */}
+        <AnimatePresence>
+          {showReporteIncidencia && (
+            <ReporteIncidenciaView
+              onClose={() => { setShowReporteIncidencia(false); setReporteIncidenciaInitialType(undefined); }}
+              profile={profile}
+              initialIncidentType={reporteIncidenciaInitialType}
+            />
           )}
         </AnimatePresence>
 
@@ -772,22 +796,24 @@ function TabButton({ icon: Icon, label, active, onClick }: { icon: any, label: s
   );
 }
 
-function HomeView({ 
+function HomeView({
   profile,
-  onShowMap, 
-  onShowTriage, 
-  onGoToForum, 
-  onGoToProfile, 
-  onGoToPayments, 
-  onGoToServices 
-}: { 
+  onShowMap,
+  onShowTriage,
+  onGoToForum,
+  onGoToProfile,
+  onGoToPayments,
+  onGoToServices,
+  onOpenQRMagico,
+}: {
   profile: any,
-  onShowMap: () => void, 
-  onShowTriage: () => void, 
-  onGoToForum: () => void, 
-  onGoToProfile: () => void, 
-  onGoToPayments: () => void, 
-  onGoToServices: () => void 
+  onShowMap: () => void,
+  onShowTriage: () => void,
+  onGoToForum: () => void,
+  onGoToProfile: () => void,
+  onGoToPayments: () => void,
+  onGoToServices: () => void,
+  onOpenQRMagico: () => void,
 }) {
   return (
     <div className="space-y-6 pt-2">
@@ -825,6 +851,30 @@ function HomeView({
          </div>
       </div>
 
+
+      {/* QR Mágico Featured CTA */}
+      <button
+        onClick={onOpenQRMagico}
+        className="w-full rounded-[2.5rem] p-6 flex items-center justify-between text-white shadow-2xl overflow-hidden relative group active:scale-[0.98] transition-transform"
+        style={{ background: 'linear-gradient(135deg, var(--magenta) 0%, #8B005E 100%)' }}
+      >
+        <div className="absolute right-0 top-0 opacity-10 w-32 h-32 -mr-6 -mt-6 group-hover:scale-110 transition-transform">
+          <QrCode className="w-full h-full" />
+        </div>
+        <div className="flex items-center gap-5 relative z-10">
+          <div className="w-14 h-14 bg-white/15 rounded-2xl flex items-center justify-center shadow-inner backdrop-blur-sm">
+            <QrCode className="w-7 h-7 text-white" />
+          </div>
+          <div className="text-left">
+            <p className="text-[10px] font-black uppercase tracking-[0.25em] text-white/60 mb-0.5">Pagos Digitales</p>
+            <p className="font-serif font-black text-xl leading-tight">QR Mágico</p>
+            <p className="text-[10px] text-white/70 font-bold uppercase tracking-widest mt-0.5">12 Trámites · 2 Minutos · Sin Filas</p>
+          </div>
+        </div>
+        <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center group-hover:bg-white/20 transition-colors shrink-0">
+          <ChevronRight className="w-5 h-5 text-white" />
+        </div>
+      </button>
 
       {/* Primary Services Grid */}
       <div>
@@ -1055,11 +1105,33 @@ function RedesCiudadanasView({ profile, onBack }: { profile: any, onBack: () => 
 }
 
 
-function PaymentsView({ onPay, onBack }: { onPay: (item: any) => void, onBack: () => void }) {
+function PaymentsView({ onPay, onBack, onOpenQRMagico }: { onPay: (item: any) => void, onBack: () => void, onOpenQRMagico: () => void }) {
   return (
     <div className="pt-2 space-y-6">
       <ViewHeader title="Tesorería" onBack={onBack} />
-      
+
+      {/* QR Mágico entry point */}
+      <button
+        onClick={onOpenQRMagico}
+        className="w-full flex items-center justify-between p-5 rounded-[2rem] text-white shadow-xl overflow-hidden relative group active:scale-[0.98] transition-transform"
+        style={{ background: 'linear-gradient(135deg, var(--magenta) 0%, #6B0040 100%)' }}
+      >
+        <div className="absolute right-4 top-0 bottom-0 flex items-center opacity-10 group-hover:opacity-20 transition-opacity">
+          <QrCode className="w-20 h-20" />
+        </div>
+        <div className="flex items-center gap-4 relative z-10">
+          <div className="w-12 h-12 bg-white/15 rounded-2xl flex items-center justify-center">
+            <QrCode className="w-6 h-6 text-white" />
+          </div>
+          <div className="text-left">
+            <p className="text-[9px] font-black uppercase tracking-widest text-white/60">12 tipos de pago</p>
+            <p className="font-black text-lg">QR Mágico</p>
+            <p className="text-[9px] text-white/70 font-bold uppercase">Predial · Agua · Multas · Tenencia...</p>
+          </div>
+        </div>
+        <ChevronRight className="w-5 h-5 text-white/60 relative z-10" />
+      </button>
+
       <div className="bg-magenta-500 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-magenta-500/30">
          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10 blur-2xl"></div>
          <p className="text-[10px] font-bold uppercase tracking-widest text-white/80 mb-2">Total a Pagar</p>
@@ -1120,7 +1192,7 @@ function PaymentsView({ onPay, onBack }: { onPay: (item: any) => void, onBack: (
   );
 }
 
-function ServicesView({ onShowTriage, onBack }: { onShowTriage: () => void, onBack: () => void }) {
+function ServicesView({ onShowTriage, onBack, onOpenReporte }: { onShowTriage: () => void, onBack: () => void, onOpenReporte: (type?: string) => void }) {
   return (
     <div className="pt-2 space-y-8">
       <ViewHeader title="Centro de Servicios" onBack={onBack} />
@@ -1160,11 +1232,11 @@ function ServicesView({ onShowTriage, onBack }: { onShowTriage: () => void, onBa
             <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Reportes Urbanos</h3>
             <div className="grid grid-cols-1 gap-3">
                {[
-                 { label: 'Reportar Luminaria', desc: 'Fallos de alumbrado público', icon: Lightbulb, color: 'text-amber-500' },
-                 { label: 'Reportar Bache', desc: 'Daños en la cinta asfáltica', icon: ShieldCheck, color: 'text-blue-500' },
-                 { label: 'Falla de Agua / Fuga', desc: 'Reporte de fugas en red', icon: Droplets, color: 'text-sky-500' }
+                 { label: 'Reportar Luminaria', desc: 'Fallos de alumbrado público', icon: Lightbulb, color: 'text-amber-500', type: 'LUMINARIA' },
+                 { label: 'Reportar Bache', desc: 'Daños en la cinta asfáltica', icon: ShieldCheck, color: 'text-blue-500', type: 'BACHE' },
+                 { label: 'Falla de Agua / Fuga', desc: 'Reporte de fugas en red', icon: Droplets, color: 'text-sky-500', type: 'FUGA_AGUA' }
                ].map((s, i) => (
-                 <div key={i} className="flex justify-between items-center p-5 bg-white border border-slate-100 rounded-[1.5rem] hover:bg-slate-50 transition-colors cursor-pointer group">
+                 <div key={i} onClick={() => onOpenReporte(s.type)} className="flex justify-between items-center p-5 bg-white border border-slate-100 rounded-[1.5rem] hover:bg-slate-50 transition-colors cursor-pointer group active:scale-[0.98]">
                     <div className="flex items-center gap-4">
                        <div className={cn("w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center", s.color)}>
                           <s.icon className="w-5 h-5" />
