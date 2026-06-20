@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carta — Lic. Leticia Araiza</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #f5f5f0; display: flex; justify-content: center; padding: 2rem; }
+  .page {
+    width: 210mm; min-height: 297mm; background: white;
+    padding: 20mm 22mm 20mm 22mm;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+    position: relative;
+  }
+  .header-band { background: #E5007A; margin: -20mm -22mm 0 -22mm; padding: 12mm 22mm 10mm; display: flex; justify-content: space-between; align-items: center; }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-dot { width: 36px; height: 36px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .logo-dot span { color: #E5007A; font-weight: 900; font-size: 11px; letter-spacing: -0.5px; }
+  .logo-text h1 { color: white; font-size: 14px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+  .logo-text p { color: rgba(255,255,255,0.7); font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; }
+  .header-meta { text-align: right; }
+  .header-meta p { color: rgba(255,255,255,0.7); font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+  .header-meta .folio { color: white; font-weight: 700; font-size: 11px; }
+  .fecha-bloque { margin: 10mm 0 8mm; }
+  .fecha-bloque p { font-size: 10.5px; color: #666; }
+  .destinatario { margin-bottom: 10mm; padding-bottom: 8mm; border-bottom: 2px solid #E5007A; }
+  .destinatario .titulo-dest { font-size: 9px; color: #E5007A; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px; }
+  .destinatario h2 { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 900; color: #121838; line-height: 1.2; }
+  .destinatario p { font-size: 11px; color: #555; margin-top: 3px; }
+  .asunto { background: #E5007A; color: white; padding: 8px 16px; border-radius: 6px; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; display: inline-block; margin-bottom: 10mm; }
+  .cuerpo p { font-size: 11px; line-height: 1.8; color: #333; margin-bottom: 5mm; text-align: justify; }
+  .cuerpo strong { color: #121838; font-weight: 700; }
+  .cuerpo em { color: #E5007A; font-style: normal; font-weight: 600; }
+  .vision-box { background: #121838; color: white; border-radius: 12px; padding: 14px 18px; margin: 6mm 0; }
+  .vision-box .v-titulo { font-size: 8px; color: #E5007A; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; }
+  .vision-box p { font-size: 11px; line-height: 1.7; color: rgba(255,255,255,0.85); margin: 0; text-align: left; }
+  .pilares { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 6mm 0; }
+  .pilar { text-align: center; padding: 12px 8px; border: 1.5px solid #eee; border-radius: 10px; }
+  .pilar .p-icon { font-size: 20px; margin-bottom: 4px; }
+  .pilar .p-name { font-size: 9px; font-weight: 700; color: #121838; text-transform: uppercase; letter-spacing: 0.5px; }
+  .pilar .p-desc { font-size: 8px; color: #888; margin-top: 2px; }
+  .invitacion { background: linear-gradient(135deg, #E5007A, #8B005E); color: white; border-radius: 12px; padding: 16px 20px; margin: 6mm 0; }
+  .invitacion p { color: white; text-align: left; margin: 0; font-size: 11.5px; line-height: 1.7; }
+  .invitacion p strong { color: white; }
+  .firma { margin-top: 12mm; display: flex; justify-content: space-between; align-items: flex-end; }
+  .firma-bloque { text-align: center; }
+  .firma-linea { width: 140px; height: 1px; background: #ccc; margin: 0 auto 4px; }
+  .firma-bloque p { font-size: 9.5px; font-weight: 700; color: #121838; text-transform: uppercase; letter-spacing: 0.5px; }
+  .firma-bloque span { font-size: 8.5px; color: #888; }
+  .footer-band { background: #121838; margin: 12mm -22mm -20mm; padding: 6mm 22mm; display: flex; justify-content: space-between; align-items: center; }
+  .footer-band p { font-size: 8px; color: rgba(255,255,255,0.4); }
+  .footer-band .url { color: #E5007A; font-weight: 700; }
+  @media print { body { background: white; padding: 0; } .page { box-shadow: none; } }
+  @media (max-width: 800px) { body { padding: 0; } .page { width: 100%; min-height: auto; padding: 8mm; } .pilares { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header-band">
+    <div class="logo">
+      <div class="logo-dot"><span>ND</span></div>
+      <div class="logo-text">
+        <h1>Nayarit Digital</h1>
+        <p>Gobernanza · Tecnología · Ciudadanía</p>
+      </div>
+    </div>
+    <div class="header-meta">
+      <p>Tepic, Nayarit · Junio 2026</p>
+      <p class="folio">REF: ND-EST-2026-002</p>
+    </div>
+  </div>
+
+  <div class="fecha-bloque">
+    <p>Tepic, Nayarit, a 20 de junio de 2026.</p>
+  </div>
+
+  <div class="destinatario">
+    <p class="titulo-dest">Estimada</p>
+    <h2>Lic. Leticia Araiza</h2>
+    <p>Lideresa Social y Estratega Política · Tepic, Nayarit</p>
+  </div>
+
+  <div class="asunto">Asunto: Invitación estratégica — Proyecto Nayarit Digital</div>
+
+  <div class="cuerpo">
+    <p>Estimada Licenciada Araiza:</p>
+
+    <p>Con profundo respeto y confianza en su trayectoria, le dirigimos la presente con el propósito de compartirle un proyecto que consideramos <em>transformador para el futuro político y social de Tepic</em>: la plataforma <strong>Nayarit Digital</strong>, un ecosistema tecnológico de gobernanza ciudadana que está redefiniendo la relación entre el gobierno municipal y la ciudadanía nayarita.</p>
+
+    <p>Conocemos su liderazgo, su comprensión del territorio y su capacidad para articular voluntades en torno a causas que importan. Por esa razón, <em>su visión y respaldo son esenciales</em> para que este proyecto alcance la escala que Tepic merece.</p>
+
+    <div class="vision-box">
+      <div class="v-titulo">La visión que nos mueve</div>
+      <p>"Un Nayarit más digital es un Nayarit más justo, transparente y próspero. Nayarit Digital nace de la convicción de que la tecnología al servicio del ciudadano no es un lujo — es el nuevo contrato social entre quienes gobiernan y quienes confían."</p>
+    </div>
+
+    <p><strong>Nayarit Digital</strong> es hoy una plataforma operativa que permite a cualquier ciudadano de Tepic pagar impuestos, reportar problemas urbanos, obtener documentos oficiales y conocer sus derechos fiscales — todo desde su celular, sin filas, sin intermediarios y con total transparencia. Fue concebida durante la gestión de la Lic. <strong>Geraldine Ponce</strong> como expresión de gobierno abierto y ciudadanía empoderada.</p>
+
+    <div class="pilares">
+      <div class="pilar"><div class="p-icon">📱</div><div class="p-name">Acceso</div><div class="p-desc">100% en línea desde cualquier celular</div></div>
+      <div class="pilar"><div class="p-icon">🔒</div><div class="p-name">Seguridad</div><div class="p-desc">Identidad digital verificada con Firebase</div></div>
+      <div class="pilar"><div class="p-icon">🤖</div><div class="p-name">Inteligencia</div><div class="p-desc">IA municipal disponible 24/7</div></div>
+      <div class="pilar"><div class="p-icon">📋</div><div class="p-name">Trámites</div><div class="p-desc">Actas, licencias y permisos instantáneos</div></div>
+      <div class="pilar"><div class="p-icon">💰</div><div class="p-name">Pagos</div><div class="p-desc">12 tipos de pago en 2 minutos</div></div>
+      <div class="pilar"><div class="p-icon">🗺️</div><div class="p-name">Trazabilidad</div><div class="p-desc">Obras públicas en tiempo real</div></div>
+    </div>
+
+    <p>Los resultados son tangibles: más de <strong>2,400 ciudadanos</strong> conectados, <strong>$4.2 millones</strong> recaudados de forma digital y cero filas en los trámites más solicitados del municipio. Esta es la evidencia de que la gobernanza digital no es una promesa — <em>ya es una realidad en Tepic.</em></p>
+
+    <div class="invitacion">
+      <p>Le extendemos una invitación abierta para conocer la plataforma en una sesión personalizada, explorar su potencial político y social, y conversar sobre cómo su experiencia y liderazgo podrían contribuir a llevar <strong>Nayarit Digital</strong> a cada colonia, cada familia y cada ciudadano de nuestro municipio.</p>
+    </div>
+
+    <p>Estamos convencidos de que con aliados como usted, <strong>Tepic puede convertirse en el primer municipio del occidente de México con gobernanza digital plena</strong>. Ese logro nos pertenece a todos.</p>
+
+    <p>En espera de su respuesta, quedamos a sus órdenes.</p>
+
+    <p>Con aprecio y respeto,</p>
+  </div>
+
+  <div class="firma">
+    <div class="firma-bloque">
+      <div class="firma-linea"></div>
+      <p>Equipo Nayarit Digital</p>
+      <span>ConnectX · Estrategia Digital 2026</span>
+    </div>
+    <div class="firma-bloque">
+      <div class="firma-linea"></div>
+      <p>Lic. Geraldine Ponce</p>
+      <span>Impulsora del Proyecto</span>
+    </div>
+  </div>
+
+  <div class="footer-band">
+    <p>Nayarit Digital · Plataforma Ciudadana Unificada · Tepic, Nayarit · 2026</p>
+    <p class="url">tepic.netlify.app</p>
+  </div>
+
+</div>
+</body>
+</html>

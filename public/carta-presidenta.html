@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carta — Presidenta Municipal de Tepic</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@400;500;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #f5f5f0; display: flex; justify-content: center; padding: 2rem; }
+  .page {
+    width: 210mm; min-height: 297mm; background: white;
+    padding: 20mm 22mm 20mm 22mm;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+    position: relative;
+  }
+  .header-band { background: #121838; margin: -20mm -22mm 0 -22mm; padding: 12mm 22mm 10mm; display: flex; justify-content: space-between; align-items: center; }
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-dot { width: 36px; height: 36px; background: #E5007A; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .logo-dot span { color: white; font-weight: 900; font-size: 11px; letter-spacing: -0.5px; }
+  .logo-text h1 { color: white; font-size: 14px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+  .logo-text p { color: rgba(255,255,255,0.5); font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; }
+  .header-meta { text-align: right; }
+  .header-meta p { color: rgba(255,255,255,0.5); font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+  .header-meta .folio { color: #E5007A; font-weight: 700; font-size: 11px; }
+  .fecha-bloque { margin: 10mm 0 8mm; }
+  .fecha-bloque p { font-size: 10.5px; color: #666; }
+  .destinatario { margin-bottom: 10mm; padding-bottom: 8mm; border-bottom: 1px solid #eee; }
+  .destinatario .titulo-dest { font-size: 9px; color: #E5007A; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 4px; }
+  .destinatario h2 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 900; color: #121838; line-height: 1.2; }
+  .destinatario p { font-size: 11px; color: #555; margin-top: 3px; }
+  .asunto { background: #121838; color: white; padding: 8px 16px; border-radius: 6px; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; display: inline-block; margin-bottom: 10mm; }
+  .cuerpo p { font-size: 11px; line-height: 1.8; color: #333; margin-bottom: 5mm; text-align: justify; }
+  .cuerpo strong { color: #121838; font-weight: 700; }
+  .cuerpo em { color: #E5007A; font-style: normal; font-weight: 600; }
+  .features { margin: 6mm 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .feature-item { background: #f8f8f6; border-left: 3px solid #E5007A; padding: 8px 12px; border-radius: 0 6px 6px 0; }
+  .feature-item .f-num { font-size: 8px; color: #E5007A; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .feature-item .f-name { font-size: 10.5px; font-weight: 700; color: #121838; }
+  .feature-item .f-desc { font-size: 9px; color: #777; margin-top: 2px; }
+  .stat-row { display: flex; gap: 12px; margin: 6mm 0; }
+  .stat-box { flex: 1; background: #121838; color: white; padding: 10px; border-radius: 10px; text-align: center; }
+  .stat-box .s-val { font-size: 18px; font-weight: 900; color: #E5007A; }
+  .stat-box .s-lab { font-size: 8px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+  .firma { margin-top: 12mm; display: flex; justify-content: space-between; align-items: flex-end; }
+  .firma-bloque { text-align: center; }
+  .firma-linea { width: 140px; height: 1px; background: #ccc; margin: 0 auto 4px; }
+  .firma-bloque p { font-size: 9.5px; font-weight: 700; color: #121838; text-transform: uppercase; letter-spacing: 0.5px; }
+  .firma-bloque span { font-size: 8.5px; color: #888; }
+  .footer-band { background: #f0f0eb; margin: 12mm -22mm -20mm; padding: 6mm 22mm; display: flex; justify-content: space-between; align-items: center; }
+  .footer-band p { font-size: 8px; color: #999; }
+  .footer-band .url { color: #E5007A; font-weight: 700; }
+  @media print { body { background: white; padding: 0; } .page { box-shadow: none; } }
+  @media (max-width: 800px) { body { padding: 0; } .page { width: 100%; min-height: auto; padding: 8mm; } .features { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header-band">
+    <div class="logo">
+      <div class="logo-dot"><span>ND</span></div>
+      <div class="logo-text">
+        <h1>Nayarit Digital</h1>
+        <p>Plataforma de Gobernanza Ciudadana</p>
+      </div>
+    </div>
+    <div class="header-meta">
+      <p>Tepic, Nayarit · Junio 2026</p>
+      <p class="folio">REF: ND-GOB-2026-001</p>
+    </div>
+  </div>
+
+  <div class="fecha-bloque">
+    <p>Tepic, Nayarit, a 20 de junio de 2026.</p>
+  </div>
+
+  <div class="destinatario">
+    <p class="titulo-dest">Destinatario</p>
+    <h2>C. Rosa Estela<br>Presidenta Municipal de Tepic</h2>
+    <p>H. Ayuntamiento de Tepic · Palacio Municipal · Tepic, Nayarit</p>
+  </div>
+
+  <div class="asunto">Asunto: Presentación oficial — Plataforma Nayarit Digital</div>
+
+  <div class="cuerpo">
+    <p>Estimada Presidenta Municipal:</p>
+
+    <p>Reciba usted un cordial saludo de parte del equipo de <strong>Nayarit Digital</strong>, plataforma tecnológica de gobernanza ciudadana desarrollada para el municipio de Tepic, cuya visión fue iniciada durante la gestión de la Lic. <strong>Geraldine Ponce</strong> como expresión de su compromiso con la <em>soberanía digital ciudadana</em> y la modernización del servicio público.</p>
+
+    <p>El presente documento tiene por objeto presentarle formalmente esta plataforma, que hoy constituye una <strong>infraestructura digital operativa</strong>, disponible para los ciudadanos del municipio y lista para integrarse plenamente a la gestión municipal que usted encabeza, dotando a su administración de herramientas concretas de transparencia, eficiencia y participación ciudadana.</p>
+
+    <p><strong>Nayarit Digital</strong> es un portal ciudadano unificado que permite a los tepicenses realizar trámites, pagos y reportes sin acudir a ventanilla, desde cualquier dispositivo con acceso a internet. Fue construida sobre principios de <em>gobierno abierto</em>, inclusión digital y soberanía de datos públicos.</p>
+
+    <div class="stat-row">
+      <div class="stat-box"><div class="s-val">5</div><div class="s-lab">módulos activos</div></div>
+      <div class="stat-box"><div class="s-val">12</div><div class="s-lab">tipos de pago digital</div></div>
+      <div class="stat-box"><div class="s-val">6</div><div class="s-lab">documentos oficiales</div></div>
+      <div class="stat-box"><div class="s-val">100%</div><div class="s-lab">en línea</div></div>
+    </div>
+
+    <p>La plataforma cuenta actualmente con los siguientes módulos operativos:</p>
+
+    <div class="features">
+      <div class="feature-item"><div class="f-num">01</div><div class="f-name">QR Mágico</div><div class="f-desc">12 tipos de pago municipal en 2 minutos, sin filas</div></div>
+      <div class="feature-item"><div class="f-num">02</div><div class="f-name">Reporte de Incidencias</div><div class="f-desc">Baches, luminarias y fugas con GPS y folio oficial</div></div>
+      <div class="feature-item"><div class="f-num">03</div><div class="f-name">Actas Instantáneas</div><div class="f-desc">6 documentos oficiales PDF con validez de 90 días</div></div>
+      <div class="feature-item"><div class="f-num">04</div><div class="f-name">Licencias Digitales</div><div class="f-desc">6 permisos municipales, 3 de expedición inmediata</div></div>
+      <div class="feature-item"><div class="f-num">05</div><div class="f-name">Faro Fiscal</div><div class="f-desc">Orientación ciudadana sobre devoluciones del SAT</div></div>
+      <div class="feature-item"><div class="f-num">IA</div><div class="f-name">Asistente ConnectX</div><div class="f-desc">IA municipal disponible 24/7 para orientación ciudadana</div></div>
+    </div>
+
+    <p>Consideramos que esta plataforma representa una <em>oportunidad histórica</em> para que su administración consolide el legado digital de Tepic, posicionando al municipio como referente nacional en gobernanza tecnológica y atención ciudadana en línea.</p>
+
+    <p>Quedamos a sus órdenes para una presentación ejecutiva en el momento que usted determine, así como para cualquier adecuación técnica o institucional que su gobierno considere pertinente. <strong>Nayarit Digital pertenece a Tepic y a sus ciudadanos.</strong></p>
+
+    <p>Atentamente,</p>
+  </div>
+
+  <div class="firma">
+    <div class="firma-bloque">
+      <div class="firma-linea"></div>
+      <p>Equipo Nayarit Digital</p>
+      <span>ConnectX · Gobernanza Digital</span>
+    </div>
+    <div class="firma-bloque">
+      <div class="firma-linea"></div>
+      <p>Lic. Geraldine Ponce</p>
+      <span>Impulsora del Proyecto</span>
+    </div>
+  </div>
+
+  <div class="footer-band">
+    <p>Nayarit Digital · Plataforma Ciudadana Unificada · Tepic, Nayarit · 2026</p>
+    <p class="url">tepic.netlify.app</p>
+  </div>
+
+</div>
+</body>
+</html>
