@@ -87,7 +87,7 @@ async function startServer() {
       const finalPrompt = context ? `${context}\n\nPregunta del usuario: ${message}` : message;
       
       const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: "gemini-2.0-flash",
         contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
         config: {
           systemInstruction: systemPrompt,
