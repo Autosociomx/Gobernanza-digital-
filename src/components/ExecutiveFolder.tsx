@@ -12,16 +12,18 @@ import {
   Zap,
   ChevronLeft,
   BookOpen,
-  Swords
+  Swords,
+  Map
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import { BrigadaStrategy } from './BrigadaStrategy';
 import { BrigadaFieldView } from './BrigadaFieldView';
 import { Whitepaper } from './Whitepaper';
 import { PitchDefense } from './PitchDefense';
+import { RoadmapArchitectureView } from './dashboard/RoadmapArchitectureView';
 
 export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
-  const [activeView, setActiveView] = useState<'main' | 'demo' | 'whitepaper' | 'defense'>('main');
+  const [activeView, setActiveView] = useState<'main' | 'demo' | 'whitepaper' | 'defense' | 'roadmap'>('main');
 
   if (activeView === 'demo') {
     return (
@@ -33,6 +35,22 @@ export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
           <ChevronLeft className="w-4 h-4" /> Volver a la Carpeta
         </button>
         <BrigadaFieldView />
+      </div>
+    );
+  }
+
+  if (activeView === 'roadmap') {
+    return (
+      <div className="min-h-screen bg-[var(--crema)] p-8 font-sans">
+        <button 
+          onClick={() => setActiveView('main')}
+          className="flex items-center gap-2 text-slate-400 hover:text-[var(--tinta)] transition-colors text-xs font-black uppercase tracking-widest mb-8"
+        >
+          <ChevronLeft className="w-4 h-4" /> Volver a la Carpeta
+        </button>
+        <div className="max-w-[600px] mx-auto">
+            <RoadmapArchitectureView />
+        </div>
       </div>
     );
   }
@@ -209,6 +227,13 @@ export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
                     <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--tinta)]">Estrategia Sectorial: BrigadaMX</h2>
                  </div>
                  <div className="flex flex-wrap items-center gap-3">
+                   <button 
+                     onClick={() => setActiveView('roadmap')}
+                     className="bg-emerald-600 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-500/20 flex items-center gap-2"
+                   >
+                     <Map className="w-4 h-4" />
+                     Roadmap Lanzamiento
+                   </button>
                    <button 
                      onClick={() => setActiveView('whitepaper')}
                      className="bg-indigo-600 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-500/20 flex items-center gap-2"

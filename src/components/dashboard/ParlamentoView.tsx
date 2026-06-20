@@ -25,9 +25,9 @@ import {
   increment,
   deleteDoc
 } from 'firebase/firestore';
-import { db, auth, handleFirestoreError, OperationType } from '../firebase';
+import { db, auth, handleFirestoreError, OperationType } from '../../firebase';
 import { motion, AnimatePresence } from 'motion/react';
-import { cn } from '../lib/utils';
+import { cn } from '../../lib/utils';
 
 type Category = 'SEGURIDAD_VECINAL' | 'REDES_APOYO' | 'PROPUESTAS_COLONIA' | 'GENERAL';
 
@@ -51,7 +51,7 @@ interface Comment {
   createdAt: any;
 }
 
-export function ForumView({ onBack }: { onBack?: () => void }) {
+export function ParlamentoView({ onBack }: { onBack?: () => void }) {
   const [view, setView] = useState<'list' | 'create' | 'detail'>('list');
   const [selectedThread, setSelectedThread] = useState<Thread | null>(null);
   const [threads, setThreads] = useState<Thread[]>([]);

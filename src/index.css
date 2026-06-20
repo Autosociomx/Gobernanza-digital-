@@ -33,18 +33,18 @@ html {
 }
 
 :root {
-  --magenta:  #E5007A;
-  --turq:     #00BCD4;
-  --solar:    #FFB300;
-  --verde:    #00873E;
-  --coral:    #F44336;
-  --morado:   #7B1FA2;
+  --magenta:  #1a73e8; /* Vibrant Gemini Blue */
+  --turq:     #188038; /* Subtle Teal/Green */
+  --solar:    #4285f4; /* Primary Blue */
+  --verde:    #34a853; /* Success/Green */
+  --coral:    #d93025; /* Alert/Red */
+  --morado:   #5e35b1; /* Deep Purple accent */
 
-  --tinta:    #150800;
-  --crema:    #FEF8EE;
-  --hueso:    #F0E6D3;
-  --blanco:   #FFFFFF;
-  --gris:     #6B5D50;
+  --tinta:    #001d3d; /* Darkest Navy */
+  --crema:    #f1f7fe; /* Pale blue-white */
+  --hueso:    #d1e2f3; /* Bone/Border Blue */
+  --blanco:   #ffffff;
+  --gris:     #486581; /* Steel gray text */
 
   --frau: 'Fraunces', serif;
   --inst: 'Instrument Sans', sans-serif;

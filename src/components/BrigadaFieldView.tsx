@@ -10,13 +10,15 @@ import {
   RefreshCw,
   ChevronRight,
   ClipboardList,
+  Coins,
+  Target,
   AlertCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 
 export function BrigadaFieldView() {
-  const [step, setStep] = useState<'welcome' | 'map' | 'survey' | 'success'>('welcome');
+  const [step, setStep] = useState<'welcome' | 'map' | 'survey' | 'success' | 'legal'>('welcome');
   const [activePriority, setActivePriority] = useState<'recaudacion' | 'servicios' | 'voto'>('recaudacion');
   const [isOnline, setIsOnline] = useState(true);
   const [scanning, setScanning] = useState(false);

@@ -156,11 +156,11 @@ const ChatIA = () => {
   );
 };
 
-interface GeraldineLandingProps {
+interface PlatformLandingProps {
   onNavigate: (view: 'landing' | 'c5' | 'citizen' | 'dev' | 'executive', subView?: string, action?: string) => void;
 }
 
-export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
+export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
   const [navScrolled, setNavScrolled] = useState(false);
   const [terminalOpen, setTerminalOpen] = useState(false);
   const [terminalCmd, setTerminalCmd] = useState('');
@@ -251,9 +251,9 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
             className="inline-flex flex-col items-center sm:items-start font-mono font-bold text-[0.62rem] tracking-[0.2em] uppercase text-[var(--tinta)] border-[1.5px] border-[var(--tinta)] bg-[var(--solar)] px-[1rem] py-[0.6rem] rounded-[1.2rem] sm:rounded-full mb-[1.6rem] shadow-[3px_3px_0_var(--tinta)] cursor-default"
           >
             <div className="flex items-center gap-[0.55rem] mb-[0.2rem]">
-              <span className="w-[6px] h-[6px] rounded-full bg-[var(--magenta)] animate-pulse"></span>Nayarit Digital · ESTADO DIGITAL · GOBERNANZA 2.0
+              <span className="w-[6px] h-[6px] rounded-full bg-[var(--magenta)] animate-pulse"></span>Nayarit Digital · ESTADO DIGITAL · GOBERNAZA CIUDADANA
             </div>
-            <div className="text-[0.55rem] tracking-widest opacity-80 sm:ml-[1.4rem]">→ 20 municipios digitalizados en los primeros 100 días</div>
+            <div className="text-[0.55rem] tracking-widest opacity-80 sm:ml-[1.4rem]">→ Plataforma unificada de gestión municipal</div>
           </motion.div>
           
           <h1 className="font-serif font-black text-[clamp(3.5rem,10vw,7rem)] leading-[0.9] tracking-[-0.045em] mb-[0.32em] drop-shadow-2xl">
@@ -263,7 +263,7 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
               transition={{delay:0.2, duration:0.8}} 
               className="block text-[var(--tinta)]"
             >
-              El Sistema Operativo
+              Infraestructura
             </motion.span>
             <motion.span 
               initial={{opacity:0, x:20}} 
@@ -271,7 +271,7 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
               transition={{delay:0.32, duration:0.8}} 
               className="block text-[var(--magenta)] italic relative"
             >
-              Municipal de Tepic
+              Digital Municipal
               <motion.div 
                 className="absolute -bottom-2 left-0 h-1 bg-[var(--magenta)] w-0"
                 animate={{ width: "100%" }}
@@ -287,7 +287,7 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
           
           <motion.p initial={{opacity:0,y:28}} animate={{opacity:1,y:0}} transition={{delay:0.55, duration:0.8}}
             className="font-sans text-[clamp(0.9rem,1.8vw,1.05rem)] text-[var(--tinta)]/80 max-w-[450px] leading-[1.75] mb-[2rem]">
-            Nayarit Digital no es un conjunto de aplicaciones. Es una infraestructura institucional que reposa sobre tres pilares: <em className="not-italic font-bold text-[var(--magenta)]">Interoperabilidad, Inclusión y Datos Abiertos.</em>
+            Nayarit Digital es una infraestructura institucional que reposa sobre tres pilares: <em className="not-italic font-bold text-[var(--magenta)]">Interoperabilidad, Inclusión y Datos Abiertos.</em>
           </motion.p>
           
           <motion.div initial={{opacity:0,y:28}} animate={{opacity:1,y:0}} transition={{delay:0.65, duration:0.8}}
@@ -298,7 +298,7 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
               onClick={() => onNavigate('citizen')}
               className="bg-[var(--tinta)] hover:bg-[var(--magenta)] text-[var(--crema)] font-bold text-[0.88rem] px-[2rem] py-[0.9rem] rounded-full inline-flex items-center gap-[0.5rem] transition-all shadow-[0_4px_0_var(--magenta)] hover:shadow-[0_8px_20px_rgba(229,0,122,0.3)]"
             >
-              Portal del Ciudadano: Nayarit ID →
+              Plataforma Ciudadana: Nayarit ID →
             </motion.button>
           </motion.div>
         </motion.div>
@@ -306,20 +306,18 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
         <motion.div initial={{opacity:0,y:28}} animate={{opacity:1,y:0}} transition={{delay:0.4, duration:0.9}} className="relative z-10 w-full max-w-[300px] md:max-w-full mx-auto md:-order-none order-first">
           <div className="foto-frame group relative">
             <div className="absolute -inset-4 bg-gradient-to-r from-[var(--magenta)] to-[var(--solar)] opacity-30 blur-2xl rounded-full transition-all group-hover:opacity-50"></div>
-            <img 
-              className="w-full aspect-[3/4] object-cover object-top rounded-[1rem] saturate-[1.1] contrast-[1.05] shadow-[0_20px_50px_rgba(0,0,0,0.3)] border-[3px] border-white relative z-10" 
-              src="/geraldine_official.png" 
-              alt="Geraldine Ponce — Presidenta Municipal de Tepic y Candidata a Gobernadora" 
-            />
+            <div className="w-full aspect-[3/4] bg-slate-200 rounded-[1rem] flex items-center justify-center relative z-10">
+                <span className="text-slate-400 font-mono text-sm">Espacio Visual</span>
+            </div>
             {/* Slogan Badge */}
             <motion.div 
               initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} transition={{delay:0.55, duration:0.6}}
               className="absolute -bottom-[0.5rem] -left-[0.5rem] md:-left-[1rem] bg-white border border-[var(--magenta)]/20 p-[0.8rem_1rem] rounded-[1rem] shadow-[0_10px_30px_-5px_rgba(229,0,122,0.2)] transition-all z-20"
             >
-              <h4 className="font-serif font-black text-[0.85rem] sm:text-[0.95rem] text-[var(--tinta)] leading-[1.1] mb-[0.2rem] max-w-[180px]">De Tepic a Nayarit:<br/>El primer estado <span className="text-[var(--magenta)]">100% digital</span>.</h4>
+              <h4 className="font-serif font-black text-[0.85rem] sm:text-[0.95rem] text-[var(--tinta)] leading-[1.1] mb-[0.2rem] max-w-[180px]">Tecnología municipal:<br/>El primer paso <span className="text-[var(--magenta)]">hacia el estado digital</span>.</h4>
               <div className="flex items-center gap-[0.4rem] mt-1 pt-1 border-t border-[var(--magenta)]/10">
                 <span className="w-[5px] h-[5px] bg-[var(--magenta)] rounded-full shadow-[0_0_5px_var(--magenta)]"></span>
-                <p className="font-mono text-[0.45rem] font-bold uppercase tracking-widest text-[var(--magenta)]">Gobernanza Digital 2027</p>
+                <p className="font-mono text-[0.45rem] font-bold uppercase tracking-widest text-[var(--magenta)]">Infraestructura Municipal</p>
               </div>
             </motion.div>
           </div>
@@ -401,8 +399,8 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
             <Reveal delay={0.7}>
               <div className="bg-white rounded-[1.2rem] border-[1.5px] border-black/10 p-[2rem_1.9rem] hover:shadow-xl transition-all h-full cursor-pointer hover:border-[var(--turq)] group" onClick={() => onNavigate('citizen', 'services')}>
                 <span className="text-[2.2rem] block mb-[0.8rem] transition-transform group-hover:scale-110">🐕</span>
-                <h3 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] mb-[0.4rem]">Animal Master</h3>
-                <p className="text-[0.82rem] text-[var(--gris)] leading-[1.65]">Trazabilidad y bienestar animal integral. Registro, salud y gestión poblacional para ganadería y mascotas bajo inteligencia artificial.</p>
+                <h3 className="font-serif font-black text-[1.3rem] text-[var(--tinta)] mb-[0.4rem]">Gestión de Fauna</h3>
+                <p className="text-[0.82rem] text-[var(--gris)] leading-[1.65]">Trazabilidad y bienestar animal integral. Registro, salud y gestión poblacional bajo inteligencia artificial.</p>
               </div>
             </Reveal>
           </div>
@@ -607,12 +605,12 @@ export const GeraldineLanding = ({ onNavigate }: GeraldineLandingProps) => {
 
       {/* FOOTER */}
       <footer className="bg-[var(--tinta)] px-[2rem] py-[3.2rem] text-center border-t-[5px] border-[var(--magenta)]">
-        <span className="font-serif font-black text-[1.4rem] tracking-[-0.03em] text-[var(--crema)] block mb-[0.3rem]">Geraldine <em className="italic text-[var(--magenta)]">Ponce</em></span>
-        <p className="font-serif italic text-[0.8rem] text-[var(--crema)]/50 mb-[1.5rem]">Presidenta Municipal de Tepic · Candidata a Gobernadora 2027</p>
+        <span className="font-serif font-black text-[1.4rem] tracking-[-0.03em] text-[var(--crema)] block mb-[0.3rem]">Plataforma Digital <em className="italic text-[var(--magenta)]">Municipal</em></span>
+        <p className="font-serif italic text-[0.8rem] text-[var(--crema)]/50 mb-[1.5rem]">Infraestructura ciudadana para la gobernanza efectiva</p>
         
         <div className="text-[0.6rem] text-[var(--crema)]/30 max-w-[500px] mx-auto space-y-2 mb-[1.5rem]">
           <p>© 2026 ConnectaX. Todos los derechos reservados.</p>
-          <p>Propiedad intelectual exclusiva de ConnectaX. Desarrollo tecnológico integral con colaboración estratégica de Google Cloud y tecnologías de Inteligencia Artificial avanzadas de Google.</p>
+          <p>Propiedad intelectual exclusiva de ConnectaX. Desarrollo tecnológico integral con colaboración estratégica de Google Cloud.</p>
         </div>
 
         <div className="h-[2px] w-[60px] mx-auto my-[0.9rem] rounded-[2px]" style={{background:'linear-gradient(90deg,var(--magenta),var(--solar),var(--turq))'}}></div>

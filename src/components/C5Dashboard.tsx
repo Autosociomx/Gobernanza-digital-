@@ -23,11 +23,14 @@ import {
   Coins,
   FileText,
   ShieldCheck,
-  ChevronLeft
+  ChevronLeft,
+  Brain
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { NayaritMap } from './NayaritMap';
+import { ParlamentoView } from './dashboard/ParlamentoView';
+import { AnalisisPoliticoView } from './dashboard/AnalisisPoliticoView';
 
 type Language = 'es' | 'cora' | 'wixarika';
 
@@ -47,7 +50,7 @@ import {
   Legend
 } from 'recharts';
 
-type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio' | 'interoperabilidad';
+type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio' | 'metricas' | 'parlamento' | 'analisis_politico' | 'interoperabilidad';
 
 export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
   const [activeModule, setActiveModule] = useState<ModuleType>(() => (localStorage.getItem('activeModule') as ModuleType) || 'tesoreria');
@@ -67,6 +70,8 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
     { id: 'agrovision', name: 'Agrovisión 3D', icon: TrendingUp, color: 'text-green-500', bg: 'bg-green-500/10' },
     { id: 'observatorio', name: 'Observatorio Digital', icon: Activity, color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
     { id: 'metricas', name: 'Métricas Integrales', icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
+    { id: 'parlamento', name: 'Parlamento Municipal', icon: Users, color: 'text-indigo-400', bg: 'bg-indigo-400/10' },
+    { id: 'analisis_politico', name: 'Análisis Estratégico', icon: Brain, color: 'text-purple-400', bg: 'bg-purple-400/10' },
     { id: 'interoperabilidad', name: 'Nodo Transparencia', icon: Building2, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
   ] as const;
 
@@ -176,6 +181,8 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
               {activeModule === 'agrovision' && <AgrovisionView />}
               {activeModule === 'observatorio' && <ObservatorioView />}
               {activeModule === 'metricas' && <MetricView />}
+              {activeModule === 'parlamento' && <ParlamentoView />}
+              {activeModule === 'analisis_politico' && <AnalisisPoliticoView />}
               {activeModule === 'interoperabilidad' && <InteroperabilidadView />}
             </motion.div>
           </AnimatePresence>

@@ -29,7 +29,7 @@ import {
   import { cn } from '../lib/utils';
   import { NayaritMap } from './NayaritMap';
 import { TepictuSalud } from './TepictuSalud';
-import { ForumView } from './ForumView';
+import { ParlamentoView } from './dashboard/ParlamentoView';
 import { NotificationView } from './NotificationView';
 import { LoginView } from './LoginView';
 import { CompleteProfileView } from './CompleteProfileView';
@@ -150,6 +150,7 @@ export function CitizenApp({
       ai_greet: "Pue'en Juan! Ne'ij tyu'iti'in Nayarit Digital. Ne'ij amu'u ne'itye tyu'uti'in...",
       home: "Tyu'un",
       forum: "Tyu'uchal",
+      networks: "Tyu'uredes",
       payments: "Tyu'upay",
       services: "Tyu'useve",
       profile: "Pēfi'i",
@@ -160,6 +161,7 @@ export function CitizenApp({
       ai_greet: "¡Ke tsi' kaniu Juan! Ne keniu Asistente Nayarit Digital. ¿Kewa pikanetsi'iwau?",
       home: "Haux",
       forum: "Chime",
+      networks: "Tyu'uredes",
       payments: "Paka",
       services: "Yereta",
       profile: "Kewita",
@@ -333,7 +335,7 @@ export function CitizenApp({
                 />
               )}
               {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} />}
-              {activeTab === 'forum' && <ForumView onBack={() => setActiveTab('home')} />}
+              {activeTab === 'forum' && <ParlamentoView onBack={() => setActiveTab('home')} />}
               {activeTab === 'payments' && <PaymentsView onPay={(item: any) => setPayingItem(item)} onBack={() => setActiveTab('home')} />}
               {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} onBack={() => setActiveTab('home')} />}
               {activeTab === 'profile' && <ProfileView profile={profile} onUpdate={updateProfile} onLogout={onLogout} onBack={() => setActiveTab('home')} onGoToSecurity={() => setActiveTab('security')} />}

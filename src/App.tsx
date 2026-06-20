@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GeraldineLanding } from './components/GeraldineLanding';
+import { PlatformLanding } from './components/PlatformLanding';
 import { C5Dashboard } from './components/C5Dashboard';
 import { CitizenApp } from './components/CitizenApp';
 import { DeveloperChecklist } from './components/DeveloperChecklist';
@@ -61,7 +61,7 @@ function App() {
 
   return (
     <div className="min-h-screen relative overflow-x-hidden">
-      <GeraldineLanding onNavigate={(view, subView, action) => {
+      <PlatformLanding onNavigate={(view, subView, action) => {
         if (view === 'citizen') {
           setCitizenTab(subView || 'home');
           setCitizenAction(action || null);
