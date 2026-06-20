@@ -1,0 +1,12 @@
+[build]
+  command = "vite build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# SPA routing — todas las rutas van a index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
