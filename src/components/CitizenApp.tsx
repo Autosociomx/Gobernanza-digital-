@@ -67,6 +67,8 @@ export function CitizenApp({
   const [loadingProfile, setLoadingProfile] = useState(true);
   const isProfileComplete = profile.name && profile.address && profile.documentId;
 
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
@@ -93,13 +95,32 @@ export function CitizenApp({
             setDoc(userDoc, initial).catch(err => handleFirestoreError(err, OperationType.UPDATE, `users/${u.uid}`));
           }
           setLoadingProfile(false);
+          setIsLoggingIn(false);
+        }, (err) => {
+          console.error("Firestore snapshot error:", err);
+          setLoadingProfile(false);
+          setIsLoggingIn(false);
         });
         return () => unsubDoc();
       } else {
         setLoadingProfile(false);
+        setIsLoggingIn(false);
       }
     });
-    return () => unsubscribe();
+
+    // Fallback security timeout for profile loading
+    const timer = setTimeout(() => {
+        if (loadingProfile) {
+            console.warn("Profile loading timed out.");
+            setLoadingProfile(false);
+            setIsLoggingIn(false);
+        }
+    }, 8000);
+
+    return () => {
+        unsubscribe();
+        clearTimeout(timer);
+    };
   }, []);
 
   const [showChat, setShowChat] = useState(initialAction === 'chat');
@@ -239,9 +260,14 @@ export function CitizenApp({
           <p className="mt-4 font-bold text-slate-400">Verificando sesión...</p>
         </div>
       ) : !user ? (
-        <LoginView onLogin={() => {}} />
+        <LoginView onLogin={() => setIsLoggingIn(true)} />
       ) : !isProfileComplete ? (
         <CompleteProfileView profile={profile} onUpdate={updateProfile} />
+      ) : isLoggingIn ? (
+        <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
+          <Loader2 className="w-8 h-8 animate-spin text-magenta-500" />
+          <p className="mt-4 font-bold text-slate-400">Autenticando...</p>
+        </div>
       ) : (
         <div className="flex justify-center bg-slate-100 min-h-screen">
           {/* Mobile Frame Simulation */}

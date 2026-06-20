@@ -50,8 +50,12 @@ import {
 type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio' | 'interoperabilidad';
 
 export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
-  const [activeModule, setActiveModule] = useState<ModuleType>('tesoreria');
+  const [activeModule, setActiveModule] = useState<ModuleType>(() => (localStorage.getItem('activeModule') as ModuleType) || 'tesoreria');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    localStorage.setItem('activeModule', activeModule);
+  }, [activeModule]);
 
   const modules = [
     { id: 'tesoreria', name: 'Tesorería Digital', icon: Building2, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
@@ -62,6 +66,7 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
     { id: 'ia', name: 'Asistente IA', icon: Bot, color: 'text-purple-500', bg: 'bg-purple-500/10' },
     { id: 'agrovision', name: 'Agrovisión 3D', icon: TrendingUp, color: 'text-green-500', bg: 'bg-green-500/10' },
     { id: 'observatorio', name: 'Observatorio Digital', icon: Activity, color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
+    { id: 'metricas', name: 'Métricas Integrales', icon: TrendingUp, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
     { id: 'interoperabilidad', name: 'Nodo Transparencia', icon: Building2, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
   ] as const;
 
@@ -170,6 +175,7 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
               {activeModule === 'ia' && <IAView />}
               {activeModule === 'agrovision' && <AgrovisionView />}
               {activeModule === 'observatorio' && <ObservatorioView />}
+              {activeModule === 'metricas' && <MetricView />}
               {activeModule === 'interoperabilidad' && <InteroperabilidadView />}
             </motion.div>
           </AnimatePresence>
@@ -666,17 +672,19 @@ function IAView() {
             <div className="relative">
               <input 
                 type="text"
+                aria-label="Introducir comando ejecutivo"
                 placeholder="Introducir comando ejecutivo..."
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                className="w-full bg-slate-900 border-2 border-slate-800 rounded-2xl px-6 py-6 text-white text-[1.15rem] pr-20 focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all font-bold placeholder:text-slate-800"
+                className="w-full bg-slate-900 border-2 border-slate-800 rounded-2xl px-6 py-4 text-white text-[1rem] pr-20 focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all font-bold placeholder:text-slate-800"
               />
               <button 
                 onClick={() => handleSendMessage()}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-4 bg-purple-600 text-white rounded-2xl shadow-xl hover:bg-purple-500 transition-all active:scale-90"
+                aria-label="Enviar"
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-purple-600 text-white rounded-xl shadow-xl hover:bg-purple-500 transition-all active:scale-90"
               >
-                <Send className="w-6 h-6" />
+                <Send className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -1201,6 +1209,38 @@ function BienestarView() {
           <div className="w-2 h-2 rounded-full bg-pink-500"></div>
           Sincronizando padrones...
         </span>
+      </div>
+    </div>
+  );
+}
+
+function MetricView() {
+  const data = [
+    { name: 'Jan', value: 400 },
+    { name: 'Feb', value: 300 },
+    { name: 'Mar', value: 600 },
+    { name: 'Apr', value: 800 },
+    { name: 'May', value: 500 },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <h3 className="text-2xl font-black text-white uppercase tracking-tighter">Métricas Integrales de Gobierno</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-[#161920] border border-slate-800 p-6 rounded-2xl">
+          <h4 className="text-sm font-semibold text-slate-400 mb-4">Adopción de Servicios Digitales</h4>
+          <div className="h-[250px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#2d3748" />
+                <XAxis dataKey="name" stroke="#a0aec0" />
+                <YAxis stroke="#a0aec0" />
+                <Tooltip />
+                <Bar dataKey="value" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
       </div>
     </div>
   );

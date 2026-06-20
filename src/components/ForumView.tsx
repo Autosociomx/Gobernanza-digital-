@@ -124,7 +124,7 @@ export function ForumView({ onBack }: { onBack?: () => void }) {
                      </button>
                    )}
                   <div className="flex flex-col">
-                     <h2 className="text-xl font-serif font-black text-slate-900 tracking-tight">Foro Ciudadano</h2>
+                     <h2 className="text-xl font-serif font-black text-slate-900 tracking-tight">Parlamento Municipal</h2>
                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Nayarit ID · Comunidad</p>
                   </div>
                </div>
