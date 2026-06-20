@@ -306,60 +306,12 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
         <motion.div initial={{opacity:0,y:28}} animate={{opacity:1,y:0}} transition={{delay:0.4, duration:0.9}} className="relative z-10 w-full max-w-[300px] md:max-w-full mx-auto md:-order-none order-first">
           <div className="foto-frame group relative">
             <div className="absolute -inset-4 bg-gradient-to-r from-[var(--magenta)] to-[var(--solar)] opacity-30 blur-2xl rounded-full transition-all group-hover:opacity-50"></div>
-            <div className="w-full aspect-[3/4] bg-gradient-to-b from-[var(--tinta)] to-[#0d1530] rounded-[1rem] relative z-10 overflow-hidden flex flex-col items-center justify-center gap-0 select-none">
-              {/* Estrellas de fondo */}
-              {[...Array(18)].map((_,i) => (
-                <div key={i} className="absolute w-0.5 h-0.5 bg-white/20 rounded-full" style={{ top:`${Math.sin(i*37)*45+50}%`, left:`${Math.cos(i*53)*45+50}%` }} />
-              ))}
-              {/* Silueta de Tepic */}
-              <svg viewBox="0 0 300 120" className="absolute bottom-0 left-0 right-0 w-full opacity-10" fill="white">
-                <path d="M0,120 L0,80 L20,80 L20,60 L30,60 L30,40 L35,40 L35,20 L38,20 L38,15 L40,10 L42,15 L42,20 L45,20 L45,40 L50,40 L50,60 L60,60 L60,70 L80,70 L80,65 L85,65 L85,55 L90,50 L95,55 L95,65 L110,65 L110,70 L130,70 L130,75 L150,75 L150,70 L170,70 L170,65 L190,65 L190,70 L210,70 L210,65 L220,65 L220,60 L225,55 L230,60 L230,65 L240,65 L240,70 L260,70 L260,75 L280,75 L280,80 L300,80 L300,120 Z" />
-              </svg>
-              {/* Teléfono mockup */}
-              <div className="relative w-[55%] mx-auto mt-6">
-                <div className="bg-white rounded-[2rem] shadow-2xl shadow-black/50 overflow-hidden border-4 border-white/10 aspect-[9/19]">
-                  {/* Status bar */}
-                  <div className="bg-[var(--tinta)] px-3 pt-2 pb-1 flex justify-between items-center">
-                    <span className="text-white text-[6px] font-bold">9:41</span>
-                    <div className="w-8 h-2 bg-black rounded-full" />
-                    <span className="text-white text-[6px] font-bold">▣▣▣</span>
-                  </div>
-                  {/* App header */}
-                  <div className="bg-[var(--tinta)] px-3 pb-3">
-                    <p className="text-[5px] font-black uppercase tracking-widest text-[var(--magenta)]">Nayarit Digital</p>
-                    <p className="text-[8px] font-serif font-black text-white">Hola, Ciudadano</p>
-                  </div>
-                  {/* Content */}
-                  <div className="bg-white p-2 space-y-1.5 flex-1">
-                    {/* QR card */}
-                    <div className="rounded-xl p-2 text-white text-[5px] font-black" style={{background:'linear-gradient(135deg,var(--magenta),#6B0040)'}}>
-                      ▣ QR Mágico · 12 Pagos
-                    </div>
-                    {/* Services grid */}
-                    <div className="grid grid-cols-2 gap-1">
-                      {['💧 Mi Agua','🏠 Predial','🏥 Salud','📋 Reportar'].map(s => (
-                        <div key={s} className="bg-slate-50 rounded-lg p-1.5 text-[4.5px] font-bold text-slate-700">{s}</div>
-                      ))}
-                    </div>
-                    {/* Stats */}
-                    <div className="bg-slate-900 rounded-lg p-1.5">
-                      <p className="text-[4px] text-slate-400 font-bold uppercase">Trazabilidad</p>
-                      <p className="text-[5px] text-white font-black">Reencarpetamiento 65%</p>
-                    </div>
-                  </div>
-                </div>
-                {/* Glow */}
-                <div className="absolute -inset-4 bg-[var(--magenta)]/20 rounded-full blur-2xl -z-10" />
-              </div>
-              {/* Stats flotantes */}
-              <div className="absolute top-4 right-4 bg-white/10 backdrop-blur-sm rounded-xl p-2 text-center border border-white/10">
-                <p className="text-white font-black text-sm leading-none">2,410</p>
-                <p className="text-white/60 text-[7px] font-bold uppercase">ciudadanos</p>
-              </div>
-              <div className="absolute bottom-16 left-3 bg-[var(--magenta)]/80 backdrop-blur-sm rounded-xl p-2 text-center border border-white/10">
-                <p className="text-white font-black text-xs leading-none">$4.2M</p>
-                <p className="text-white/80 text-[7px] font-bold uppercase">recaudado</p>
-              </div>
+            <div className="w-full aspect-[3/4] rounded-[1rem] relative z-10 overflow-hidden shadow-2xl">
+              <img
+                src="/nayarit-digital-hero.png"
+                alt="Nayarit Digital — Gobernanza inteligente, territorio conectado"
+                className="w-full h-full object-cover object-top"
+              />
             </div>
             {/* Slogan Badge */}
             <motion.div 
