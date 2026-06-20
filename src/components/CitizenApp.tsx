@@ -24,7 +24,8 @@ import {
   LayoutGrid,
   Bot,
   Sparkles,
-  Store
+  Store,
+  Banknote
 } from 'lucide-react';
   import { motion, AnimatePresence } from 'motion/react';
   import { cn } from '../lib/utils';
@@ -41,6 +42,7 @@ import { QRMagicoView } from './QRMagicoView';
 import { ReporteIncidenciaView } from './ReporteIncidenciaView';
 import { ActasInstantaneasView } from './ActasInstantaneasView';
 import { LicenciasDigitalesView } from './LicenciasDigitalesView';
+import { FaroFiscalView } from './FaroFiscalView';
 
 import { db, auth, handleFirestoreError, OperationType, getRedirectResult } from '../firebase';
 import { doc, getDoc, setDoc, onSnapshot, collection, query, where, getDocs, addDoc } from 'firebase/firestore';
@@ -139,6 +141,7 @@ export function CitizenApp({
   const [reporteIncidenciaInitialType, setReporteIncidenciaInitialType] = useState<string | undefined>(undefined);
   const [showActas, setShowActas] = useState(false);
   const [showLicencias, setShowLicencias] = useState(false);
+  const [showFaro, setShowFaro] = useState(false);
   const [selectedWork, setSelectedWork] = useState<any>(null);
   const [payingItem, setPayingItem] = useState<any>(null);
   const [paymentStep, setPaymentStep] = useState<'idle' | 'processing' | 'success' | 'cash_instructions'>('idle');
@@ -351,7 +354,7 @@ export function CitizenApp({
               {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} />}
               {activeTab === 'forum' && <ParlamentoView onBack={() => setActiveTab('home')} />}
               {activeTab === 'payments' && <PaymentsView onPay={(item: any) => setPayingItem(item)} onBack={() => setActiveTab('home')} onOpenQRMagico={() => setShowQRMagico(true)} />}
-              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} onBack={() => setActiveTab('home')} onOpenReporte={(type) => { setReporteIncidenciaInitialType(type); setShowReporteIncidencia(true); }} onOpenActas={() => setShowActas(true)} onOpenLicencias={() => setShowLicencias(true)} />}
+              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} onBack={() => setActiveTab('home')} onOpenReporte={(type) => { setReporteIncidenciaInitialType(type); setShowReporteIncidencia(true); }} onOpenActas={() => setShowActas(true)} onOpenLicencias={() => setShowLicencias(true)} onOpenFaro={() => setShowFaro(true)} />}
               {activeTab === 'profile' && <ProfileView profile={profile} onUpdate={updateProfile} onLogout={onLogout} onBack={() => setActiveTab('home')} onGoToSecurity={() => setActiveTab('security')} />}
               {activeTab === 'security' && <SecurityCenterView onBack={() => setActiveTab('profile')} />}
               {activeTab === 'notifications' && <NotificationView onBack={() => setActiveTab('home')} />}
@@ -584,6 +587,13 @@ export function CitizenApp({
         <AnimatePresence>
           {showLicencias && (
             <LicenciasDigitalesView onClose={() => setShowLicencias(false)} profile={profile} />
+          )}
+        </AnimatePresence>
+
+        {/* Faro Fiscal Overlay */}
+        <AnimatePresence>
+          {showFaro && (
+            <FaroFiscalView onClose={() => setShowFaro(false)} profile={profile} />
           )}
         </AnimatePresence>
 
@@ -1214,7 +1224,7 @@ function PaymentsView({ onPay, onBack, onOpenQRMagico }: { onPay: (item: any) =>
   );
 }
 
-function ServicesView({ onShowTriage, onBack, onOpenReporte, onOpenActas, onOpenLicencias }: { onShowTriage: () => void, onBack: () => void, onOpenReporte: (type?: string) => void, onOpenActas: () => void, onOpenLicencias: () => void }) {
+function ServicesView({ onShowTriage, onBack, onOpenReporte, onOpenActas, onOpenLicencias, onOpenFaro }: { onShowTriage: () => void, onBack: () => void, onOpenReporte: (type?: string) => void, onOpenActas: () => void, onOpenLicencias: () => void, onOpenFaro: () => void }) {
   return (
     <div className="pt-2 space-y-8">
       <ViewHeader title="Centro de Servicios" onBack={onBack} />
@@ -1273,6 +1283,24 @@ function ServicesView({ onShowTriage, onBack, onOpenReporte, onOpenActas, onOpen
                ))}
             </div>
          </div>
+
+         {/* Faro Fiscal CTA */}
+         <button
+           onClick={onOpenFaro}
+           className="w-full flex items-center justify-between p-5 rounded-[2rem] text-white overflow-hidden relative group active:scale-[0.98] transition-all"
+           style={{ background: 'linear-gradient(135deg, #121838 0%, #2d1b69 100%)' }}
+         >
+           <div className="flex items-center gap-4 relative z-10">
+             <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
+               <Banknote className="w-6 h-6 text-amber-400" />
+             </div>
+             <div className="text-left">
+               <p className="text-sm font-black text-white">Faro Fiscal</p>
+               <p className="text-[9px] text-white/60 font-bold uppercase tracking-tight">¿El SAT te debe dinero? Descúbrelo</p>
+             </div>
+           </div>
+           <ChevronRight className="w-5 h-5 text-white/40 relative z-10" />
+         </button>
 
          {/* Licencias Digitales CTA */}
          <button
