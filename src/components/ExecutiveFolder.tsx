@@ -21,9 +21,10 @@ import { BrigadaFieldView } from './BrigadaFieldView';
 import { Whitepaper } from './Whitepaper';
 import { PitchDefense } from './PitchDefense';
 import { RoadmapArchitectureView } from './dashboard/RoadmapArchitectureView';
+import { MarcoEticoIA } from './MarcoEticoIA';
 
 export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
-  const [activeView, setActiveView] = useState<'main' | 'demo' | 'whitepaper' | 'defense' | 'roadmap'>('main');
+  const [activeView, setActiveView] = useState<'main' | 'demo' | 'whitepaper' | 'defense' | 'roadmap' | 'etica'>('main');
 
   if (activeView === 'demo') {
     return (
@@ -79,13 +80,29 @@ export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
   if (activeView === 'defense') {
     return (
       <div className="min-h-screen bg-slate-950 flex flex-col px-4 md:px-12 py-8">
-        <button 
+        <button
           onClick={() => setActiveView('main')}
           className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-xs font-black uppercase tracking-widest mb-8 w-fit mx-auto"
         >
           <ChevronLeft className="w-4 h-4" /> Volver a la Carpeta
         </button>
         <PitchDefense />
+      </div>
+    );
+  }
+
+  if (activeView === 'etica') {
+    return (
+      <div className="min-h-screen bg-[#0a0a0c] flex flex-col">
+        <div className="sticky top-0 z-50 bg-[#161920]/80 backdrop-blur border-b border-slate-800 px-4 py-3">
+          <button
+            onClick={() => setActiveView('main')}
+            className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-xs font-black uppercase tracking-widest"
+          >
+            <ChevronLeft className="w-4 h-4" /> Volver a la Carpeta
+          </button>
+        </div>
+        <MarcoEticoIA />
       </div>
     );
   }
@@ -227,28 +244,35 @@ export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
                     <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--tinta)]">Estrategia Sectorial: BrigadaMX</h2>
                  </div>
                  <div className="flex flex-wrap items-center gap-3">
-                   <button 
+                   <button
                      onClick={() => setActiveView('roadmap')}
                      className="bg-emerald-600 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-500/20 flex items-center gap-2"
                    >
                      <Map className="w-4 h-4" />
                      Roadmap Lanzamiento
                    </button>
-                   <button 
+                   <button
                      onClick={() => setActiveView('whitepaper')}
                      className="bg-indigo-600 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-500/20 flex items-center gap-2"
                    >
                      <BookOpen className="w-4 h-4" />
                      Leer Whitepaper Ley Digital
                    </button>
-                   <button 
+                   <button
                      onClick={() => setActiveView('defense')}
                      className="bg-rose-500 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-rose-400 transition-colors shadow-lg shadow-rose-500/20 flex items-center gap-2"
                    >
                      <Swords className="w-4 h-4" />
                      War Room (Objeciones)
                    </button>
-                   <button 
+                   <button
+                     onClick={() => setActiveView('etica')}
+                     className="bg-violet-600 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-violet-500 transition-colors shadow-lg shadow-violet-500/20 flex items-center gap-2"
+                   >
+                     <ShieldCheck className="w-4 h-4" />
+                     Marco Ético IA
+                   </button>
+                   <button
                      onClick={() => setActiveView('demo')}
                      className="bg-slate-900 border border-slate-800 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-[var(--magenta)] transition-colors shadow-lg shadow-black/20 mt-2 sm:mt-0"
                    >
