@@ -1,9 +1,9 @@
 import React from 'react';
-import { Search, Stethoscope, Lightbulb, ShieldCheck, Droplets, Plus, ChevronRight } from 'lucide-react';
+import { Search, Stethoscope, Lightbulb, ShieldCheck, Droplets, Plus, ChevronRight, FileText } from 'lucide-react';
 import { ViewHeader } from './shared';
 import { cn } from '../../lib/utils';
 
-export function ServicesView({ onShowTriage, onBack }: { onShowTriage: () => void, onBack: () => void }) {
+export function ServicesView({ onShowTriage, onBack, onShowTramites }: { onShowTriage: () => void, onBack: () => void, onShowTramites: () => void }) {
   return (
     <div className="pt-2 space-y-8">
       <ViewHeader title="Centro de Servicios" onBack={onBack} />
@@ -68,12 +68,19 @@ export function ServicesView({ onShowTriage, onBack }: { onShowTriage: () => voi
           <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Trámites Administrativos</h3>
           <div className="bg-white rounded-[2rem] border border-slate-100 divide-y divide-slate-50 overflow-hidden">
             {['Licencia de Funcionamiento', 'Permiso de Construcción', 'Uso de Suelo', 'Actas de Nacimiento'].map(s => (
-              <div key={s} className="px-8 py-5 flex justify-between items-center hover:bg-slate-50 cursor-pointer transition-colors">
+              <button key={s} onClick={onShowTramites} className="w-full px-8 py-5 flex justify-between items-center hover:bg-slate-50 cursor-pointer transition-colors text-left">
                 <span className="text-sm font-bold text-slate-700">{s}</span>
                 <ChevronRight className="w-4 h-4 text-slate-300" />
-              </div>
+              </button>
             ))}
           </div>
+          <button
+            onClick={onShowTramites}
+            className="w-full py-4 bg-slate-900 text-white rounded-[1.5rem] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-transform"
+          >
+            <FileText className="w-4 h-4" />
+            Ver Mis Trámites y Folios
+          </button>
         </div>
       </div>
     </div>

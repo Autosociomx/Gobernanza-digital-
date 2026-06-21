@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Home, 
-  CreditCard, 
-  FileText, 
-  User, 
-  MessageSquare, 
+import {
+  Home,
+  CreditCard,
+  FileText,
+  User,
+  MessageSquare,
   Plus,
   Bell,
   Search,
@@ -23,7 +23,9 @@ import {
   ShieldCheck,
   LayoutGrid,
   Bot,
-  Sparkles
+  Sparkles,
+  FolderOpen,
+  ScrollText
 } from 'lucide-react';
   import { motion, AnimatePresence } from 'motion/react';
   import { cn } from '../lib/utils';
@@ -34,6 +36,8 @@ import { NotificationView } from './NotificationView';
 import { LoginView } from './LoginView';
 import { CompleteProfileView } from './CompleteProfileView';
 import { CredentialScannerView } from './CredentialScannerView';
+import { ExpedienteUnicoView } from './ExpedienteUnicoView';
+import { TramiteTracker } from './TramiteTracker';
 import { QRCodeSVG } from 'qrcode.react';
 import JsBarcode from 'jsbarcode';
 import { TabButton, QuickAction, ViewHeader } from '../blocks/ruta/shared';
@@ -133,6 +137,8 @@ export function CitizenApp({
   const [showChat, setShowChat] = useState(initialAction === 'chat');
   const [showMap, setShowMap] = useState(initialAction === 'map');
   const [showTriage, setShowTriage] = useState(initialAction === 'triage');
+  const [showExpediente, setShowExpediente] = useState(false);
+  const [showTramites, setShowTramites] = useState(false);
   const [selectedWork, setSelectedWork] = useState<any>(null);
   const [payingItem, setPayingItem] = useState<any>(null);
   const [paymentStep, setPaymentStep] = useState<'idle' | 'processing' | 'success' | 'cash_instructions'>('idle');
@@ -344,8 +350,8 @@ export function CitizenApp({
               {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} />}
               {activeTab === 'forum' && <ParlamentoView onBack={() => setActiveTab('home')} />}
               {activeTab === 'payments' && <PaymentsView onPay={(item: any) => setPayingItem(item)} onBack={() => setActiveTab('home')} />}
-              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} onBack={() => setActiveTab('home')} />}
-              {activeTab === 'profile' && <ProfileView profile={profile} onUpdate={updateProfile} onLogout={onLogout} onBack={() => setActiveTab('home')} onGoToSecurity={() => setActiveTab('security')} />}
+              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} onBack={() => setActiveTab('home')} onShowTramites={() => setShowTramites(true)} />}
+              {activeTab === 'profile' && <ProfileView profile={profile} onUpdate={updateProfile} onLogout={onLogout} onBack={() => setActiveTab('home')} onGoToSecurity={() => setActiveTab('security')} onShowExpediente={() => setShowExpediente(true)} />}
               {activeTab === 'security' && <SecurityCenterView onBack={() => setActiveTab('profile')} />}
               {activeTab === 'notifications' && <NotificationView onBack={() => setActiveTab('home')} />}
 
@@ -556,6 +562,20 @@ export function CitizenApp({
                    </motion.div>
                 )}
              </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Expediente Único Overlay */}
+        <AnimatePresence>
+          {showExpediente && (
+            <ExpedienteUnicoView onClose={() => setShowExpediente(false)} />
+          )}
+        </AnimatePresence>
+
+        {/* Trámites Overlay */}
+        <AnimatePresence>
+          {showTramites && (
+            <TramiteTracker onClose={() => setShowTramites(false)} />
           )}
         </AnimatePresence>
 

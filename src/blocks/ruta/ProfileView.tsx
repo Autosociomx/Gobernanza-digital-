@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ShieldCheck, ChevronLeft, Sparkles } from 'lucide-react';
+import { ShieldCheck, ChevronLeft, Sparkles, FolderOpen } from 'lucide-react';
 import { ViewHeader } from './shared';
 import { CredentialScannerView } from '../../components/CredentialScannerView';
 import { auth } from '../../firebase';
@@ -10,13 +10,15 @@ export function ProfileView({
   onLogout,
   onBack,
   onGoToSecurity,
-  onUpdate
+  onUpdate,
+  onShowExpediente,
 }: {
   profile: any,
   onLogout: () => void,
   onBack: () => void,
   onGoToSecurity: () => void,
-  onUpdate: (data: any) => void
+  onUpdate: (data: any) => void,
+  onShowExpediente: () => void,
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [localProfile, setLocalProfile] = useState(profile);
@@ -136,8 +138,18 @@ export function ProfileView({
         </div>
       </div>
 
-      {/* Security Link */}
+      {/* Menu Links */}
       <div className="space-y-3">
+        <button
+          onClick={onShowExpediente}
+          className="w-full bg-white px-8 py-6 rounded-[2rem] shadow-sm border border-slate-100/50 text-left flex items-center justify-between group transition-all hover:bg-slate-50"
+        >
+          <div>
+            <span className="text-lg font-bold text-slate-800 block">Expediente Único</span>
+            <span className="text-[10px] text-slate-400 uppercase font-black tracking-widest">Bóveda de Documentos · Cero Papel</span>
+          </div>
+          <FolderOpen className="w-5 h-5 text-indigo-500" />
+        </button>
         <button
           onClick={onGoToSecurity}
           className="w-full bg-white px-8 py-6 rounded-[2rem] shadow-sm border border-slate-100/50 text-left flex items-center justify-between group transition-all hover:bg-slate-50"
