@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Home, 
-  CreditCard, 
-  FileText, 
-  User, 
-  MessageSquare, 
+import {
+  Home,
+  CreditCard,
+  FileText,
+  User,
+  MessageSquare,
   Plus,
   Bell,
   Search,
@@ -23,7 +23,9 @@ import {
   ShieldCheck,
   LayoutGrid,
   Bot,
-  Sparkles
+  Sparkles,
+  FolderOpen,
+  ScrollText
 } from 'lucide-react';
   import { motion, AnimatePresence } from 'motion/react';
   import { cn } from '../lib/utils';
@@ -34,6 +36,8 @@ import { NotificationView } from './NotificationView';
 import { LoginView } from './LoginView';
 import { CompleteProfileView } from './CompleteProfileView';
 import { CredentialScannerView } from './CredentialScannerView';
+import { ExpedienteUnicoView } from './ExpedienteUnicoView';
+import { TramiteTracker } from './TramiteTracker';
 import { QRCodeSVG } from 'qrcode.react';
 import JsBarcode from 'jsbarcode';
 
@@ -126,6 +130,8 @@ export function CitizenApp({
   const [showChat, setShowChat] = useState(initialAction === 'chat');
   const [showMap, setShowMap] = useState(initialAction === 'map');
   const [showTriage, setShowTriage] = useState(initialAction === 'triage');
+  const [showExpediente, setShowExpediente] = useState(false);
+  const [showTramites, setShowTramites] = useState(false);
   const [selectedWork, setSelectedWork] = useState<any>(null);
   const [payingItem, setPayingItem] = useState<any>(null);
   const [paymentStep, setPaymentStep] = useState<'idle' | 'processing' | 'success' | 'cash_instructions'>('idle');
@@ -337,8 +343,8 @@ export function CitizenApp({
               {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} />}
               {activeTab === 'forum' && <ParlamentoView onBack={() => setActiveTab('home')} />}
               {activeTab === 'payments' && <PaymentsView onPay={(item: any) => setPayingItem(item)} onBack={() => setActiveTab('home')} />}
-              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} onBack={() => setActiveTab('home')} />}
-              {activeTab === 'profile' && <ProfileView profile={profile} onUpdate={updateProfile} onLogout={onLogout} onBack={() => setActiveTab('home')} onGoToSecurity={() => setActiveTab('security')} />}
+              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} onBack={() => setActiveTab('home')} onShowTramites={() => setShowTramites(true)} />}
+              {activeTab === 'profile' && <ProfileView profile={profile} onUpdate={updateProfile} onLogout={onLogout} onBack={() => setActiveTab('home')} onGoToSecurity={() => setActiveTab('security')} onShowExpediente={() => setShowExpediente(true)} />}
               {activeTab === 'security' && <SecurityCenterView onBack={() => setActiveTab('profile')} />}
               {activeTab === 'notifications' && <NotificationView onBack={() => setActiveTab('home')} />}
 
@@ -549,6 +555,20 @@ export function CitizenApp({
                    </motion.div>
                 )}
              </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Expediente Único Overlay */}
+        <AnimatePresence>
+          {showExpediente && (
+            <ExpedienteUnicoView onClose={() => setShowExpediente(false)} />
+          )}
+        </AnimatePresence>
+
+        {/* Trámites Overlay */}
+        <AnimatePresence>
+          {showTramites && (
+            <TramiteTracker onClose={() => setShowTramites(false)} />
           )}
         </AnimatePresence>
 
@@ -1120,7 +1140,7 @@ function PaymentsView({ onPay, onBack }: { onPay: (item: any) => void, onBack: (
   );
 }
 
-function ServicesView({ onShowTriage, onBack }: { onShowTriage: () => void, onBack: () => void }) {
+function ServicesView({ onShowTriage, onBack, onShowTramites }: { onShowTriage: () => void, onBack: () => void, onShowTramites: () => void }) {
   return (
     <div className="pt-2 space-y-8">
       <ViewHeader title="Centro de Servicios" onBack={onBack} />
@@ -1185,30 +1205,39 @@ function ServicesView({ onShowTriage, onBack }: { onShowTriage: () => void, onBa
             <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Trámites Administrativos</h3>
             <div className="bg-white rounded-[2rem] border border-slate-100 divide-y divide-slate-50 overflow-hidden">
                {['Licencia de Funcionamiento', 'Permiso de Construcción', 'Uso de Suelo', 'Actas de Nacimiento'].map(s => (
-                 <div key={s} className="px-8 py-5 flex justify-between items-center hover:bg-slate-50 cursor-pointer transition-colors">
+                 <button key={s} onClick={onShowTramites} className="w-full px-8 py-5 flex justify-between items-center hover:bg-slate-50 cursor-pointer transition-colors text-left">
                     <span className="text-sm font-bold text-slate-700">{s}</span>
                     <ChevronRight className="w-4 h-4 text-slate-300" />
-                 </div>
+                 </button>
                ))}
             </div>
+            <button
+              onClick={onShowTramites}
+              className="w-full py-4 bg-slate-900 text-white rounded-[1.5rem] font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-transform"
+            >
+              <FileText className="w-4 h-4" />
+              Ver Mis Trámites y Folios
+            </button>
          </div>
       </div>
     </div>
   );
 }
 
-function ProfileView({ 
-  profile, 
-  onLogout, 
-  onBack, 
+function ProfileView({
+  profile,
+  onLogout,
+  onBack,
   onGoToSecurity,
-  onUpdate
-}: { 
+  onUpdate,
+  onShowExpediente,
+}: {
   profile: any,
-  onLogout: () => void, 
-  onBack: () => void, 
+  onLogout: () => void,
+  onBack: () => void,
   onGoToSecurity: () => void,
-  onUpdate: (data: any) => void
+  onUpdate: (data: any) => void,
+  onShowExpediente: () => void,
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [localProfile, setLocalProfile] = useState(profile);
@@ -1332,7 +1361,17 @@ function ProfileView({
 
       {/* Block 2: Menu Items */}
       <div className="space-y-3">
-         <button 
+         <button
+           onClick={onShowExpediente}
+           className="w-full bg-white px-8 py-6 rounded-[2rem] shadow-sm border border-slate-100/50 text-left flex items-center justify-between group transition-all hover:bg-slate-50"
+         >
+            <div>
+              <span className="text-lg font-bold text-slate-800 block">Expediente Único</span>
+              <span className="text-[10px] text-slate-400 uppercase font-black tracking-widest">Bóveda de Documentos · Cero Papel</span>
+            </div>
+            <FolderOpen className="w-5 h-5 text-indigo-500" />
+         </button>
+         <button
            onClick={onGoToSecurity}
            className="w-full bg-white px-8 py-6 rounded-[2rem] shadow-sm border border-slate-100/50 text-left flex items-center justify-between group transition-all hover:bg-slate-50"
          >
