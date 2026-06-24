@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { db, handleFirestoreError } from '../firebase';
-import { doc, onSnapshot, collection, addDoc, updateDoc, increment } from 'firebase/firestore';
+import { doc, onSnapshot, collection, addDoc, updateDoc, increment, getDocs, query, where } from 'firebase/firestore';
 import { User } from 'firebase/auth';
 import { motion } from 'motion/react';
-import { Gift, ChevronLeft, Ticket, CheckCircle2, ShieldCheck, Coins } from 'lucide-react';
+import { Gift, ChevronLeft, Ticket, CheckCircle2, ShieldCheck, Coins, AlertTriangle } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 export function CanjesView({ user, onBack }: { user: User, onBack: () => void }) {
   const [puntos, setPuntos] = useState(0);
+  const [canjeError, setCanjeError] = useState('');
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
 
@@ -30,36 +31,42 @@ export function CanjesView({ user, onBack }: { user: User, onBack: () => void })
   ];
 
   const handleCanjear = async (b: any) => {
+    setCanjeError('');
     if (puntos < b.cost) {
-      alert('Puntos insuficientes');
+      setCanjeError('Puntos insuficientes para este beneficio.');
       return;
     }
     setLoading(true);
     try {
-      // Create code
+      // Verificar que no exista ya un canje activo del mismo beneficio (prevención doble canje)
+      const canjesRef = collection(db, `canjes/${user.uid}/lista`);
+      const existente = await getDocs(query(canjesRef, where('beneficioId', '==', b.id), where('redimido', '==', false)));
+      if (!existente.empty) {
+        setCanjeError('Ya tienes un canje activo de este beneficio. Úsalo antes de solicitar uno nuevo.');
+        setLoading(false);
+        return;
+      }
+
       const code = `CANJE-${Date.now().toString(36).toUpperCase()}-TEP`;
-      
-      // Add canje
-      await addDoc(collection(db, `canjes/${user.uid}/lista`), {
+
+      // Registrar canje con flag redimido: false
+      await addDoc(canjesRef, {
         beneficioId: b.id,
         label: b.label,
         cost: b.cost,
         code,
+        redimido: false,
         createdAt: new Date().toISOString()
       });
 
-      // Deduct points
-      await updateDoc(doc(db, 'puntos', user.uid), {
-        total: increment(-b.cost)
-      }).catch(async () => {
-         // if doc doesn't exist yet, although it should because they have points
-      });
+      // Descontar puntos
+      await updateDoc(doc(db, 'puntos', user.uid), { total: increment(-b.cost) });
 
-      setSuccessMsg(`¡Canjeado con éxito! Código: ${code}`);
-      setTimeout(() => setSuccessMsg(''), 5000);
+      setSuccessMsg(`¡Canjeado! Código: ${code}`);
+      setTimeout(() => setSuccessMsg(''), 6000);
     } catch (e: any) {
-       console.error(e);
-       alert('Error al canjear: ' + e.message);
+      console.error(e);
+      setCanjeError('Error al canjear. Intenta de nuevo.');
     } finally {
       setLoading(false);
     }
@@ -90,6 +97,13 @@ export function CanjesView({ user, onBack }: { user: User, onBack: () => void })
          <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mx-4 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center gap-3 text-emerald-800 text-sm font-bold shadow-sm">
             <CheckCircle2 className="w-5 h-5 text-emerald-500" />
             {successMsg}
+         </motion.div>
+      )}
+
+      {canjeError && (
+         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mx-4 p-4 bg-red-50 border border-red-200 rounded-2xl flex items-center gap-3 text-red-700 text-xs font-medium shadow-sm">
+            <AlertTriangle className="w-4 h-4 text-red-500 shrink-0" />
+            {canjeError}
          </motion.div>
       )}
 

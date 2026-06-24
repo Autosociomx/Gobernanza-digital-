@@ -33,18 +33,18 @@ html {
 }
 
 :root {
-  --magenta:  #1a73e8; /* Vibrant Gemini Blue */
-  --turq:     #188038; /* Subtle Teal/Green */
-  --solar:    #4285f4; /* Primary Blue */
-  --verde:    #34a853; /* Success/Green */
-  --coral:    #d93025; /* Alert/Red */
-  --morado:   #5e35b1; /* Deep Purple accent */
+  --magenta:  #E5007A; /* Rosa Wixarika — CTA principal */
+  --turq:     #00BCD4; /* Turquesa — acento secundario */
+  --solar:    #FFB300; /* Solar — dorado énfasis */
+  --verde:    #34a853; /* Verde bosque */
+  --coral:    #F44336; /* Coral — alerta */
+  --morado:   #6B3FA0; /* Morado — profundidad */
 
-  --tinta:    #001d3d; /* Darkest Navy */
-  --crema:    #f1f7fe; /* Pale blue-white */
-  --hueso:    #d1e2f3; /* Bone/Border Blue */
+  --tinta:    #001d3d; /* Azul marino — fondo principal */
+  --crema:    #f8f4ed; /* Crema cálida */
+  --hueso:    #e8ddd0; /* Hueso — bordes */
   --blanco:   #ffffff;
-  --gris:     #486581; /* Steel gray text */
+  --gris:     #5a5248; /* Gris cálido */
 
   --frau: 'Fraunces', serif;
   --inst: 'Instrument Sans', sans-serif;
@@ -94,8 +94,8 @@ body {
 .ojo:nth-child(2) { animation-delay: -2.3s; animation-duration: 7.5s; }
 .ojo:nth-child(3) { animation-delay: -4.1s; animation-duration: 8.5s; }
 @keyframes ojo-flotar {
-  0%,100% { transform: translateY(0); }
-  50%     { transform: translateY(-14px); }
+  0%,100% { translate: 0 0px; }
+  50%     { translate: 0 -14px; }
 }
 .ojo-giro::before, .ojo-giro::after {
   content: '';
@@ -150,6 +150,31 @@ body {
 .ojo-c .c3 { inset: 15px; border-width: 7px; border-color: var(--morado); }
 .ojo-c .c4 { inset: 22px; background: var(--blanco); }
 .ojo-c .c5, .ojo-c .c6 { display: none; }
+
+/* Patrón nierika grande — hero background */
+.nierika-hero-bg {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cpolygon points='80,6 154,80 80,154 6,80' fill='none' stroke='%23E5007A' stroke-width='2.5' opacity='0.5'/%3E%3Cpolygon points='80,24 136,80 80,136 24,80' fill='none' stroke='%2300BCD4' stroke-width='2' opacity='0.45'/%3E%3Cpolygon points='80,42 118,80 80,118 42,80' fill='none' stroke='%23FFB300' stroke-width='1.8' opacity='0.4'/%3E%3Cpolygon points='80,58 102,80 80,102 58,80' fill='none' stroke='%2334a853' stroke-width='1.4' opacity='0.35'/%3E%3Ccircle cx='80' cy='80' r='5' fill='%23FFB300' opacity='0.65'/%3E%3Ccircle cx='80' cy='6' r='4' fill='%23E5007A' opacity='0.65'/%3E%3Ccircle cx='154' cy='80' r='4' fill='%2300BCD4' opacity='0.65'/%3E%3Ccircle cx='80' cy='154' r='4' fill='%23E5007A' opacity='0.65'/%3E%3Ccircle cx='6' cy='80' r='4' fill='%2300BCD4' opacity='0.65'/%3E%3Cpolygon points='80,6 86,14 80,22 74,14' fill='%23E5007A' opacity='0.6'/%3E%3Cpolygon points='154,80 146,86 138,80 146,74' fill='%2300BCD4' opacity='0.6'/%3E%3Cpolygon points='80,154 86,146 80,138 74,146' fill='%23E5007A' opacity='0.6'/%3E%3Cpolygon points='6,80 14,86 22,80 14,74' fill='%2300BCD4' opacity='0.6'/%3E%3Cline x1='80' y1='6' x2='80' y2='154' stroke='%23FFB300' stroke-width='0.8' opacity='0.18'/%3E%3Cline x1='6' y1='80' x2='154' y2='80' stroke='%23FFB300' stroke-width='0.8' opacity='0.18'/%3E%3Cline x1='6' y1='6' x2='154' y2='154' stroke='%23F44336' stroke-width='0.6' opacity='0.1'/%3E%3Cline x1='154' y1='6' x2='6' y2='154' stroke='%23F44336' stroke-width='0.6' opacity='0.1'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+/* Slow-spin for the large background nierika diamond */
+.nierika-spin-slow {
+  animation: nierika-spin 90s linear infinite;
+  transform-origin: center center;
+}
+@keyframes nierika-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* 3D card hover effect */
+.card-3d {
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-style: preserve-3d;
+}
+.card-3d:hover {
+  transform: perspective(800px) rotateX(-4deg) rotateY(4deg) translateZ(8px);
+}
 
 @media (max-width: 820px) {
   .ojo-a { width: 110px; height: 110px; left: -8%; bottom: 2%; }

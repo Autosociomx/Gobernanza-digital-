@@ -21,6 +21,7 @@ export function MysteryShopperView({ user, onBack }: { user: User | null, onBack
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [formError, setFormError] = useState('');
 
   // Form State
   const [dependencia, setDependencia] = useState('');
@@ -42,10 +43,10 @@ export function MysteryShopperView({ user, onBack }: { user: User | null, onBack
 
   const handleSubmit = async () => {
     if (!dependencia || calificacion === 0 || intentoCorrupcion === null) {
-      alert("Por favor, completa los campos clave (Dependencia, Calificación y si hubo solicitud de soborno).");
+      setFormError('Completa los campos obligatorios: Dependencia, Calificación y si hubo solicitud de soborno.');
       return;
     }
-
+    setFormError('');
     setLoading(true);
     try {
       await addDoc(collection(db, 'auditorias_ciudadanas'), {
@@ -63,7 +64,7 @@ export function MysteryShopperView({ user, onBack }: { user: User | null, onBack
       setSuccess(true);
     } catch (error) {
       console.error(error);
-      alert('Error al enviar la auditoría.');
+      setFormError('Error al enviar la auditoría. Intenta de nuevo.');
     } finally {
       setLoading(false);
     }
@@ -243,7 +244,14 @@ export function MysteryShopperView({ user, onBack }: { user: User | null, onBack
              </div>
           </div>
 
-          <button 
+          {formError && (
+            <div className="w-full px-4 py-3 bg-red-50 border border-red-200 rounded-2xl flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
+              <p className="text-[11px] text-red-600 font-medium leading-snug">{formError}</p>
+            </div>
+          )}
+
+          <button
             onClick={handleSubmit}
             disabled={loading}
             className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 shadow-xl shadow-indigo-500/20 transition-colors disabled:opacity-50"
