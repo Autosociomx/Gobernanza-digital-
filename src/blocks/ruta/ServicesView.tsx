@@ -3,7 +3,7 @@ import { Search, Stethoscope, Lightbulb, ShieldCheck, Droplets, Plus, ChevronRig
 import { ViewHeader } from './shared';
 import { cn } from '../../lib/utils';
 
-export function ServicesView({ onShowTriage, onBack, onShowTramites }: { onShowTriage: () => void, onBack: () => void, onShowTramites: () => void }) {
+export function ServicesView({ onShowTriage, onBack, onShowTramites, onShowReporte }: { onShowTriage: () => void, onBack: () => void, onShowTramites: () => void, onShowReporte: () => void }) {
   return (
     <div className="pt-2 space-y-8">
       <ViewHeader title="Centro de Servicios" onBack={onBack} />
@@ -47,7 +47,7 @@ export function ServicesView({ onShowTriage, onBack, onShowTramites }: { onShowT
               { label: 'Reportar Bache', desc: 'Daños en la cinta asfáltica', icon: ShieldCheck, color: 'text-blue-500' },
               { label: 'Falla de Agua / Fuga', desc: 'Reporte de fugas en red', icon: Droplets, color: 'text-sky-500' }
             ].map((s, i) => (
-              <div key={i} className="flex justify-between items-center p-5 bg-white border border-slate-100 rounded-[1.5rem] hover:bg-slate-50 transition-colors cursor-pointer group">
+              <button key={i} onClick={onShowReporte} className="w-full flex justify-between items-center p-5 bg-white border border-slate-100 rounded-[1.5rem] hover:bg-slate-50 transition-colors cursor-pointer group text-left">
                 <div className="flex items-center gap-4">
                   <div className={cn("w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center", s.color)}>
                     <s.icon className="w-5 h-5" />
@@ -58,7 +58,7 @@ export function ServicesView({ onShowTriage, onBack, onShowTramites }: { onShowT
                   </div>
                 </div>
                 <Plus className="w-4 h-4 text-slate-300 group-hover:text-slate-900 transition-colors" />
-              </div>
+              </button>
             ))}
           </div>
         </div>

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ShieldCheck, ChevronLeft, Sparkles, FolderOpen } from 'lucide-react';
 import { ViewHeader } from './shared';
 import { CredentialScannerView } from '../../components/CredentialScannerView';
-import { auth } from '../../firebase';
+import { auth, db } from '../../firebase';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { cn } from '../../lib/utils';
 
 export function ProfileView({
@@ -23,10 +24,21 @@ export function ProfileView({
   const [isEditing, setIsEditing] = useState(false);
   const [localProfile, setLocalProfile] = useState(profile);
   const [showScanner, setShowScanner] = useState(false);
+  const [puntos, setPuntos] = useState<number | null>(null);
 
   useEffect(() => {
     setLocalProfile(profile);
   }, [profile]);
+
+  useEffect(() => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+    const unsub = onSnapshot(doc(db, 'puntos', uid), (snap) => {
+      if (snap.exists()) setPuntos(snap.data().total ?? 0);
+      else setPuntos(0);
+    }, () => setPuntos(null));
+    return () => unsub();
+  }, []);
 
   const handleSave = () => {
     onUpdate(localProfile);
@@ -115,8 +127,10 @@ export function ProfileView({
               <p className="text-[9px] text-slate-400 uppercase font-black tracking-widest leading-tight">Reportes Urbanos Resueltos</p>
             </div>
             <div className="p-6 bg-magenta-50/50 rounded-3xl text-center border border-magenta-100">
-              <p className="text-3xl font-black text-magenta-500 mb-1">450</p>
-              <p className="text-[9px] text-magenta-400 uppercase font-black tracking-widest leading-tight">Puntos Recompensa Conecta</p>
+              <p className="text-3xl font-black text-magenta-500 mb-1">
+                {puntos !== null ? puntos.toLocaleString('es-MX') : '—'}
+              </p>
+              <p className="text-[9px] text-magenta-400 uppercase font-black tracking-widest leading-tight">Nayarit Points</p>
             </div>
           </div>
         </div>

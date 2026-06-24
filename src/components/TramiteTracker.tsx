@@ -11,6 +11,7 @@ import {
   collection, addDoc, onSnapshot, query, where, Timestamp,
   doc, updateDoc
 } from 'firebase/firestore';
+import { sumarPuntos, PUNTOS } from '../lib/nayaritPoints';
 
 // ─── Catálogo de Trámites (LMR + Reglamento Municipal Tepic) ───────────────
 
@@ -354,10 +355,11 @@ export function TramiteTracker({ onClose }: { onClose: () => void }) {
     const cat = CATALOGO.find((c) => c.id === tipoSel)!;
     setSubmitting(true);
     try {
+      const folio = generarFolio(tipoSel);
       await addDoc(collection(db, 'tramites'), {
         tipo: tipoSel,
         titulo: cat.titulo,
-        folio: generarFolio(tipoSel),
+        folio,
         descripcion: descripcion.trim(),
         submittedAt: Timestamp.now(),
         plazoHabiles: cat.plazoHabiles,
@@ -366,6 +368,7 @@ export function TramiteTracker({ onClose }: { onClose: () => void }) {
         status: 'PENDIENTE',
         uid,
       });
+      sumarPuntos(uid, `Trámite iniciado: ${cat.titulo}`, PUNTOS.TRAMITE_INICIADO, folio).catch(() => {});
       setTipoSel(null);
       setDescripcion('');
       setView('lista');

@@ -38,6 +38,8 @@ import { CompleteProfileView } from './CompleteProfileView';
 import { CredentialScannerView } from './CredentialScannerView';
 import { ExpedienteUnicoView } from './ExpedienteUnicoView';
 import { TramiteTracker } from './TramiteTracker';
+import { ReporteCiudadanoView } from './ReporteCiudadanoView';
+import { NayaChat } from './NayaChat';
 import { QRCodeSVG } from 'qrcode.react';
 import JsBarcode from 'jsbarcode';
 import { TabButton, QuickAction, ViewHeader } from '../blocks/ruta/shared';
@@ -139,6 +141,7 @@ export function CitizenApp({
   const [showTriage, setShowTriage] = useState(initialAction === 'triage');
   const [showExpediente, setShowExpediente] = useState(false);
   const [showTramites, setShowTramites] = useState(false);
+  const [showReporte, setShowReporte] = useState(false);
   const [selectedWork, setSelectedWork] = useState<any>(null);
   const [payingItem, setPayingItem] = useState<any>(null);
   const [paymentStep, setPaymentStep] = useState<'idle' | 'processing' | 'success' | 'cash_instructions'>('idle');
@@ -350,7 +353,7 @@ export function CitizenApp({
               {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} />}
               {activeTab === 'forum' && <ParlamentoView onBack={() => setActiveTab('home')} />}
               {activeTab === 'payments' && <PaymentsView onPay={(item: any) => setPayingItem(item)} onBack={() => setActiveTab('home')} />}
-              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} onBack={() => setActiveTab('home')} onShowTramites={() => setShowTramites(true)} />}
+              {activeTab === 'services' && <ServicesView onShowTriage={() => setShowTriage(true)} onBack={() => setActiveTab('home')} onShowTramites={() => setShowTramites(true)} onShowReporte={() => setShowReporte(true)} />}
               {activeTab === 'profile' && <ProfileView profile={profile} onUpdate={updateProfile} onLogout={onLogout} onBack={() => setActiveTab('home')} onGoToSecurity={() => setActiveTab('security')} onShowExpediente={() => setShowExpediente(true)} />}
               {activeTab === 'security' && <SecurityCenterView onBack={() => setActiveTab('profile')} />}
               {activeTab === 'notifications' && <NotificationView onBack={() => setActiveTab('home')} />}
@@ -578,6 +581,26 @@ export function CitizenApp({
             <TramiteTracker onClose={() => setShowTramites(false)} />
           )}
         </AnimatePresence>
+
+        {/* Reportes Ciudadanos Overlay */}
+        <AnimatePresence>
+          {showReporte && (
+            <motion.div
+              initial={{ opacity: 0, y: '100%' }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: '100%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 35 }}
+              className="fixed inset-0 z-50 overflow-y-auto bg-[var(--crema)]"
+            >
+              <ReporteCiudadanoView onClose={() => setShowReporte(false)} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Naya Floating Chat */}
+        {!showReporte && !showTramites && !showExpediente && !showChat && !showTriage && (
+          <NayaChat />
+        )}
 
         {/* Payment Flow Overlay */}
         <AnimatePresence>
