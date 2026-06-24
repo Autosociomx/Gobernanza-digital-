@@ -50,7 +50,7 @@ import {
   Legend
 } from 'recharts';
 
-type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio' | 'metricas' | 'parlamento' | 'analisis_politico' | 'interoperabilidad';
+type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio' | 'metricas' | 'parlamento' | 'analisis_politico' | 'interoperabilidad' | 'gabinete';
 
 export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
   const [activeModule, setActiveModule] = useState<ModuleType>(() => (localStorage.getItem('activeModule') as ModuleType) || 'tesoreria');
@@ -64,8 +64,9 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
     { id: 'tesoreria', name: 'Tesorería Digital', icon: Building2, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
     { id: 'obras', name: 'Trazabilidad Obras', icon: MapIcon, color: 'text-amber-500', bg: 'bg-amber-500/10' },
     { id: 'servicios', name: 'Servicios Públicos', icon: AlertTriangle, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-    { id: 'salud', name: 'TEPICTU Salud', icon: Activity, color: 'text-rose-500', bg: 'bg-rose-500/10' },
+    { id: 'salud', name: 'Salud Inteligente Nayarit ID', icon: Activity, color: 'text-rose-500', bg: 'bg-rose-500/10' },
     { id: 'bienestar', name: 'Bienestar Social', icon: HeartHandshake, color: 'text-pink-500', bg: 'bg-pink-500/10' },
+    { id: 'gabinete', name: 'Gabinete en Tiempo Real', icon: Users, color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
     { id: 'ia', name: 'Asistente IA', icon: Bot, color: 'text-purple-500', bg: 'bg-purple-500/10' },
     { id: 'agrovision', name: 'Agrovisión 3D', icon: TrendingUp, color: 'text-green-500', bg: 'bg-green-500/10' },
     { id: 'observatorio', name: 'Observatorio Digital', icon: Activity, color: 'text-cyan-500', bg: 'bg-cyan-500/10' },
@@ -177,6 +178,7 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
               {activeModule === 'servicios' && <ServiciosView />}
               {activeModule === 'salud' && <SaludView />}
               {activeModule === 'bienestar' && <BienestarView />}
+              {activeModule === 'gabinete' && <GabineteView />}
               {activeModule === 'ia' && <IAView />}
               {activeModule === 'agrovision' && <AgrovisionView />}
               {activeModule === 'observatorio' && <ObservatorioView />}
@@ -501,8 +503,8 @@ function SaludView() {
     <div className="space-y-6">
       <div className="flex justify-between items-start">
         <div>
-          <h3 className="text-2xl font-bold text-white tracking-tight text-rose-500">TEPICTU Salud</h3>
-          <p className="text-slate-400 text-sm mt-1">Triaje médico Offline + Alertas Epidemiológicas.</p>
+          <h3 className="text-2xl font-bold text-white tracking-tight text-rose-500">Salud Inteligente Nayarit ID</h3>
+          <p className="text-slate-400 text-sm mt-1">Triaje médico Offline + Alertas Epidemiológicas (Conecta C-11).</p>
         </div>
         <div className="px-3 py-1 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-full text-xs font-mono flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></div>
@@ -1248,6 +1250,119 @@ function MetricView() {
             </ResponsiveContainer>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function GabineteView() {
+  const officials = [
+    {
+      name: "Geraldine Ponce",
+      title: "Presidenta Municipal",
+      department: "Presidencia",
+      kpiName: "Aprobación Ciudadana",
+      kpiValue: "84%",
+      kpiStatus: "positive",
+      avatar: "https://images.unsplash.com/photo-1586996292898-71f4036c4e07?w=200&h=200&fit=crop&crop=faces",
+      responseTime: "< 24h",
+      projects: 12
+    },
+    {
+      name: "Alejandro Galván",
+      title: "Jefe de Gabinete",
+      department: "Gabinete",
+      kpiName: "Eficiencia Operativa",
+      kpiValue: "92%",
+      kpiStatus: "positive",
+      avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop&crop=faces",
+      responseTime: "< 12h",
+      projects: 8
+    },
+    {
+      name: "Mtra. Blanca Simancas",
+      title: "Secretaria del Ayuntamiento",
+      department: "Secretaría",
+      kpiName: "Trámites Digitalizados",
+      kpiValue: "80%",
+      kpiStatus: "neutral",
+      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=faces",
+      responseTime: "< 48h",
+      projects: 5
+    },
+    {
+      name: "Lic. Carlos Robles",
+      title: "Director de Obras Públicas",
+      department: "Infraestructura",
+      kpiName: "Obras en Tiempo",
+      kpiValue: "88%",
+      kpiStatus: "positive",
+      avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&h=200&fit=crop&crop=faces",
+      responseTime: "< 72h",
+      projects: 24
+    }
+  ];
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <h2 className="text-2xl font-serif font-black text-white mb-2">Gabinete en Tiempo Real</h2>
+        <p className="text-slate-400">Adiós al directorio web tradicional. Aquí los ciudadanos evalúan el desempeño real, el tiempo de respuesta y la eficiencia de cada servidor público. Cuentas claras para construir confianza.</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-[#161920] rounded-xl p-6 border border-slate-800">
+          <div className="text-slate-400 text-sm font-medium mb-1">Total Gabinete</div>
+          <div className="text-3xl font-black text-white">42</div>
+          <div className="text-emerald-400 text-sm font-bold mt-2">100% Declaración 3de3</div>
+        </div>
+        <div className="bg-[#161920] rounded-xl p-6 border border-slate-800">
+          <div className="text-slate-400 text-sm font-medium mb-1">Promedio Respuesta</div>
+          <div className="text-3xl font-black text-white">18h</div>
+          <div className="text-emerald-400 text-sm font-bold mt-2">-40% vs Administración Anterior</div>
+        </div>
+        <div className="bg-[#161920] rounded-xl p-6 border border-slate-800">
+          <div className="text-slate-400 text-sm font-medium mb-1">Evaluación Ciudadana</div>
+          <div className="text-3xl font-black text-emerald-400">8.9/10</div>
+          <div className="text-slate-500 text-sm mt-2">Basado en NayaritID</div>
+        </div>
+        <div className="bg-[#161920] rounded-xl p-6 border border-slate-800">
+          <div className="text-slate-400 text-sm font-medium mb-1">Iniciativas Cumplidas</div>
+          <div className="text-3xl font-black text-white">142</div>
+          <div className="text-emerald-400 text-sm font-bold mt-2">Validadas por C5</div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {officials.map((official, i) => (
+          <div key={i} className="bg-[#161920] rounded-xl border border-slate-800 overflow-hidden group hover:border-emerald-500/50 transition-colors">
+            <div className="p-6 text-center">
+              <div className="w-24 h-24 mx-auto rounded-full overflow-hidden mb-4 border-2 border-slate-800 group-hover:border-emerald-500/50 transition-colors">
+                <img src={official.avatar} alt={official.name} className="w-full h-full object-cover" />
+              </div>
+              <h3 className="font-bold text-white text-lg">{official.name}</h3>
+              <p className="text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">{official.title}</p>
+              <p className="text-slate-500 text-sm">{official.department}</p>
+            </div>
+            <div className="border-t border-slate-800 bg-[#0a0a0c] p-4">
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-slate-400 text-xs">{official.kpiName}</span>
+                <span className={cn("text-sm font-bold", official.kpiStatus === 'positive' ? "text-emerald-400" : "text-amber-400")}>{official.kpiValue}</span>
+              </div>
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-slate-400 text-xs">Tiempo Respuesta</span>
+                <span className="text-slate-300 text-sm font-mono">{official.responseTime}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400 text-xs">Proyectos C5</span>
+                <span className="text-slate-300 text-sm font-mono">{official.projects} Activos</span>
+              </div>
+            </div>
+            <div className="p-4 bg-emerald-500/10 border-t border-emerald-500/20 text-center cursor-pointer hover:bg-emerald-500/20 transition-colors">
+              <span className="text-emerald-400 text-xs font-bold uppercase tracking-widest">Auditar Funcionario</span>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

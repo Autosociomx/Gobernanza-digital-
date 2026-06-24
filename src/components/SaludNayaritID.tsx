@@ -28,7 +28,7 @@ interface Message {
   triage?: TriageLevel;
 }
 
-export function TepictuSalud({ onClose }: { onClose: () => void }) {
+export function SaludNayaritID({ onClose }: { onClose: () => void }) {
   const [screen, setScreen] = useState<'splash' | 'rol' | 'input' | 'chat'>('splash');
   const [rol, setRol] = useState<RolType | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -62,7 +62,7 @@ export function TepictuSalud({ onClose }: { onClose: () => void }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           message: userMsg,
-          context: `MODO_SALUD_CONECTAX: Eres ConectaX en modo ${rol} con estándar CIE-11. Clasifica según sistema Manchester al final con [TRIAJE:ROJO/AMARILLO/VERDE]. Si el síntoma sugiere gravedad (Rojo o Amarillo, ej. dolor intenso de cabeza y luces), DEBES omitir el consejo genérico de 've a un centro de salud' y en su lugar informar brevemente el criterio neurológico o de urgencia y ofrecer conectar con un especialista del Centro de Salud Digital por videollamada.`
+          context: `MODO_SALUD_INTELIGENTE_NAYARIT_ID: Eres el asistente de Salud Inteligente Nayarit ID en modo ${rol} con estándar CIE-11. Clasifica según sistema Manchester al final con [TRIAJE:ROJO/AMARILLO/VERDE]. Si el síntoma sugiere gravedad (Rojo o Amarillo, ej. dolor intenso de cabeza y luces), DEBES omitir el consejo genérico de 've a un centro de salud' y en su lugar informar brevemente el criterio neurológico o de urgencia y ofrecer conectar con un especialista del Centro de Salud Digital por videollamada.`
         })
       });
       const data = await response.json();
@@ -87,9 +87,9 @@ export function TepictuSalud({ onClose }: { onClose: () => void }) {
 
   const initChat = () => {
     const greetings = {
-      paciente: '¡Hola! Soy el asistente ConectaX para la salud de Tepic 👋\n\nEstoy aquí para realizar tu triaje médico CIE-11. ¿Qué molestia principal tienes ahorita?',
-      familiar: '¡Hola! Entiendo que estás describiendo los síntomas de alguien más para el sistema ConectaX. ¿Quién necesita atención?',
-      promotor: 'ConectaX — Modo Promotor de Campo activado ✓\n\nDescribe los síntomas según el protocolo CIE-11 para determinar prioridad de traslado.'
+      paciente: '¡Hola! Soy el asistente de Salud Inteligente Nayarit ID para Tepic 👋\n\nEstoy aquí para realizar tu triaje médico CIE-11. ¿Qué molestia principal tienes ahorita?',
+      familiar: '¡Hola! Entiendo que estás describiendo los síntomas de alguien más para Salud Inteligente Nayarit ID. ¿Quién necesita atención?',
+      promotor: 'Salud Inteligente Nayarit ID — Modo Promotor de Campo activado ✓\n\nDescribe los síntomas según el protocolo CIE-11 para determinar prioridad de traslado.'
     };
     
     setMessages([{ role: 'assistant', content: greetings[rol || 'paciente'] }]);
@@ -128,7 +128,7 @@ export function TepictuSalud({ onClose }: { onClose: () => void }) {
             <MedicalAvatar />
           </div>
           <div>
-            <h1 className="font-serif font-black text-lg leading-none">Conecta<span className="text-[#c9952a]">X</span></h1>
+            <h1 className="font-serif font-black text-lg leading-none">Salud Nayarit ID</h1>
             <p className="text-[10px] uppercase font-bold tracking-widest text-white/60">Municipio de Tepic · Salud CIE-11</p>
           </div>
           <button onClick={onClose} className="ml-auto flex items-center gap-1.5 bg-red-500/20 px-4 py-2 rounded-full border border-red-500/30 font-black text-[10px] uppercase tracking-widest">
@@ -160,12 +160,12 @@ export function TepictuSalud({ onClose }: { onClose: () => void }) {
               </div>
             </motion.div>
             
-            <h1 className="font-serif font-black text-5xl text-white mb-2 leading-tight">Conecta<span className="text-[#c9952a]">X</span></h1>
+            <h1 className="font-serif font-black text-[2.5rem] text-white mb-2 leading-tight">Salud Inteligente Nayarit ID</h1>
             <p className="text-[#c9952a] font-black uppercase tracking-[0.2em] text-xs mb-4">Salud Inteligente CIE-11</p>
             
             <div className="bg-[#c9952a]/10 border border-[#c9952a]/30 rounded-full px-4 py-2 flex items-center gap-2 text-[#c9952a] text-xs font-bold mb-8">
               <span className="w-2 h-2 rounded-full bg-[#c9952a] animate-pulse"></span>
-              ConnectX Infrastructure 2027
+              Infraestructura Salud Digital 2027
             </div>
 
             <p className="text-white/80 text-lg leading-relaxed max-w-sm mb-12">

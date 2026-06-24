@@ -422,7 +422,7 @@ export const TesisCienciaPolitica = () => {
                         <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest bg-emerald-50 px-2 py-1 rounded inline-block">Fase 3: Inteligencia Predictiva (Año 2)</span>
                         <h5 className="font-bold text-lg text-slate-900">Nayarit Intelligence Engine Activo</h5>
                         <p className="text-xs text-slate-600 leading-relaxed text-justify">
-                          ConectaX correlaciona información entre clústeres. Por ejemplo, al detectar un aumento de quejas de "Moscos" en el bot ciudadano (Clúster Servicios Municipales), el motor genera automáticamente alertas preventivas de Dengue a la Secretaría de Salud antes de que repunte la epidemia.
+                          Salud Inteligente Nayarit ID correlaciona información entre clústeres. Por ejemplo, al detectar un aumento de quejas de "Moscos" en el bot ciudadano (Clúster Servicios Municipales), el motor genera automáticamente alertas preventivas de Dengue a la Secretaría de Salud antes de que repunte la epidemia.
                         </p>
                       </div>
                     </div>
@@ -464,7 +464,7 @@ export const TesisCienciaPolitica = () => {
                     {/* Single Gateway */}
                     <div className="bg-rose-600 text-white p-4 rounded-xl flex flex-col items-center border border-rose-500 shadow-xl shadow-rose-600/20">
                       <Shield size={24} className="mb-2" />
-                      <p className="text-xs font-bold whitespace-nowrap">ConectaX Gateway</p>
+                      <p className="text-xs font-bold whitespace-nowrap">Sistema Nayarit Digital</p>
                       <p className="text-[9px] opacity-70">Identidad Digital Única</p>
                     </div>
 
