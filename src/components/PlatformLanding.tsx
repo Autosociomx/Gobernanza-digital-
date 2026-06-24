@@ -1,296 +1,527 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Menu, Radio, GraduationCap, Shield, Users, BarChart2, Leaf, Briefcase, HeartPulse, Bus, Wifi,
-  TrendingUp, ArrowRight, Flower2, UsersRound, ShieldAlert,
-  Map, Utensils, Trash2, Activity, Clock
+import {
+  Menu, Radio, BarChart2, HeartPulse, ShieldCheck,
+  ArrowRight, ShieldAlert, Gift, Map, X
 } from 'lucide-react';
-import { cn } from '../lib/utils';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCards, Navigation, Pagination } from 'swiper/modules';
-
+import { EffectCards, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/effect-cards';
 import 'swiper/css/pagination';
-import 'swiper/css/navigation';
 
 interface PlatformLandingProps {
   onNavigate: (view: 'landing' | 'c5' | 'citizen' | 'dev' | 'executive', subView?: string, action?: string) => void;
 }
 
+// Solo módulos reales y desplegados en la plataforma
 const carouselItems = [
-  { id: 1, num: '01', title: 'Ruta PRO', icon: Bus, color: 'text-blue-600', img: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=400&h=600&fit=crop' },
-  { id: 2, num: '02', title: 'Nayarit Chef', icon: Utensils, color: 'text-orange-600', img: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=400&h=600&fit=crop' },
-  { id: 3, num: '03', title: 'Gestión de Residuos Médicos', icon: Trash2, color: 'text-emerald-600', img: 'https://images.unsplash.com/photo-1583324113626-70df0f4deaab?q=80&w=400&h=600&fit=crop' },
-  { id: 4, num: '04', title: 'Tu Salud', icon: HeartPulse, color: 'text-red-500', img: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=400&h=600&fit=crop' },
-  { id: 5, num: '05', title: 'Autoanálisis', icon: Activity, color: 'text-purple-600', img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=400&h=600&fit=crop' },
-  { id: 6, num: '06', title: 'Optimiza tus Días', icon: Clock, color: 'text-yellow-600', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=400&h=600&fit=crop' },
+  {
+    id: 1, num: '01', title: 'C5 Gobierno Digital', subtitle: 'Panel de mando unificado',
+    icon: BarChart2, color: 'text-blue-400',
+    img: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=400&h=600&fit=crop',
+    route: 'c5' as const,
+  },
+  {
+    id: 2, num: '02', title: 'Nayarit ID', subtitle: 'Identidad digital ciudadana',
+    icon: ShieldCheck, color: 'text-emerald-400',
+    img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=400&h=600&fit=crop',
+    route: 'citizen' as const,
+  },
+  {
+    id: 3, num: '03', title: 'Salud Inteligente', subtitle: 'Triaje médico con IA offline',
+    icon: HeartPulse, color: 'text-rose-400',
+    img: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=400&h=600&fit=crop',
+    route: 'citizen' as const,
+  },
+  {
+    id: 4, num: '04', title: 'Inspector Ciudadano', subtitle: 'Auditoría anticorrupción anónima',
+    icon: ShieldAlert, color: 'text-amber-400',
+    img: 'https://images.unsplash.com/photo-1507537297725-24a1c029d3ca?q=80&w=400&h=600&fit=crop',
+    route: 'citizen' as const,
+  },
+  {
+    id: 5, num: '05', title: 'Canjes & Beneficios', subtitle: 'Puntos por participación cívica',
+    icon: Gift, color: 'text-purple-400',
+    img: 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?q=80&w=400&h=600&fit=crop',
+    route: 'citizen' as const,
+  },
+  {
+    id: 6, num: '06', title: 'Geo-Radar Urbano', subtitle: 'Reportes de ciudad en tiempo real',
+    icon: Map, color: 'text-cyan-400',
+    img: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=400&h=600&fit=crop',
+    route: 'citizen' as const,
+  },
 ];
 
-const OjosEscena = () => {
-  const [offset, setOffset] = useState({ cx: 0, cy: 0, tx: 0, ty: 0 });
+// Fondo interactivo arte Huichol (Wixarika) — responde al mouse
+const NierikaBackground = () => {
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
-    let animationFrameId: number;
-    let currentTx = 0, currentTy = 0;
-    let currentCx = 0, currentCy = 0;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      currentTx = (e.clientX / window.innerWidth - 0.5) * 2;
-      currentTy = (e.clientY / window.innerHeight - 0.5) * 2;
+    const handler = (e: MouseEvent) => {
+      setMouse({
+        x: (e.clientX / window.innerWidth - 0.5) * 40,
+        y: (e.clientY / window.innerHeight - 0.5) * 40,
+      });
     };
+    window.addEventListener('mousemove', handler, { passive: true });
+    return () => window.removeEventListener('mousemove', handler);
+  }, []);
 
-    const handleDeviceOrientation = (e: DeviceOrientationEvent) => {
+  return (
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      {/* Capa 1: patrón nierika repetido — velocidad lenta */}
+      <div
+        className="absolute nierika-hero-bg"
+        style={{
+          inset: '-15%',
+          transform: `translate(${mouse.x * 0.12}px, ${mouse.y * 0.12}px)`,
+          transition: 'transform 0.8s cubic-bezier(0.23,1,0.32,1)',
+        }}
+      />
+
+      {/* Capa 2: gran nierika central giratoria + parallax */}
+      <div
+        className="absolute inset-0 flex items-center justify-center"
+        style={{
+          transform: `translate(${mouse.x * 0.22}px, ${mouse.y * 0.22}px)`,
+          transition: 'transform 0.6s cubic-bezier(0.23,1,0.32,1)',
+        }}
+      >
+        <svg
+          viewBox="0 0 800 800"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="nierika-spin-slow"
+          style={{ width: 'min(95vw, 720px)', height: 'min(95vw, 720px)' }}
+        >
+          {/* Diamantes concéntricos — escala Wixarika */}
+          <polygon points="400,12 788,400 400,788 12,400" stroke="#E5007A" strokeWidth="3" opacity="0.55"/>
+          <polygon points="400,60 740,400 400,740 60,400" stroke="#00BCD4" strokeWidth="2.5" opacity="0.5"/>
+          <polygon points="400,115 685,400 400,685 115,400" stroke="#FFB300" strokeWidth="2.2" opacity="0.45"/>
+          <polygon points="400,170 630,400 400,630 170,400" stroke="#34a853" strokeWidth="2" opacity="0.4"/>
+          <polygon points="400,225 575,400 400,575 225,400" stroke="#E5007A" strokeWidth="1.8" opacity="0.35"/>
+          <polygon points="400,280 520,400 400,520 280,400" stroke="#00BCD4" strokeWidth="1.5" opacity="0.3"/>
+          <polygon points="400,335 465,400 400,465 335,400" stroke="#FFB300" strokeWidth="1.2" opacity="0.28"/>
+
+          {/* Puntas de diamante — acento Wixarika */}
+          <polygon points="400,12 418,38 400,64 382,38" fill="#E5007A" opacity="0.75"/>
+          <polygon points="788,400 762,418 736,400 762,382" fill="#00BCD4" opacity="0.75"/>
+          <polygon points="400,788 418,762 400,736 382,762" fill="#E5007A" opacity="0.75"/>
+          <polygon points="12,400 38,418 64,400 38,382" fill="#00BCD4" opacity="0.75"/>
+
+          {/* Diamantes de esquina intermedia */}
+          <polygon points="210,210 225,225 210,240 195,225" fill="#FFB300" opacity="0.55"/>
+          <polygon points="590,210 605,225 590,240 575,225" fill="#FFB300" opacity="0.55"/>
+          <polygon points="590,590 605,605 590,620 575,605" fill="#FFB300" opacity="0.55"/>
+          <polygon points="210,590 225,605 210,620 195,605" fill="#FFB300" opacity="0.55"/>
+
+          {/* Centro — ojo de la nierika */}
+          <circle cx="400" cy="400" r="14" fill="#FFB300" opacity="0.9"/>
+          <circle cx="400" cy="400" r="7"  fill="#E5007A" opacity="0.9"/>
+          <circle cx="400" cy="400" r="3"  fill="#ffffff"  opacity="1"/>
+
+          {/* Líneas cruzadas (varas del tejido) */}
+          <line x1="400" y1="12"  x2="400" y2="788" stroke="#FFB300" strokeWidth="0.9" opacity="0.18"/>
+          <line x1="12"  y1="400" x2="788" y2="400" stroke="#FFB300" strokeWidth="0.9" opacity="0.18"/>
+          <line x1="12"  y1="12"  x2="788" y2="788" stroke="#F44336" strokeWidth="0.7" opacity="0.12"/>
+          <line x1="788" y1="12"  x2="12"  y2="788" stroke="#F44336" strokeWidth="0.7" opacity="0.12"/>
+
+          {/* Puntos de intersección */}
+          <circle cx="400" cy="12"  r="7" fill="#E5007A" opacity="0.75"/>
+          <circle cx="788" cy="400" r="7" fill="#00BCD4" opacity="0.75"/>
+          <circle cx="400" cy="788" r="7" fill="#E5007A" opacity="0.75"/>
+          <circle cx="12"  cy="400" r="7" fill="#00BCD4" opacity="0.75"/>
+        </svg>
+      </div>
+
+      {/* Capa 3: cuatro ojos-nierika decorativos en esquinas */}
+      <div className="absolute top-[8%] left-[6%] w-20 h-20 opacity-30 nierika-spin-slow"
+           style={{ transform: `translate(${mouse.x * 0.35}px, ${mouse.y * 0.35}px) rotate(0deg)`, animationDuration: '60s' }}>
+        <svg viewBox="0 0 80 80" fill="none">
+          <polygon points="40,2 78,40 40,78 2,40" stroke="#FFB300" strokeWidth="2.2" opacity="0.9"/>
+          <polygon points="40,14 66,40 40,66 14,40" stroke="#E5007A" strokeWidth="1.8" opacity="0.8"/>
+          <polygon points="40,26 54,40 40,54 26,40" stroke="#00BCD4" strokeWidth="1.5" opacity="0.7"/>
+          <circle cx="40" cy="40" r="5" fill="#FFB300"/>
+        </svg>
+      </div>
+      <div className="absolute bottom-[12%] right-[5%] w-28 h-28 opacity-25"
+           style={{ transform: `translate(${mouse.x * 0.28}px, ${mouse.y * 0.28}px)`, animation: 'nierika-spin 70s linear infinite reverse' }}>
+        <svg viewBox="0 0 80 80" fill="none">
+          <polygon points="40,2 78,40 40,78 2,40" stroke="#00BCD4" strokeWidth="2.2" opacity="0.9"/>
+          <polygon points="40,14 66,40 40,66 14,40" stroke="#FFB300" strokeWidth="1.8" opacity="0.8"/>
+          <polygon points="40,26 54,40 40,54 26,40" stroke="#E5007A" strokeWidth="1.5" opacity="0.7"/>
+          <circle cx="40" cy="40" r="5" fill="#00BCD4"/>
+        </svg>
+      </div>
+
+      {/* Gradiente de fondo marino que unifica todo */}
+      <div className="absolute inset-0"
+           style={{ background: 'linear-gradient(160deg, rgba(0,29,61,0.88) 0%, rgba(0,29,61,0.75) 40%, rgba(0,29,61,0.88) 100%)' }}
+      />
+    </div>
+  );
+};
+
+// Ojos de Dios 3D — sensibilidad original restaurada (×0.5 mouse, ÷60 giroscopio)
+const OjosEscena = () => {
+  const [offset, setOffset] = useState({ cx: 0, cy: 0 });
+
+  useEffect(() => {
+    let raf: number;
+    let tx = 0, ty = 0, cx = 0, cy = 0;
+
+    const onMouse = (e: MouseEvent) => {
+      tx = e.clientX / window.innerWidth - 0.5;
+      ty = e.clientY / window.innerHeight - 0.5;
+    };
+    const onOrientation = (e: DeviceOrientationEvent) => {
       if (e.gamma !== null && e.beta !== null) {
-        currentTx = Math.max(-1, Math.min(1, e.gamma / 30));
-        currentTy = Math.max(-1, Math.min(1, (e.beta - 45) / 30));
+        tx = Math.max(-0.5, Math.min(0.5, e.gamma / 60));
+        ty = Math.max(-0.5, Math.min(0.5, (e.beta - 45) / 60));
       }
+    };
+    const onScroll = () => {
+      if ('ontouchstart' in window)
+        ty = Math.max(-0.5, Math.min(0.5, window.scrollY / window.innerHeight - 0.25));
     };
 
     const isTouch = 'ontouchstart' in window;
-    if (!isTouch) {
-      window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    } else {
-      window.addEventListener('deviceorientation', handleDeviceOrientation, { passive: true });
+    if (!isTouch) window.addEventListener('mousemove', onMouse, { passive: true });
+    else {
+      window.addEventListener('deviceorientation', onOrientation, { passive: true });
+      window.addEventListener('scroll', onScroll, { passive: true });
     }
 
-    const animate = () => {
-      currentCx += (currentTx - currentCx) * 0.05;
-      currentCy += (currentTy - currentCy) * 0.05;
-      setOffset({ cx: currentCx, cy: currentCy, tx: currentTx, ty: currentTy });
-      animationFrameId = requestAnimationFrame(animate);
+    const loop = () => {
+      cx += (tx - cx) * 0.06;
+      cy += (ty - cy) * 0.06;
+      setOffset({ cx, cy });
+      raf = requestAnimationFrame(loop);
     };
-    animate();
+    loop();
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('deviceorientation', handleDeviceOrientation);
-      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener('mousemove', onMouse);
+      window.removeEventListener('deviceorientation', onOrientation);
+      window.removeEventListener('scroll', onScroll);
+      cancelAnimationFrame(raf);
     };
   }, []);
 
   return (
-    <div className="ojos-escena fixed inset-0 opacity-20 pointer-events-none z-0" id="ojosEscena">
-      {/* Ojo A - Principal (Bottom Left) */}
-      <div className="ojo ojo-a" style={{ 
-        transform: `translate(${offset.cx * 30}px, ${offset.cy * 30}px) scale(1.2)`,
-        left: '5%',
-        bottom: '10%'
-      }}>
+    <div className="ojos-escena fixed inset-0 pointer-events-none z-[3] overflow-hidden">
+      {/* Ojo A — grande, inferior izquierdo */}
+      <div className="ojo ojo-a" style={{ transform: `translate(${offset.cx * 22}px, ${offset.cy * 22}px)` }}>
         <div className="ojo-giro">
-          <div className="capa c1"></div><div className="capa c2"></div><div className="capa c3"></div>
-          <div className="capa c4"></div><div className="capa c5"></div><div className="capa c6"></div>
+          <div className="capa c1"/><div className="capa c2"/><div className="capa c3"/>
+          <div className="capa c4"/><div className="capa c5"/><div className="capa c6"/>
         </div>
       </div>
-
-      {/* Ojo B - Secondary (Top Right) */}
-      <div className="ojo ojo-b" style={{ 
-        transform: `translate(${offset.cx * 50}px, ${offset.cy * 50}px) rotate(15deg)`,
-        right: '8%',
-        top: '15%'
-      }}>
+      {/* Ojo B — mediano, superior derecho */}
+      <div className="ojo ojo-b" style={{ transform: `translate(${offset.cx * 40}px, ${offset.cy * 40}px)` }}>
         <div className="ojo-giro">
-          <div className="capa c1"></div><div className="capa c2"></div><div className="capa c3"></div>
-          <div className="capa c4"></div><div className="capa c5"></div><div className="capa c6"></div>
+          <div className="capa c1"/><div className="capa c2"/><div className="capa c3"/>
+          <div className="capa c4"/><div className="capa c5"/>
         </div>
       </div>
-
-      {/* Ojo C - Tertiary (Top Left) */}
-      <div className="ojo ojo-c" style={{ 
-        transform: `translate(${offset.cx * 80}px, ${offset.cy * 80}px) scale(0.8)`,
-        left: '15%',
-        top: '10%'
-      }}>
+      {/* Ojo C — pequeño, superior centro */}
+      <div className="ojo ojo-c" style={{ transform: `translate(${offset.cx * 60}px, ${offset.cy * 60}px)` }}>
         <div className="ojo-giro">
-          <div className="capa c1"></div><div className="capa c2"></div><div className="capa c3"></div>
-          <div className="capa c4"></div><div className="capa c5"></div>
+          <div className="capa c1"/><div className="capa c2"/><div className="capa c3"/>
+          <div className="capa c4"/>
         </div>
       </div>
-
-      {/* Subtle Tech accents */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-blue-500/5 rounded-full pointer-events-none"></div>
     </div>
   );
 };
 
 export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#fcfdfe] font-sans overflow-x-hidden selection:bg-blue-100 relative">
-      {/* Background Ojos & Tech Accents */}
+    <div className="min-h-screen bg-[#001d3d] font-sans overflow-x-hidden selection:bg-[#E5007A]/30 relative">
+      <NierikaBackground />
       <OjosEscena />
 
-      {/* Decorative Top Border - Subtle & Elite */}
-      <div className="h-1.5 w-full bg-gradient-to-r from-blue-600 via-amber-500 to-emerald-500 opacity-80"></div>
+      {/* Banda cromática superior — paleta Wixarika completa */}
+      <div className="h-[3px] w-full relative z-20"
+           style={{ background: 'linear-gradient(90deg, #E5007A 0%, #FFB300 20%, #00BCD4 40%, #34a853 60%, #6B3FA0 80%, #E5007A 100%)' }}
+      />
 
       {/* Header */}
-      <header className="px-6 md:px-12 py-8 flex justify-between items-center relative z-20">
+      <header className="px-6 md:px-12 py-6 flex justify-between items-center relative z-20">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20">
-            <Radio className="text-white w-7 h-7" />
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center shadow-xl"
+               style={{ background: 'linear-gradient(135deg, #E5007A, #6B3FA0)', boxShadow: '0 8px 30px rgba(229,0,122,0.4)' }}>
+            <Radio className="text-white w-6 h-6" />
           </div>
           <div>
-            <h1 className="font-serif font-black text-2xl tracking-tight text-[#0f285c]">Nayarit<span className="text-blue-600">Digital</span></h1>
-            <p className="text-[0.6rem] uppercase tracking-[0.3em] font-bold text-slate-400">Excelencia Gubernamental</p>
+            <h1 className="font-serif font-black text-xl tracking-tight text-white leading-none">
+              Nayarit<span style={{ color: '#FFB300' }}>Digital</span>
+            </h1>
+            <p className="text-[0.55rem] uppercase tracking-[0.3em] font-bold text-white/35 mt-0.5">
+              Plataforma Estatal · Excelencia Gubernamental
+            </p>
           </div>
         </div>
-        
-        <nav className="hidden lg:flex items-center gap-10">
-          {['Soluciones', 'Estrategia', 'Impacto', 'Transparencia'].map((item) => (
-            <button key={item} className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">{item}</button>
+
+        <nav className="hidden lg:flex items-center gap-8">
+          {['Soluciones', 'Estrategia', 'Impacto', 'Transparencia'].map(item => (
+            <button key={item}
+              className="text-[0.7rem] font-bold text-white/50 hover:text-white transition-colors uppercase tracking-widest">
+              {item}
+            </button>
           ))}
-          <button 
+          <button
             onClick={() => onNavigate('dev')}
-            className="bg-[#0f285c] text-white px-7 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-[#0f285c]/20"
-          >
-            Acceso Elite
+            className="px-6 py-2.5 rounded-full text-[0.7rem] font-bold uppercase tracking-widest transition-all hover:scale-105 hover:shadow-xl"
+            style={{ background: 'linear-gradient(135deg, #E5007A, #6B3FA0)', color: 'white', boxShadow: '0 4px 20px rgba(229,0,122,0.35)' }}>
+            Acceso Élite
           </button>
         </nav>
 
-        <button className="lg:hidden p-3 bg-white shadow-md rounded-xl">
-          <Menu className="w-6 h-6 text-[#0f285c]" />
+        <button className="lg:hidden p-2.5 rounded-xl border border-white/10 bg-white/5"
+                onClick={() => setMenuOpen(!menuOpen)}>
+          {menuOpen ? <X className="w-5 h-5 text-white" /> : <Menu className="w-5 h-5 text-white" />}
         </button>
       </header>
 
-      {/* Main Content */}
-      <main className="px-6 md:px-12 py-12 md:py-24 max-w-[1600px] mx-auto relative z-10">
-        <div className="flex flex-col xl:flex-row gap-16 xl:gap-24 items-center">
-          
-          {/* Left Column: Typography & CTAs */}
-          <div className="xl:w-1/2 flex flex-col justify-center shrink-0">
+      {/* Menú móvil */}
+      {menuOpen && (
+        <div className="lg:hidden absolute top-[5rem] left-4 right-4 z-30 rounded-2xl border border-white/10 p-6 flex flex-col gap-4"
+             style={{ background: 'rgba(0,29,61,0.95)', backdropFilter: 'blur(20px)' }}>
+          {['Soluciones', 'Estrategia', 'Impacto', 'Transparencia'].map(item => (
+            <button key={item} className="text-sm font-bold text-white/60 text-left py-2 border-b border-white/5 hover:text-white transition-colors uppercase tracking-widest">
+              {item}
+            </button>
+          ))}
+          <button onClick={() => { onNavigate('dev'); setMenuOpen(false); }}
+            className="mt-2 py-3 rounded-full text-sm font-bold uppercase tracking-widest text-white"
+            style={{ background: 'linear-gradient(135deg, #E5007A, #6B3FA0)' }}>
+            Acceso Élite
+          </button>
+        </div>
+      )}
+
+      {/* Contenido principal */}
+      <main className="px-6 md:px-12 py-12 md:py-20 max-w-[1600px] mx-auto relative z-10">
+        <div className="flex flex-col xl:flex-row gap-16 xl:gap-20 items-center">
+
+          {/* Columna izquierda: tipografía y CTAs */}
+          <div className="xl:w-1/2 flex flex-col justify-center">
+            {/* Etiqueta de categoría */}
             <div className="flex items-center gap-3 mb-8">
-               <div className="h-[1px] w-12 bg-blue-600/30"></div>
-               <span className="text-blue-600 font-bold tracking-[0.3em] text-[0.7rem] uppercase">6 Pilares de Transformación</span>
-               <div className="h-[1px] w-12 bg-blue-600/30"></div>
-            </div>
-            
-            <h2 className="text-6xl md:text-7xl lg:text-[5.5rem] font-serif font-black text-[#0f285c] leading-[0.95] tracking-tighter mb-10">
-               La Nueva Era <br />
-               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 italic font-medium">Digital</span> de Nayarit
-            </h2>
-            
-            <p className="text-slate-600 text-xl leading-relaxed mb-12 max-w-xl font-medium opacity-90">
-               Una infraestructura inteligente diseñada para la eficiencia, la transparencia y el bienestar ciudadano. Tecnología de élite al servicio del pueblo.
-            </p>
-            
-            <div className="flex flex-wrap items-center gap-6 mb-20">
-               <button 
-                 onClick={() => onNavigate('citizen')}
-                 className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-full text-lg font-bold transition-all shadow-2xl shadow-blue-600/40 flex items-center gap-4 group"
-               >
-                 Explorar Ecosistema <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-               </button>
-               
-               <button className="flex items-center gap-3 text-[#0f285c] font-bold hover:gap-5 transition-all group">
-                 <span>Ver Estrategia 2024</span>
-                 <div className="w-10 h-[2px] bg-[#0f285c] group-hover:w-16 transition-all"></div>
-               </button>
+              <div className="h-px w-10" style={{ background: '#E5007A' }} />
+              <span className="font-bold tracking-[0.3em] text-[0.62rem] uppercase" style={{ color: '#FFB300' }}>
+                6 Módulos Activos · Plan Nayarit 2025–2030
+              </span>
+              <div className="h-px w-10" style={{ background: '#E5007A' }} />
             </div>
 
-            <div className="grid grid-cols-2 gap-8 max-w-lg border-t border-slate-200 pt-12">
-               <div>
-                 <h4 className="text-3xl font-serif font-bold text-[#0f285c]">100%</h4>
-                 <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Transparencia</p>
-               </div>
-               <div>
-                 <h4 className="text-3xl font-serif font-bold text-[#0f285c]">24/7</h4>
-                 <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Disponibilidad</p>
-               </div>
+            {/* Titular principal — PNL: aspiracional + territorial + presente */}
+            <h2 className="text-5xl md:text-6xl lg:text-7xl font-serif font-black text-white leading-[0.92] tracking-tighter mb-8">
+              La Nueva Era<br/>
+              <span
+                className="italic font-medium"
+                style={{
+                  background: 'linear-gradient(90deg, #E5007A, #FFB300 50%, #00BCD4)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}>
+                Digital
+              </span>
+              <br/>
+              de Nayarit
+            </h2>
+
+            {/* Subtítulo — PNL: tres pilares, lenguaje de transformación */}
+            <p className="text-white/65 text-lg leading-relaxed mb-10 max-w-lg font-medium">
+              Una plataforma de inteligencia gubernamental construida sobre transparencia radical,
+              participación ciudadana activa y tecnología de vanguardia.
+              Al servicio del pueblo de Nayarit.
+            </p>
+
+            {/* CTAs */}
+            <div className="flex flex-wrap items-center gap-5 mb-16">
+              <button
+                onClick={() => onNavigate('citizen')}
+                className="px-8 py-4 rounded-full text-base font-bold transition-all hover:scale-105 flex items-center gap-3 group"
+                style={{
+                  background: 'linear-gradient(135deg, #E5007A, #6B3FA0)',
+                  color: 'white',
+                  boxShadow: '0 20px 60px rgba(229,0,122,0.45)',
+                }}>
+                Explorar Plataforma
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+
+              <button
+                onClick={() => onNavigate('c5')}
+                className="flex items-center gap-3 font-bold hover:text-white transition-all group text-sm"
+                style={{ color: 'rgba(255,255,255,0.6)' }}>
+                <span>Panel de Gobierno</span>
+                <div className="w-8 h-px bg-white/30 group-hover:w-14 transition-all" />
+              </button>
+            </div>
+
+            {/* Métricas — PNL: credibilidad con números reales */}
+            <div className="grid grid-cols-3 gap-6 border-t pt-10" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
+              <div>
+                <h4 className="text-3xl font-serif font-black text-white">1.2M</h4>
+                <p className="text-[0.58rem] uppercase tracking-widest font-bold mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>Ciudadanos</p>
+              </div>
+              <div>
+                <h4 className="text-3xl font-serif font-black" style={{ color: '#FFB300' }}>100%</h4>
+                <p className="text-[0.58rem] uppercase tracking-widest font-bold mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>Transparencia</p>
+              </div>
+              <div>
+                <h4 className="text-3xl font-serif font-black text-white">24/7</h4>
+                <p className="text-[0.58rem] uppercase tracking-widest font-bold mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>Disponibilidad</p>
+              </div>
             </div>
           </div>
 
-          {/* Right Column: Swiper 3D Carousel - Elite Cards */}
-          <div className="xl:w-1/2 w-full max-w-[450px] md:max-w-[500px] relative h-[550px] md:h-[700px] flex items-center justify-center">
-             <Swiper
-               effect={'cards'}
-               grabCursor={true}
-               modules={[EffectCards, Pagination, Navigation]}
-               className="w-full h-[500px] md:h-[600px]"
-               pagination={{
-                 clickable: true,
-                 dynamicBullets: true,
-               }}
-               navigation={true}
-             >
-               {carouselItems.map((item) => (
-                 <SwiperSlide 
-                   key={item.id} 
-                   className="rounded-[2.5rem] overflow-hidden shadow-[0_40px_80px_-15px_rgba(15,40,92,0.3)] bg-white flex flex-col border border-white/50 cursor-grab active:cursor-grabbing group"
-                   onClick={() => {
-                      if (item.id === 1) onNavigate('c5');
-                      else if (item.id === 4) onNavigate('citizen', 'services');
-                      else if (item.id === 8) onNavigate('citizen', 'services', 'triage');
-                      else onNavigate('citizen');
-                   }}
-                 >
-                   <div className="p-10 text-center flex flex-col items-center bg-white z-10 relative">
-                      <div className="flex items-center gap-2 mb-6">
-                        <span className="w-8 h-[1px] bg-blue-600/20"></span>
-                        <span className="text-blue-600 font-black text-xl tracking-tighter italic">Pilar {item.num}</span>
-                        <span className="w-8 h-[1px] bg-blue-600/20"></span>
-                      </div>
-                      <div className={cn("p-5 rounded-2xl mb-6 bg-slate-50 group-hover:scale-110 transition-transform duration-500", item.color)}>
-                        {React.createElement(item.icon, { className: "w-10 h-10" })}
-                      </div>
-                      <h3 className="font-serif font-black text-2xl text-[#0f285c] leading-tight px-4 mb-2">
-                        {item.title}
-                      </h3>
-                      <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Nayarit Digital Elite</p>
-                   </div>
-                   
-                   {/* Image background that blends into the top */}
-                   <div className="absolute inset-0 z-0">
-                     <div className="absolute inset-0 bg-gradient-to-b from-white via-white/80 to-transparent z-10 h-[60%]"></div>
-                     <img src={item.img} alt={item.title} className="w-full h-full object-cover pointer-events-none group-hover:scale-105 transition-transform duration-[2s]" />
-                     <div className="absolute inset-0 bg-gradient-to-t from-[#0f285c]/90 via-[#0f285c]/20 to-transparent z-10"></div>
-                     
-                     <div className="absolute bottom-8 left-0 right-0 z-20 px-8">
-                        <button className="w-full py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white text-xs font-bold uppercase tracking-[0.2em] hover:bg-white hover:text-[#0f285c] transition-all">
-                          Ver Detalles
-                        </button>
-                     </div>
-                   </div>
-                 </SwiperSlide>
-               ))}
-             </Swiper>
+          {/* Columna derecha: carrusel Swiper 3D */}
+          <div className="xl:w-1/2 w-full max-w-[380px] md:max-w-[420px] relative flex items-center justify-center"
+               style={{ height: '540px' }}>
+            {/* Halo de luz detrás del carrusel */}
+            <div className="absolute inset-0 rounded-full pointer-events-none"
+                 style={{ background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(229,0,122,0.18) 0%, transparent 70%)' }}
+            />
+
+            <Swiper
+              effect="cards"
+              grabCursor
+              modules={[EffectCards, Pagination]}
+              className="w-full"
+              style={{ height: '500px' }}
+              pagination={{ clickable: true, dynamicBullets: true }}
+            >
+              {carouselItems.map(item => (
+                <SwiperSlide
+                  key={item.id}
+                  className="rounded-[2rem] overflow-hidden cursor-grab active:cursor-grabbing group card-3d"
+                  style={{ boxShadow: '0 40px 80px -10px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.06)' }}
+                  onClick={() => onNavigate(item.route)}
+                >
+                  {/* Contenido top del card */}
+                  <div className="relative z-10 p-8 pt-10 flex flex-col items-center text-center"
+                       style={{ background: 'linear-gradient(180deg, rgba(0,29,61,0.97) 0%, rgba(0,29,61,0.65) 100%)' }}>
+                    {/* Etiqueta módulo */}
+                    <div className="flex items-center gap-2 mb-5">
+                      <div className="h-px w-5" style={{ background: '#E5007A' }} />
+                      <span className="font-mono text-[0.58rem] font-bold tracking-widest" style={{ color: '#FFB300' }}>
+                        MÓDULO {item.num}
+                      </span>
+                      <div className="h-px w-5" style={{ background: '#E5007A' }} />
+                    </div>
+
+                    {/* Ícono del módulo */}
+                    <div className={`p-4 rounded-2xl mb-5 group-hover:scale-110 transition-transform duration-500 ${item.color}`}
+                         style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                      {React.createElement(item.icon, { className: 'w-9 h-9' })}
+                    </div>
+
+                    <h3 className="font-serif font-black text-xl text-white leading-tight mb-2">{item.title}</h3>
+                    <p className="font-bold text-[0.65rem] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                      {item.subtitle}
+                    </p>
+                  </div>
+
+                  {/* Imagen de fondo */}
+                  <div className="absolute inset-0 z-0">
+                    <img
+                      src={item.img}
+                      alt={item.title}
+                      className="w-full h-full object-cover pointer-events-none group-hover:scale-105 transition-transform duration-[2.5s]"
+                      style={{ opacity: 0.35 }}
+                    />
+                    <div className="absolute inset-0"
+                         style={{ background: 'linear-gradient(to top, rgba(0,29,61,0.97) 35%, transparent)' }}
+                    />
+                  </div>
+
+                  {/* CTA inferior */}
+                  <div className="absolute bottom-5 left-5 right-5 z-20">
+                    <div className="py-3 rounded-xl text-[0.62rem] font-bold uppercase tracking-[0.18em] text-center transition-all group-hover:bg-[rgba(229,0,122,0.35)]"
+                         style={{
+                           background: 'rgba(229,0,122,0.15)',
+                           border: '1px solid rgba(229,0,122,0.35)',
+                           backdropFilter: 'blur(8px)',
+                           color: 'rgba(255,255,255,0.85)',
+                         }}>
+                      Ingresar al Módulo
+                    </div>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
         </div>
       </main>
 
-      {/* Footer Branding - Elite Ribbon */}
+      {/* Ribbon de compromiso institucional */}
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 pb-16 relative z-20">
-         <div className="bg-[#0f285c] text-white rounded-[2.5rem] shadow-2xl border border-white/10 p-8 md:p-12 flex flex-wrap justify-between items-center gap-8 relative overflow-hidden">
-            {/* Geometric patterns */}
-            <div className="absolute right-0 top-0 bottom-0 w-64 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 10px 10px, white 1px, transparent 0)', backgroundSize: '30px 30px' }}></div>
-            
-            <div className="flex items-center gap-6 relative z-10">
-               <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20">
-                  <ShieldAlert className="text-amber-400 w-8 h-8" />
-               </div>
-               <div>
-                  <h3 className="text-2xl font-serif font-black tracking-tight">Compromiso Nayarit</h3>
-                  <p className="text-slate-400 text-sm font-medium">Liderando la transformación digital del Pacífico.</p>
-               </div>
-            </div>
+        <div
+          className="rounded-[2rem] p-8 md:p-12 flex flex-wrap justify-between items-center gap-8 relative overflow-hidden"
+          style={{
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.07)',
+            backdropFilter: 'blur(24px)',
+          }}>
+          {/* Acento nierika en esquina */}
+          <div className="absolute -right-10 -top-10 w-56 h-56 opacity-15 pointer-events-none">
+            <svg viewBox="0 0 80 80" fill="none" style={{ animation: 'nierika-spin 40s linear infinite' }}>
+              <polygon points="40,2 78,40 40,78 2,40" stroke="#E5007A" strokeWidth="2"/>
+              <polygon points="40,12 68,40 40,68 12,40" stroke="#00BCD4" strokeWidth="1.5"/>
+              <polygon points="40,22 58,40 40,58 22,40" stroke="#FFB300" strokeWidth="1.2"/>
+              <circle cx="40" cy="40" r="4" fill="#E5007A"/>
+            </svg>
+          </div>
 
-            <div className="flex gap-12 relative z-10">
-               <div className="text-center">
-                  <div className="text-amber-400 text-3xl font-black font-serif">1.5M</div>
-                  <div className="text-[0.6rem] uppercase tracking-widest font-bold text-slate-400 mt-1">Ciudadanos</div>
-               </div>
-               <div className="text-center">
-                  <div className="text-blue-400 text-3xl font-black font-serif">20+</div>
-                  <div className="text-[0.6rem] uppercase tracking-widest font-bold text-slate-400 mt-1">Secretarías</div>
-               </div>
+          {/* Identidad */}
+          <div className="flex items-center gap-5 relative z-10">
+            <div className="w-14 h-14 rounded-2xl flex items-center justify-center"
+                 style={{ background: 'rgba(229,0,122,0.12)', border: '1px solid rgba(229,0,122,0.3)' }}>
+              <ShieldAlert style={{ color: '#E5007A' }} className="w-7 h-7" />
             </div>
+            <div>
+              <h3 className="text-xl font-serif font-black text-white tracking-tight">Compromiso Nayarit</h3>
+              <p className="text-sm font-medium" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                Gobierno transparente. Ciudadanía empoderada.
+              </p>
+            </div>
+          </div>
 
-            <div className="relative z-10">
-               <button className="bg-white text-[#0f285c] px-8 py-4 rounded-full font-bold text-sm uppercase tracking-widest hover:bg-amber-400 transition-colors shadow-lg">
-                  Panel de Control
-               </button>
+          {/* Métricas */}
+          <div className="flex gap-10 relative z-10">
+            <div className="text-center">
+              <div className="text-3xl font-black font-serif" style={{ color: '#FFB300' }}>1.2M</div>
+              <div className="text-[0.58rem] uppercase tracking-widest font-bold mt-1" style={{ color: 'rgba(255,255,255,0.28)' }}>Ciudadanos</div>
             </div>
-         </div>
+            <div className="text-center">
+              <div className="text-3xl font-black font-serif text-blue-400">20+</div>
+              <div className="text-[0.58rem] uppercase tracking-widest font-bold mt-1" style={{ color: 'rgba(255,255,255,0.28)' }}>Secretarías</div>
+            </div>
+            <div className="text-center">
+              <div className="text-3xl font-black font-serif" style={{ color: '#E5007A' }}>6</div>
+              <div className="text-[0.58rem] uppercase tracking-widest font-bold mt-1" style={{ color: 'rgba(255,255,255,0.28)' }}>Módulos Activos</div>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="relative z-10">
+            <button
+              onClick={() => onNavigate('c5')}
+              className="px-8 py-3 rounded-full font-bold text-sm uppercase tracking-widest transition-all hover:scale-105 text-white"
+              style={{ background: 'linear-gradient(135deg, #E5007A, #6B3FA0)', boxShadow: '0 8px 30px rgba(229,0,122,0.35)' }}>
+              Panel de Control
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
-
