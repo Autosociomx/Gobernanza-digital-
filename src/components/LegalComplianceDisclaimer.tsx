@@ -9,7 +9,7 @@ export function LegalComplianceDisclaimer() {
         <div>
           <h3 className="font-serif font-black text-lg mb-2">Fundamento Legal y Cumplimiento Federal</h3>
           <p className="text-slate-300 text-xs leading-relaxed mb-4">
-              Nuestra plataforma opera en estricto cumplimiento con la <strong>Ley de Firma Electrónica Avanzada (LFEA)</strong> y los lineamientos del <strong>INAI</strong>, garantizando la validez, integridad y seguridad de todos los trámites y transacciones realizadas. Cada pago efectuado a través de nuestra billetera digital cuenta con plena validez jurídica y trazabilidad institucional, conforme a los estándares de autenticación establecidos por el marco jurídico federal mexicano.
+              Nuestra plataforma opera en estricto cumplimiento con la <strong>Ley Federal de Digitalización</strong>, garantizando la validez, integridad y seguridad de todos los trámites y transacciones realizadas. Cada pago efectuado a través de nuestra billetera digital cuenta con plena validez jurídica y trazabilidad institucional, cumpliendo con los estándares de autenticación y firma electrónica avanzada requeridos.
           </p>
           <button className="text-emerald-400 text-xs font-bold uppercase tracking-widest flex items-center gap-1 hover:underline">
               Ver Certificación Legal
