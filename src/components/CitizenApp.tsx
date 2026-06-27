@@ -1499,6 +1499,7 @@ function ProfileView({
 function SecurityCenterView({ user, onBack }: { user: FirebaseUser | null, onBack: () => void }) {
   const [deleting, setDeleting] = useState(false);
   const [deleteStep, setDeleteStep] = useState(0);
+  const [isBiometricEnabled, setIsBiometricEnabled] = useState(true);
 
   const handleDownloadData = async () => {
     if (!user) return;
@@ -1667,14 +1668,29 @@ function SecurityCenterView({ user, onBack }: { user: FirebaseUser | null, onBac
          <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Configuración de Acceso</h4>
          <div className="bg-white rounded-[2rem] border border-slate-100 divide-y divide-slate-50 overflow-hidden shadow-sm">
             {[
-              { label: 'Autenticación Biométrica', status: 'Activado', color: 'text-emerald-500' },
+              { label: 'Autenticación Biométrica', isToggle: true, enabled: isBiometricEnabled, onToggle: () => setIsBiometricEnabled(!isBiometricEnabled) },
               { label: 'Cifrado de Extremo a Extremo', status: 'Activo', color: 'text-emerald-500' },
               { label: 'Verificación en Dos Pasos', status: 'Configurado', color: 'text-emerald-500' },
               { label: 'Nivel de Privacidad', status: 'Máximo', color: 'text-blue-500' }
             ].map((item, i) => (
               <div key={i} className="px-8 py-6 flex justify-between items-center">
                  <span className="font-bold text-slate-700">{item.label}</span>
-                 <span className={cn("text-[10px] font-black uppercase tracking-widest", item.color)}>{item.status}</span>
+                 {item.isToggle ? (
+                   <button 
+                     onClick={item.onToggle}
+                     className={cn(
+                       "w-12 h-6 rounded-full p-1 transition-colors duration-200 ease-in-out",
+                       item.enabled ? "bg-emerald-500" : "bg-slate-300"
+                     )}
+                   >
+                     <div className={cn(
+                       "bg-white w-4 h-4 rounded-full shadow-sm transition-transform duration-200 ease-in-out",
+                       item.enabled ? "translate-x-6" : "translate-x-0"
+                     )} />
+                   </button>
+                 ) : (
+                   <span className={cn("text-[10px] font-black uppercase tracking-widest", item.color)}>{item.status}</span>
+                 )}
               </div>
             ))}
          </div>
