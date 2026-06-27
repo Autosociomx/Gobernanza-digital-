@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Menu, Radio, Shield, Leaf, HeartPulse, Bus,
-  TrendingUp, ArrowRight, UsersRound, ShieldAlert,
-  Utensils, Activity
+import { 
+  Menu, Radio, GraduationCap, Shield, Users, BarChart2, Leaf, Briefcase, HeartPulse, Bus, Wifi,
+  TrendingUp, ArrowRight, Flower2, UsersRound, ShieldAlert,
+  Map, Utensils, Trash2, Activity, Clock
 } from 'lucide-react';
+import { cn } from '../lib/utils';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, EffectCards, Navigation, Pagination } from 'swiper/modules';
+import { EffectCards, Navigation, Pagination } from 'swiper/modules';
 
 import 'swiper/css';
 import 'swiper/css/effect-cards';
@@ -16,54 +17,23 @@ interface PlatformLandingProps {
   onNavigate: (view: 'landing' | 'c5' | 'citizen' | 'dev' | 'executive', subView?: string, action?: string) => void;
 }
 
-const carouselItems: Array<{
-  id: number; num: string; tag: string; title: string; subtitle: string;
-  icon: React.ComponentType<{ className?: string }>;
-  accentColor: string; img: string;
-  navigate: 'landing' | 'c5' | 'citizen' | 'dev' | 'executive';
-}> = [
-  {
-    id: 1, num: '01', tag: 'TRANSPORTE INTELIGENTE', title: 'Ruta PRO',
-    subtitle: 'GPS en tiempo real para toda la red de transporte público de Tepic y el estado',
-    icon: Bus, accentColor: '#2563EB',
-    img: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=800&h=1100&fit=crop',
-    navigate: 'c5',
-  },
-  {
-    id: 2, num: '02', tag: 'URGENCIAS CON IA', title: 'Triage Médico',
-    subtitle: 'Clasificación inteligente de pacientes — de la calle al expediente en minutos',
-    icon: HeartPulse, accentColor: '#DC2626',
-    img: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?q=80&w=800&h=1100&fit=crop',
-    navigate: 'citizen',
-  },
-  {
-    id: 3, num: '03', tag: 'CAMPO INTELIGENTE', title: 'AgroVisión 3D',
-    subtitle: 'Monitoreo satelital y drones para maximizar la producción agrícola nayarita',
-    icon: Leaf, accentColor: '#059669',
-    img: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=800&h=1100&fit=crop',
-    navigate: 'citizen',
-  },
-  {
-    id: 4, num: '04', tag: 'GOBIERNO ABIERTO', title: 'Gobernanza Digital',
-    subtitle: 'Presupuestos, trámites y transparencia en un solo portal ciudadano',
-    icon: Shield, accentColor: '#7C3AED',
-    img: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=800&h=1100&fit=crop',
-    navigate: 'executive',
-  },
-  {
-    id: 5, num: '05', tag: 'BIENESTAR DIGITAL', title: 'Tu Salud',
-    subtitle: 'Expediente médico digital, citas en línea y toda la red de salud del estado',
-    icon: Activity, accentColor: '#DB2777',
-    img: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=800&h=1100&fit=crop',
-    navigate: 'citizen',
-  },
-  {
-    id: 6, num: '06', tag: 'CULTURA Y SABOR', title: 'Nayarit Chef',
-    subtitle: 'De la pesca artesanal a la alta cocina — los sabores únicos de la costa del Pacífico',
-    icon: Utensils, accentColor: '#D97706',
-    img: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=800&h=1100&fit=crop',
-    navigate: 'citizen',
-  },
+const carouselItems = [
+  { id: 1, num: '01', title: 'Infraestructura municipal', icon: Radio, color: 'text-blue-600', img: 'https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?q=80&w=400&h=600&fit=crop' },
+  { id: 2, num: '02', title: 'Educación y capacitación digital', icon: GraduationCap, color: 'text-green-600', img: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=400&h=600&fit=crop' },
+  { id: 3, num: '03', title: 'Seguridad digital', icon: Shield, color: 'text-red-600', img: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=400&h=600&fit=crop' },
+  { id: 4, num: '04', title: 'Servicios ciudadanos', icon: Users, color: 'text-orange-500', img: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=400&h=600&fit=crop' },
+  { id: 5, num: '05', title: 'Datos abiertos y transparencia', icon: BarChart2, color: 'text-purple-600', img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=400&h=600&fit=crop' },
+  { id: 6, num: '06', title: 'Sostenibilidad y medio ambiente', icon: Leaf, color: 'text-emerald-600', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=400&h=600&fit=crop' },
+  { id: 7, num: '07', title: 'Economía digital', icon: Briefcase, color: 'text-blue-500', img: 'https://images.unsplash.com/photo-1604594849809-dfedbc827105?q=80&w=400&h=600&fit=crop' },
+  { id: 8, num: '08', title: 'Salud digital y bienestar', icon: HeartPulse, color: 'text-red-500', img: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=400&h=600&fit=crop' },
+  { id: 9, num: '09', title: 'Movilidad inteligente', icon: Bus, color: 'text-yellow-600', img: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=400&h=600&fit=crop' },
+  { id: 10, num: '10', title: 'Conectividad para todos', icon: Wifi, color: 'text-indigo-600', img: 'https://images.unsplash.com/photo-1520869562399-e772f042f422?q=80&w=400&h=600&fit=crop' },
+  { id: 11, num: '11', title: 'Ruta PRO', icon: Bus, color: 'text-blue-600', img: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=400&h=600&fit=crop' },
+  { id: 12, num: '12', title: 'Nayarit Chef', icon: Utensils, color: 'text-orange-600', img: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=400&h=600&fit=crop' },
+  { id: 13, num: '13', title: 'Residuos Médicos', icon: Trash2, color: 'text-emerald-600', img: 'https://images.unsplash.com/photo-1583324113626-70df0f4deaab?q=80&w=400&h=600&fit=crop' },
+  { id: 14, num: '14', title: 'Tu Salud', icon: HeartPulse, color: 'text-red-500', img: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=400&h=600&fit=crop' },
+  { id: 15, num: '15', title: 'Autoanálisis', icon: Activity, color: 'text-purple-600', img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=400&h=600&fit=crop' },
+  { id: 16, num: '16', title: 'Optimiza tus Días', icon: Clock, color: 'text-yellow-600', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=400&h=600&fit=crop' },
 ];
 
 const OjosEscena = () => {
@@ -111,7 +81,7 @@ const OjosEscena = () => {
   return (
     <div className="ojos-escena fixed inset-0 opacity-20 pointer-events-none z-0" id="ojosEscena">
       {/* Ojo A - Principal (Bottom Left) */}
-      <div className="ojo ojo-a" style={{
+      <div className="ojo ojo-a" style={{ 
         transform: `translate(${offset.cx * 30}px, ${offset.cy * 30}px) scale(1.2)`,
         left: '5%',
         bottom: '10%'
@@ -123,7 +93,7 @@ const OjosEscena = () => {
       </div>
 
       {/* Ojo B - Secondary (Top Right) */}
-      <div className="ojo ojo-b" style={{
+      <div className="ojo ojo-b" style={{ 
         transform: `translate(${offset.cx * 50}px, ${offset.cy * 50}px) rotate(15deg)`,
         right: '8%',
         top: '15%'
@@ -135,7 +105,7 @@ const OjosEscena = () => {
       </div>
 
       {/* Ojo C - Tertiary (Top Left) */}
-      <div className="ojo ojo-c" style={{
+      <div className="ojo ojo-c" style={{ 
         transform: `translate(${offset.cx * 80}px, ${offset.cy * 80}px) scale(0.8)`,
         left: '15%',
         top: '10%'
@@ -173,12 +143,12 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
             <p className="text-[0.6rem] uppercase tracking-[0.3em] font-bold text-slate-400">Excelencia Gubernamental</p>
           </div>
         </div>
-
+        
         <nav className="hidden lg:flex items-center gap-10">
           {['Soluciones', 'Estrategia', 'Impacto', 'Transparencia'].map((item) => (
             <button key={item} className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">{item}</button>
           ))}
-          <button
+          <button 
             onClick={() => onNavigate('dev')}
             className="bg-[#0f285c] text-white px-7 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-[#0f285c]/20"
           >
@@ -194,34 +164,34 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
       {/* Main Content */}
       <main className="px-6 md:px-12 py-12 md:py-24 max-w-[1600px] mx-auto relative z-10">
         <div className="flex flex-col xl:flex-row gap-16 xl:gap-24 items-center">
-
+          
           {/* Left Column: Typography & CTAs */}
           <div className="xl:w-1/2 flex flex-col justify-center shrink-0">
             <div className="flex items-center gap-3 mb-8">
                <div className="h-[1px] w-12 bg-blue-600/30"></div>
-               <span className="text-blue-600 font-bold tracking-[0.3em] text-[0.7rem] uppercase">6 Módulos Desplegados</span>
+               <span className="text-blue-600 font-bold tracking-[0.3em] text-[0.7rem] uppercase">16 Pilares de Transformación</span>
                <div className="h-[1px] w-12 bg-blue-600/30"></div>
             </div>
-
+            
             <h2 className="text-6xl md:text-7xl lg:text-[5.5rem] font-serif font-black text-[#0f285c] leading-[0.95] tracking-tighter mb-10">
                La Nueva Era <br />
                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 italic font-medium">Digital</span> de Nayarit
             </h2>
-
+            
             <p className="text-slate-600 text-xl leading-relaxed mb-12 max-w-xl font-medium opacity-90">
                Una infraestructura inteligente diseñada para la eficiencia, la transparencia y el bienestar ciudadano. Tecnología de élite al servicio del pueblo.
             </p>
-
+            
             <div className="flex flex-wrap items-center gap-6 mb-20">
-               <button
+               <button 
                  onClick={() => onNavigate('citizen')}
                  className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-full text-lg font-bold transition-all shadow-2xl shadow-blue-600/40 flex items-center gap-4 group"
                >
                  Explorar Ecosistema <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
                </button>
-
+               
                <button className="flex items-center gap-3 text-[#0f285c] font-bold hover:gap-5 transition-all group">
-                 <span>Ver Estrategia 2025</span>
+                 <span>Ver Estrategia 2024</span>
                  <div className="w-10 h-[2px] bg-[#0f285c] group-hover:w-16 transition-all"></div>
                </button>
             </div>
@@ -238,18 +208,13 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
             </div>
           </div>
 
-          {/* Right Column: Swiper 3D Carousel - Cinematic Full-Bleed Cards */}
-          <div className="xl:w-1/2 w-full max-w-[450px] md:max-w-[500px] relative h-[600px] md:h-[720px] flex items-center justify-center">
+          {/* Right Column: Swiper 3D Carousel - Elite Cards */}
+          <div className="xl:w-1/2 w-full max-w-[450px] md:max-w-[500px] relative h-[550px] md:h-[700px] flex items-center justify-center">
              <Swiper
                effect={'cards'}
                grabCursor={true}
-               modules={[Autoplay, EffectCards, Pagination, Navigation]}
-               className="w-full h-[560px] md:h-[680px]"
-               autoplay={{
-                 delay: 3500,
-                 disableOnInteraction: false,
-                 pauseOnMouseEnter: true,
-               }}
+               modules={[EffectCards, Pagination, Navigation]}
+               className="w-full h-[500px] md:h-[600px]"
                pagination={{
                  clickable: true,
                  dynamicBullets: true,
@@ -257,69 +222,41 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                navigation={true}
              >
                {carouselItems.map((item) => (
-                 <SwiperSlide
-                   key={item.id}
-                   className="rounded-[2.5rem] overflow-hidden shadow-[0_40px_80px_-15px_rgba(0,0,0,0.55)] cursor-grab active:cursor-grabbing group"
-                   onClick={() => onNavigate(item.navigate)}
+                 <SwiperSlide 
+                   key={item.id} 
+                   className="rounded-[2.5rem] overflow-hidden shadow-[0_40px_80px_-15px_rgba(15,40,92,0.3)] bg-white flex flex-col border border-white/50 cursor-grab active:cursor-grabbing group"
+                   onClick={() => {
+                      if (item.id === 1) onNavigate('c5');
+                      else if (item.id === 4) onNavigate('citizen', 'services');
+                      else if (item.id === 8) onNavigate('citizen', 'services', 'triage');
+                      else onNavigate('citizen');
+                   }}
                  >
-                   <div className="relative w-full h-full">
-                     {/* Full-bleed background image */}
-                     <img
-                       src={item.img}
-                       alt={item.title}
-                       className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-[3s]"
-                     />
-
-                     {/* Cinematic gradient overlays */}
-                     <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-black/50"></div>
-                     <div
-                       className="absolute bottom-0 left-0 right-0 h-2/3"
-                       style={{ background: `linear-gradient(to top, ${item.accentColor}55, transparent)` }}
-                     ></div>
-
-                     {/* Top accent line */}
-                     <div
-                       className="absolute top-0 left-0 right-0 h-[3px]"
-                       style={{ backgroundColor: item.accentColor }}
-                     ></div>
-
-                     {/* Header row: module tag + number */}
-                     <div className="absolute top-7 left-7 right-7 flex justify-between items-center z-10">
-                       <span
-                         className="text-[0.55rem] font-black uppercase tracking-[0.25em] px-3 py-1.5 rounded-full backdrop-blur-md border text-white"
-                         style={{
-                           backgroundColor: `${item.accentColor}35`,
-                           borderColor: `${item.accentColor}70`,
-                         }}
-                       >
-                         {item.tag}
-                       </span>
-                       <span className="font-serif font-black text-white/10 text-5xl leading-none select-none">{item.num}</span>
-                     </div>
-
-                     {/* Center watermark icon */}
-                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                       {React.createElement(item.icon, { className: 'w-56 h-56 text-white opacity-[0.04]' })}
-                     </div>
-
-                     {/* Bottom content */}
-                     <div className="absolute bottom-0 left-0 right-0 p-8 z-10">
-                       <div
-                         className="w-12 h-[3px] mb-4 rounded-full"
-                         style={{ backgroundColor: item.accentColor }}
-                       ></div>
-                       <h3 className="font-serif font-black text-[1.9rem] text-white leading-[1.1] mb-3 drop-shadow-lg">
-                         {item.title}
-                       </h3>
-                       <p className="text-white/65 text-sm leading-relaxed mb-6 font-medium">
-                         {item.subtitle}
-                       </p>
-                       <div
-                         className="w-full py-3.5 rounded-xl text-[0.65rem] font-black uppercase tracking-[0.25em] text-center text-white/80 backdrop-blur-md border border-white/15 hover:bg-white hover:text-[#0f285c] transition-all duration-300"
-                         style={{ backgroundColor: 'rgba(255,255,255,0.07)' }}
-                       >
-                         Explorar módulo →
-                       </div>
+                   <div className="p-10 text-center flex flex-col items-center bg-white z-10 relative">
+                      <div className="flex items-center gap-2 mb-6">
+                        <span className="w-8 h-[1px] bg-blue-600/20"></span>
+                        <span className="text-blue-600 font-black text-xl tracking-tighter italic">Pilar {item.num}</span>
+                        <span className="w-8 h-[1px] bg-blue-600/20"></span>
+                      </div>
+                      <div className={cn("p-5 rounded-2xl mb-6 bg-slate-50 group-hover:scale-110 transition-transform duration-500", item.color)}>
+                        {React.createElement(item.icon, { className: "w-10 h-10" })}
+                      </div>
+                      <h3 className="font-serif font-black text-2xl text-[#0f285c] leading-tight px-4 mb-2">
+                        {item.title}
+                      </h3>
+                      <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Nayarit Digital Elite</p>
+                   </div>
+                   
+                   {/* Image background that blends into the top */}
+                   <div className="absolute inset-0 z-0">
+                     <div className="absolute inset-0 bg-gradient-to-b from-white via-white/80 to-transparent z-10 h-[60%]"></div>
+                     <img src={item.img} alt={item.title} className="w-full h-full object-cover pointer-events-none group-hover:scale-105 transition-transform duration-[2s]" />
+                     <div className="absolute inset-0 bg-gradient-to-t from-[#0f285c]/90 via-[#0f285c]/20 to-transparent z-10"></div>
+                     
+                     <div className="absolute bottom-8 left-0 right-0 z-20 px-8">
+                        <button className="w-full py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white text-xs font-bold uppercase tracking-[0.2em] hover:bg-white hover:text-[#0f285c] transition-all">
+                          Ver Detalles
+                        </button>
                      </div>
                    </div>
                  </SwiperSlide>
@@ -377,7 +314,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
          <div className="bg-[#0f285c] text-white rounded-[2.5rem] shadow-2xl border border-white/10 p-8 md:p-12 flex flex-wrap justify-between items-center gap-8 relative overflow-hidden">
             {/* Geometric patterns */}
             <div className="absolute right-0 top-0 bottom-0 w-64 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 10px 10px, white 1px, transparent 0)', backgroundSize: '30px 30px' }}></div>
-
+            
             <div className="flex items-center gap-6 relative z-10">
                <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20">
                   <ShieldAlert className="text-amber-400 w-8 h-8" />
@@ -409,3 +346,4 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
     </div>
   );
 };
+
