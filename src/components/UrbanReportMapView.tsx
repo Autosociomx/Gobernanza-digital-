@@ -43,7 +43,6 @@ export function UrbanReportMapView({ onBack }: { onBack: () => void }) {
           defaultCenter={{lat: 21.5039, lng: -104.8947}}
           defaultZoom={13}
           mapId="DEMO_MAP_ID_URBAN"
-          internalUsageAttributionIds={['gmp_mcp_codeassist_v1_aistudio']}
           style={{width: '100%', height: '100%'}}
           disableDefaultUI={true}
         >

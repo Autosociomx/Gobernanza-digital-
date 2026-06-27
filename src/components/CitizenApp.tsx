@@ -24,7 +24,11 @@ import {
   LayoutGrid,
   Bot,
   Sparkles,
-  Map as MapIcon
+  Map as MapIcon,
+  ShieldAlert,
+  EyeOff,
+  Download,
+  Trash2
 } from 'lucide-react';
   import { motion, AnimatePresence } from 'motion/react';
   import { cn } from '../lib/utils';

@@ -18,12 +18,22 @@ interface PlatformLandingProps {
 }
 
 const carouselItems = [
-  { id: 1, num: '01', title: 'Ruta PRO', icon: Bus, color: 'text-blue-600', img: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=400&h=600&fit=crop' },
-  { id: 2, num: '02', title: 'Nayarit Chef', icon: Utensils, color: 'text-orange-600', img: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=400&h=600&fit=crop' },
-  { id: 3, num: '03', title: 'Gestión de Residuos Médicos', icon: Trash2, color: 'text-emerald-600', img: 'https://images.unsplash.com/photo-1583324113626-70df0f4deaab?q=80&w=400&h=600&fit=crop' },
-  { id: 4, num: '04', title: 'Tu Salud', icon: HeartPulse, color: 'text-red-500', img: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=400&h=600&fit=crop' },
-  { id: 5, num: '05', title: 'Autoanálisis', icon: Activity, color: 'text-purple-600', img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=400&h=600&fit=crop' },
-  { id: 6, num: '06', title: 'Optimiza tus Días', icon: Clock, color: 'text-yellow-600', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=400&h=600&fit=crop' },
+  { id: 1, num: '01', title: 'Infraestructura municipal', icon: Radio, color: 'text-blue-600', img: 'https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?q=80&w=400&h=600&fit=crop' },
+  { id: 2, num: '02', title: 'Educación y capacitación digital', icon: GraduationCap, color: 'text-green-600', img: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=400&h=600&fit=crop' },
+  { id: 3, num: '03', title: 'Seguridad digital', icon: Shield, color: 'text-red-600', img: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=400&h=600&fit=crop' },
+  { id: 4, num: '04', title: 'Servicios ciudadanos', icon: Users, color: 'text-orange-500', img: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=400&h=600&fit=crop' },
+  { id: 5, num: '05', title: 'Datos abiertos y transparencia', icon: BarChart2, color: 'text-purple-600', img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=400&h=600&fit=crop' },
+  { id: 6, num: '06', title: 'Sostenibilidad y medio ambiente', icon: Leaf, color: 'text-emerald-600', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=400&h=600&fit=crop' },
+  { id: 7, num: '07', title: 'Economía digital', icon: Briefcase, color: 'text-blue-500', img: 'https://images.unsplash.com/photo-1604594849809-dfedbc827105?q=80&w=400&h=600&fit=crop' },
+  { id: 8, num: '08', title: 'Salud digital y bienestar', icon: HeartPulse, color: 'text-red-500', img: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=400&h=600&fit=crop' },
+  { id: 9, num: '09', title: 'Movilidad inteligente', icon: Bus, color: 'text-yellow-600', img: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=400&h=600&fit=crop' },
+  { id: 10, num: '10', title: 'Conectividad para todos', icon: Wifi, color: 'text-indigo-600', img: 'https://images.unsplash.com/photo-1520869562399-e772f042f422?q=80&w=400&h=600&fit=crop' },
+  { id: 11, num: '11', title: 'Ruta PRO', icon: Bus, color: 'text-blue-600', img: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=400&h=600&fit=crop' },
+  { id: 12, num: '12', title: 'Nayarit Chef', icon: Utensils, color: 'text-orange-600', img: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=400&h=600&fit=crop' },
+  { id: 13, num: '13', title: 'Residuos Médicos', icon: Trash2, color: 'text-emerald-600', img: 'https://images.unsplash.com/photo-1583324113626-70df0f4deaab?q=80&w=400&h=600&fit=crop' },
+  { id: 14, num: '14', title: 'Tu Salud', icon: HeartPulse, color: 'text-red-500', img: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=400&h=600&fit=crop' },
+  { id: 15, num: '15', title: 'Autoanálisis', icon: Activity, color: 'text-purple-600', img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=400&h=600&fit=crop' },
+  { id: 16, num: '16', title: 'Optimiza tus Días', icon: Clock, color: 'text-yellow-600', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=400&h=600&fit=crop' },
 ];
 
 const OjosEscena = () => {
@@ -159,7 +169,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
           <div className="xl:w-1/2 flex flex-col justify-center shrink-0">
             <div className="flex items-center gap-3 mb-8">
                <div className="h-[1px] w-12 bg-blue-600/30"></div>
-               <span className="text-blue-600 font-bold tracking-[0.3em] text-[0.7rem] uppercase">6 Pilares de Transformación</span>
+               <span className="text-blue-600 font-bold tracking-[0.3em] text-[0.7rem] uppercase">16 Pilares de Transformación</span>
                <div className="h-[1px] w-12 bg-blue-600/30"></div>
             </div>
             
@@ -255,6 +265,49 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
           </div>
         </div>
       </main>
+
+      {/* Bottom Features Bar */}
+      <div className="max-w-[1400px] mx-auto px-6 md:px-12 pb-12 relative z-20 mt-12 xl:mt-0">
+         <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-xl border border-white p-6 md:p-8 flex flex-wrap justify-center md:justify-between items-center gap-8 relative overflow-hidden">
+            {/* Left/Right Decorative patterns */}
+            <div className="absolute left-0 top-0 bottom-0 w-32 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 10px 10px, blue 2px, transparent 0)', backgroundSize: '20px 20px' }}></div>
+            <div className="absolute right-0 top-0 bottom-0 w-32 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 10px 10px, red 2px, transparent 0)', backgroundSize: '20px 20px' }}></div>
+
+            <div className="flex items-center gap-4 relative z-10">
+              <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                <TrendingUp className="w-6 h-6" />
+              </div>
+              <p className="text-sm font-bold text-slate-700 max-w-[120px] leading-tight">Tecnología para el bienestar</p>
+            </div>
+
+            <div className="hidden md:block w-px h-12 bg-slate-200"></div>
+
+            <div className="flex items-center gap-4 relative z-10">
+              <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+                <UsersRound className="w-6 h-6" />
+              </div>
+              <p className="text-sm font-bold text-slate-700 max-w-[120px] leading-tight">Gobierno abierto y transparente</p>
+            </div>
+
+            <div className="hidden md:block w-px h-12 bg-slate-200"></div>
+
+            <div className="flex items-center gap-4 relative z-10">
+              <div className="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center text-red-600">
+                <ShieldAlert className="w-6 h-6" />
+              </div>
+              <p className="text-sm font-bold text-slate-700 max-w-[120px] leading-tight">Seguridad y confianza en cada paso</p>
+            </div>
+
+            <div className="hidden md:block w-px h-12 bg-slate-200"></div>
+
+            <div className="flex items-center gap-4 relative z-10">
+              <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
+                <Leaf className="w-6 h-6" />
+              </div>
+              <p className="text-sm font-bold text-slate-700 max-w-[120px] leading-tight">Un futuro sostenible para Nayarit</p>
+            </div>
+         </div>
+      </div>
 
       {/* Footer Branding - Elite Ribbon */}
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 pb-16 relative z-20">
