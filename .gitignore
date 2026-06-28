@@ -6,3 +6,10 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# SEC-1: Firebase config with API keys — usar variables de entorno
+firebase-applet-config.json
+
+# Bases de datos locales
+*.db
+*.sqlite
