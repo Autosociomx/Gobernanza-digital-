@@ -50,8 +50,10 @@ import { doc, setDoc, getDoc, onSnapshot, collection, addDoc, getDocs, query, wh
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { getMasterRegistry, InfrastructureAsset } from '../services/infrastructureService';
 import { CanjesView } from './CanjesView';
+import { TramitesCatalogoView } from './citizen/TramitesCatalogoView';
+import { TransparenciaLNETBView } from './citizen/TransparenciaLNETBView';
 
-type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria';
+type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria' | 'tramites' | 'transparencia';
 type Language = 'es' | 'cora' | 'wixarika';
 
 export function CitizenApp({ 
@@ -181,9 +183,10 @@ export function CitizenApp({
       home: "Inicio",
       forum: "Campaña",
       networks: "Redes",
-      payments: "Tesorería",
+      payments: "Pagos",
       services: "Gobierno",
       profile: "Mi NayaritID",
+      tramites: "Trámites",
       assistant_online: "Online · Soporte Regional",
     },
     cora: {
@@ -195,6 +198,7 @@ export function CitizenApp({
       payments: "Tyu'upay",
       services: "Tyu'useve",
       profile: "Pēfi'i",
+      tramites: "Tyu'utram",
       assistant_online: "Online · Cora Support",
     },
     wixarika: {
@@ -206,6 +210,7 @@ export function CitizenApp({
       payments: "Paka",
       services: "Yereta",
       profile: "Kewita",
+      tramites: "Xapiyari",
       assistant_online: "Online · Wixárika Support",
     }
   };
@@ -376,14 +381,16 @@ export function CitizenApp({
               transition={{ duration: 0.2 }}
             >
               {activeTab === 'home' && (
-                <HomeView 
+                <HomeView
                   profile={profile}
-                  onShowMap={() => setShowMap(true)} 
+                  onShowMap={() => setShowMap(true)}
                   onShowTriage={() => setShowTriage(true)}
                   onGoToForum={() => setActiveTab('forum')}
                   onGoToProfile={() => setActiveTab('profile')}
                   onGoToPayments={() => setActiveTab('payments')}
                   onGoToServices={() => setActiveTab('services')}
+                  onGoToTramites={() => setActiveTab('tramites')}
+                  onGoToTransparencia={() => setActiveTab('transparencia')}
                 />
               )}
               {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} />}
@@ -395,6 +402,8 @@ export function CitizenApp({
               {activeTab === 'canjes' && <CanjesView user={user!} onBack={() => setActiveTab('profile')} />}
               {activeTab === 'auditoria' && <MysteryShopperView user={user} onBack={() => setActiveTab('services')} />}
               {activeTab === 'notifications' && <NotificationView onBack={() => setActiveTab('home')} />}
+              {activeTab === 'tramites' && <TramitesCatalogoView onBack={() => setActiveTab('home')} onStartTramite={() => setActiveTab('payments')} />}
+              {activeTab === 'transparencia' && <TransparenciaLNETBView onBack={() => setActiveTab('home')} />}
 
             </motion.div>
           </AnimatePresence>
@@ -412,9 +421,9 @@ export function CitizenApp({
         {/* Navigation Bar */}
         <nav className="absolute bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-100 px-2 py-3 pb-8 flex justify-around items-center z-40">
            <TabButton icon={Home} label={translations[lang].home} active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
-           <TabButton icon={Users} label={translations[lang].networks} active={activeTab === 'networks'} onClick={() => setActiveTab('networks')} />
-           <TabButton icon={MessageSquare} label={translations[lang].forum} active={activeTab === 'forum'} onClick={() => setActiveTab('forum')} />
+           <TabButton icon={FileText} label={translations[lang].tramites} active={activeTab === 'tramites'} onClick={() => setActiveTab('tramites')} />
            <TabButton icon={CreditCard} label={translations[lang].payments} active={activeTab === 'payments'} onClick={() => setActiveTab('payments')} />
+           <TabButton icon={Users} label={translations[lang].networks} active={activeTab === 'networks'} onClick={() => setActiveTab('networks')} />
            <TabButton icon={User} label={translations[lang].profile} active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} />
         </nav>
 
@@ -826,22 +835,26 @@ function TabButton({ icon: Icon, label, active, onClick }: { icon: any, label: s
   );
 }
 
-function HomeView({ 
+function HomeView({
   profile,
-  onShowMap, 
-  onShowTriage, 
-  onGoToForum, 
-  onGoToProfile, 
-  onGoToPayments, 
-  onGoToServices 
-}: { 
-  profile: any,
-  onShowMap: () => void, 
-  onShowTriage: () => void, 
-  onGoToForum: () => void, 
-  onGoToProfile: () => void, 
-  onGoToPayments: () => void, 
-  onGoToServices: () => void 
+  onShowMap,
+  onShowTriage,
+  onGoToForum,
+  onGoToProfile,
+  onGoToPayments,
+  onGoToServices,
+  onGoToTramites,
+  onGoToTransparencia,
+}: {
+  profile: any;
+  onShowMap: () => void;
+  onShowTriage: () => void;
+  onGoToForum: () => void;
+  onGoToProfile: () => void;
+  onGoToPayments: () => void;
+  onGoToServices: () => void;
+  onGoToTramites: () => void;
+  onGoToTransparencia: () => void;
 }) {
   return (
     <div className="space-y-6 pt-2">
@@ -922,6 +935,8 @@ function HomeView({
            <QuickAction icon={ShieldCheck} label="Reporte GPS" color="bg-sky-50 text-sky-600" onClick={onGoToServices} description="Incidencias ciudadanas" />
            <QuickAction icon={Stethoscope} label="Triaje Salud IA" color="bg-rose-50 text-rose-600" onClick={onShowTriage} description="Atención Inmediata" />
            <QuickAction icon={Lightbulb} label="Reporte Urbano" color="bg-amber-50 text-amber-600" onClick={onGoToServices} description="Servicios Públicos" />
+           <QuickAction icon={FileText} label="Catálogo Trámites" color="bg-emerald-50 text-emerald-600" onClick={onGoToTramites} description="Arts. 51-54 LNETB" />
+           <QuickAction icon={LayoutGrid} label="Transparencia LNETB" color="bg-purple-50 text-purple-600" onClick={onGoToTransparencia} description="Cumplimiento Art. 15" />
         </div>
       </div>
 
