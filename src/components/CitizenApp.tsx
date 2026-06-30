@@ -50,10 +50,8 @@ import { doc, setDoc, getDoc, onSnapshot, collection, addDoc, getDocs, query, wh
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { getMasterRegistry, InfrastructureAsset } from '../services/infrastructureService';
 import { CanjesView } from './CanjesView';
-import { TramitesCatalogoView } from './citizen/TramitesCatalogoView';
-import { TransparenciaLNETBView } from './citizen/TransparenciaLNETBView';
 
-type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria' | 'tramites' | 'transparencia';
+type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria';
 type Language = 'es' | 'cora' | 'wixarika';
 
 export function CitizenApp({ 
@@ -183,10 +181,9 @@ export function CitizenApp({
       home: "Inicio",
       forum: "Campaña",
       networks: "Redes",
-      payments: "Pagos",
+      payments: "Tesorería",
       services: "Gobierno",
       profile: "Mi NayaritID",
-      tramites: "Trámites",
       assistant_online: "Online · Soporte Regional",
     },
     cora: {
@@ -198,7 +195,6 @@ export function CitizenApp({
       payments: "Tyu'upay",
       services: "Tyu'useve",
       profile: "Pēfi'i",
-      tramites: "Tyu'utram",
       assistant_online: "Online · Cora Support",
     },
     wixarika: {
@@ -210,7 +206,6 @@ export function CitizenApp({
       payments: "Paka",
       services: "Yereta",
       profile: "Kewita",
-      tramites: "Xapiyari",
       assistant_online: "Online · Wixárika Support",
     }
   };
@@ -237,6 +232,9 @@ export function CitizenApp({
 
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [useThinking, setUseThinking] = useState(false);
+  const [useMaps, setUseMaps] = useState(false);
+  const [useSearch, setUseSearch] = useState(false);
 
   const quickActions = {
     es: ["Pagar Predial", "Reportar Bache", "Mapa de Obras", "Ayuda"],
@@ -263,7 +261,12 @@ export function CitizenApp({
       const response = await fetch('/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: `${userMsg} (Language selected: ${lang})` })
+        body: JSON.stringify({ 
+          message: `${userMsg} (Language selected: ${lang})`,
+          useThinking,
+          useMaps,
+          useSearch
+        })
       });
       const data = await response.json();
       
@@ -347,19 +350,41 @@ export function CitizenApp({
             <p className="text-[10px] uppercase tracking-widest font-black text-magenta-500" style={{color:'var(--magenta)'}}>Nayarit Digital</p>
             <h1 className="text-xl font-serif font-black text-slate-900 leading-tight">{translations[lang].welcome}</h1>
             <div className="flex gap-2 mt-2">
-               {['es', 'cora', 'wixarika'].map(l => (
-                 <button 
-                   key={l}
-                   onClick={() => setLang(l as Language)}
-                   className={cn(
-                     "text-[8px] font-bold uppercase px-2 py-0.5 rounded transition-all",
-                     lang === l ? "bg-magenta-500 text-white" : "bg-slate-100 text-slate-400"
-                   )}
-                   style={lang === l ? {backgroundColor:'var(--magenta)'} : {}}
-                 >
-                   {l}
-                 </button>
-               ))}
+               {['es', 'cora', 'wixarika'].map(l => {
+                 let activeClass = "";
+                 let inlineStyle: any = {};
+                 
+                 if (lang === l) {
+                   if (l === 'es') {
+                     activeClass = "bg-magenta-500 text-white";
+                     inlineStyle = { backgroundColor: 'var(--magenta)' };
+                   } else if (l === 'cora') {
+                     // Colores terrosos/cálidos tradicionales Cora
+                     activeClass = "bg-orange-600 text-white shadow-sm shadow-orange-500/20";
+                     inlineStyle = { backgroundColor: '#ea580c' }; 
+                   } else if (l === 'wixarika') {
+                     // Colores vibrantes tradicionales Huichol (Wixárika)
+                     activeClass = "text-white bg-gradient-to-r from-cyan-400 via-purple-500 to-yellow-400 shadow-sm shadow-cyan-500/20";
+                     inlineStyle = {}; 
+                   }
+                 } else {
+                   activeClass = "bg-slate-100 text-slate-400 hover:bg-slate-200";
+                 }
+
+                 return (
+                   <button 
+                     key={l}
+                     onClick={() => setLang(l as Language)}
+                     className={cn(
+                       "text-[8px] font-bold uppercase px-3 py-1 rounded-full transition-all",
+                       activeClass
+                     )}
+                     style={inlineStyle}
+                   >
+                     {l}
+                   </button>
+                 );
+               })}
             </div>
           </div>
           <div className="relative">
@@ -381,16 +406,14 @@ export function CitizenApp({
               transition={{ duration: 0.2 }}
             >
               {activeTab === 'home' && (
-                <HomeView
+                <HomeView 
                   profile={profile}
-                  onShowMap={() => setShowMap(true)}
+                  onShowMap={() => setShowMap(true)} 
                   onShowTriage={() => setShowTriage(true)}
                   onGoToForum={() => setActiveTab('forum')}
                   onGoToProfile={() => setActiveTab('profile')}
                   onGoToPayments={() => setActiveTab('payments')}
                   onGoToServices={() => setActiveTab('services')}
-                  onGoToTramites={() => setActiveTab('tramites')}
-                  onGoToTransparencia={() => setActiveTab('transparencia')}
                 />
               )}
               {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} />}
@@ -402,8 +425,6 @@ export function CitizenApp({
               {activeTab === 'canjes' && <CanjesView user={user!} onBack={() => setActiveTab('profile')} />}
               {activeTab === 'auditoria' && <MysteryShopperView user={user} onBack={() => setActiveTab('services')} />}
               {activeTab === 'notifications' && <NotificationView onBack={() => setActiveTab('home')} />}
-              {activeTab === 'tramites' && <TramitesCatalogoView onBack={() => setActiveTab('home')} onStartTramite={() => setActiveTab('payments')} />}
-              {activeTab === 'transparencia' && <TransparenciaLNETBView onBack={() => setActiveTab('home')} />}
 
             </motion.div>
           </AnimatePresence>
@@ -421,9 +442,9 @@ export function CitizenApp({
         {/* Navigation Bar */}
         <nav className="absolute bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-100 px-2 py-3 pb-8 flex justify-around items-center z-40">
            <TabButton icon={Home} label={translations[lang].home} active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
-           <TabButton icon={FileText} label={translations[lang].tramites} active={activeTab === 'tramites'} onClick={() => setActiveTab('tramites')} />
-           <TabButton icon={CreditCard} label={translations[lang].payments} active={activeTab === 'payments'} onClick={() => setActiveTab('payments')} />
            <TabButton icon={Users} label={translations[lang].networks} active={activeTab === 'networks'} onClick={() => setActiveTab('networks')} />
+           <TabButton icon={MessageSquare} label={translations[lang].forum} active={activeTab === 'forum'} onClick={() => setActiveTab('forum')} />
+           <TabButton icon={CreditCard} label={translations[lang].payments} active={activeTab === 'payments'} onClick={() => setActiveTab('payments')} />
            <TabButton icon={User} label={translations[lang].profile} active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} />
         </nav>
 
@@ -439,20 +460,63 @@ export function CitizenApp({
                className="absolute inset-0 z-50 bg-white flex flex-col"
             >
                {/* Chat Header */}
-               <div className="px-6 py-8 border-b border-slate-100 flex justify-between items-center bg-slate-900 text-white">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-magenta-500 flex items-center justify-center text-white shadow-lg ring-2 ring-white/20"><Bot className="w-6 h-6" /></div>
-                    <div>
-                      <p className="text-[1.1rem] font-black uppercase tracking-tight leading-none mb-1">{isAiMode ? 'Naya IA' : 'Naya Local'}</p>
-                      <p className={cn("text-[10px] font-bold uppercase flex items-center gap-1", isAiMode ? "text-emerald-400" : "text-amber-400")}>
-                        <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse", isAiMode ? "bg-emerald-400" : "bg-amber-400")}></span>
-                        {isAiMode ? translations[lang].assistant_online : 'Fallback Mode'}
-                      </p>
+               <div className="px-6 py-6 border-b border-slate-100 flex flex-col gap-4 bg-slate-900 text-white">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-magenta-500 flex items-center justify-center text-white shadow-lg ring-2 ring-white/20"><Bot className="w-6 h-6" /></div>
+                      <div>
+                        <p className="text-[1.1rem] font-black uppercase tracking-tight leading-none mb-1">{isAiMode ? 'Naya IA' : 'Naya Local'}</p>
+                        <p className={cn("text-[10px] font-bold uppercase flex items-center gap-1", isAiMode ? "text-emerald-400" : "text-amber-400")}>
+                          <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse", isAiMode ? "bg-emerald-400" : "bg-amber-400")}></span>
+                          {isAiMode ? translations[lang].assistant_online : 'Fallback Mode'}
+                        </p>
+                      </div>
                     </div>
+                    <button onClick={() => setShowChat(false)} className="p-3 hover:bg-white/10 rounded-full transition-colors">
+                      <X className="w-8 h-8" />
+                    </button>
                   </div>
-                  <button onClick={() => setShowChat(false)} className="p-3 hover:bg-white/10 rounded-full transition-colors">
-                    <X className="w-8 h-8" />
-                  </button>
+                  <div className="flex gap-2 border-t border-white/10 pt-4 flex-wrap">
+                     <button
+                        onClick={() => {
+                          setUseThinking(!useThinking);
+                          if (!useThinking) { setUseMaps(false); setUseSearch(false); }
+                        }}
+                        className={cn(
+                          "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5 border",
+                          useThinking ? "bg-purple-500/20 text-purple-300 border-purple-500/50" : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10"
+                        )}
+                     >
+                        <div className={cn("w-1.5 h-1.5 rounded-full", useThinking ? "bg-purple-400 animate-pulse" : "bg-white/30")}></div>
+                        Thinking Mode
+                     </button>
+                     <button
+                        onClick={() => {
+                          setUseMaps(!useMaps);
+                          if (!useMaps) { setUseThinking(false); setUseSearch(false); }
+                        }}
+                        className={cn(
+                          "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5 border",
+                          useMaps ? "bg-blue-500/20 text-blue-300 border-blue-500/50" : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10"
+                        )}
+                     >
+                        <div className={cn("w-1.5 h-1.5 rounded-full", useMaps ? "bg-blue-400 animate-pulse" : "bg-white/30")}></div>
+                        Maps Grounding
+                     </button>
+                     <button
+                        onClick={() => {
+                          setUseSearch(!useSearch);
+                          if (!useSearch) { setUseThinking(false); setUseMaps(false); }
+                        }}
+                        className={cn(
+                          "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5 border",
+                          useSearch ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50" : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10"
+                        )}
+                     >
+                        <div className={cn("w-1.5 h-1.5 rounded-full", useSearch ? "bg-emerald-400 animate-pulse" : "bg-white/30")}></div>
+                        Search Grounding
+                     </button>
+                  </div>
                </div>
 
                {/* Messages Console */}
@@ -835,26 +899,22 @@ function TabButton({ icon: Icon, label, active, onClick }: { icon: any, label: s
   );
 }
 
-function HomeView({
+function HomeView({ 
   profile,
-  onShowMap,
-  onShowTriage,
-  onGoToForum,
-  onGoToProfile,
-  onGoToPayments,
-  onGoToServices,
-  onGoToTramites,
-  onGoToTransparencia,
-}: {
-  profile: any;
-  onShowMap: () => void;
-  onShowTriage: () => void;
-  onGoToForum: () => void;
-  onGoToProfile: () => void;
-  onGoToPayments: () => void;
-  onGoToServices: () => void;
-  onGoToTramites: () => void;
-  onGoToTransparencia: () => void;
+  onShowMap, 
+  onShowTriage, 
+  onGoToForum, 
+  onGoToProfile, 
+  onGoToPayments, 
+  onGoToServices 
+}: { 
+  profile: any,
+  onShowMap: () => void, 
+  onShowTriage: () => void, 
+  onGoToForum: () => void, 
+  onGoToProfile: () => void, 
+  onGoToPayments: () => void, 
+  onGoToServices: () => void 
 }) {
   return (
     <div className="space-y-6 pt-2">
@@ -935,8 +995,6 @@ function HomeView({
            <QuickAction icon={ShieldCheck} label="Reporte GPS" color="bg-sky-50 text-sky-600" onClick={onGoToServices} description="Incidencias ciudadanas" />
            <QuickAction icon={Stethoscope} label="Triaje Salud IA" color="bg-rose-50 text-rose-600" onClick={onShowTriage} description="Atención Inmediata" />
            <QuickAction icon={Lightbulb} label="Reporte Urbano" color="bg-amber-50 text-amber-600" onClick={onGoToServices} description="Servicios Públicos" />
-           <QuickAction icon={FileText} label="Catálogo Trámites" color="bg-emerald-50 text-emerald-600" onClick={onGoToTramites} description="Arts. 51-54 LNETB" />
-           <QuickAction icon={LayoutGrid} label="Transparencia LNETB" color="bg-purple-50 text-purple-600" onClick={onGoToTransparencia} description="Cumplimiento Art. 15" />
         </div>
       </div>
 

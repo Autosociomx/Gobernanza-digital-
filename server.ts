@@ -3,7 +3,7 @@ import { createServer as createViteServer } from "vite";
 import path from "path";
 import fs from "fs/promises";
 import Database from "better-sqlite3";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 import Stripe from "stripe";
 
 // Initialize AI
@@ -85,7 +85,7 @@ async function startServer() {
 
   // AI Assistant Endpoint
   app.post("/api/ai/chat", async (req, res) => {
-    const { message, context } = req.body;
+    const { message, context, useThinking, useMaps, useSearch } = req.body;
     
     if (!process.env.GEMINI_API_KEY) {
       return res.status(500).json({ 
@@ -96,12 +96,24 @@ async function startServer() {
     try {
       const finalPrompt = context ? `${context}\n\nPregunta del usuario: ${message}` : message;
       
+      let model = "gemini-3.5-flash";
+      let config: any = {
+        systemInstruction: systemPrompt,
+      };
+
+      if (useThinking) {
+        model = "gemini-3.1-pro-preview";
+        config.thinkingConfig = { thinkingLevel: ThinkingLevel.HIGH }; 
+      } else if (useMaps) {
+        config.tools = [{ googleMaps: {} }];
+      } else if (useSearch) {
+        config.tools = [{ googleSearch: {} }];
+      }
+      
       const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: model,
         contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
-        config: {
-          systemInstruction: systemPrompt,
-        },
+        config: config,
       });
       
       res.json({ response: response.text });

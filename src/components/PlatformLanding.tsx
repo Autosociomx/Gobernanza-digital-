@@ -18,22 +18,12 @@ interface PlatformLandingProps {
 }
 
 const carouselItems = [
-  { id: 1, num: '01', title: 'Infraestructura municipal', icon: Radio, color: 'text-blue-600', img: 'https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?q=80&w=400&h=600&fit=crop' },
-  { id: 2, num: '02', title: 'Educación y capacitación digital', icon: GraduationCap, color: 'text-green-600', img: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=400&h=600&fit=crop' },
-  { id: 3, num: '03', title: 'Seguridad digital', icon: Shield, color: 'text-red-600', img: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=400&h=600&fit=crop' },
-  { id: 4, num: '04', title: 'Servicios ciudadanos', icon: Users, color: 'text-orange-500', img: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=400&h=600&fit=crop' },
-  { id: 5, num: '05', title: 'Datos abiertos y transparencia', icon: BarChart2, color: 'text-purple-600', img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=400&h=600&fit=crop' },
-  { id: 6, num: '06', title: 'Sostenibilidad y medio ambiente', icon: Leaf, color: 'text-emerald-600', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=400&h=600&fit=crop' },
-  { id: 7, num: '07', title: 'Economía digital', icon: Briefcase, color: 'text-blue-500', img: 'https://images.unsplash.com/photo-1604594849809-dfedbc827105?q=80&w=400&h=600&fit=crop' },
-  { id: 8, num: '08', title: 'Salud digital y bienestar', icon: HeartPulse, color: 'text-red-500', img: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=400&h=600&fit=crop' },
-  { id: 9, num: '09', title: 'Movilidad inteligente', icon: Bus, color: 'text-yellow-600', img: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=400&h=600&fit=crop' },
-  { id: 10, num: '10', title: 'Conectividad para todos', icon: Wifi, color: 'text-indigo-600', img: 'https://images.unsplash.com/photo-1520869562399-e772f042f422?q=80&w=400&h=600&fit=crop' },
-  { id: 11, num: '11', title: 'Ruta PRO', icon: Bus, color: 'text-blue-600', img: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=400&h=600&fit=crop' },
-  { id: 12, num: '12', title: 'Nayarit Chef', icon: Utensils, color: 'text-orange-600', img: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=400&h=600&fit=crop' },
-  { id: 13, num: '13', title: 'Residuos Médicos', icon: Trash2, color: 'text-emerald-600', img: 'https://images.unsplash.com/photo-1583324113626-70df0f4deaab?q=80&w=400&h=600&fit=crop' },
-  { id: 14, num: '14', title: 'Tu Salud', icon: HeartPulse, color: 'text-red-500', img: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=400&h=600&fit=crop' },
-  { id: 15, num: '15', title: 'Autoanálisis', icon: Activity, color: 'text-purple-600', img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=400&h=600&fit=crop' },
-  { id: 16, num: '16', title: 'Optimiza tus Días', icon: Clock, color: 'text-yellow-600', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=400&h=600&fit=crop' },
+  { id: 1, num: '01', title: 'Ruta PRO', icon: Bus, color: 'text-blue-600', img: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=400&h=600&fit=crop' },
+  { id: 2, num: '02', title: 'Nayarit Chef', icon: Utensils, color: 'text-orange-600', img: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=400&h=600&fit=crop' },
+  { id: 3, num: '03', title: 'Gestión de Residuos Médicos', icon: Trash2, color: 'text-emerald-600', img: 'https://images.unsplash.com/photo-1583324113626-70df0f4deaab?q=80&w=400&h=600&fit=crop' },
+  { id: 4, num: '04', title: 'Tu Salud', icon: HeartPulse, color: 'text-red-500', img: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=400&h=600&fit=crop' },
+  { id: 5, num: '05', title: 'Autoanálisis', icon: Activity, color: 'text-purple-600', img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=400&h=600&fit=crop' },
+  { id: 6, num: '06', title: 'Optimiza tus Días', icon: Clock, color: 'text-yellow-600', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=400&h=600&fit=crop' },
 ];
 
 const OjosEscena = () => {
@@ -145,9 +135,10 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
         </div>
         
         <nav className="hidden lg:flex items-center gap-10">
-          {['Soluciones', 'Estrategia', 'Impacto', 'Transparencia'].map((item) => (
-            <button key={item} className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">{item}</button>
-          ))}
+          <button onClick={() => onNavigate('citizen')} className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">Soluciones</button>
+          <button onClick={() => onNavigate('executive')} className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">Estrategia</button>
+          <button onClick={() => onNavigate('dev')} className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">Impacto</button>
+          <button onClick={() => onNavigate('c5')} className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">Transparencia</button>
           <button 
             onClick={() => onNavigate('dev')}
             className="bg-[#0f285c] text-white px-7 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-[#0f285c]/20"
@@ -169,7 +160,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
           <div className="xl:w-1/2 flex flex-col justify-center shrink-0">
             <div className="flex items-center gap-3 mb-8">
                <div className="h-[1px] w-12 bg-blue-600/30"></div>
-               <span className="text-blue-600 font-bold tracking-[0.3em] text-[0.7rem] uppercase">16 Pilares de Transformación</span>
+               <span className="text-blue-600 font-bold tracking-[0.3em] text-[0.7rem] uppercase">6 Pilares de Transformación</span>
                <div className="h-[1px] w-12 bg-blue-600/30"></div>
             </div>
             

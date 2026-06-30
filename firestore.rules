@@ -180,6 +180,28 @@ service cloud.firestore {
       allow update: if isAuthenticated();
     }
 
+    match /tramites/{tramiteId} {
+      allow read, delete: if isAuthenticated() && request.auth.uid == resource.data.uid;
+      allow create, update: if isAuthenticated() && request.auth.uid == request.resource.data.uid;
+    }
+
+    match /expediente_unico/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    match /puntos/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    match /canjes/{userId}/lista/{canjeId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    match /auditorias_ciudadanas/{auditId} {
+      allow read, create: if isAuthenticated();
+      allow update, delete: if isAdmin();
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;
