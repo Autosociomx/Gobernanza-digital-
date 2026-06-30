@@ -137,6 +137,7 @@ export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
                     <ul className="space-y-3">
                        {[
                          'Validación física de identidad (Protocolo 20:80).',
+                         'Academia Digital ConnectX: Certificación Sindical.',
                          'Certificación de Gobernanza por Google Cloud.',
                          'Transparencia total en ejecución de obra pública.'
                        ].map((t, i) => (

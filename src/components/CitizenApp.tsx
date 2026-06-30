@@ -28,7 +28,8 @@ import {
   ShieldAlert,
   EyeOff,
   Download,
-  Trash2
+  Trash2,
+  GraduationCap
 } from 'lucide-react';
   import { motion, AnimatePresence } from 'motion/react';
   import { cn } from '../lib/utils';
@@ -50,8 +51,9 @@ import { doc, setDoc, getDoc, onSnapshot, collection, addDoc, getDocs, query, wh
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { getMasterRegistry, InfrastructureAsset } from '../services/infrastructureService';
 import { CanjesView } from './CanjesView';
+import { ConnectXAcademy } from './ConnectXAcademy';
 
-type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria';
+type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria' | 'academy';
 type Language = 'es' | 'cora' | 'wixarika';
 
 export function CitizenApp({ 
@@ -414,6 +416,7 @@ export function CitizenApp({
                   onGoToProfile={() => setActiveTab('profile')}
                   onGoToPayments={() => setActiveTab('payments')}
                   onGoToServices={() => setActiveTab('services')}
+                  onGoToAcademy={() => setActiveTab('academy')}
                 />
               )}
               {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} />}
@@ -425,6 +428,7 @@ export function CitizenApp({
               {activeTab === 'canjes' && <CanjesView user={user!} onBack={() => setActiveTab('profile')} />}
               {activeTab === 'auditoria' && <MysteryShopperView user={user} onBack={() => setActiveTab('services')} />}
               {activeTab === 'notifications' && <NotificationView onBack={() => setActiveTab('home')} />}
+              {activeTab === 'academy' && <ConnectXAcademy onBack={() => setActiveTab('home')} />}
 
             </motion.div>
           </AnimatePresence>
@@ -465,7 +469,7 @@ export function CitizenApp({
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-full bg-magenta-500 flex items-center justify-center text-white shadow-lg ring-2 ring-white/20"><Bot className="w-6 h-6" /></div>
                       <div>
-                        <p className="text-[1.1rem] font-black uppercase tracking-tight leading-none mb-1">{isAiMode ? 'Naya IA' : 'Naya Local'}</p>
+                        <p className="text-[1.1rem] font-black uppercase tracking-tight leading-none mb-1">{isAiMode ? 'Aura IA (ConnectX)' : 'Modo Offline'}</p>
                         <p className={cn("text-[10px] font-bold uppercase flex items-center gap-1", isAiMode ? "text-emerald-400" : "text-amber-400")}>
                           <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse", isAiMode ? "bg-emerald-400" : "bg-amber-400")}></span>
                           {isAiMode ? translations[lang].assistant_online : 'Fallback Mode'}
@@ -906,7 +910,8 @@ function HomeView({
   onGoToForum, 
   onGoToProfile, 
   onGoToPayments, 
-  onGoToServices 
+  onGoToServices,
+  onGoToAcademy
 }: { 
   profile: any,
   onShowMap: () => void, 
@@ -914,7 +919,8 @@ function HomeView({
   onGoToForum: () => void, 
   onGoToProfile: () => void, 
   onGoToPayments: () => void, 
-  onGoToServices: () => void 
+  onGoToServices: () => void,
+  onGoToAcademy: () => void
 }) {
   return (
     <div className="space-y-6 pt-2">
@@ -997,6 +1003,28 @@ function HomeView({
            <QuickAction icon={Lightbulb} label="Reporte Urbano" color="bg-amber-50 text-amber-600" onClick={onGoToServices} description="Servicios Públicos" />
         </div>
       </div>
+
+      {/* Academy CTA for Workers */}
+      <button 
+        onClick={onGoToAcademy}
+        className="w-full bg-magenta-50 rounded-[2rem] p-6 flex items-center justify-between border border-magenta-100 shadow-xl shadow-magenta-500/5 group relative overflow-hidden"
+      >
+        <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-4 translate-y-4 group-hover:scale-110 transition-transform">
+           <GraduationCap className="w-24 h-24 text-magenta-500" />
+        </div>
+        <div className="flex items-center gap-5 relative z-10">
+           <div className="w-12 h-12 bg-magenta-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-magenta-500/30">
+              <Sparkles className="w-6 h-6" />
+           </div>
+           <div className="text-left">
+              <p className="font-serif font-black text-xl leading-tight text-slate-900">Academia ConnectX</p>
+              <p className="text-[10px] text-magenta-500 font-bold uppercase tracking-widest">Certificación: Servidor Público Digital</p>
+           </div>
+        </div>
+        <div className="w-10 h-10 bg-magenta-100 rounded-full flex items-center justify-center group-hover:bg-magenta-500 transition-colors">
+          <ChevronRight className="w-5 h-5 text-magenta-500 group-hover:text-white" />
+        </div>
+      </button>
 
       {/* Forum CTA for Neighborhood Networks */}
       <button 
