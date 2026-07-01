@@ -48,6 +48,7 @@ import { CompleteProfileView } from './CompleteProfileView';
 import { CredentialScannerView } from './CredentialScannerView';
 import { MysteryShopperView } from './MysteryShopperView';
 import { UrbanReportMapView } from './UrbanReportMapView';
+import { RouteProView } from './RouteProView';
 import { QRCodeSVG } from 'qrcode.react';
 import JsBarcode from 'jsbarcode';
 
@@ -1427,6 +1428,12 @@ function TesoreriaYTramitesView({ onPay, onBack }: { onPay: (item: any) => void,
 }
 
 function ServiciosYReportesView({ onShowTriage, onGoToAuditoria, onBack }: { onShowTriage: () => void, onGoToAuditoria: () => void, onBack: () => void }) {
+  const [showRoutePro, setShowRoutePro] = useState(false);
+
+  if (showRoutePro) {
+    return <RouteProView onBack={() => setShowRoutePro(false)} />;
+  }
+
   return (
     <div className="pt-2 space-y-8 pb-20">
       <ViewHeader title="Centro de Operaciones" onBack={onBack} />
@@ -1498,7 +1505,7 @@ function ServiciosYReportesView({ onShowTriage, onGoToAuditoria, onBack }: { onS
          <div className="space-y-3">
             <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Módulo 06 — Logística Municipal (RoutePro)</h3>
             <div className="grid grid-cols-1 gap-3">
-               <button className="w-full flex justify-between items-center p-5 bg-emerald-50 border border-emerald-100 rounded-[1.5rem] hover:bg-emerald-100 active:scale-[0.99] transition-all group text-left">
+               <button onClick={() => setShowRoutePro(true)} className="w-full flex justify-between items-center p-5 bg-emerald-50 border border-emerald-100 rounded-[1.5rem] hover:bg-emerald-100 active:scale-[0.99] transition-all group text-left">
                   <div className="flex items-center gap-4">
                      <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
                         <MapIcon className="w-6 h-6" />
