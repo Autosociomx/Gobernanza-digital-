@@ -90,29 +90,31 @@ export const MandoCentral: React.FC = () => {
       {/* Header Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { title: 'Dependencias en Operación Sistémica', value: departments.length, icon: <Building2 size={24} />, color: 'text-blue-600', bg: 'bg-blue-50' },
-          { title: 'Eventos de Trazabilidad Forense', value: logs.length, icon: <Eye size={24} />, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-          { title: 'Índice de Soberanía Digital', value: riskAnalysis ? `${riskAnalysis.sovereigntyIndex}%` : 'N/A', icon: <Globe size={24} />, color: 'text-nayarit-orange', bg: 'bg-orange-50' },
-          { title: 'Usuarios Activos', value: new Set(logs.map(l => l.userId)).size, icon: <Users size={24} />, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+          { title: 'Dependencias Activas', value: departments.length, icon: <Building2 size={20} />, color: 'text-blue-600', bg: 'bg-blue-50', desc: 'Operación Sistémica' },
+          { title: 'Eventos de Trazabilidad', value: logs.length, icon: <Eye size={20} />, color: 'text-emerald-600', bg: 'bg-emerald-50', desc: 'Auditoría Forense' },
+          { title: 'Soberanía Digital', value: riskAnalysis ? `${riskAnalysis.sovereigntyIndex}%` : 'N/A', icon: <Globe size={20} />, color: 'text-nayarit-orange', bg: 'bg-orange-50', desc: 'Índice de Resiliencia' },
+          { title: 'Usuarios Verificados', value: new Set(logs.map(l => l.userId)).size, icon: <Users size={20} />, color: 'text-indigo-600', bg: 'bg-indigo-50', desc: 'Participación Activa' },
         ].map((stat, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="p-6 rounded-3xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-shadow"
+            className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-200/40 relative overflow-hidden group"
           >
-            <div className="flex items-center justify-between mb-4">
-              <div className={cn("p-3 rounded-2xl", stat.bg, stat.color)}>
-                {stat.icon}
-              </div>
-              <div className="flex items-center gap-1 text-emerald-500 text-xs font-bold">
-                <ArrowUpRight size={14} />
-                +12%
-              </div>
+            <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity">
+               {stat.icon}
             </div>
-            <h3 className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">{stat.title}</h3>
-            <p className="text-3xl font-black text-slate-900">{stat.value}</p>
+            <div className="relative z-10 flex flex-col gap-4">
+               <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center", stat.bg, stat.color)}>
+                  {stat.icon}
+               </div>
+               <div>
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{stat.desc}</p>
+                  <h3 className="text-3xl font-serif font-black text-slate-900 tracking-tighter leading-none mb-1">{stat.value}</h3>
+                  <p className="text-xs font-bold text-slate-500">{stat.title}</p>
+               </div>
+            </div>
           </motion.div>
         ))}
       </div>
@@ -155,18 +157,19 @@ export const MandoCentral: React.FC = () => {
               <AreaChart data={activityData}>
                 <defs>
                   <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#F27D26" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#F27D26" stopOpacity={0}/>
+                    <stop offset="0%" stopColor="#F27D26" stopOpacity={0.5}/>
+                    <stop offset="100%" stopColor="#F27D26" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fontSize: 10, fontWeight: 700, fill: '#94a3b8'}} />
-                <YAxis axisLine={false} tickLine={false} tick={{fontSize: 10, fontWeight: 700, fill: '#94a3b8'}} />
+                <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="#e2e8f0" opacity={0.6} />
+                <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fill: '#64748b'}} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{fontSize: 11, fontFamily: "'JetBrains Mono', monospace", fill: '#64748b'}} dx={-10} />
                 <Tooltip 
-                  contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                  itemStyle={{ fontWeight: 700, color: '#F27D26' }}
+                  contentStyle={{ backgroundColor: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                  itemStyle={{ fontWeight: 600, color: '#F27D26', fontFamily: "'JetBrains Mono', monospace" }}
+                  cursor={{ stroke: '#cbd5e1', strokeWidth: 1, strokeDasharray: '4 4' }}
                 />
-                <Area type="monotone" dataKey="count" stroke="#F27D26" strokeWidth={3} fillOpacity={1} fill="url(#colorCount)" />
+                <Area type="monotone" dataKey="count" stroke="#F27D26" strokeWidth={3} fillOpacity={1} fill="url(#colorCount)" activeDot={{ r: 6, fill: '#F27D26', stroke: '#ffffff', strokeWidth: 2 }} />
               </AreaChart>
             </ResponsiveContainer>
           </div>

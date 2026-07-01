@@ -6,15 +6,24 @@ import Database from "better-sqlite3";
 import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 import Stripe from "stripe";
 
-// Initialize AI
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY || "",
-  httpOptions: {
-    headers: {
-      'User-Agent': 'aistudio-build',
+let aiClient: GoogleGenAI | null = null;
+function getAI() {
+  if (!aiClient) {
+    const key = process.env.GEMINI_API_KEY;
+    if (!key) {
+      throw new Error("GEMINI_API_KEY no configurada. Por favor, añádela en Settings > Secrets.");
     }
+    aiClient = new GoogleGenAI({
+      apiKey: key,
+      httpOptions: {
+        headers: {
+          'User-Agent': 'aistudio-build',
+        }
+      }
+    });
   }
-});
+  return aiClient;
+}
 
 // Initialize Stripe
 let stripeClient: Stripe | null = null;
@@ -95,6 +104,7 @@ async function startServer() {
 
     try {
       const finalPrompt = context ? `${context}\n\nPregunta del usuario: ${message}` : message;
+      const ai = getAI();
       
       let model = "gemini-3.5-flash";
       let config: any = {

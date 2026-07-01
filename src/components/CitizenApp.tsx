@@ -29,7 +29,12 @@ import {
   EyeOff,
   Download,
   Trash2,
-  GraduationCap
+  GraduationCap,
+  Activity,
+  Fingerprint,
+  Play,
+  Code,
+  Zap
 } from 'lucide-react';
   import { motion, AnimatePresence } from 'motion/react';
   import { cn } from '../lib/utils';
@@ -52,8 +57,10 @@ import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { getMasterRegistry, InfrastructureAsset } from '../services/infrastructureService';
 import { CanjesView } from './CanjesView';
 import { ConnectXAcademy } from './ConnectXAcademy';
+import { SystemAuditView } from './SystemAuditView';
+import { BananaCommandCenter } from './BananaCommandCenter';
 
-type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria' | 'academy';
+type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria' | 'academy' | 'system_audit' | 'banana_command';
 type Language = 'es' | 'cora' | 'wixarika';
 
 export function CitizenApp({ 
@@ -347,11 +354,14 @@ export function CitizenApp({
         </div>
 
         {/* Header */}
-        <header className="px-6 py-4 flex justify-between items-start">
-          <div>
-            <p className="text-[10px] uppercase tracking-widest font-black text-magenta-500" style={{color:'var(--magenta)'}}>Nayarit Digital</p>
-            <h1 className="text-xl font-serif font-black text-slate-900 leading-tight">{translations[lang].welcome}</h1>
-            <div className="flex gap-2 mt-2">
+        <header className="px-6 py-8 flex justify-between items-start">
+          <div className="space-y-1">
+            <p className="text-[10px] uppercase tracking-[0.3em] font-black text-magenta-500 mb-1" style={{color:'var(--magenta)'}}>Gobernanza ConnectX</p>
+            <h1 className="text-3xl font-serif font-black text-slate-900 leading-[0.9] tracking-tighter">
+              {translations[lang].welcome.split(',')[0]},<br/>
+              <span className="text-magenta-600" style={{color:'var(--magenta)'}}>{translations[lang].welcome.split(',')[1]}</span>
+            </h1>
+            <div className="flex gap-2 mt-4">
                {['es', 'cora', 'wixarika'].map(l => {
                  let activeClass = "";
                  let inlineStyle: any = {};
@@ -417,6 +427,8 @@ export function CitizenApp({
                   onGoToPayments={() => setActiveTab('payments')}
                   onGoToServices={() => setActiveTab('services')}
                   onGoToAcademy={() => setActiveTab('academy')}
+                  onGoToSystemAudit={() => setActiveTab('system_audit')}
+                  onGoToBanana={() => setActiveTab('banana_command')}
                 />
               )}
               {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} />}
@@ -429,6 +441,8 @@ export function CitizenApp({
               {activeTab === 'auditoria' && <MysteryShopperView user={user} onBack={() => setActiveTab('services')} />}
               {activeTab === 'notifications' && <NotificationView onBack={() => setActiveTab('home')} />}
               {activeTab === 'academy' && <ConnectXAcademy onBack={() => setActiveTab('home')} />}
+              {activeTab === 'system_audit' && <SystemAuditView onBack={() => setActiveTab('home')} />}
+              {activeTab === 'banana_command' && <BananaCommandCenter onBack={() => setActiveTab('home')} />}
 
             </motion.div>
           </AnimatePresence>
@@ -911,7 +925,9 @@ function HomeView({
   onGoToProfile, 
   onGoToPayments, 
   onGoToServices,
-  onGoToAcademy
+  onGoToAcademy,
+  onGoToSystemAudit,
+  onGoToBanana
 }: { 
   profile: any,
   onShowMap: () => void, 
@@ -920,65 +936,139 @@ function HomeView({
   onGoToProfile: () => void, 
   onGoToPayments: () => void, 
   onGoToServices: () => void,
-  onGoToAcademy: () => void
+  onGoToAcademy: () => void,
+  onGoToSystemAudit: () => void,
+  onGoToBanana: () => void
 }) {
   return (
     <div className="space-y-6 pt-2">
 
-      {/* Portal Ciudadano Fusión */}
-      <div 
-        className="bg-white rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 border border-slate-100"
-      >
-        <h2 className="text-sm font-bold text-slate-800 uppercase tracking-widest mb-1">Tu Eje de Gobernanza</h2>
-        <p className="text-slate-500 text-xs mb-6">Tu identidad y trámites unificados. El motor de tu participación en Tepic Digital.</p>
-        
-        <div className="grid grid-cols-2 gap-4">
-          {/* Nayarit ID Card */}
-          <div 
-             onClick={onGoToProfile}
-             className="bg-gradient-to-tr from-slate-900 to-indigo-900 rounded-[1.5rem] p-5 text-white flex flex-col cursor-pointer transition-transform hover:scale-[1.03]"
-          >
-             <span className="text-3xl mb-3">🔑</span>
-             <h3 className="font-bold text-sm leading-tight mb-1">Nayarit ID</h3>
-             <p className="text-[10px] text-slate-300">Identidad Digital Única</p>
+      {/* Visual Hero ConnectX - Neuro-Experience */}
+      <div className="px-1 mb-2">
+        <div className="relative h-72 w-full rounded-[3rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] group cursor-pointer border border-white/5">
+          {/* Animated Background Simulation */}
+          <div className="absolute inset-0 bg-slate-950">
+             <div className="absolute inset-0 opacity-30">
+                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(236,72,153,0.15),transparent_70%)] animate-pulse"></div>
+                <div className="absolute top-[20%] right-[10%] w-64 h-64 bg-magenta-500/10 rounded-full blur-[100px] animate-bounce duration-[10000ms]"></div>
+                <div className="absolute bottom-[10%] left-[5%] w-72 h-72 bg-emerald-500/5 rounded-full blur-[120px] animate-pulse duration-[8000ms]"></div>
+             </div>
+             {/* Tech Grid Overlay */}
+             <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:24px_24px]"></div>
           </div>
 
-          {/* Ventanilla Única */}
-          <div 
-             onClick={onGoToServices}
-             className="bg-magenta-500 rounded-[1.5rem] p-5 text-white flex flex-col cursor-pointer transition-transform hover:scale-[1.03]"
-             style={{backgroundColor:'var(--magenta)'}}
-          >
-             <span className="text-3xl mb-3">⚡</span>
-             <h3 className="font-bold text-sm leading-tight mb-1">Ventanilla Única</h3>
-             <p className="text-[10px] text-magenta-100">Trámites sin filas</p>
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+          
+          <div className="absolute inset-0 flex flex-col justify-end p-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="space-y-4"
+            >
+              <div className="flex items-center gap-2">
+                 <div className="w-1.5 h-1.5 rounded-full bg-magenta-500 animate-pulse"></div>
+                 <p className="text-[10px] font-black text-magenta-500 uppercase tracking-[0.4em]">Protocolo SSS-2026</p>
+              </div>
+              <h2 className="text-4xl font-serif font-black text-white leading-[0.9] tracking-tighter">
+                Soberanía Digital<br/>
+                <span className="text-slate-400">en Evolución Activa</span>
+              </h2>
+              <div className="flex items-center gap-4 pt-2">
+                <button className="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 px-6 py-3 rounded-2xl group/play hover:bg-white/20 transition-all">
+                  <div className="w-8 h-8 rounded-full bg-magenta-600 flex items-center justify-center shadow-lg group-hover/play:scale-110 transition-transform">
+                    <Play className="w-4 h-4 text-white fill-white ml-0.5" />
+                  </div>
+                  <span className="text-[10px] font-black text-white uppercase tracking-widest">Ver Manifiesto</span>
+                </button>
+                <div className="flex -space-x-2">
+                   {[1,2,3].map(i => (
+                     <div key={i} className="w-8 h-8 rounded-full border-2 border-slate-900 bg-slate-800 flex items-center justify-center text-[10px] font-black text-white">
+                        {String.fromCharCode(64 + i)}
+                     </div>
+                   ))}
+                   <div className="w-8 h-8 rounded-full border-2 border-slate-900 bg-magenta-500 flex items-center justify-center text-[10px] font-black text-white">
+                      +1k
+                   </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+          
+          {/* Top Indicators */}
+          <div className="absolute top-8 left-8 right-8 flex justify-between items-start">
+             <div className="flex flex-col gap-1">
+                <span className="text-[8px] font-black text-white/40 uppercase tracking-widest">Nayarit Digital</span>
+                <span className="text-[10px] font-mono text-white/80">LAT: 21.50 N / LON: 104.89 W</span>
+             </div>
+             <div className="px-3 py-1.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-xl flex items-center gap-2">
+                <Zap className="w-3 h-3 text-yellow-400" />
+                <span className="text-[9px] font-black text-white uppercase tracking-widest">Soberanía: 98.4%</span>
+             </div>
           </div>
         </div>
-        
-        <p className="mt-6 text-xs text-slate-600 text-center leading-relaxed">
-          ¡Eres el motor del cambio! Con tu identidad digital verás cómo cada trámite se vuelve más transparente, rápido y sencillo para ti.
-        </p>
+      </div>
+
+      {/* Portal Ciudadano Fusión */}
+      <div 
+        className="bg-slate-950 rounded-[2.5rem] p-8 shadow-2xl shadow-slate-900/50 relative overflow-hidden group"
+      >
+        <div className="absolute top-0 right-0 w-40 h-40 bg-magenta-500/10 rounded-full blur-[60px] -mr-20 -mt-20 group-hover:bg-magenta-500/20 transition-colors"></div>
+        <div className="relative z-10">
+          <h2 className="text-[10px] font-black text-magenta-500 uppercase tracking-[0.4em] mb-4">Núcleo de Ciudadanía</h2>
+          <p className="text-white font-serif text-2xl font-black leading-none tracking-tighter mb-8">Gestión de<br/><span className="text-slate-400">Poder Digital</span></p>
+          
+          <div className="grid grid-cols-2 gap-4">
+            {/* Nayarit ID Card */}
+            <div 
+               onClick={onGoToProfile}
+               className="bg-slate-900 border border-slate-800 rounded-[2rem] p-6 text-white flex flex-col cursor-pointer transition-all hover:bg-slate-800 active:scale-95 group/card"
+            >
+               <div className="w-10 h-10 bg-slate-800 rounded-2xl flex items-center justify-center mb-4 group-hover/card:bg-slate-700 transition-colors">
+                  <Fingerprint className="w-5 h-5 text-magenta-500" />
+               </div>
+               <h3 className="font-bold text-sm leading-tight mb-1">Nayarit ID</h3>
+               <p className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Identidad Biométrica</p>
+            </div>
+  
+            {/* Ventanilla Única */}
+            <div 
+               onClick={onGoToServices}
+               className="bg-magenta-600 rounded-[2rem] p-6 text-white flex flex-col cursor-pointer transition-all hover:bg-magenta-500 active:scale-95 shadow-xl shadow-magenta-600/20 group/card"
+               style={{backgroundColor:'var(--magenta)'}}
+            >
+               <div className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center mb-4 group-hover/card:bg-white/30 transition-colors">
+                  <Zap className="w-5 h-5" />
+               </div>
+               <h3 className="font-bold text-sm leading-tight mb-1">Ventanilla</h3>
+               <p className="text-[9px] text-magenta-100 font-bold uppercase tracking-widest">Servicio Directo</p>
+            </div>
+          </div>
+        </div>
       </div>
 
 
       {/* Asistente de Acciones Directas */}
-      <div className="bg-emerald-600 rounded-[2rem] p-6 text-white shadow-xl shadow-emerald-500/20">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <h3 className="font-serif font-black text-lg">Centro de Operaciones Ciudadanas</h3>
-            <p className="text-emerald-50 text-xs">Acción prioritaria detectada en tiempo real.</p>
+      <div className="bg-emerald-600 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-emerald-900/30 relative overflow-hidden group">
+        <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -ml-16 -mb-16 group-hover:bg-white/20 transition-colors"></div>
+        <div className="relative z-10 flex flex-col gap-6">
+          <div className="flex justify-between items-start">
+            <div className="space-y-1">
+              <h3 className="font-serif font-black text-2xl tracking-tighter">Operaciones Directas</h3>
+              <p className="text-emerald-100 text-[10px] font-bold uppercase tracking-widest">IA Predictiva: Acción requerida</p>
+            </div>
+            <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
+              <Sparkles className="w-6 h-6" />
+            </div>
           </div>
-          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-            <Sparkles className="w-5 h-5" />
-          </div>
+          <button 
+            onClick={onGoToPayments}
+            className="w-full bg-white text-emerald-700 py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:bg-emerald-50 transition-all flex items-center justify-center gap-3 group/btn"
+          >
+            <CreditCard className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
+            Liquidar Pago Pendiente
+          </button>
         </div>
-        <button 
-          onClick={onGoToPayments}
-          className="w-full bg-white text-emerald-600 py-4 rounded-xl font-black text-sm shadow-sm hover:bg-emerald-50 transition-colors flex items-center justify-center gap-2"
-        >
-          <CreditCard className="w-4 h-4" />
-          Pagar Recibo de Agua (Cumplimiento Digital)
-        </button>
       </div>
 
       {/* Marco Legal y Cumplimiento Federal */}
@@ -991,16 +1081,19 @@ function HomeView({
       </motion.div>
       
       {/* Primary Services Grid */}
-      <div>
-        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-           <LayoutGrid className="w-3 h-3" />
-           Ecosistema de Gobernanza Dinámica
-        </h2>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] flex items-center gap-3">
+             <div className="w-6 h-[1px] bg-slate-300"></div>
+             Gobernanza Dinámica
+          </h2>
+          <LayoutGrid className="w-4 h-4 text-slate-300" />
+        </div>
         <div className="grid grid-cols-2 gap-4">
-           <QuickAction icon={Droplets} label="Tesorería Digital" color="bg-blue-50 text-blue-600" onClick={onGoToPayments} description="Pagos bajo Ley Federal" />
-           <QuickAction icon={ShieldCheck} label="Reporte GPS" color="bg-sky-50 text-sky-600" onClick={onGoToServices} description="Incidencias ciudadanas" />
-           <QuickAction icon={Stethoscope} label="Triaje Salud IA" color="bg-rose-50 text-rose-600" onClick={onShowTriage} description="Atención Inmediata" />
-           <QuickAction icon={Lightbulb} label="Reporte Urbano" color="bg-amber-50 text-amber-600" onClick={onGoToServices} description="Servicios Públicos" />
+           <QuickAction icon={Droplets} label="Tesorería" color="bg-slate-50 text-slate-900 border-slate-100" onClick={onGoToPayments} description="Finanzas Públicas" />
+           <QuickAction icon={ShieldCheck} label="Reporte GPS" color="bg-slate-50 text-slate-900 border-slate-100" onClick={onGoToServices} description="Gestión Territorial" />
+           <QuickAction icon={Stethoscope} label="Salud IA" color="bg-slate-50 text-slate-900 border-slate-100" onClick={onShowTriage} description="Triaje Preventivo" />
+           <QuickAction icon={Lightbulb} label="Servicios" color="bg-slate-50 text-slate-900 border-slate-100" onClick={onGoToServices} description="Atención Urbana" />
         </div>
       </div>
 
@@ -1023,6 +1116,26 @@ function HomeView({
         </div>
         <div className="w-10 h-10 bg-magenta-100 rounded-full flex items-center justify-center group-hover:bg-magenta-500 transition-colors">
           <ChevronRight className="w-5 h-5 text-magenta-500 group-hover:text-white" />
+        </div>
+      </button>
+
+      {/* System Integrity Auditor (Mystery Shopper) */}
+      <button 
+        onClick={onGoToSystemAudit}
+        className="w-full bg-slate-900 rounded-[2rem] p-6 flex items-center justify-between border border-slate-800 shadow-2xl relative overflow-hidden group"
+      >
+        <div className="absolute top-0 right-0 w-32 h-32 bg-magenta-500/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-magenta-500/20 transition-colors"></div>
+        <div className="flex items-center gap-5 relative z-10">
+           <div className="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center text-magenta-500 shadow-inner">
+              <ShieldCheck className="w-6 h-6" />
+           </div>
+           <div className="text-left">
+              <p className="font-serif font-black text-xl leading-tight text-white">Integridad de Sistema</p>
+              <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Auditoría "Mystery Shopper" ConnectX</p>
+           </div>
+        </div>
+        <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center group-hover:bg-magenta-600 transition-all">
+          <Activity className="w-5 h-5 text-magenta-500 group-hover:text-white" />
         </div>
       </button>
 

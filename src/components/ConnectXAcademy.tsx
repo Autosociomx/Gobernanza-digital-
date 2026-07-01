@@ -109,26 +109,26 @@ export function ConnectXAcademy({ onBack }: { onBack: () => void }) {
 
         <LevelCard 
           level="BRONCE"
-          title="Vencer el Miedo"
-          description="Entiende qué es y qué no es la IA interactuando con Aura. Deja de verla como amenaza y reconócela como tu aliada."
+          title="Erradicación del Miedo"
+          description="Desmantela la narrativa de reemplazo. Interactúa con Aura para comprender que tu conocimiento del terreno es irreemplazable. Toma el control hoy."
           status="completed"
-          benefits={["Diagnóstico de Carga Laboral", "Acceso a Chat de Soporte Aura", "Insignia de Iniciación"]}
+          benefits={["Auditoría de Carga Cognitiva", "Acceso Directo: Mentor Aura", "Insignia de Soberanía"]}
         />
 
         <LevelCard 
           level="PLATA"
-          title="Dominar la Herramienta"
-          description="Usa la IA en tu trabajo diario: redacta oficios, organiza datos y gestiona trámites en segundos."
+          title="Dominio de la Herramienta"
+          description="Convierte la IA en tu extensión operativa. Redacta, organiza y gestiona con una eficiencia que antes tomaba días. Tú eres el procesador."
           status="in_progress"
-          benefits={["Propuesta de Digitalización", "Certificación Técnica Intermedia", "Sincronización con Sindicato"]}
+          benefits={["Blueprint de Digitalización", "Certificación Forense Intermedia", "Sincronización Sindical Activa"]}
         />
 
         <LevelCard 
           level="ORO"
-          title="Liderar el Cambio"
-          description="Conviértete en un Gestor de Innovación. Detecta fallos en procesos y propón soluciones soberanas."
+          title="Liderazgo de Transformación"
+          description="Evoluciona a Arquitecto de Procesos. Diseña el futuro de tu dependencia bajo estándares de soberanía absoluta."
           status="locked"
-          benefits={["Proyecto de Grado Aplicado", "Doble Sello: ConnectX + Sindicato", "Perfil de Auditor Maestro"]}
+          benefits={["Tesina de Innovación Aplicada", "Doble Sello de Autoridad", "Perfil de Estratega Digital"]}
         />
 
         <div className="bg-[#0f285c] rounded-[2.5rem] p-8 text-white">

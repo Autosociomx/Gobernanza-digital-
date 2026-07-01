@@ -93,7 +93,7 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
                   N
                 </div>
                 <div>
-                  <h1 className="font-bold text-white tracking-tight leading-none mb-1">Nayarit Digital</h1>
+                  <h1 className="font-serif font-black text-lg text-white tracking-tight leading-none mb-1">Nayarit Digital</h1>
                   <p className="text-[10px] text-slate-500 font-mono tracking-widest uppercase">C5 Governance Hub</p>
                 </div>
               </div>
@@ -198,10 +198,11 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
 
 function InteroperabilidadView() {
   return (
-    <div className="space-y-8">
-      <div>
-        <h3 className="text-2xl font-black text-white tracking-tight uppercase">Nodo de Transparencia Activa</h3>
-        <p className="text-slate-400 text-sm mt-1">Bus de servicios e interoperabilidad. Cumplimiento de Ley de Gobierno Digital del Estado de Nayarit.</p>
+    <div className="space-y-10">
+      <div className="space-y-2">
+        <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em]">Infraestructura Digital ConnectX</p>
+        <h3 className="text-4xl font-serif font-black text-white tracking-tighter">Nodo de Transparencia Activa</h3>
+        <p className="text-slate-500 text-sm max-w-2xl leading-relaxed">Arquitectura de bus de servicios interoperables. Garantía de integridad de datos bajo la Ley de Gobierno Digital del Estado de Nayarit.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -329,18 +330,20 @@ function TesoreriaView() {
             <AreaChart data={data} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorIngresos" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
+                  <stop offset="0%" stopColor="#10B981" stopOpacity={0.5}/>
+                  <stop offset="100%" stopColor="#10B981" stopOpacity={0}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-              <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-              <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `$${v}`} />
+              <CartesianGrid strokeDasharray="4 4" stroke="#1e293b" vertical={false} opacity={0.5} />
+              <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} fontFamily="'JetBrains Mono', monospace" tickLine={false} axisLine={false} dy={10} />
+              <YAxis stroke="#94a3b8" fontSize={11} fontFamily="'JetBrains Mono', monospace" tickLine={false} axisLine={false} tickFormatter={(v) => `$${(v/1000)}k`} dx={-10} />
               <Tooltip 
-                contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px', color: '#f8fafc' }}
-                itemStyle={{ color: '#10B981' }}
+                contentStyle={{ backgroundColor: '#0f1115', border: '1px solid #1e293b', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)' }}
+                itemStyle={{ color: '#10B981', fontWeight: 600, fontFamily: "'JetBrains Mono', monospace" }}
+                labelStyle={{ color: '#64748b', marginBottom: '4px' }}
+                cursor={{ stroke: '#1e293b', strokeWidth: 1, strokeDasharray: '4 4' }}
               />
-              <Area type="monotone" dataKey="ingresos" stroke="#10B981" strokeWidth={2} fillOpacity={1} fill="url(#colorIngresos)" />
+              <Area type="monotone" dataKey="ingresos" stroke="#10B981" strokeWidth={3} fillOpacity={1} fill="url(#colorIngresos)" activeDot={{ r: 6, fill: '#10B981', stroke: '#0f1115', strokeWidth: 2 }} />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -1082,16 +1085,17 @@ function ObservatorioView() {
           <div className="h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={citizenData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                <XAxis dataKey="name" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
-                <YAxis stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
+                <CartesianGrid strokeDasharray="4 4" stroke="#1e293b" vertical={false} opacity={0.5} />
+                <XAxis dataKey="name" stroke="#94a3b8" fontSize={10} fontFamily="'JetBrains Mono', monospace" tickLine={false} axisLine={false} dy={10} />
+                <YAxis stroke="#94a3b8" fontSize={10} fontFamily="'JetBrains Mono', monospace" tickLine={false} axisLine={false} dx={-10} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#0f1115', border: '1px solid #334155', borderRadius: '8px', fontSize: '10px' }}
+                  contentStyle={{ backgroundColor: '#0f1115', border: '1px solid #334155', borderRadius: '12px', fontSize: '10px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)' }}
+                  itemStyle={{ color: '#a855f7', fontWeight: 600, fontFamily: "'JetBrains Mono', monospace" }}
                   cursor={{ fill: 'rgba(168, 85, 247, 0.05)' }}
                 />
-                <Bar dataKey="total" radius={[4, 4, 0, 0]}>
+                <Bar dataKey="total" radius={[4, 4, 0, 0]} barSize={24}>
                   {citizenData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={index === citizenData.length - 1 ? '#a855f7' : '#3b4252'} />
+                    <Cell key={`cell-${index}`} fill={index === citizenData.length - 1 ? '#a855f7' : '#334155'} />
                   ))}
                 </Bar>
               </BarChart>
@@ -1113,17 +1117,18 @@ function ObservatorioView() {
           <div className="h-[220px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={worksData} layout="vertical" margin={{ left: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={false} />
+                <CartesianGrid strokeDasharray="4 4" stroke="#1e293b" horizontal={false} opacity={0.5} />
                 <XAxis type="number" domain={[0, 100]} hide />
-                <YAxis dataKey="name" type="category" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} width={80} />
+                <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={10} fontFamily="'JetBrains Mono', monospace" tickLine={false} axisLine={false} width={80} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#0f1115', border: '1px solid #334155', borderRadius: '8px', fontSize: '10px' }}
+                  contentStyle={{ backgroundColor: '#0f1115', border: '1px solid #334155', borderRadius: '12px', fontSize: '10px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)' }}
+                  itemStyle={{ color: '#06b6d4', fontWeight: 600, fontFamily: "'JetBrains Mono', monospace" }}
                   cursor={{ fill: 'rgba(6, 182, 212, 0.05)' }}
                   formatter={(value: any) => [`${value}%`, 'Avance']}
                 />
                 <Bar dataKey="progress" radius={[0, 4, 4, 0]} barSize={12}>
                   {worksData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.progress > 80 ? '#06b6d4' : entry.progress > 50 ? '#0891b2' : '#1e293b'} />
+                    <Cell key={`cell-${index}`} fill={entry.progress > 80 ? '#06b6d4' : entry.progress > 50 ? '#0891b2' : '#334155'} />
                   ))}
                 </Bar>
               </BarChart>
@@ -1241,11 +1246,19 @@ function MetricView() {
           <div className="h-[250px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#2d3748" />
-                <XAxis dataKey="name" stroke="#a0aec0" />
-                <YAxis stroke="#a0aec0" />
-                <Tooltip />
-                <Bar dataKey="value" fill="#8884d8" />
+                <CartesianGrid strokeDasharray="4 4" stroke="#1e293b" vertical={false} opacity={0.5} />
+                <XAxis dataKey="name" stroke="#94a3b8" fontSize={11} fontFamily="'JetBrains Mono', monospace" tickLine={false} axisLine={false} dy={10} />
+                <YAxis stroke="#94a3b8" fontSize={11} fontFamily="'JetBrains Mono', monospace" tickLine={false} axisLine={false} dx={-10} />
+                <Tooltip 
+                  cursor={{ fill: '#1e293b', opacity: 0.4 }}
+                  contentStyle={{ backgroundColor: '#0f1115', border: '1px solid #1e293b', borderRadius: '12px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)' }}
+                  itemStyle={{ color: '#8b5cf6', fontWeight: 600, fontFamily: "'JetBrains Mono', monospace" }}
+                />
+                <Bar dataKey="value" fill="#8884d8" radius={[4, 4, 0, 0]} barSize={32}>
+                  {data.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#6366f1' : '#8b5cf6'} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
