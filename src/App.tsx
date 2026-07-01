@@ -4,6 +4,7 @@ import { C5Dashboard } from './components/C5Dashboard';
 import { CitizenApp } from './components/CitizenApp';
 import { DeveloperChecklist } from './components/DeveloperChecklist';
 import { ExecutiveFolder } from './components/ExecutiveFolder';
+import { OfflineBanner } from './components/OfflineBanner';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, LayoutDashboard, UserCircle2, FileText, Settings2 } from 'lucide-react';
 
@@ -13,19 +14,19 @@ function App() {
   const [citizenAction, setCitizenAction] = useState<any>(null);
 
   if (currentView === 'c5') {
-    return <C5Dashboard onLogout={() => setCurrentView('landing')} />;
+    return <><OfflineBanner /><C5Dashboard onLogout={() => setCurrentView('landing')} /></>;
   }
 
   if (currentView === 'citizen') {
-    return <CitizenApp onLogout={() => setCurrentView('landing')} initialTab={citizenTab} initialAction={citizenAction} />;
+    return <><OfflineBanner /><CitizenApp onLogout={() => setCurrentView('landing')} initialTab={citizenTab} initialAction={citizenAction} /></>;
   }
 
   if (currentView === 'dev') {
-    return <DeveloperChecklist onLogout={() => setCurrentView('landing')} />;
+    return <><OfflineBanner /><DeveloperChecklist onLogout={() => setCurrentView('landing')} /></>;
   }
 
   if (currentView === 'executive') {
-    return <ExecutiveFolder onBack={() => setCurrentView('landing')} />;
+    return <><OfflineBanner /><ExecutiveFolder onBack={() => setCurrentView('landing')} /></>;
   }
 
   const menuItems = [

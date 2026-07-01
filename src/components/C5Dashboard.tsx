@@ -55,6 +55,7 @@ type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 
 export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
   const [activeModule, setActiveModule] = useState<ModuleType>(() => (localStorage.getItem('activeModule') as ModuleType) || 'tesoreria');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const isDemoMode = !import.meta.env.VITE_FIREBASE_API_KEY || import.meta.env.VITE_FIREBASE_API_KEY === 'demo';
 
   useEffect(() => {
     localStorage.setItem('activeModule', activeModule);
@@ -152,6 +153,12 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
           </div>
           
           <div className="flex items-center gap-4">
+            {isDemoMode && (
+              <div className="flex items-center gap-2 bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-500/30">
+                <div className="w-2 h-2 rounded-full bg-amber-400"></div>
+                <span className="text-xs font-mono text-amber-400 uppercase tracking-wider">MODO DEMO</span>
+              </div>
+            )}
             <div className="flex items-center gap-2 bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700/50">
               <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse"></div>
               <span className="text-xs font-mono text-emerald-400">STATE: ONLINE</span>
@@ -319,6 +326,9 @@ function TesoreriaView() {
                 <stat.icon className={cn("w-5 h-5", stat.color)} />
               </div>
             </div>
+            <p className="text-[9px] text-slate-600 font-mono mt-3 relative z-10">
+              Fuente: Tesorería Municipal · Corte: 30-Jun-2026 · Act. 14:32
+            </p>
           </div>
         ))}
       </div>
