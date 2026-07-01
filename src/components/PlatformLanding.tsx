@@ -130,7 +130,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
           </div>
           <div>
             <h1 className="font-serif font-black text-2xl tracking-tight text-[#0f285c]">Nayarit<span className="text-blue-600">Digital</span></h1>
-            <p className="text-[0.6rem] uppercase tracking-[0.3em] font-bold text-slate-400">Excelencia Gubernamental</p>
+            <p className="text-[0.6rem] uppercase tracking-[0.3em] font-bold text-slate-400">Gobierno sin excusas</p>
           </div>
         </div>
         
@@ -160,29 +160,29 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
           <div className="xl:w-1/2 flex flex-col justify-center shrink-0">
             <div className="flex items-center gap-3 mb-8">
                <div className="h-[1px] w-12 bg-blue-600/30"></div>
-               <span className="text-blue-600 font-bold tracking-[0.3em] text-[0.7rem] uppercase">6 Pilares de Transformación</span>
+               <span className="text-blue-600 font-bold tracking-[0.3em] text-[0.7rem] uppercase">6 módulos activos hoy</span>
                <div className="h-[1px] w-12 bg-blue-600/30"></div>
             </div>
             
             <h2 className="text-6xl md:text-7xl lg:text-[5.5rem] font-serif font-black text-[#0f285c] leading-[0.95] tracking-tighter mb-10">
-               La Nueva Era <br />
-               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 italic font-medium">Digital</span> de Nayarit
+               Tu gobierno<br />
+               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 italic font-medium">en tu bolsillo.</span>
             </h2>
-            
+
             <p className="text-slate-600 text-xl leading-relaxed mb-12 max-w-xl font-medium opacity-90">
-               Una infraestructura inteligente diseñada para la eficiencia, la transparencia y el bienestar ciudadano. Tecnología de élite al servicio del pueblo.
+               Resuelve trámites en minutos, no en semanas. Paga sin salir de casa. Reporta problemas y ve cómo se resuelven. Sin filas. Sin papel. Sin excusas.
             </p>
             
             <div className="flex flex-wrap items-center gap-6 mb-20">
-               <button 
+               <button
                  onClick={() => onNavigate('citizen')}
                  className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-full text-lg font-bold transition-all shadow-2xl shadow-blue-600/40 flex items-center gap-4 group"
                >
-                 Explorar Ecosistema <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                 Úsalo ahora — es gratis <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
                </button>
-               
-               <button className="flex items-center gap-3 text-[#0f285c] font-bold hover:gap-5 transition-all group">
-                 <span>Ver Estrategia 2024</span>
+
+               <button onClick={() => onNavigate('executive')} className="flex items-center gap-3 text-[#0f285c] font-bold hover:gap-5 transition-all group">
+                 <span>Ver resultados reales</span>
                  <div className="w-10 h-[2px] bg-[#0f285c] group-hover:w-16 transition-all"></div>
                </button>
             </div>
@@ -190,11 +190,11 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
             <div className="grid grid-cols-2 gap-8 max-w-lg border-t border-slate-200 pt-12">
                <div>
                  <h4 className="text-3xl font-serif font-bold text-[#0f285c]">100%</h4>
-                 <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Transparencia</p>
+                 <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Cada peso visible</p>
                </div>
                <div>
                  <h4 className="text-3xl font-serif font-bold text-[#0f285c]">24/7</h4>
-                 <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Disponibilidad</p>
+                 <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Sin horario de oficina</p>
                </div>
             </div>
           </div>
@@ -226,7 +226,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                    <div className="p-10 text-center flex flex-col items-center bg-white z-10 relative">
                       <div className="flex items-center gap-2 mb-6">
                         <span className="w-8 h-[1px] bg-blue-600/20"></span>
-                        <span className="text-blue-600 font-black text-xl tracking-tighter italic">Pilar {item.num}</span>
+                        <span className="text-blue-600 font-black text-sm tracking-[0.2em] uppercase">{item.num}</span>
                         <span className="w-8 h-[1px] bg-blue-600/20"></span>
                       </div>
                       <div className={cn("p-5 rounded-2xl mb-6 bg-slate-50 group-hover:scale-110 transition-transform duration-500", item.color)}>
@@ -235,7 +235,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                       <h3 className="font-serif font-black text-2xl text-[#0f285c] leading-tight px-4 mb-2">
                         {item.title}
                       </h3>
-                      <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Nayarit Digital Elite</p>
+                      <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Disponible ahora · Gratis para ciudadanos</p>
                    </div>
                    
                    {/* Image background that blends into the top */}
@@ -246,7 +246,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                      
                      <div className="absolute bottom-8 left-0 right-0 z-20 px-8">
                         <button className="w-full py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white text-xs font-bold uppercase tracking-[0.2em] hover:bg-white hover:text-[#0f285c] transition-all">
-                          Ver Detalles
+                          Acceder ahora
                         </button>
                      </div>
                    </div>
@@ -268,7 +268,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
               <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
                 <TrendingUp className="w-6 h-6" />
               </div>
-              <p className="text-sm font-bold text-slate-700 max-w-[120px] leading-tight">Tecnología para el bienestar</p>
+              <p className="text-sm font-bold text-slate-700 max-w-[140px] leading-tight">Tu trámite resuelto hoy, no en semanas</p>
             </div>
 
             <div className="hidden md:block w-px h-12 bg-slate-200"></div>
@@ -277,7 +277,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
               <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
                 <UsersRound className="w-6 h-6" />
               </div>
-              <p className="text-sm font-bold text-slate-700 max-w-[120px] leading-tight">Gobierno abierto y transparente</p>
+              <p className="text-sm font-bold text-slate-700 max-w-[140px] leading-tight">Cada peso del presupuesto visible en tiempo real</p>
             </div>
 
             <div className="hidden md:block w-px h-12 bg-slate-200"></div>
@@ -286,7 +286,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
               <div className="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center text-red-600">
                 <ShieldAlert className="w-6 h-6" />
               </div>
-              <p className="text-sm font-bold text-slate-700 max-w-[120px] leading-tight">Seguridad y confianza en cada paso</p>
+              <p className="text-sm font-bold text-slate-700 max-w-[140px] leading-tight">Tus datos protegidos por ley federal</p>
             </div>
 
             <div className="hidden md:block w-px h-12 bg-slate-200"></div>
@@ -295,7 +295,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
               <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
                 <Leaf className="w-6 h-6" />
               </div>
-              <p className="text-sm font-bold text-slate-700 max-w-[120px] leading-tight">Un futuro sostenible para Nayarit</p>
+              <p className="text-sm font-bold text-slate-700 max-w-[140px] leading-tight">Nayarit conectado, municipio a municipio</p>
             </div>
          </div>
       </div>
@@ -311,8 +311,8 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                   <ShieldAlert className="text-amber-400 w-8 h-8" />
                </div>
                <div>
-                  <h3 className="text-2xl font-serif font-black tracking-tight">Compromiso Nayarit</h3>
-                  <p className="text-slate-400 text-sm font-medium">Liderando la transformación digital del Pacífico.</p>
+                  <h3 className="text-2xl font-serif font-black tracking-tight">1.5 millones de nayaritas</h3>
+                  <p className="text-slate-400 text-sm font-medium">merecen un gobierno que funcione de verdad.</p>
                </div>
             </div>
 
@@ -328,8 +328,8 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
             </div>
 
             <div className="relative z-10">
-               <button className="bg-white text-[#0f285c] px-8 py-4 rounded-full font-bold text-sm uppercase tracking-widest hover:bg-amber-400 transition-colors shadow-lg">
-                  Panel de Control
+               <button onClick={() => onNavigate('c5')} className="bg-white text-[#0f285c] px-8 py-4 rounded-full font-bold text-sm uppercase tracking-widest hover:bg-amber-400 transition-colors shadow-lg">
+                  Entrar al C5 ahora
                </button>
             </div>
          </div>
