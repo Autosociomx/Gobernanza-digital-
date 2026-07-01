@@ -65,7 +65,7 @@ const LevelCard = ({ level, title, description, status, benefits }: LevelProps) 
   );
 };
 
-export function ConnectXAcademy({ onBack }: { onBack: () => void }) {
+export function ConnectXAcademy({ onBack, onGoToStrategy }: { onBack: () => void, onGoToStrategy: () => void }) {
   return (
     <motion.div 
       initial={{ opacity: 0, x: 20 }}
@@ -74,16 +74,24 @@ export function ConnectXAcademy({ onBack }: { onBack: () => void }) {
     >
       <header className="p-8 bg-slate-900 text-white rounded-b-[3rem] shadow-2xl shadow-slate-900/20">
         <div className="flex justify-between items-start mb-8">
-          <div>
+          <div className="flex-1">
             <p className="text-[10px] uppercase tracking-[0.3em] font-black text-magenta-400 mb-2">ConnectX Academy</p>
             <h1 className="text-3xl font-serif font-black leading-tight">Servidor Público<br/>Digital 2026</h1>
           </div>
-          <button 
-            onClick={onBack}
-            className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
-          >
-            <ChevronRight className="w-6 h-6 rotate-180" />
-          </button>
+          <div className="flex gap-3">
+             <button 
+                onClick={onGoToStrategy}
+                className="px-4 py-2 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 text-[10px] font-black uppercase tracking-widest hover:bg-yellow-500/20 transition-colors"
+             >
+                Blueprint
+             </button>
+             <button 
+               onClick={onBack}
+               className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+             >
+               <ChevronRight className="w-6 h-6 rotate-180" />
+             </button>
+          </div>
         </div>
 
         <div className="bg-white/5 rounded-3xl p-6 border border-white/10">

@@ -34,7 +34,9 @@ import {
   Fingerprint,
   Play,
   Code,
-  Zap
+  Zap,
+  Network,
+  ArrowRight
 } from 'lucide-react';
   import { motion, AnimatePresence } from 'motion/react';
   import { cn } from '../lib/utils';
@@ -48,7 +50,6 @@ import { CompleteProfileView } from './CompleteProfileView';
 import { CredentialScannerView } from './CredentialScannerView';
 import { MysteryShopperView } from './MysteryShopperView';
 import { UrbanReportMapView } from './UrbanReportMapView';
-import { RouteProView } from './RouteProView';
 import { QRCodeSVG } from 'qrcode.react';
 import JsBarcode from 'jsbarcode';
 
@@ -60,8 +61,9 @@ import { CanjesView } from './CanjesView';
 import { ConnectXAcademy } from './ConnectXAcademy';
 import { SystemAuditView } from './SystemAuditView';
 import { BananaCommandCenter } from './BananaCommandCenter';
+import { StrategicAcademyView } from './StrategicAcademyView';
 
-type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria' | 'academy' | 'system_audit' | 'banana_command';
+type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria' | 'academy' | 'system_audit' | 'banana_command' | 'strategic_academy';
 type Language = 'es' | 'cora' | 'wixarika';
 
 export function CitizenApp({ 
@@ -430,6 +432,7 @@ export function CitizenApp({
                   onGoToAcademy={() => setActiveTab('academy')}
                   onGoToSystemAudit={() => setActiveTab('system_audit')}
                   onGoToBanana={() => setActiveTab('banana_command')}
+                  onGoToStrategy={() => setActiveTab('strategic_academy')}
                 />
               )}
               {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} />}
@@ -441,9 +444,10 @@ export function CitizenApp({
               {activeTab === 'canjes' && <CanjesView user={user!} onBack={() => setActiveTab('profile')} />}
               {activeTab === 'auditoria' && <MysteryShopperView user={user} onBack={() => setActiveTab('services')} />}
               {activeTab === 'notifications' && <NotificationView onBack={() => setActiveTab('home')} />}
-              {activeTab === 'academy' && <ConnectXAcademy onBack={() => setActiveTab('home')} />}
+              {activeTab === 'academy' && <ConnectXAcademy onGoToStrategy={() => setActiveTab('strategic_academy')} onBack={() => setActiveTab('home')} />}
               {activeTab === 'system_audit' && <SystemAuditView onBack={() => setActiveTab('home')} />}
               {activeTab === 'banana_command' && <BananaCommandCenter onBack={() => setActiveTab('home')} />}
+              {activeTab === 'strategic_academy' && <StrategicAcademyView onBack={() => setActiveTab('home')} />}
 
             </motion.div>
           </AnimatePresence>
@@ -928,7 +932,8 @@ function HomeView({
   onGoToServices,
   onGoToAcademy,
   onGoToSystemAudit,
-  onGoToBanana
+  onGoToBanana,
+  onGoToStrategy
 }: { 
   profile: any,
   onShowMap: () => void, 
@@ -939,7 +944,8 @@ function HomeView({
   onGoToServices: () => void,
   onGoToAcademy: () => void,
   onGoToSystemAudit: () => void,
-  onGoToBanana: () => void
+  onGoToBanana: () => void,
+  onGoToStrategy: () => void
 }) {
   return (
     <div className="space-y-6 pt-2">
@@ -1117,6 +1123,26 @@ function HomeView({
         </div>
         <div className="w-10 h-10 bg-magenta-100 rounded-full flex items-center justify-center group-hover:bg-magenta-500 transition-colors">
           <ChevronRight className="w-5 h-5 text-magenta-500 group-hover:text-white" />
+        </div>
+      </button>
+
+      {/* Strategic Blueprint CTA */}
+      <button 
+        onClick={onGoToStrategy}
+        className="w-full bg-[#0a0a0a] rounded-[2rem] p-6 flex items-center justify-between border border-yellow-500/20 shadow-2xl relative overflow-hidden group"
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(234,179,8,0.05),transparent_50%)]"></div>
+        <div className="flex items-center gap-5 relative z-10">
+           <div className="w-12 h-12 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl flex items-center justify-center text-yellow-500 shadow-lg shadow-yellow-500/5">
+              <Network className="w-6 h-6" />
+           </div>
+           <div className="text-left">
+              <p className="font-serif font-black text-xl leading-tight text-white">Blueprint Estratégico</p>
+              <p className="text-[10px] text-yellow-500 font-bold uppercase tracking-widest">Modelo de Soberanía y Sostenibilidad</p>
+           </div>
+        </div>
+        <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-yellow-500 transition-all">
+          <ArrowRight className="w-5 h-5 text-yellow-500 group-hover:text-black" />
         </div>
       </button>
 
@@ -1428,12 +1454,6 @@ function TesoreriaYTramitesView({ onPay, onBack }: { onPay: (item: any) => void,
 }
 
 function ServiciosYReportesView({ onShowTriage, onGoToAuditoria, onBack }: { onShowTriage: () => void, onGoToAuditoria: () => void, onBack: () => void }) {
-  const [showRoutePro, setShowRoutePro] = useState(false);
-
-  if (showRoutePro) {
-    return <RouteProView onBack={() => setShowRoutePro(false)} />;
-  }
-
   return (
     <div className="pt-2 space-y-8 pb-20">
       <ViewHeader title="Centro de Operaciones" onBack={onBack} />
@@ -1505,7 +1525,7 @@ function ServiciosYReportesView({ onShowTriage, onGoToAuditoria, onBack }: { onS
          <div className="space-y-3">
             <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Módulo 06 — Logística Municipal (RoutePro)</h3>
             <div className="grid grid-cols-1 gap-3">
-               <button onClick={() => setShowRoutePro(true)} className="w-full flex justify-between items-center p-5 bg-emerald-50 border border-emerald-100 rounded-[1.5rem] hover:bg-emerald-100 active:scale-[0.99] transition-all group text-left">
+               <button className="w-full flex justify-between items-center p-5 bg-emerald-50 border border-emerald-100 rounded-[1.5rem] hover:bg-emerald-100 active:scale-[0.99] transition-all group text-left">
                   <div className="flex items-center gap-4">
                      <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
                         <MapIcon className="w-6 h-6" />

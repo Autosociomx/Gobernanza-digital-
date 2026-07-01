@@ -143,7 +143,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
             onClick={() => onNavigate('dev')}
             className="bg-[#0f285c] text-white px-7 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-[#0f285c]/20"
           >
-            Acceso Institucional
+            Acceso Elite
           </button>
         </nav>
 
@@ -170,7 +170,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
             </h2>
             
             <p className="text-slate-600 text-xl leading-relaxed mb-12 max-w-xl font-medium opacity-90">
-               Infraestructura de gobierno digital diseñada para la eficiencia institucional, la transparencia obligatoria y el acceso ciudadano garantizado por la LNETB.
+               Una infraestructura inteligente diseñada para la eficiencia, la transparencia y el bienestar ciudadano. Tecnología de élite al servicio del pueblo.
             </p>
             
             <div className="flex flex-wrap items-center gap-6 mb-20">
@@ -178,11 +178,11 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                  onClick={() => onNavigate('citizen')}
                  className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-full text-lg font-bold transition-all shadow-2xl shadow-blue-600/40 flex items-center gap-4 group"
                >
-                 Ingresar al Portal Ciudadano <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                 Explorar Ecosistema <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
                </button>
                
                <button className="flex items-center gap-3 text-[#0f285c] font-bold hover:gap-5 transition-all group">
-                 <span>Hoja de Ruta 2026–2031</span>
+                 <span>Ver Estrategia 2024</span>
                  <div className="w-10 h-[2px] bg-[#0f285c] group-hover:w-16 transition-all"></div>
                </button>
             </div>
@@ -235,7 +235,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                       <h3 className="font-serif font-black text-2xl text-[#0f285c] leading-tight px-4 mb-2">
                         {item.title}
                       </h3>
-                      <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Plataforma de Gobierno Digital · Nayarit</p>
+                      <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Nayarit Digital Elite</p>
                    </div>
                    
                    {/* Image background that blends into the top */}
@@ -246,7 +246,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                      
                      <div className="absolute bottom-8 left-0 right-0 z-20 px-8">
                         <button className="w-full py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white text-xs font-bold uppercase tracking-[0.2em] hover:bg-white hover:text-[#0f285c] transition-all">
-                          Conocer Módulo
+                          Ver Detalles
                         </button>
                      </div>
                    </div>

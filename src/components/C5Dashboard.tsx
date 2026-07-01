@@ -55,7 +55,6 @@ type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 
 export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
   const [activeModule, setActiveModule] = useState<ModuleType>(() => (localStorage.getItem('activeModule') as ModuleType) || 'tesoreria');
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const isDemoMode = !import.meta.env.VITE_FIREBASE_API_KEY || import.meta.env.VITE_FIREBASE_API_KEY === 'demo';
 
   useEffect(() => {
     localStorage.setItem('activeModule', activeModule);
@@ -153,12 +152,6 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
           </div>
           
           <div className="flex items-center gap-4">
-            {isDemoMode && (
-              <div className="flex items-center gap-2 bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-500/30">
-                <div className="w-2 h-2 rounded-full bg-amber-400"></div>
-                <span className="text-xs font-mono text-amber-400 uppercase tracking-wider">MODO DEMO</span>
-              </div>
-            )}
             <div className="flex items-center gap-2 bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700/50">
               <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse"></div>
               <span className="text-xs font-mono text-emerald-400">STATE: ONLINE</span>
@@ -326,9 +319,6 @@ function TesoreriaView() {
                 <stat.icon className={cn("w-5 h-5", stat.color)} />
               </div>
             </div>
-            <p className="text-[9px] text-slate-600 font-mono mt-3 relative z-10">
-              Fuente: Tesorería Municipal · Corte: 30-Jun-2026 · Act. 14:32
-            </p>
           </div>
         ))}
       </div>
@@ -570,14 +560,14 @@ function SaludView() {
 function IAView() {
   const [lang, setLang] = useState<Language>('es');
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([
-    { role: 'assistant', content: 'Mtra. Blanca Simancas, el Asistente IA de ConnectX está listo. ¿Desea un reporte de cumplimiento LNETB, recaudación digital o el estatus de obras en Tepic?' }
+    { role: 'assistant', content: 'Presidenta Geraldine Ponce, el Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?' }
   ]);
 
   useEffect(() => {
     const greets = {
-      es: 'Mtra. Blanca Simancas, el Asistente IA de ConnectX está listo. ¿Desea un reporte de cumplimiento LNETB, recaudación digital o el estatus de obras en Tepic?',
-      cora: "Mtra. Blanca Simancas, ConnectX IA amu'u tyu'un. ¿Tyu'un ne'ij tyu'uti'in Tepic?",
-      wixarika: 'Mtra. Blanca Simancas keniu, ConnectX IA keniu. ¿Kewa pikanetsi\'iwau Tepic?'
+      es: 'Presidenta Geraldine Ponce, el Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?',
+      cora: "Presidenta Geraldine Ponce, ConnectX IA amu'u tyu'un. ¿Tyu'un ne'ij tyu'uti'in Tepic?",
+      wixarika: 'Geraldine Ponce keniu, ConnectX IA keniu. ¿Kewa pikanetsi\'iwau Tepic?'
     };
     setMessages([{ role: 'assistant', content: greets[lang] }]);
   }, [lang]);
@@ -1279,154 +1269,65 @@ function MetricView() {
 }
 
 function GabineteView() {
-  const estatal = [
-    {
-      name: "C. Miguel Ángel Navarro Quintero",
-      title: "GOBERNADOR DEL ESTADO",
-      department: "Gobierno del Estado de Nayarit",
-      kpiName: "Municipios Nayarit",
-      kpiValue: "20 / 20",
-      kpiStatus: "positive",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces",
-      responseTime: "Escala estatal",
-      projects: 20,
-      badge: null,
-      highlight: true,
-    },
-  ];
-
-  const municipales = [
-    {
-      name: "Mtra. Blanca Patricia Simancas Bueno",
-      title: "PRESIDENTA MUNICIPAL ENCARGADA",
-      department: "Presidencia Municipal",
-      kpiName: "Trámites Digitalizados",
-      kpiValue: "80%",
-      kpiStatus: "positive",
-      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=faces",
-      responseTime: "< 48h",
-      projects: 7,
-      badge: null,
-      highlight: false,
-    },
+  const officials = [
     {
       name: "Geraldine Ponce",
-      title: "PRESIDENTA MUNICIPAL",
-      department: "Presidencia — En Licencia",
+      title: "Presidenta Municipal",
+      department: "Presidencia",
       kpiName: "Aprobación Ciudadana",
       kpiValue: "84%",
       kpiStatus: "positive",
       avatar: "https://images.unsplash.com/photo-1586996292898-71f4036c4e07?w=200&h=200&fit=crop&crop=faces",
-      responseTime: "— licencia activa",
-      projects: 12,
-      badge: "LICENCIA · CANDIDATA GOBERNADORA 2027",
-      highlight: false,
+      responseTime: "< 24h",
+      projects: 12
     },
     {
       name: "Alejandro Galván",
-      title: "JEFE DE GABINETE",
+      title: "Jefe de Gabinete",
       department: "Gabinete",
       kpiName: "Eficiencia Operativa",
       kpiValue: "92%",
       kpiStatus: "positive",
       avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop&crop=faces",
       responseTime: "< 12h",
-      projects: 8,
-      badge: null,
-      highlight: false,
+      projects: 8
+    },
+    {
+      name: "Mtra. Blanca Simancas",
+      title: "Secretaria del Ayuntamiento",
+      department: "Secretaría",
+      kpiName: "Trámites Digitalizados",
+      kpiValue: "80%",
+      kpiStatus: "neutral",
+      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=faces",
+      responseTime: "< 48h",
+      projects: 5
     },
     {
       name: "Lic. Carlos Robles",
-      title: "DIRECTOR DE OBRAS PÚBLICAS",
+      title: "Director de Obras Públicas",
       department: "Infraestructura",
       kpiName: "Obras en Tiempo",
       kpiValue: "88%",
       kpiStatus: "positive",
       avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&h=200&fit=crop&crop=faces",
       responseTime: "< 72h",
-      projects: 24,
-      badge: null,
-      highlight: false,
-    },
+      projects: 24
+    }
   ];
-
-  const OfficialCard = ({ official }: { official: typeof estatal[0] }) => (
-    <div className={cn(
-      "bg-[#161920] rounded-xl border overflow-hidden group transition-colors",
-      official.highlight
-        ? "border-amber-500/50 hover:border-amber-400"
-        : "border-slate-800 hover:border-emerald-500/50"
-    )}>
-      {official.highlight && (
-        <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-1.5 text-center">
-          <span className="text-amber-400 text-[10px] font-black uppercase tracking-widest">
-            🏛 Gobierno del Estado de Nayarit
-          </span>
-        </div>
-      )}
-      {official.badge && (
-        <div className="bg-slate-700/40 border-b border-slate-700 px-4 py-1.5 text-center">
-          <span className="text-slate-400 text-[10px] font-black uppercase tracking-widest">
-            {official.badge}
-          </span>
-        </div>
-      )}
-      <div className="p-6 text-center">
-        <div className={cn(
-          "w-24 h-24 mx-auto rounded-full overflow-hidden mb-4 border-2 transition-colors",
-          official.highlight
-            ? "border-amber-500/50 group-hover:border-amber-400"
-            : "border-slate-800 group-hover:border-emerald-500/50"
-        )}>
-          <img src={official.avatar} alt={official.name} className="w-full h-full object-cover" />
-        </div>
-        <h3 className="font-bold text-white text-lg leading-tight">{official.name}</h3>
-        <p className={cn(
-          "text-xs font-bold uppercase tracking-wider mb-1 mt-1",
-          official.highlight ? "text-amber-400" : "text-emerald-400"
-        )}>{official.title}</p>
-        <p className="text-slate-500 text-sm">{official.department}</p>
-      </div>
-      <div className="border-t border-slate-800 bg-[#0a0a0c] p-4">
-        <div className="flex justify-between items-center mb-3">
-          <span className="text-slate-400 text-xs">{official.kpiName}</span>
-          <span className={cn("text-sm font-bold", official.kpiStatus === 'positive' ? "text-emerald-400" : "text-amber-400")}>{official.kpiValue}</span>
-        </div>
-        <div className="flex justify-between items-center mb-3">
-          <span className="text-slate-400 text-xs">Alcance</span>
-          <span className="text-slate-300 text-sm font-mono">{official.responseTime}</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-slate-400 text-xs">Proyectos C5</span>
-          <span className="text-slate-300 text-sm font-mono">{official.projects} Activos</span>
-        </div>
-      </div>
-      <div className={cn(
-        "p-4 border-t text-center cursor-pointer transition-colors",
-        official.highlight
-          ? "bg-amber-500/10 border-amber-500/20 hover:bg-amber-500/20"
-          : "bg-emerald-500/10 border-emerald-500/20 hover:bg-emerald-500/20"
-      )}>
-        <span className={cn(
-          "text-xs font-bold uppercase tracking-widest",
-          official.highlight ? "text-amber-400" : "text-emerald-400"
-        )}>Auditar Funcionario</span>
-      </div>
-    </div>
-  );
 
   return (
     <div className="space-y-8">
       <div>
         <h2 className="text-2xl font-serif font-black text-white mb-2">Gabinete en Tiempo Real</h2>
-        <p className="text-slate-400">Adiós al directorio web tradicional. Aquí los ciudadanos evalúan el desempeño real, el tiempo de respuesta y la eficiencia de cada servidor público — desde el Gobierno del Estado hasta cada dirección municipal. Cuentas claras para construir confianza.</p>
+        <p className="text-slate-400">Adiós al directorio web tradicional. Aquí los ciudadanos evalúan el desempeño real, el tiempo de respuesta y la eficiencia de cada servidor público. Cuentas claras para construir confianza.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-[#161920] rounded-xl p-6 border border-slate-800">
-          <div className="text-slate-400 text-sm font-medium mb-1">Cobertura</div>
-          <div className="text-3xl font-black text-white">20</div>
-          <div className="text-amber-400 text-sm font-bold mt-2">Municipios de Nayarit</div>
+          <div className="text-slate-400 text-sm font-medium mb-1">Total Gabinete</div>
+          <div className="text-3xl font-black text-white">42</div>
+          <div className="text-emerald-400 text-sm font-bold mt-2">100% Declaración 3de3</div>
         </div>
         <div className="bg-[#161920] rounded-xl p-6 border border-slate-800">
           <div className="text-slate-400 text-sm font-medium mb-1">Promedio Respuesta</div>
@@ -1445,28 +1346,36 @@ function GabineteView() {
         </div>
       </div>
 
-      {/* Nivel Estatal */}
-      <div>
-        <div className="flex items-center gap-3 mb-4">
-          <div className="h-px flex-1 bg-amber-500/20" />
-          <span className="text-amber-400 text-[10px] font-black uppercase tracking-widest px-2">Nivel Estatal — Gobierno de Nayarit</span>
-          <div className="h-px flex-1 bg-amber-500/20" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {estatal.map((o, i) => <OfficialCard key={i} official={o} />)}
-        </div>
-      </div>
-
-      {/* Nivel Municipal */}
-      <div>
-        <div className="flex items-center gap-3 mb-4">
-          <div className="h-px flex-1 bg-emerald-500/20" />
-          <span className="text-emerald-400 text-[10px] font-black uppercase tracking-widest px-2">Nivel Municipal — H. Ayuntamiento de Tepic</span>
-          <div className="h-px flex-1 bg-emerald-500/20" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {municipales.map((o, i) => <OfficialCard key={i} official={o} />)}
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {officials.map((official, i) => (
+          <div key={i} className="bg-[#161920] rounded-xl border border-slate-800 overflow-hidden group hover:border-emerald-500/50 transition-colors">
+            <div className="p-6 text-center">
+              <div className="w-24 h-24 mx-auto rounded-full overflow-hidden mb-4 border-2 border-slate-800 group-hover:border-emerald-500/50 transition-colors">
+                <img src={official.avatar} alt={official.name} className="w-full h-full object-cover" />
+              </div>
+              <h3 className="font-bold text-white text-lg">{official.name}</h3>
+              <p className="text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">{official.title}</p>
+              <p className="text-slate-500 text-sm">{official.department}</p>
+            </div>
+            <div className="border-t border-slate-800 bg-[#0a0a0c] p-4">
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-slate-400 text-xs">{official.kpiName}</span>
+                <span className={cn("text-sm font-bold", official.kpiStatus === 'positive' ? "text-emerald-400" : "text-amber-400")}>{official.kpiValue}</span>
+              </div>
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-slate-400 text-xs">Tiempo Respuesta</span>
+                <span className="text-slate-300 text-sm font-mono">{official.responseTime}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-400 text-xs">Proyectos C5</span>
+                <span className="text-slate-300 text-sm font-mono">{official.projects} Activos</span>
+              </div>
+            </div>
+            <div className="p-4 bg-emerald-500/10 border-t border-emerald-500/20 text-center cursor-pointer hover:bg-emerald-500/20 transition-colors">
+              <span className="text-emerald-400 text-xs font-bold uppercase tracking-widest">Auditar Funcionario</span>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
