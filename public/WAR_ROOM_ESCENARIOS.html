@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>War Room · Escenarios ConnectX / Nayarit Digital</title>
+<style>
+  :root {
+    --verde: #10b981;
+    --amarillo: #f59e0b;
+    --rojo: #ef4444;
+    --bg: #060b14;
+    --card: #0d1424;
+    --card2: #111827;
+    --border: #1f2d45;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --accent: #3b82f6;
+    --magenta: #e879f9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.6; }
+
+  .page { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* Header */
+  .header { text-align: center; padding: 60px 20px 40px; border-bottom: 1px solid var(--border); margin-bottom: 48px; }
+  .header .label { font-size: 10px; font-weight: 900; letter-spacing: .3em; text-transform: uppercase; color: var(--rojo); margin-bottom: 12px; }
+  .header h1 { font-size: clamp(28px, 5vw, 52px); font-weight: 900; line-height: 1.1; margin-bottom: 16px; }
+  .header h1 em { font-style: normal; color: var(--magenta); }
+  .header p { font-size: 15px; color: var(--muted); max-width: 600px; margin: 0 auto; }
+
+  /* Leyenda */
+  .legend { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-bottom: 56px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+
+  /* Persona block */
+  .persona-block { margin-bottom: 64px; }
+  .persona-header { display: flex; align-items: center; gap: 16px; padding: 20px 24px; background: var(--card); border: 1px solid var(--border); border-radius: 20px 20px 0 0; }
+  .persona-icon { width: 52px; height: 52px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+  .persona-title { font-size: 18px; font-weight: 900; }
+  .persona-sub { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .15em; margin-top: 2px; }
+  .persona-tag { margin-left: auto; font-size: 10px; font-weight: 900; letter-spacing: .15em; text-transform: uppercase; padding: 4px 12px; border-radius: 100px; border: 1px solid; }
+
+  /* Scenarios grid */
+  .scenarios { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; border: 1px solid var(--border); border-top: none; border-radius: 0 0 20px 20px; overflow: hidden; }
+  @media(max-width: 680px) { .scenarios { grid-template-columns: 1fr; } }
+
+  .scenario { padding: 24px; background: var(--card2); border-right: 1px solid var(--border); }
+  .scenario:last-child { border-right: none; }
+  @media(max-width: 680px) { .scenario { border-right: none; border-bottom: 1px solid var(--border); } }
+
+  .scenario-badge { font-size: 9px; font-weight: 900; letter-spacing: .2em; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; display: inline-block; margin-bottom: 16px; }
+  .verde-badge { background: rgba(16,185,129,.15); color: var(--verde); }
+  .amarillo-badge { background: rgba(245,158,11,.15); color: var(--amarillo); }
+  .rojo-badge { background: rgba(239,68,68,.15); color: var(--rojo); }
+
+  .scenario-title { font-size: 13px; font-weight: 900; margin-bottom: 12px; }
+
+  .scene-block { margin-bottom: 12px; }
+  .scene-label { font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: .15em; color: var(--muted); margin-bottom: 4px; }
+  .scene-text { font-size: 12px; color: #94a3b8; line-height: 1.5; }
+  .scene-quote { font-size: 12px; color: var(--text); font-style: italic; border-left: 2px solid var(--border); padding-left: 10px; line-height: 1.5; }
+  .scene-response { font-size: 12px; color: var(--verde); font-weight: 600; line-height: 1.5; }
+  .scene-response.amarillo { color: var(--amarillo); }
+  .scene-response.rojo { color: #f87171; }
+
+  .fix-tag { display: inline-block; font-size: 9px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; background: rgba(59,130,246,.12); color: #60a5fa; border: 1px solid rgba(59,130,246,.2); margin-top: 10px; }
+
+  /* Mejoras section */
+  .mejoras { margin-top: 64px; }
+  .mejoras h2 { font-size: 22px; font-weight: 900; text-align: center; margin-bottom: 8px; }
+  .mejoras .subtitle { text-align: center; font-size: 13px; color: var(--muted); margin-bottom: 36px; }
+  .mejoras-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media(max-width: 600px) { .mejoras-grid { grid-template-columns: 1fr; } }
+  .mejora-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+  .mejora-num { font-size: 10px; font-weight: 900; color: var(--muted); letter-spacing: .2em; margin-bottom: 8px; }
+  .mejora-title { font-size: 14px; font-weight: 900; margin-bottom: 6px; }
+  .mejora-why { font-size: 12px; color: var(--muted); margin-bottom: 10px; line-height: 1.5; }
+  .mejora-escenario { font-size: 10px; font-weight: 700; color: #60a5fa; }
+
+  /* Scripts section */
+  .scripts { margin-top: 64px; padding: 36px; background: var(--card); border: 1px solid var(--border); border-radius: 24px; }
+  .scripts h2 { font-size: 20px; font-weight: 900; margin-bottom: 6px; }
+  .scripts .sub { font-size: 12px; color: var(--muted); margin-bottom: 28px; }
+  .script-item { margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+  .script-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .script-trigger { font-size: 11px; font-weight: 900; color: var(--rojo); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 6px; }
+  .script-q { font-size: 13px; color: #94a3b8; font-style: italic; margin-bottom: 10px; }
+  .script-a { font-size: 13px; color: var(--text); background: rgba(16,185,129,.06); border-left: 3px solid var(--verde); padding: 12px 14px; border-radius: 0 8px 8px 0; line-height: 1.6; }
+
+  /* Footer */
+  .footer { text-align: center; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="label">ConnectX · Nayarit Digital · Uso Interno</div>
+    <h1>War Room de <em>Escenarios</em></h1>
+    <p>5 personas reales × 3 situaciones cada una. Lo que puede pasar — con quién, cuándo y cómo responder para que siempre sea una victoria o un aprendizaje.</p>
+  </div>
+
+  <!-- LEYENDA -->
+  <div class="legend">
+    <div class="legend-item"><div class="dot" style="background:var(--verde)"></div> VERDE — Todo sale bien</div>
+    <div class="legend-item"><div class="dot" style="background:var(--amarillo)"></div> AMARILLO — Fricción / objeción</div>
+    <div class="legend-item"><div class="dot" style="background:var(--rojo)"></div> ROJO — Crisis / ataque directo</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PERSONA 1: EL SHARK (Presidenta / Regidor)            -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="persona-block">
+    <div class="persona-header">
+      <div class="persona-icon" style="background:rgba(232,121,249,.15)">🦈</div>
+      <div>
+        <div class="persona-title">El Shark</div>
+        <div class="persona-sub">Presidenta Municipal / Regidor / Secretario de Gobierno</div>
+      </div>
+      <div class="persona-tag" style="color:var(--magenta);border-color:rgba(232,121,249,.3)">DECISOR</div>
+    </div>
+    <div class="scenarios">
+
+      <div class="scenario">
+        <span class="scenario-badge verde-badge">🟢 Verde</span>
+        <div class="scenario-title">"¿Cuánto cuesta y cuándo empezamos?"</div>
+        <div class="scene-block">
+          <div class="scene-label">Situación</div>
+          <div class="scene-text">Ve el Faro Fiscal en vivo, el mapa de obras con puntos rojos que representan fugas de dinero, y pregunta por el precio y la implementación.</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Lo que dicen</div>
+          <div class="scene-quote">"Esto es lo que necesitamos. Los regidores de oposición ya no podrán cuestionar si no hay datos públicos."</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Tu respuesta</div>
+          <div class="scene-response">Modelo de servicio: sin inversión inicial. Porcentaje de la recaudación digital adicional que generemos. La plataforma se paga sola con la eficiencia que produce.</div>
+        </div>
+        <span class="fix-tag">No requiere mejora en app</span>
+      </div>
+
+      <div class="scenario">
+        <span class="scenario-badge amarillo-badge">🟡 Amarillo</span>
+        <div class="scenario-title">"Ya tenemos un sistema de tesorería"</div>
+        <div class="scene-block">
+          <div class="scene-label">Situación</div>
+          <div class="scene-text">Hay un sistema legacy (SAP, SIIA u otro) que el municipio usa. El funcionario de TI lo defiende porque su trabajo depende de él.</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Lo que dicen</div>
+          <div class="scene-quote">"Tenemos contrato hasta 2027 con nuestro proveedor actual y ya digitalizamos algunos trámites."</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Tu respuesta</div>
+          <div class="scene-response amarillo">No somos su reemplazo — somos la capa ciudadana que su sistema nunca tuvo. Nayarit Digital conecta al ciudadano con lo que ya existe. La LNETB exige que ese acceso sea disponible hoy: su proveedor actual ¿cumple el Art. 13 fracciones XIII-XVIII?</div>
+        </div>
+        <span class="fix-tag">Mejora: módulo de integración API visible en C5</span>
+      </div>
+
+      <div class="scenario">
+        <span class="scenario-badge rojo-badge">🔴 Rojo</span>
+        <div class="scenario-title">"¿Cómo sé que los datos del municipio están seguros?"</div>
+        <div class="scene-block">
+          <div class="scene-label">Situación</div>
+          <div class="scene-text">Alguien del equipo del regidor leyó sobre filtraciones de datos de gobiernos en México (SEDENA, PEMEX) y lo trae a la mesa.</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Lo que dicen</div>
+          <div class="scene-quote">"He visto que los sistemas de gobierno son hackeados constantemente. ¿Qué pasa si filtran los datos de los ciudadanos?"</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Tu respuesta</div>
+          <div class="scene-response rojo">El código fuente es propiedad del municipio (Art. 91 LNETB). Los datos viven en servidores del gobierno federal (Firebase GCP, región México). Nosotros nunca tocamos los datos — solo construimos la interfaz. El municipio siempre tiene acceso completo. Adicionalmente: auditoría de código abierta disponible en cualquier momento.</div>
+        </div>
+        <span class="fix-tag">Mejora: pantalla "Seguridad y Privacidad" en settings</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PERSONA 2: LA CIUDADANA (María, 45, colonia)          -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="persona-block">
+    <div class="persona-header">
+      <div class="persona-icon" style="background:rgba(16,185,129,.15)">👩</div>
+      <div>
+        <div class="persona-title">La Ciudadana</div>
+        <div class="persona-sub">María, 45 años · Colonia periférica · Smartphone básico · Sin cuenta bancaria</div>
+      </div>
+      <div class="persona-tag" style="color:var(--verde);border-color:rgba(16,185,129,.3)">USUARIO FINAL</div>
+    </div>
+    <div class="scenarios">
+
+      <div class="scenario">
+        <span class="scenario-badge verde-badge">🟢 Verde</span>
+        <div class="scenario-title">Paga su predial en 3 minutos</div>
+        <div class="scene-block">
+          <div class="scene-label">Situación</div>
+          <div class="scene-text">María abre la app, selecciona "Predial", ve su adeudo, paga con OXXO Pay (efectivo en tienda) y recibe recibo digital.</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Lo que dicen</div>
+          <div class="scene-quote">"¿Así de fácil? Antes tenía que ir al municipio y perder medio día. Y aquí me dice cuánto debo exactamente."</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Resultado</div>
+          <div class="scene-response">Recaudación garantizada sin que el ciudadano pise una ventanilla. Cumple Art. 13 XIII-XVIII LNETB. María se vuelve embajadora orgánica del sistema.</div>
+        </div>
+        <span class="fix-tag">Requiere: integrar referencia OXXO Pay en flujo de pago</span>
+      </div>
+
+      <div class="scenario">
+        <span class="scenario-badge amarillo-badge">🟡 Amarillo</span>
+        <div class="scenario-title">"¿Qué es Llave MX? No entiendo"</div>
+        <div class="scene-block">
+          <div class="scene-label">Situación</div>
+          <div class="scene-text">María intenta entrar con Llave MX pero no sabe qué es, no tiene CURP a la mano y el nombre en su INE no coincide exactamente.</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Lo que dicen</div>
+          <div class="scene-quote">"Me pide una contraseña que no tengo. No sé qué es eso de Llave MX. ¿Necesito internet para esto?"</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Tu respuesta</div>
+          <div class="scene-response amarillo">El botón de Google funciona con cualquier correo Gmail que María ya usa. Llave MX se puede crear en 5 minutos con su CURP. La app debe mostrar una guía paso a paso con ilustraciones simples cuando el usuario hace clic en "¿Qué es Llave MX?".</div>
+        </div>
+        <span class="fix-tag">Mejora: modal educativo "¿Qué es Llave MX?" con 3 pasos ilustrados</span>
+      </div>
+
+      <div class="scenario">
+        <span class="scenario-badge rojo-badge">🔴 Rojo</span>
+        <div class="scenario-title">La app falla el último día del descuento</div>
+        <div class="scene-block">
+          <div class="scene-label">Situación</div>
+          <div class="scene-text">Firebase tiene downtime de 2 horas el 28 de febrero — último día del descuento "pronto pago" del predial. Cientos de ciudadanos intentan pagar.</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Lo que dicen</div>
+          <div class="scene-quote">"La aplicación no sirve, quiero mi descuento. Esto es culpa del municipio."</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Tu respuesta</div>
+          <div class="scene-response rojo">Protocolo de contingencia: 1) Banner automático con número de emergencia municipal. 2) SLA de 99.9% de uptime — si cae dentro del SLA, el municipio extiende el período de descuento. 3) Página de estado en tiempo real en status.nayarit.digital.</div>
+        </div>
+        <span class="fix-tag">Mejora urgente: pantalla offline + número de emergencia 800</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PERSONA 3: EL FUNCIONARIO RESISTENTE                  -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="persona-block">
+    <div class="persona-header">
+      <div class="persona-icon" style="background:rgba(245,158,11,.15)">🏛️</div>
+      <div>
+        <div class="persona-title">El Funcionario Resistente</div>
+        <div class="persona-sub">Tesorero / Contador / Jefe de ventanilla · 15 años en el municipio · Conoce los "atajos"</div>
+      </div>
+      <div class="persona-tag" style="color:var(--amarillo);border-color:rgba(245,158,11,.3)">SABOTEADOR POTENCIAL</div>
+    </div>
+    <div class="scenarios">
+
+      <div class="scenario">
+        <span class="scenario-badge verde-badge">🟢 Verde</span>
+        <div class="scenario-title">Ve que su vida es más fácil</div>
+        <div class="scene-block">
+          <div class="scene-label">Situación</div>
+          <div class="scene-text">En el primer mes, el sistema digital elimina las colas en su ventanilla. Ahora solo atiende casos complejos. Tiene más tiempo y menos estrés.</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Lo que dicen</div>
+          <div class="scene-quote">"Antes me llegaban 80 personas al día. Ahora solo vienen 20 con problemas que realmente necesitan mi ayuda."</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Resultado</div>
+          <div class="scene-response">Se convierte en aliado interno. Propóngale ser "Funcionario Digital Certificado" — Academia Nivel Plata. Sello de reconocimiento público en su credencial.</div>
+        </div>
+        <span class="fix-tag">Oportunidad: credencial digital visible en su perfil del sistema</span>
+      </div>
+
+      <div class="scenario">
+        <span class="scenario-badge amarillo-badge">🟡 Amarillo</span>
+        <div class="scenario-title">"Esto nos va a quitar el trabajo"</div>
+        <div class="scene-block">
+          <div class="scene-label">Situación</div>
+          <div class="scene-text">El contador de 20 años de antigüedad lidera la resistencia silenciosa: datos incorrectos en el sistema, retrasos en la carga de información.</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Lo que dicen</div>
+          <div class="scene-quote">"El sistema tiene errores. Los datos que captura no son confiables. Mejor lo hacemos como siempre."</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Tu respuesta</div>
+          <div class="scene-response amarillo">El reencuadre es clave: "La LNETB ya ordenó la digitalización — la única pregunta es si llega CON usted o SIN usted. Con usted, tiene un perfil certificado y bono de productividad. Sin usted, el sistema llega de todos modos pero usted no tiene el sello." Involúcrelo como co-diseñador del catálogo de trámites.</div>
+        </div>
+        <span class="fix-tag">Mejora: módulo de "Retroalimentación del Operador" en C5</span>
+      </div>
+
+      <div class="scenario">
+        <span class="scenario-badge rojo-badge">🔴 Rojo</span>
+        <div class="scenario-title">Sabotaje activo de datos</div>
+        <div class="scene-block">
+          <div class="scene-label">Situación</div>
+          <div class="scene-text">El funcionario carga datos incorrectos o duplicados deliberadamente para hacer que el sistema parezca poco confiable ante los superiores.</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Lo que dicen</div>
+          <div class="scene-quote">"¿Ven? El sistema dice que el ciudadano pagó pero en el sistema viejo no aparece. Esto no funciona."</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Tu respuesta</div>
+          <div class="scene-response rojo">Audit trail inmutable: cada acción en el sistema queda firmada con el UID del usuario y timestamp en Firestore. El Mystery Shopper ciudadano detecta irregularidades. "El sistema registra quién hizo qué y cuándo — incluyendo quién cargó datos incorrectos." Esto disuade el sabotaje desde el día 1.</div>
+        </div>
+        <span class="fix-tag">Mejora crítica: log de auditoría visible en C5 por acción/usuario</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PERSONA 4: EL SINDICALISTA (Óscar Cedano / SUTSEM)    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="persona-block">
+    <div class="persona-header">
+      <div class="persona-icon" style="background:rgba(59,130,246,.15)">✊</div>
+      <div>
+        <div class="persona-title">El Sindicalista</div>
+        <div class="persona-sub">Óscar Cedano · Sec. Gral. SUTSEM · 1,200 agremiados · Sección 49 SNTE · Poder de movilización</div>
+      </div>
+      <div class="persona-tag" style="color:var(--accent);border-color:rgba(59,130,246,.3)">ALIADO CLAVE / RIESGO ALTO</div>
+    </div>
+    <div class="scenarios">
+
+      <div class="scenario">
+        <span class="scenario-badge verde-badge">🟢 Verde</span>
+        <div class="scenario-title">La Academia se convierte en victoria sindical</div>
+        <div class="scene-block">
+          <div class="scene-label">Situación</div>
+          <div class="scene-text">Cedano presenta la Academia ConnectX en asamblea. Sus agremiados ven que la certificación sube su valor en el mercado laboral y no les cuesta nada.</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Lo que dicen</div>
+          <div class="scene-quote">"El sindicato negoció capacitación gratuita con certificado reconocido. Esto es un logro de la organización."</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Resultado</div>
+          <div class="scene-response">Cedano es el embajador. El sindicato se apropia del logro. ConnectX tiene acceso a 1,200 servidores públicos capacitados. La resistencia se convierte en impulso.</div>
+        </div>
+        <span class="fix-tag">Requiere: credencial con doble sello ConnectX + SUTSEM imprimible</span>
+      </div>
+
+      <div class="scenario">
+        <span class="scenario-badge amarillo-badge">🟡 Amarillo</span>
+        <div class="scenario-title">"¿Por qué en nuestro tiempo libre?"</div>
+        <div class="scene-block">
+          <div class="scene-label">Situación</div>
+          <div class="scene-text">Los agremiados reciben la propuesta de la Academia pero ven que los módulos se toman fuera de horario laboral. No están dispuestos a "trabajar gratis".</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Lo que dicen</div>
+          <div class="scene-quote">"Si la institución quiere que nos capacitemos, que lo pague en horas de trabajo. Nosotros no regalamos nuestro tiempo."</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Tu respuesta</div>
+          <div class="scene-response amarillo">Propuesta: módulo Bronce en línea, 20 min/día, desde el celular en cualquier momento. La negociación con la presidencia para incluirlo como tiempo laboral (1h/semana) la lidera Cedano — eso le da poder de negociación con el municipio. ConnectX facilita el argumento: "La LNETB obliga al municipio a capacitar a sus servidores (Art. XV transitorio)".</div>
+        </div>
+        <span class="fix-tag">Mejora: app Academia con módulos microlearning de 15 min</span>
+      </div>
+
+      <div class="scenario">
+        <span class="scenario-badge rojo-badge">🔴 Rojo</span>
+        <div class="scenario-title">Panfleto: "ConnectX quiere reemplazarnos con IA"</div>
+        <div class="scene-block">
+          <div class="scene-label">Situación</div>
+          <div class="scene-text">Un delegado sindical contrario a Cedano distribuye un volante en el ayuntamiento diciendo que la app es para eliminar plazas. La noticia llega al director de Recursos Humanos.</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Lo que dicen</div>
+          <div class="scene-quote">"ConnectX quiere poner una app para quitarnos el trabajo y quedarse con nuestro salario. No dejen que entren al municipio."</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Tu respuesta</div>
+          <div class="scene-response rojo">Respuesta pública y transparente: 1) Carta abierta firmada por ConnectX + SUTSEM (si ya es aliado) con datos: "La digitalización no elimina plazas — las especializa. Tepic tiene déficit de 40 servidores públicos capacitados en digital". 2) Citar los transitorios XIV-XVI de la LNETB: el municipio TIENE que capacitar, no despedir. 3) Proponer auditoría ciudadana del contrato mediante Faro Fiscal.</div>
+        </div>
+        <span class="fix-tag">Mejora: sección "ConnectX No Reemplaza" en landing con datos de plazas</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- PERSONA 5: EL AUDITOR / PERIODISTA                    -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="persona-block">
+    <div class="persona-header">
+      <div class="persona-icon" style="background:rgba(239,68,68,.15)">📰</div>
+      <div>
+        <div class="persona-title">El Auditor / Periodista</div>
+        <div class="persona-sub">Transparencia · INAI · Periodismo de investigación · Regidor de oposición</div>
+      </div>
+      <div class="persona-tag" style="color:var(--rojo);border-color:rgba(239,68,68,.3)">VIGILANTE EXTERNO</div>
+    </div>
+    <div class="scenarios">
+
+      <div class="scenario">
+        <span class="scenario-badge verde-badge">🟢 Verde</span>
+        <div class="scenario-title">Nota positiva: "Tepic recauda más con sistema digital"</div>
+        <div class="scene-block">
+          <div class="scene-label">Situación</div>
+          <div class="scene-text">El periodista del Nayarit Opina usa el Faro Fiscal público y escribe una nota sobre el incremento en recaudación y la caída de las colas en Tesorería.</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Lo que dicen</div>
+          <div class="scene-quote">"Por primera vez en años, los datos de recaudación del municipio son públicos y actualizados. El Faro Fiscal lo hace posible."</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Resultado</div>
+          <div class="scene-response">Cobertura orgánica gratuita. El municipio tiene un caso de éxito documentado por prensa independiente. ConnectX tiene referencia verificable para su siguiente pitch.</div>
+        </div>
+        <span class="fix-tag">Requiere: URL pública del Faro Fiscal accesible sin login</span>
+      </div>
+
+      <div class="scenario">
+        <span class="scenario-badge amarillo-badge">🟡 Amarillo</span>
+        <div class="scenario-title">"Los datos no coinciden con la Cuenta Pública"</div>
+        <div class="scene-block">
+          <div class="scene-label">Situación</div>
+          <div class="scene-text">El auditor compara los datos del Faro Fiscal con los que el municipio reportó al INEGI o a la Auditoría Superior. Hay diferencias en los números.</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Lo que dicen</div>
+          <div class="scene-quote">"Su app dice que se recaudaron $4.2M pero la cuenta pública reporta $3.8M. ¿Cuáles son los datos reales?"</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Tu respuesta</div>
+          <div class="scene-response amarillo">Transparencia total es la ventaja: "Los datos de Nayarit Digital son en tiempo real — los de la Cuenta Pública son del cierre del ejercicio anterior. La diferencia es el incremento que el sistema digital ya generó. Aquí está el desglose por fecha y concepto." El sistema debe mostrar la fuente de cada dato con timestamp y corte de fecha.</div>
+        </div>
+        <span class="fix-tag">Mejora: metadatos de fuente + fecha de corte en cada KPI del Faro Fiscal</span>
+      </div>
+
+      <div class="scenario">
+        <span class="scenario-badge rojo-badge">🔴 Rojo</span>
+        <div class="scenario-title">"Firmaron sin licitación" / Brecha de datos</div>
+        <div class="scene-block">
+          <div class="scene-label">Situación A</div>
+          <div class="scene-text">Un regidor de oposición acusa al municipio de contratar a ConnectX sin proceso de licitación pública, usando el contrato como arma política.</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Lo que dicen</div>
+          <div class="scene-quote">"Este contrato millonario no fue a licitación. ¿Qué intereses hay detrás de ConnectX y la Presidenta?"</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Tu respuesta</div>
+          <div class="scene-response rojo">Dos líneas de defensa: 1) Los contratos de digitalización bajo la LNETB tienen excepción de licitación por urgencia en los primeros 18 meses (período de adecuación). 2) El código fuente es propiedad municipal desde el día 1 — si alguien quiere auditar, puede ver el código completo. 3) El contrato puede subirse al Faro Fiscal como ejemplo de transparencia proactiva.</div>
+        </div>
+        <div class="scene-block" style="margin-top:12px">
+          <div class="scene-label">Situación B — Brecha de datos</div>
+          <div class="scene-text">Una vulnerabilidad en un endpoint expone nombres y correos de ciudadanos. El periodista lo reporta antes de que ConnectX lo detecte.</div>
+        </div>
+        <div class="scene-block">
+          <div class="scene-label">Respuesta de crisis</div>
+          <div class="scene-response rojo">Protocolo en 4h: 1) Reconocer la brecha inmediatamente — el silencio destruye. 2) Notificar al INAI en las primeras 72h (obligatorio). 3) Publicar el reporte técnico completo. 4) Recordar: los datos sensibles (CURP, RFC) los maneja el gobierno federal via Llave MX — ConnectX no los almacena localmente.</div>
+        </div>
+        <span class="fix-tag">Mejora urgente: política de privacidad + AVISO DE PRIVACIDAD INAI publicado</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- MEJORAS TÉCNICAS REVELADAS                            -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="mejoras">
+    <h2>🔧 Mejoras Técnicas Reveladas por los Escenarios</h2>
+    <p class="subtitle">Lo que los escenarios negativos nos dicen que falta en la app — por orden de impacto en demo y producción.</p>
+    <div class="mejoras-grid">
+
+      <div class="mejora-card">
+        <div class="mejora-num">PRIORIDAD 01 · ALTA</div>
+        <div class="mejora-title">Pantalla de Contingencia Offline</div>
+        <div class="mejora-why">Si Firebase tiene downtime o el Wi-Fi municipal cae durante la demo, la app debe mostrar un mensaje de contingencia con número de emergencia y no una pantalla en blanco. Aplica al Triage IA también — debe tener respuestas básicas sin conexión.</div>
+        <div class="mejora-escenario">↑ Revelado por: Ciudadana Rojo + Demo técnica</div>
+      </div>
+
+      <div class="mejora-card">
+        <div class="mejora-num">PRIORIDAD 02 · ALTA</div>
+        <div class="mejora-title">Modal "¿Qué es Llave MX?" con 3 pasos ilustrados</div>
+        <div class="mejora-why">El ciudadano de colonia periférica no sabe qué es Llave MX. Un pequeño modal con ilustraciones simples (CURP → llavemx.gob.mx → acceso) elimina el bloqueo principal en la primera experiencia de uso.</div>
+        <div class="mejora-escenario">↑ Revelado por: Ciudadana Amarillo</div>
+      </div>
+
+      <div class="mejora-card">
+        <div class="mejora-num">PRIORIDAD 03 · ALTA</div>
+        <div class="mejora-title">Metadatos de fuente en cada KPI del Faro Fiscal</div>
+        <div class="mejora-why">Cada número en el dashboard debe mostrar "Fuente: Tesorería Municipal · Corte: 30-Jun-2026 · Actualizado: hoy 14:32". Esto defiende ante cualquier pregunta de auditor o periodista sobre veracidad de datos.</div>
+        <div class="mejora-escenario">↑ Revelado por: Auditor Amarillo</div>
+      </div>
+
+      <div class="mejora-card">
+        <div class="mejora-num">PRIORIDAD 04 · MEDIA</div>
+        <div class="mejora-title">Log de Auditoría de Acciones en C5</div>
+        <div class="mejora-why">Cada acción de un funcionario en el sistema queda registrada con su UID, timestamp y tipo de operación. Visible en C5 para el Secretario del Ayuntamiento. Disuade el sabotaje y documenta el cumplimiento LNETB.</div>
+        <div class="mejora-escenario">↑ Revelado por: Funcionario Resistente Rojo</div>
+      </div>
+
+      <div class="mejora-card">
+        <div class="mejora-num">PRIORIDAD 05 · MEDIA</div>
+        <div class="mejora-title">Aviso de Privacidad INAI publicado + Sección Seguridad</div>
+        <div class="mejora-why">Una página "Privacidad y Seguridad" en settings que explique: qué datos se almacenan, dónde (GCP México), qué no se almacena (CURP, datos biométricos), cómo solicitar borrado. Obligatorio LFPDPPP. Blinda ante acusación de filtración.</div>
+        <div class="mejora-escenario">↑ Revelado por: Shark Rojo + Auditor Rojo</div>
+      </div>
+
+      <div class="mejora-card">
+        <div class="mejora-num">PRIORIDAD 06 · MEDIA</div>
+        <div class="mejora-title">Badge "DEMO · DATOS SIMULADOS" en modo presentación</div>
+        <div class="mejora-why">Durante una demo con autoridades, es mejor que los datos dummy estén claramente marcados como simulados. Evita que el regidor crea que los $2.4M del Faro Fiscal son reales y se decepcione al no encontrarlos en sus reportes.</div>
+        <div class="mejora-escenario">↑ Revelado por: Shark Verde (prevención)</div>
+      </div>
+
+      <div class="mejora-card">
+        <div class="mejora-num">PRIORIDAD 07 · BAJA</div>
+        <div class="mejora-title">Credencial Digital con Doble Sello ConnectX + Sindicato</div>
+        <div class="mejora-why">Para la Academia: al completar cualquier nivel, el empleado genera una credencial PDF con QR verificable, doble sello ConnectX y SUTSEM/SNTE, nombre del nivel y fecha. Convierte la certificación en un activo sindical y de carrera pública.</div>
+        <div class="mejora-escenario">↑ Revelado por: Sindicalista Verde + Amarillo</div>
+      </div>
+
+      <div class="mejora-card">
+        <div class="mejora-num">PRIORIDAD 08 · BAJA</div>
+        <div class="mejora-title">Integración OXXO Pay / referencia de pago en efectivo</div>
+        <div class="mejora-why">40% de los ciudadanos de Tepic no tienen tarjeta bancaria. La referencia numérica para OXXO Pay (que el sistema ya genera como código de barras) necesita estar conectada a un PSP real para ser funcional. Sin esto, el flujo de pago queda incompleto para el ciudadano sin cuenta.</div>
+        <div class="mejora-escenario">↑ Revelado por: Ciudadana Verde</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <!-- SCRIPTS LISTOS PARA LLEVAR                           -->
+  <!-- ═══════════════════════════════════════════════════════ -->
+  <div class="scripts">
+    <h2>📋 Scripts Listos para la Reunión</h2>
+    <p class="sub">Respuestas de 30 segundos para las preguntas que sí van a venir.</p>
+
+    <div class="script-item">
+      <div class="script-trigger">🔴 Pregunta trampa más frecuente</div>
+      <div class="script-q">"¿Por qué deberíamos pagarte a ti en lugar de que lo haga nuestra Dirección de Informática?"</div>
+      <div class="script-a">"Su dirección de informática gestiona la infraestructura — eso es su expertise y lo seguirá haciendo. Nosotros construimos la interfaz ciudadana que la LNETB exige que exista antes de [fecha de vencimiento]. El municipio no tiene ni el tiempo ni el expertise especializado para cumplir en esos plazos. Nuestro modelo es sin costo inicial — el municipio solo paga cuando el sistema ya está generando recaudación adicional."</div>
+    </div>
+
+    <div class="script-item">
+      <div class="script-trigger">🔴 La pregunta que nadie quiere hacer pero todos piensan</div>
+      <div class="script-q">"¿Han implementado esto en otro municipio? ¿Tienen referencias?"</div>
+      <div class="script-a">"Tepic es nuestro municipio piloto estratégico — y eso tiene valor. Ser el primer municipio de Nayarit que cumple la LNETB no es una desventaja: es un activo político. El Gobernador Navarro tiene interés en que Nayarit sea referente nacional en gobierno digital. Ustedes pueden ser la historia que se cuenta en el Congreso."</div>
+    </div>
+
+    <div class="script-item">
+      <div class="script-trigger">🟡 Objeción sindical</div>
+      <div class="script-q">"La tecnología va a quitarle el trabajo a nuestros agremiados."</div>
+      <div class="script-a">"La tecnología ya está llegando — la LNETB lo ordena. La única pregunta es si llega CONTRA el trabajador o DE LA MANO del trabajador. Con la Academia ConnectX, cada agremiado tiene un certificado que le dice al próximo gobierno: 'yo sé usar las herramientas del siglo XXI'. El que resiste la certificación es el que queda vulnerable. El sindicato que la promueve es el que protege a sus agremiados."</div>
+    </div>
+
+    <div class="script-item">
+      <div class="script-trigger">🟡 El dato que siempre impacta</div>
+      <div class="script-q">(Para cerrar cualquier conversación)</div>
+      <div class="script-a">"Cada día que el municipio no tiene el sistema digital activo, hay ciudadanos que pierden un día de trabajo por venir a una ventanilla a pagar un trámite que podría hacerse en 3 minutos desde el celular. Eso no es ineficiencia administrativa — es costo social real que la ley ya considera una violación de derechos. Nosotros tenemos la solución funcionando hoy."</div>
+    </div>
+
+    <div class="script-item">
+      <div class="script-trigger">🟢 El cierre</div>
+      <div class="script-q">(Cuando el ambiente es positivo y quieren saber el siguiente paso)</div>
+      <div class="script-a">"El siguiente paso es una sesión de trabajo de 2 horas con su equipo de Tesorería y Jurídico para mapear los 14 trámites y firmar el convenio de piloto. No es una firma de contrato millonario — es un acuerdo de 90 días de prueba donde ustedes validan el sistema con datos reales. Al final de esos 90 días, tienen los datos para decidir. ¿Cuándo podemos agendar esa sesión?"</div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>ConnectX Servicios S.A. de C.V. · Tepic, Nayarit · Documento de uso interno — No distribuir</p>
+    <p style="margin-top:6px">Generado: Julio 2026 · War Room v1.0</p>
+  </div>
+
+</div>
+</body>
+</html>
