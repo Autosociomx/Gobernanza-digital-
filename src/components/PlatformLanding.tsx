@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Menu, Radio, GraduationCap, Shield, Users, BarChart2, Leaf, Briefcase, HeartPulse, Bus, Wifi,
-  TrendingUp, ArrowRight, Flower2, UsersRound, ShieldAlert,
-  Map, Utensils, Trash2, Activity, Clock
+import {
+  Menu, Radio, HeartPulse, Bus, TrendingUp, ArrowRight,
+  UsersRound, ShieldAlert, Map, Activity, ShieldCheck,
+  FileText, Globe, Leaf
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -18,12 +18,12 @@ interface PlatformLandingProps {
 }
 
 const carouselItems = [
-  { id: 1, num: '01', title: 'Ruta PRO', icon: Bus, color: 'text-blue-600', img: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=400&h=600&fit=crop' },
-  { id: 2, num: '02', title: 'Nayarit Chef', icon: Utensils, color: 'text-orange-600', img: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=400&h=600&fit=crop' },
-  { id: 3, num: '03', title: 'Gestión de Residuos Médicos', icon: Trash2, color: 'text-emerald-600', img: 'https://images.unsplash.com/photo-1583324113626-70df0f4deaab?q=80&w=400&h=600&fit=crop' },
-  { id: 4, num: '04', title: 'Tu Salud', icon: HeartPulse, color: 'text-red-500', img: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=400&h=600&fit=crop' },
-  { id: 5, num: '05', title: 'Autoanálisis', icon: Activity, color: 'text-purple-600', img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=400&h=600&fit=crop' },
-  { id: 6, num: '06', title: 'Optimiza tus Días', icon: Clock, color: 'text-yellow-600', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=400&h=600&fit=crop' },
+  { id: 1, num: '01', title: 'Llave MX', impact: 'Un solo acceso para todo el gobierno', icon: ShieldCheck, color: 'text-emerald-600', img: 'https://images.unsplash.com/photo-1614027164847-1b28cfe1df60?q=80&w=400&h=600&fit=crop' },
+  { id: 2, num: '02', title: 'Actas Digitales', impact: 'Tu acta en 3 minutos, sin filas', icon: FileText, color: 'text-blue-600', img: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=400&h=600&fit=crop' },
+  { id: 3, num: '03', title: 'GPS Incidencias', impact: 'Reporta y sabe quién lo resolvió', icon: Map, color: 'text-amber-600', img: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=400&h=600&fit=crop' },
+  { id: 4, num: '04', title: 'Faro Fiscal', impact: 'El municipio que se paga solo', icon: TrendingUp, color: 'text-purple-600', img: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=400&h=600&fit=crop' },
+  { id: 5, num: '05', title: 'Triage IA', impact: 'Orientación médica antes de urgencias', icon: HeartPulse, color: 'text-red-500', img: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=400&h=600&fit=crop' },
+  { id: 6, num: '06', title: 'RoutePro', impact: 'Gobierno que opera sin papel', icon: Bus, color: 'text-blue-600', img: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=400&h=600&fit=crop' },
 ];
 
 const OjosEscena = () => {
@@ -173,17 +173,18 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                Resuelve trámites en minutos, no en semanas. Paga sin salir de casa. Reporta problemas y ve cómo se resuelven. Sin filas. Sin papel. Sin excusas.
             </p>
             
-            <div className="flex flex-wrap items-center gap-6 mb-20">
+            <div className="flex flex-wrap items-center gap-4 mb-20">
                <button
                  onClick={() => onNavigate('citizen')}
-                 className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-full text-lg font-bold transition-all shadow-2xl shadow-blue-600/40 flex items-center gap-4 group"
+                 className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-5 rounded-full text-base font-bold transition-all shadow-2xl shadow-blue-600/40 flex items-center gap-3 group"
                >
-                 Úsalo ahora — es gratis <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                 Soy ciudadano — Acceder <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                </button>
-
-               <button onClick={() => onNavigate('executive')} className="flex items-center gap-3 text-[#0f285c] font-bold hover:gap-5 transition-all group">
-                 <span>Ver resultados reales</span>
-                 <div className="w-10 h-[2px] bg-[#0f285c] group-hover:w-16 transition-all"></div>
+               <button
+                 onClick={() => onNavigate('c5')}
+                 className="border-2 border-[#0f285c] text-[#0f285c] hover:bg-[#0f285c] hover:text-white px-8 py-5 rounded-full text-base font-bold transition-all flex items-center gap-3 group"
+               >
+                 Soy funcionario — Ver demo <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                </button>
             </div>
 
@@ -235,7 +236,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                       <h3 className="font-serif font-black text-2xl text-[#0f285c] leading-tight px-4 mb-2">
                         {item.title}
                       </h3>
-                      <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Disponible ahora · Gratis para ciudadanos</p>
+                      <p className="text-emerald-600 text-xs font-bold mt-1">{item.impact}</p>
                    </div>
                    
                    {/* Image background that blends into the top */}
@@ -257,83 +258,143 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
         </div>
       </main>
 
-      {/* Bottom Features Bar */}
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 pb-12 relative z-20 mt-12 xl:mt-0">
-         <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-xl border border-white p-6 md:p-8 flex flex-wrap justify-center md:justify-between items-center gap-8 relative overflow-hidden">
-            {/* Left/Right Decorative patterns */}
-            <div className="absolute left-0 top-0 bottom-0 w-32 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 10px 10px, blue 2px, transparent 0)', backgroundSize: '20px 20px' }}></div>
-            <div className="absolute right-0 top-0 bottom-0 w-32 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 10px 10px, red 2px, transparent 0)', backgroundSize: '20px 20px' }}></div>
+      {/* Social Proof Strip */}
+      <section className="bg-[#0f285c] py-16 relative z-10">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-12">
+          <div className="grid grid-cols-3 divide-x divide-white/10 text-center">
+            <div className="py-4 px-6">
+              <div className="text-5xl md:text-6xl font-serif font-black text-amber-400">50,000</div>
+              <div className="text-xs font-bold text-slate-300 mt-2 uppercase tracking-widest">ciudadanos</div>
+              <div className="text-xs text-slate-500 mt-1">meta Tepic año 1</div>
+            </div>
+            <div className="py-4 px-6">
+              <div className="text-5xl md:text-6xl font-serif font-black text-blue-400">15</div>
+              <div className="text-xs font-bold text-slate-300 mt-2 uppercase tracking-widest">meses</div>
+              <div className="text-xs text-slate-500 mt-1">para transformar Nayarit</div>
+            </div>
+            <div className="py-4 px-6">
+              <div className="text-5xl md:text-6xl font-serif font-black text-emerald-400">0</div>
+              <div className="text-xs font-bold text-slate-300 mt-2 uppercase tracking-widest">papel ni filas</div>
+              <div className="text-xs text-slate-500 mt-1">desde el primer día</div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-            <div className="flex items-center gap-4 relative z-10">
-              <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
-                <TrendingUp className="w-6 h-6" />
+      {/* Before / After */}
+      <section className="py-24 relative z-10 bg-[#fcfdfe]">
+        <div className="max-w-[1100px] mx-auto px-6 md:px-12">
+          <div className="text-center mb-14">
+            <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">El cambio en una línea</p>
+            <h3 className="text-4xl font-serif font-black text-[#0f285c]">Hoy vs. con Nayarit Digital</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-red-50/60 border border-red-100 rounded-3xl p-8">
+              <p className="text-xs font-black uppercase tracking-widest text-red-400 mb-6">Antes — el trámite de siempre</p>
+              {[
+                '3 visitas a oficinas en horario laboral',
+                'Días o semanas de espera sin saber el estatus',
+                'Papel, fotocopias, sellos y filas',
+                'Información perdida entre dependencias',
+                'Sin registro ni responsable visible',
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3 py-3 border-b border-red-100 last:border-0">
+                  <div className="w-5 h-5 rounded-full bg-red-200 flex items-center justify-center shrink-0 text-red-500 text-xs font-black">✕</div>
+                  <span className="text-slate-600 text-sm font-medium">{item}</span>
+                </div>
+              ))}
+            </div>
+            <div className="bg-emerald-50/60 border border-emerald-100 rounded-3xl p-8">
+              <p className="text-xs font-black uppercase tracking-widest text-emerald-600 mb-6">Con Nayarit Digital — hoy</p>
+              {[
+                '1 solo acceso desde tu celular, cualquier día',
+                '3 minutos para la mayoría de trámites',
+                'Sin papel, sin filas, sin traslados',
+                'Folio y estatus en tiempo real con notificación',
+                'Responsable asignado visible desde el primer clic',
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3 py-3 border-b border-emerald-100 last:border-0">
+                  <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center shrink-0 text-white text-xs font-black">✓</div>
+                  <span className="text-slate-700 text-sm font-medium">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Nayarit ID — Identidad en 3 lenguas */}
+      <section className="bg-[#080f1e] py-24 relative z-10 overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/8 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-600/8 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="max-w-[900px] mx-auto px-6 md:px-12 text-center relative z-10">
+          <div className="inline-flex items-center gap-2 bg-blue-600/20 border border-blue-500/30 px-5 py-2 rounded-full mb-8">
+            <Globe className="w-4 h-4 text-blue-400" />
+            <span className="text-blue-400 text-xs font-bold uppercase tracking-widest">Identidad Digital Soberana</span>
+          </div>
+          <h3 className="text-5xl md:text-6xl font-serif font-black text-white mb-6 tracking-tight">NAYARIT ID</h3>
+          <p className="text-slate-400 text-lg max-w-lg mx-auto mb-12 leading-relaxed">Tu identidad digital nayarita. Una sola cuenta para todos los servicios del estado.</p>
+          <div className="flex justify-center gap-4 mb-10 flex-wrap">
+            {[
+              { lang: 'Español', emoji: '🇲🇽', note: 'Oficial' },
+              { lang: 'Cora', emoji: '🌿', note: 'Nayeri' },
+              { lang: 'Wixarika', emoji: '🌵', note: 'Huichol' },
+            ].map((item, i) => (
+              <div key={i} className="bg-white/5 border border-white/10 rounded-2xl px-8 py-5 text-center min-w-[120px]">
+                <div className="text-3xl mb-2">{item.emoji}</div>
+                <div className="text-white font-bold text-sm">{item.lang}</div>
+                <div className="text-slate-500 text-xs mt-0.5">{item.note}</div>
               </div>
-              <p className="text-sm font-bold text-slate-700 max-w-[140px] leading-tight">Tu trámite resuelto hoy, no en semanas</p>
-            </div>
+            ))}
+          </div>
+          <p className="text-slate-500 text-sm">El primer portal de gobierno en México que reconoce las lenguas indígenas de Nayarit.</p>
+        </div>
+      </section>
 
-            <div className="hidden md:block w-px h-12 bg-slate-200"></div>
+      {/* Llave MX Compliance */}
+      <section className="bg-[#0f285c] py-20 relative z-10 border-t border-white/5">
+        <div className="max-w-[900px] mx-auto px-6 md:px-12 text-center">
+          <div className="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/30 px-5 py-2 rounded-full mb-8">
+            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <span className="text-emerald-400 text-xs font-bold uppercase tracking-widest">Cumplimiento LNETB — Art. 74</span>
+          </div>
+          <h3 className="text-3xl md:text-4xl font-serif font-black text-white mb-6">Integrado con Llave MX desde el día 1</h3>
+          <p className="text-slate-400 text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+            El único sistema en Nayarit que cumple la obligación federal de inicio de sesión único.<br className="hidden md:block" />
+            El ciudadano usa sus credenciales federales — sin crear otra contraseña.
+          </p>
+          <div className="inline-flex items-center gap-3 bg-emerald-500 px-8 py-3.5 rounded-full">
+            <ShieldCheck className="w-5 h-5 text-white" />
+            <span className="text-white font-black text-sm tracking-wide">Verificado · DOF 16-VII-2025</span>
+          </div>
+        </div>
+      </section>
 
-            <div className="flex items-center gap-4 relative z-10">
-              <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
-                <UsersRound className="w-6 h-6" />
-              </div>
-              <p className="text-sm font-bold text-slate-700 max-w-[140px] leading-tight">Cada peso del presupuesto visible en tiempo real</p>
-            </div>
-
-            <div className="hidden md:block w-px h-12 bg-slate-200"></div>
-
-            <div className="flex items-center gap-4 relative z-10">
-              <div className="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center text-red-600">
-                <ShieldAlert className="w-6 h-6" />
-              </div>
-              <p className="text-sm font-bold text-slate-700 max-w-[140px] leading-tight">Tus datos protegidos por ley federal</p>
-            </div>
-
-            <div className="hidden md:block w-px h-12 bg-slate-200"></div>
-
-            <div className="flex items-center gap-4 relative z-10">
-              <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
-                <Leaf className="w-6 h-6" />
-              </div>
-              <p className="text-sm font-bold text-slate-700 max-w-[140px] leading-tight">Nayarit conectado, municipio a municipio</p>
-            </div>
-         </div>
-      </div>
-
-      {/* Footer Branding - Elite Ribbon */}
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 pb-16 relative z-20">
-         <div className="bg-[#0f285c] text-white rounded-[2.5rem] shadow-2xl border border-white/10 p-8 md:p-12 flex flex-wrap justify-between items-center gap-8 relative overflow-hidden">
-            {/* Geometric patterns */}
-            <div className="absolute right-0 top-0 bottom-0 w-64 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 10px 10px, white 1px, transparent 0)', backgroundSize: '30px 30px' }}></div>
-            
-            <div className="flex items-center gap-6 relative z-10">
-               <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20">
-                  <ShieldAlert className="text-amber-400 w-8 h-8" />
-               </div>
-               <div>
-                  <h3 className="text-2xl font-serif font-black tracking-tight">1.5 millones de nayaritas</h3>
-                  <p className="text-slate-400 text-sm font-medium">merecen un gobierno que funcione de verdad.</p>
-               </div>
-            </div>
-
-            <div className="flex gap-12 relative z-10">
-               <div className="text-center">
-                  <div className="text-amber-400 text-3xl font-black font-serif">1.5M</div>
-                  <div className="text-[0.6rem] uppercase tracking-widest font-bold text-slate-400 mt-1">Ciudadanos</div>
-               </div>
-               <div className="text-center">
-                  <div className="text-blue-400 text-3xl font-black font-serif">20+</div>
-                  <div className="text-[0.6rem] uppercase tracking-widest font-bold text-slate-400 mt-1">Secretarías</div>
-               </div>
-            </div>
-
-            <div className="relative z-10">
-               <button onClick={() => onNavigate('c5')} className="bg-white text-[#0f285c] px-8 py-4 rounded-full font-bold text-sm uppercase tracking-widest hover:bg-amber-400 transition-colors shadow-lg">
-                  Entrar al C5 ahora
-               </button>
-            </div>
-         </div>
-      </div>
+      {/* Final CTA */}
+      <section className="py-28 relative z-10 bg-[#fcfdfe] text-center overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(ellipse at 50% 60%, #dbeafe 0%, transparent 65%)' }}></div>
+        <div className="max-w-[700px] mx-auto px-6 relative z-10">
+          <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-5">Operativo hoy en Tepic</p>
+          <h3 className="text-5xl md:text-7xl font-serif font-black text-[#0f285c] leading-[0.9] tracking-tighter mb-8">
+            Ya está<br /><span className="text-blue-600 italic">funcionando.</span>
+          </h3>
+          <p className="text-xl text-slate-500 font-medium mb-6">La pregunta es cuándo quieres ser parte.</p>
+          <p className="text-sm text-slate-400 italic mb-14 max-w-lg mx-auto leading-relaxed">
+            "Estonia tardó cinco años en construir su gobierno digital.<br className="hidden md:block" />
+            Nayarit puede hacerlo en 15 meses."
+          </p>
+          <button
+            onClick={() => onNavigate('c5')}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-12 py-6 rounded-full text-lg font-bold transition-all shadow-2xl shadow-blue-600/40 inline-flex items-center gap-4 group"
+          >
+            Ver el sistema en vivo — 20 minutos
+            <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+          </button>
+          <p className="mt-10 text-xs text-slate-400 font-medium tracking-wider">
+            ConnectX Servicios S.A. de C.V. · Tepic, Nayarit · 2026 · <span className="font-bold">#NayaritDigital</span>
+          </p>
+        </div>
+      </section>
     </div>
   );
 };
