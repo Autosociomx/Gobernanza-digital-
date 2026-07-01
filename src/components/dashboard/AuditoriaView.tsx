@@ -17,22 +17,30 @@ interface AuditEntry {
   type: ActionType;
 }
 
+function tsFromNow(minutesAgo: number): string {
+  const d = new Date(Date.now() - minutesAgo * 60 * 1000);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const date = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const time = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  return `${date} ${time}`;
+}
+
 const AUDIT_ENTRIES: AuditEntry[] = [
-  { id: 1,  user: 'Geraldine R.',  avatar: 'G', role: 'Tesorera Municipal',   action: 'Aprobó pago',           module: 'Tesorería',  target: 'Folio #TPC-2026-9902',              ts: '2026-07-01 14:32', ip: '192.168.1.45',  type: 'write'  },
-  { id: 2,  user: 'Carlos M.',     avatar: 'C', role: 'Dir. Obras Públicas',   action: 'Actualizó avance',      module: 'Obras',      target: 'Bacheo Av. México km 3',             ts: '2026-07-01 13:58', ip: '192.168.1.12',  type: 'write'  },
-  { id: 3,  user: 'Miguel A.',     avatar: 'M', role: 'Administrador',         action: 'Accedió al sistema',    module: 'C5 Hub',     target: 'Módulo Tesorería',                  ts: '2026-07-01 13:30', ip: '10.0.0.2',      type: 'access' },
-  { id: 4,  user: 'Geraldine R.',  avatar: 'G', role: 'Tesorera Municipal',   action: 'Exportó reporte',       module: 'Tesorería',  target: 'Recaudación Semanal PDF',            ts: '2026-07-01 11:15', ip: '192.168.1.45',  type: 'export' },
-  { id: 5,  user: 'Ana L.',        avatar: 'A', role: 'Servicios Públicos',    action: 'Cerró incidencia',      module: 'Servicios',  target: 'Reporte #INC-0445',                 ts: '2026-07-01 10:44', ip: '192.168.1.88',  type: 'write'  },
-  { id: 6,  user: 'Roberto S.',    avatar: 'R', role: 'Dir. Bienestar Social', action: 'Eliminó beneficiario',  module: 'Bienestar',  target: 'Ciudadano ID #84920',               ts: '2026-07-01 09:30', ip: '192.168.2.33',  type: 'delete' },
-  { id: 7,  user: 'Geraldine R.',  avatar: 'G', role: 'Tesorera Municipal',   action: 'Modificó meta fiscal',  module: 'Tesorería',  target: 'Meta recaudación Q3-2026',          ts: '2026-06-30 17:45', ip: '192.168.1.45',  type: 'write'  },
-  { id: 8,  user: 'Carlos M.',     avatar: 'C', role: 'Dir. Obras Públicas',   action: 'Subió documento',       module: 'Obras',      target: 'Contrato licitación LC-2026-12',    ts: '2026-06-30 16:20', ip: '192.168.1.12',  type: 'write'  },
-  { id: 9,  user: 'Sistema',       avatar: 'S', role: 'Proceso automático',    action: 'Backup programado',     module: 'Sistema',    target: 'DB snapshot 2026-06-30 03:00',      ts: '2026-06-30 03:00', ip: 'localhost',     type: 'system' },
-  { id: 10, user: 'Roberto S.',    avatar: 'R', role: 'Dir. Bienestar Social', action: 'Acceso denegado',       module: 'Tesorería',  target: 'Módulo restringido — sin permiso',  ts: '2026-06-29 18:22', ip: '192.168.2.33',  type: 'denied' },
-  { id: 11, user: 'Ana L.',        avatar: 'A', role: 'Servicios Públicos',    action: 'Editó trámite',         module: 'Servicios',  target: 'Trámite #TRM-2026-0088',            ts: '2026-06-29 16:10', ip: '192.168.1.88',  type: 'write'  },
-  { id: 12, user: 'Roberto S.',    avatar: 'R', role: 'Dir. Bienestar Social', action: 'Eliminó registro',      module: 'Bienestar',  target: 'Padrón beneficiarios — 3 entradas', ts: '2026-06-29 15:55', ip: '192.168.2.33',  type: 'delete' },
-  { id: 13, user: 'Miguel A.',     avatar: 'M', role: 'Administrador',         action: 'Cambió permisos',       module: 'Sistema',    target: 'Usuario Roberto S. — rol modificado', ts: '2026-06-29 15:00', ip: '10.0.0.2',    type: 'write'  },
-  { id: 14, user: 'Geraldine R.',  avatar: 'G', role: 'Tesorera Municipal',   action: 'Consultó expediente',   module: 'Tesorería',  target: 'Contribuyente RFC: JMHL890102',     ts: '2026-06-29 11:30', ip: '192.168.1.45',  type: 'access' },
-  { id: 15, user: 'Carlos M.',     avatar: 'C', role: 'Dir. Obras Públicas',   action: 'Cerró licitación',      module: 'Obras',      target: 'LC-2026-12 — monto $2.8M',          ts: '2026-06-29 10:00', ip: '192.168.1.12',  type: 'write'  },
+  { id: 1,  user: 'Geraldine R.',  avatar: 'G', role: 'Tesorera Municipal',   action: 'Aprobó pago',           module: 'Tesorería',  target: 'Folio #TPC-2026-9902',              ts: tsFromNow(4),    ip: '192.168.1.45',  type: 'write'  },
+  { id: 2,  user: 'Carlos M.',     avatar: 'C', role: 'Dir. Obras Públicas',   action: 'Actualizó avance',      module: 'Obras',      target: 'Bacheo Av. México km 3',             ts: tsFromNow(38),   ip: '192.168.1.12',  type: 'write'  },
+  { id: 3,  user: 'Miguel A.',     avatar: 'M', role: 'Administrador',         action: 'Accedió al sistema',    module: 'C5 Hub',     target: 'Módulo Tesorería',                  ts: tsFromNow(66),   ip: '10.0.0.2',      type: 'access' },
+  { id: 4,  user: 'Geraldine R.',  avatar: 'G', role: 'Tesorera Municipal',   action: 'Exportó reporte',       module: 'Tesorería',  target: 'Recaudación Semanal PDF',            ts: tsFromNow(197),  ip: '192.168.1.45',  type: 'export' },
+  { id: 5,  user: 'Ana L.',        avatar: 'A', role: 'Servicios Públicos',    action: 'Cerró incidencia',      module: 'Servicios',  target: 'Reporte #INC-0445',                 ts: tsFromNow(228),  ip: '192.168.1.88',  type: 'write'  },
+  { id: 6,  user: 'Roberto S.',    avatar: 'R', role: 'Dir. Bienestar Social', action: 'Eliminó beneficiario',  module: 'Bienestar',  target: 'Ciudadano ID #84920',               ts: tsFromNow(302),  ip: '192.168.2.33',  type: 'delete' },
+  { id: 7,  user: 'Geraldine R.',  avatar: 'G', role: 'Tesorera Municipal',   action: 'Modificó meta fiscal',  module: 'Tesorería',  target: 'Meta recaudación Q3-2026',          ts: tsFromNow(1335), ip: '192.168.1.45',  type: 'write'  },
+  { id: 8,  user: 'Carlos M.',     avatar: 'C', role: 'Dir. Obras Públicas',   action: 'Subió documento',       module: 'Obras',      target: 'Contrato licitación LC-2026-12',    ts: tsFromNow(1420), ip: '192.168.1.12',  type: 'write'  },
+  { id: 9,  user: 'Sistema',       avatar: 'S', role: 'Proceso automático',    action: 'Backup programado',     module: 'Sistema',    target: 'DB snapshot automático',            ts: tsFromNow(1650), ip: 'localhost',     type: 'system' },
+  { id: 10, user: 'Roberto S.',    avatar: 'R', role: 'Dir. Bienestar Social', action: 'Acceso denegado',       module: 'Tesorería',  target: 'Módulo restringido — sin permiso',  ts: tsFromNow(2738), ip: '192.168.2.33',  type: 'denied' },
+  { id: 11, user: 'Ana L.',        avatar: 'A', role: 'Servicios Públicos',    action: 'Editó trámite',         module: 'Servicios',  target: 'Trámite #TRM-2026-0088',            ts: tsFromNow(2870), ip: '192.168.1.88',  type: 'write'  },
+  { id: 12, user: 'Roberto S.',    avatar: 'R', role: 'Dir. Bienestar Social', action: 'Eliminó registro',      module: 'Bienestar',  target: 'Padrón beneficiarios — 3 entradas', ts: tsFromNow(2885), ip: '192.168.2.33',  type: 'delete' },
+  { id: 13, user: 'Miguel A.',     avatar: 'M', role: 'Administrador',         action: 'Cambió permisos',       module: 'Sistema',    target: 'Usuario Roberto S. — rol modificado', ts: tsFromNow(2940), ip: '10.0.0.2',    type: 'write'  },
+  { id: 14, user: 'Geraldine R.',  avatar: 'G', role: 'Tesorera Municipal',   action: 'Consultó expediente',   module: 'Tesorería',  target: 'Contribuyente RFC: JMHL890102',     ts: tsFromNow(3090), ip: '192.168.1.45',  type: 'access' },
+  { id: 15, user: 'Carlos M.',     avatar: 'C', role: 'Dir. Obras Públicas',   action: 'Cerró licitación',      module: 'Obras',      target: 'LC-2026-12 — monto $2.8M',          ts: tsFromNow(3240), ip: '192.168.1.12',  type: 'write'  },
 ];
 
 const TYPE_META: Record<ActionType, { label: string; color: string; bg: string; icon: React.ElementType }> = {
