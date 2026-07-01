@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Propuesta Sindical — Transformación Digital SNTE</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0f1115;
+    color: #cbd5e1;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+  .page { max-width: 860px; margin: 0 auto; }
+
+  /* Header */
+  .header {
+    border-left: 4px solid #10b981;
+    padding-left: 20px;
+    margin-bottom: 48px;
+  }
+  .header .flag {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 8px;
+  }
+  .flag-stripe { width: 10px; height: 28px; border-radius: 2px; }
+  .header h1 {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+  }
+  .header .sub {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-top: 8px;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+  }
+
+  /* Section titles */
+  h2 {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .15em;
+    color: #475569;
+    margin-bottom: 16px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  /* Callout box */
+  .callout {
+    background: #161920;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 32px;
+  }
+  .callout.green { border-color: #10b981/40; }
+  .callout p { font-size: 0.82rem; line-height: 1.65; color: #94a3b8; }
+  .callout strong { color: #e2e8f0; }
+
+  /* Grid */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+  @media (max-width: 640px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* Card */
+  .card {
+    background: #161920;
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .card .label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: #475569;
+    margin-bottom: 4px;
+  }
+  .card .value {
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #fff;
+  }
+  .card .desc {
+    font-size: 0.72rem;
+    color: #64748b;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .card.emerald { border-color: rgba(16,185,129,.25); }
+  .card.cyan    { border-color: rgba(6,182,212,.25); }
+  .card.purple  { border-color: rgba(168,85,247,.25); }
+  .card.amber   { border-color: rgba(245,158,11,.25); }
+  .card.rose    { border-color: rgba(244,63,94,.25); }
+
+  /* Benefit row */
+  .benefit-row {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 14px 16px;
+    background: #161920;
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+  .benefit-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .benefit-row h4 { font-size: 0.82rem; font-weight: 700; color: #e2e8f0; margin-bottom: 2px; }
+  .benefit-row p { font-size: 0.72rem; color: #64748b; line-height: 1.5; }
+
+  /* Commitment table */
+  table { width: 100%; border-collapse: collapse; margin-bottom: 32px; }
+  th {
+    font-size: 0.65rem; text-transform: uppercase; letter-spacing: .1em;
+    color: #475569; padding: 10px 14px; text-align: left;
+    background: #161920; border-bottom: 1px solid #1e293b;
+  }
+  td {
+    font-size: 0.78rem; padding: 10px 14px;
+    border-bottom: 1px solid #0f1115; color: #94a3b8;
+    vertical-align: top;
+  }
+  tr:hover td { background: #161920/50; }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 99px;
+    font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+  }
+  .badge-green  { background: rgba(16,185,129,.15); color: #10b981; }
+  .badge-amber  { background: rgba(245,158,11,.15);  color: #f59e0b; }
+  .badge-blue   { background: rgba(59,130,246,.15);  color: #60a5fa; }
+
+  /* Timeline */
+  .timeline { margin-bottom: 32px; }
+  .tl-item { display: flex; gap: 16px; padding-bottom: 24px; position: relative; }
+  .tl-item::before {
+    content: ''; position: absolute; left: 15px; top: 32px;
+    bottom: 0; width: 1px; background: #1e293b;
+  }
+  .tl-item:last-child::before { display: none; }
+  .tl-dot {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 900; color: #fff; flex-shrink: 0;
+  }
+  .tl-content h4 { font-size: 0.82rem; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+  .tl-content p { font-size: 0.72rem; color: #64748b; line-height: 1.5; }
+  .tl-quarter { font-size: 0.65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+
+  /* Footer */
+  .footer {
+    margin-top: 60px; padding-top: 20px;
+    border-top: 1px solid #1e293b;
+    font-size: 0.68rem; color: #334155;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+  }
+
+  /* Print */
+  @media print {
+    body { background: #fff; color: #000; }
+    .callout, .card, .benefit-row { border: 1px solid #ccc; }
+    h2 { color: #333; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="flag">
+      <div class="flag-stripe" style="background:#006847"></div>
+      <div class="flag-stripe" style="background:#fff"></div>
+      <div class="flag-stripe" style="background:#ce1126"></div>
+    </div>
+    <h1>Propuesta de Vinculación Sindical<br>Transformación Digital Municipal</h1>
+    <p class="sub">ConnectX Servicios S.A. de C.V. · Tepic, Nayarit · Julio 2026<br>
+    SNTE Sección 49 (Federales) · SNTE Sección 20 (Estatales)</p>
+  </div>
+
+  <!-- Contexto -->
+  <h2>Contexto y Marco Legal</h2>
+  <div class="callout">
+    <p>
+      La <strong>Ley Nacional para Eliminar Trámites Burocráticos (LNETB, DOF 16-VII-2025)</strong> establece en sus Artículos 51–54 y en los Transitorios XIV, XV y XVI la obligación de digitalizar el 100 % de los trámites municipales antes del <strong>16 de julio de 2027</strong>. El incumplimiento genera responsabilidad administrativa para los funcionarios.
+    </p>
+    <p style="margin-top:10px">
+      Esta transformación no desplaza al personal docente ni administrativo — <strong>lo profesionaliza y lo protege</strong>. ConnectX propone un modelo de vinculación sindical que convierte al magisterio en protagonista del cambio, con beneficios tangibles para sus agremiados y sus familias.
+    </p>
+  </div>
+
+  <!-- KPIs del Impacto -->
+  <h2>Impacto Proyectado en la Base Sindical</h2>
+  <div class="grid-3">
+    <div class="card emerald">
+      <div class="label">Docentes beneficiados</div>
+      <div class="value">12,400+</div>
+      <div class="desc">Nayarit · acceso a plataforma digital ciudadana con trámites simplificados</div>
+    </div>
+    <div class="card cyan">
+      <div class="label">Horas de papelería eliminadas</div>
+      <div class="value">3.2 h/mes</div>
+      <div class="desc">Por docente · trámites de licencias, constancias y pagos en línea</div>
+    </div>
+    <div class="card purple">
+      <div class="label">Ahorro en traslados</div>
+      <div class="value">$480/año</div>
+      <div class="desc">Promedio por trabajador · desplazamientos a oficinas eliminados</div>
+    </div>
+    <div class="card amber">
+      <div class="label">Municipios cubiertos</div>
+      <div class="value">20</div>
+      <div class="desc">Todos los municipios de Nayarit con acceso al portal ciudadano</div>
+    </div>
+    <div class="card rose">
+      <div class="label">Reducción en tiempos de trámite</div>
+      <div class="value">78%</div>
+      <div class="desc">De 5–15 días presenciales a 24–72 horas digitales</div>
+    </div>
+    <div class="card" style="border-color:rgba(16,185,129,.25)">
+      <div class="label">Cumplimiento legal</div>
+      <div class="value">100%</div>
+      <div class="desc">Arts. 51–54 LNETB · protege a funcionarios de responsabilidad administrativa</div>
+    </div>
+  </div>
+
+  <!-- Beneficios concretos -->
+  <h2>Beneficios Concretos para Agremiados y Familias</h2>
+
+  <div class="benefit-row">
+    <div class="benefit-icon" style="background:rgba(16,185,129,.15)">📋</div>
+    <div>
+      <h4>Trámites administrativos sin colas</h4>
+      <p>Constancias de empleo, estados de cuenta, licencias médicas y permisos especiales — todos desde el celular, con firma electrónica válida (e.firma SAT o Llave MX).</p>
+    </div>
+  </div>
+  <div class="benefit-row">
+    <div class="benefit-icon" style="background:rgba(6,182,212,.15)">💳</div>
+    <div>
+      <h4>Pagos de servicios municipales sin desplazamiento</h4>
+      <p>Predial, agua, licencias de uso de suelo y multas de tránsito — pago en línea, OXXO Pay o transferencia SPEI, con recibo oficial descargable al instante.</p>
+    </div>
+  </div>
+  <div class="benefit-row">
+    <div class="benefit-icon" style="background:rgba(168,85,247,.15)">🏥</div>
+    <div>
+      <h4>Triage IA para familias (Nayarit Salud)</h4>
+      <p>Orientación médica por inteligencia artificial disponible 24/7 — resuelve dudas sobre síntomas, medicamentos y derechohabencia ISSSTE/IMSS sin saturar clínicas.</p>
+    </div>
+  </div>
+  <div class="benefit-row">
+    <div class="benefit-icon" style="background:rgba(245,158,11,.15)">📍</div>
+    <div>
+      <h4>Seguimiento de obra pública en tiempo real</h4>
+      <p>Consulta el avance de la infraestructura en tu colonia — nuevo bacheo, luminaria, parques — con fotos, presupuesto y responsable visible para toda la comunidad escolar.</p>
+    </div>
+  </div>
+  <div class="benefit-row">
+    <div class="benefit-icon" style="background:rgba(244,63,94,.15)">🚨</div>
+    <div>
+      <h4>Reporte de incidencias vía GPS</h4>
+      <p>Notifica baches, luminarias fundidas, fugas de agua o problemas de seguridad desde la app ciudadana — el C5 municipal da seguimiento con número de folio y tiempo estimado de resolución.</p>
+    </div>
+  </div>
+  <div class="benefit-row">
+    <div class="benefit-icon" style="background:rgba(16,185,129,.15)">🎓</div>
+    <div>
+      <h4>Academia ConnectX — Certificación Digital</h4>
+      <p>Acceso prioritario para agremiados a la plataforma de capacitación en competencias digitales, ciudadanía digital y uso de gobierno electrónico. Credencial digital con QR válida para escalafón.</p>
+    </div>
+  </div>
+
+  <!-- Compromisos recíprocos -->
+  <h2>Compromisos Recíprocos</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ConnectX se compromete a…</th>
+        <th>El Sindicato colabora en…</th>
+        <th>Plazo</th>
+        <th>Entregable</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Instalar módulos de atención digital en zonas sindicales</td>
+        <td>Identificar centros de trabajo con mayor demanda de trámites</td>
+        <td><span class="badge badge-green">Q3 2026</span></td>
+        <td>20 módulos instalados</td>
+      </tr>
+      <tr>
+        <td>Capacitar a promotores digitales (1 por escuela)</td>
+        <td>Seleccionar y facilitar la participación de los promotores</td>
+        <td><span class="badge badge-green">Q3 2026</span></td>
+        <td>500 promotores certificados</td>
+      </tr>
+      <tr>
+        <td>Acceso premium a todos los módulos de la app ciudadana</td>
+        <td>Difundir la plataforma entre agremiados y sus familias</td>
+        <td><span class="badge badge-amber">Q4 2026</span></td>
+        <td>12,400 usuarios activos</td>
+      </tr>
+      <tr>
+        <td>Informe trimestral de impacto a la mesa directiva sindical</td>
+        <td>Retroalimentación sobre trámites prioritarios del magisterio</td>
+        <td><span class="badge badge-blue">Continuo</span></td>
+        <td>Reporte PDF + tablero en vivo</td>
+      </tr>
+      <tr>
+        <td>Credencial digital con QR para certificados Academia ConnectX</td>
+        <td>Validar su reconocimiento en escalafón ante autoridades SEP/SE</td>
+        <td><span class="badge badge-amber">Q4 2026</span></td>
+        <td>Acuerdo de reconocimiento</td>
+      </tr>
+      <tr>
+        <td>Mesa de trabajo permanente con representantes sindicales</td>
+        <td>Participar en el comité de gobernanza digital municipal</td>
+        <td><span class="badge badge-blue">Continuo</span></td>
+        <td>Reuniones mensuales + actas</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Hoja de ruta -->
+  <h2>Hoja de Ruta de Implementación</h2>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot" style="background:#10b981">
+        <span class="tl-quarter">Q3</span>
+      </div>
+      <div class="tl-content">
+        <h4>Jul–Sep 2026 · Firma y arranque</h4>
+        <p>Firma de convenio de colaboración · Instalación de 5 módulos piloto · Primera cohorte de 100 promotores digitales · Lanzamiento de campaña "Tu trámite en 3 minutos".</p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:#f59e0b">
+        <span class="tl-quarter">Q4</span>
+      </div>
+      <div class="tl-content">
+        <h4>Oct–Dic 2026 · Escalamiento</h4>
+        <p>20 módulos operativos en todo Nayarit · 500 promotores certificados · Integración de pagos ISSSTE/IMSS con la plataforma · Primer informe de impacto sindical.</p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:#8b5cf6">
+        <span class="tl-quarter">Q1</span>
+      </div>
+      <div class="tl-content">
+        <h4>Ene–Mar 2027 · Consolidación</h4>
+        <p>Cobertura del 100 % de escuelas afiliadas · Academia ConnectX en curricula sindical · Cumplimiento total LNETB antes del vencimiento del Transitorio XV (16-Jul-2027).</p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:#10b981">
+        <span class="tl-quarter">Q2</span>
+      </div>
+      <div class="tl-content">
+        <h4>Abr–Jul 2027 · Modelo permanente</h4>
+        <p>Comité de gobernanza digital con representación sindical formalizada · Publicación de resultados conjuntos · Extensión del modelo a sindicatos de otros estados.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cumplimiento legal -->
+  <h2>Respaldo Legal y Garantías</h2>
+  <div class="grid-2" style="margin-bottom:32px">
+    <div class="callout">
+      <p><strong>Art. 51–54 LNETB</strong> — Toda dependencia municipal debe ofrecer sus trámites en formato digital. Esta ley protege al sindicato de cualquier intento de revertir la digitalización, ya que hacerlo implicaría ilegalidad.</p>
+    </div>
+    <div class="callout">
+      <p><strong>Transitorio XIV LNETB</strong> — Los municipios tienen hasta el 16 de julio de 2027 para cumplir. La vinculación temprana posiciona a las secciones sindicales como aliadas del cumplimiento, no como resistencias al cambio.</p>
+    </div>
+    <div class="callout">
+      <p><strong>Art. 74 LNETB (Llave MX)</strong> — La autenticación única federal garantiza que los datos de los docentes están protegidos por el estándar federal de identidad digital, no sujetos a discrecionalidad municipal.</p>
+    </div>
+    <div class="callout">
+      <p><strong>INAI / LGPDPPSO</strong> — La plataforma opera bajo aviso de privacidad registrado ante el INAI. Ningún dato sindical o personal del docente es compartido con terceros sin consentimiento explícito.</p>
+    </div>
+  </div>
+
+  <!-- Contacto -->
+  <h2>Próximos Pasos</h2>
+  <div class="callout">
+    <p>
+      Para iniciar el proceso de vinculación, ConnectX propone una <strong>mesa de diálogo inicial</strong> con la mesa directiva de cada sección. En esa reunión se presentará la demostración en vivo de la plataforma, el convenio borrador y el plan de capacitación a promotores.
+    </p>
+    <p style="margin-top:10px">
+      <strong>Contacto:</strong> Miguel Alexis Pérez Aguilar · Director General ConnectX Servicios S.A. de C.V.<br>
+      Tepic, Nayarit · <a href="mailto:contacto@connectx.mx" style="color:#10b981">contacto@connectx.mx</a>
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>ConnectX Servicios S.A. de C.V. · RFC: CXS-XXXXXX-XXX · Tepic, Nayarit</span>
+    <span>Propuesta confidencial · Versión 1.0 · Julio 2026</span>
+    <span>SNTE Sección 49 (Federales) · SNTE Sección 20 (Estatales)</span>
+  </div>
+
+</div>
+</body>
+</html>

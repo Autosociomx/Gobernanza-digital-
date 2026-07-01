@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Academia Digital ConnectX · Diagrama Estratégico</title>
+<style>
+  :root {
+    --verde: #00A86B;
+    --azul: #0f285c;
+    --ambar: #F59E0B;
+    --bronce: #CD7F32;
+    --plata: #9CA3AF;
+    --oro: #F59E0B;
+    --fondo: #050C1B;
+    --card: #0D1B33;
+    --borde: rgba(255,255,255,0.07);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--fondo);
+    color: #E2E8F0;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ─────────────────────────────────── */
+  .header {
+    background: linear-gradient(135deg, #0f285c 0%, #1a3a7c 50%, #0f285c 100%);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(0,168,107,0.3);
+  }
+  .header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(0,168,107,0.15) 0%, transparent 70%);
+  }
+  .header-badge {
+    display: inline-block;
+    background: rgba(0,168,107,0.15);
+    border: 1px solid rgba(0,168,107,0.4);
+    color: #00A86B;
+    font-size: 0.65rem;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.4rem 1.2rem;
+    border-radius: 999px;
+    margin-bottom: 1.2rem;
+  }
+  .header h1 {
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    position: relative;
+  }
+  .header h1 span { color: #00A86B; }
+  .header-sub {
+    color: rgba(255,255,255,0.55);
+    font-size: 0.85rem;
+    margin-top: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    position: relative;
+  }
+
+  /* ── LAYOUT ──────────────────────────────────── */
+  .page { max-width: 1200px; margin: 0 auto; padding: 3rem 1.5rem; }
+  .section-label {
+    font-size: 0.6rem;
+    font-weight: 900;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .section-label::before, .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+  }
+
+  /* ── FLUJO PRINCIPAL ─────────────────────────── */
+  .flujo {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 3rem;
+  }
+  .flujo-node {
+    background: var(--card);
+    border: 1px solid var(--borde);
+    border-radius: 1rem;
+    padding: 1.2rem 1rem;
+    text-align: center;
+  }
+  .flujo-node .icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  .flujo-node .label {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .flujo-node .sub {
+    font-size: 0.6rem;
+    color: rgba(255,255,255,0.4);
+    margin-top: 0.3rem;
+    font-weight: 600;
+  }
+  .flujo-node.highlight {
+    border-color: rgba(0,168,107,0.5);
+    background: linear-gradient(135deg, rgba(0,168,107,0.1), rgba(0,168,107,0.05));
+  }
+  .flujo-arrow {
+    color: rgba(255,255,255,0.2);
+    font-size: 1.2rem;
+    font-weight: 300;
+  }
+
+  /* ── NIVELES ─────────────────────────────────── */
+  .niveles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+  .nivel-card {
+    border-radius: 1.5rem;
+    overflow: hidden;
+    border: 1px solid var(--borde);
+    position: relative;
+  }
+  .nivel-header {
+    padding: 1.5rem;
+    text-align: center;
+    position: relative;
+  }
+  .nivel-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 10%; right: 10%;
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+  }
+  .nivel-medal {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  .nivel-name {
+    font-size: 1.2rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .nivel-duration {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    margin-top: 0.4rem;
+  }
+  .nivel-body { padding: 1.5rem; background: rgba(0,0,0,0.2); }
+  .nivel-tag {
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+  .nivel-items { list-style: none; }
+  .nivel-items li {
+    font-size: 0.8rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: rgba(255,255,255,0.8);
+    font-weight: 500;
+  }
+  .nivel-items li:last-child { border-bottom: none; }
+  .nivel-items li::before {
+    content: '▸';
+    font-size: 0.65rem;
+    flex-shrink: 0;
+  }
+  .nivel-footer {
+    padding: 1rem 1.5rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.05em;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  /* Bronce */
+  .bronce .nivel-header { background: linear-gradient(135deg, #2D1B00, #3D2800); }
+  .bronce .nivel-name { color: #CD7F32; }
+  .bronce .nivel-items li::before { color: #CD7F32; }
+  .bronce .nivel-footer { background: rgba(205,127,50,0.08); color: #CD7F32; }
+  .bronce { border-color: rgba(205,127,50,0.2); }
+
+  /* Plata */
+  .plata .nivel-header { background: linear-gradient(135deg, #1A1F2E, #232839); }
+  .plata .nivel-name { color: #C0C8D8; }
+  .plata .nivel-items li::before { color: #9CA3AF; }
+  .plata .nivel-footer { background: rgba(156,163,175,0.08); color: #C0C8D8; }
+  .plata { border-color: rgba(156,163,175,0.2); }
+
+  /* Oro */
+  .oro .nivel-header { background: linear-gradient(135deg, #1C1500, #2A2000); }
+  .oro .nivel-name { color: #F59E0B; }
+  .oro .nivel-items li::before { color: #F59E0B; }
+  .oro .nivel-footer { background: rgba(245,158,11,0.08); color: #F59E0B; }
+  .oro { border-color: rgba(245,158,11,0.25); }
+  .oro-badge {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    background: rgba(245,158,11,0.15);
+    border: 1px solid rgba(245,158,11,0.3);
+    color: #F59E0B;
+    font-size: 0.55rem;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+  }
+
+  /* ── MONETIZACIÓN ────────────────────────────── */
+  .monetizacion {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+    margin-bottom: 3rem;
+  }
+  .mono-card {
+    background: var(--card);
+    border: 1px solid var(--borde);
+    border-radius: 1.2rem;
+    padding: 1.4rem;
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+  .mono-card:hover { border-color: rgba(0,168,107,0.3); }
+  .mono-num {
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    background: rgba(0,168,107,0.1);
+    border: 1px solid rgba(0,168,107,0.3);
+    color: #00A86B;
+    font-size: 0.85rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .mono-content {}
+  .mono-title {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 0.4rem;
+  }
+  .mono-desc {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.5);
+    line-height: 1.5;
+  }
+  .mono-pill {
+    display: inline-block;
+    background: rgba(0,168,107,0.08);
+    border: 1px solid rgba(0,168,107,0.2);
+    color: #00A86B;
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    margin-top: 0.6rem;
+  }
+
+  /* ── EMPODERAMIENTO ──────────────────────────── */
+  .empoderamiento {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+  .empoderamiento-card {
+    background: var(--card);
+    border: 1px solid var(--borde);
+    border-radius: 1rem;
+    padding: 1.2rem 1rem;
+    text-align: center;
+  }
+  .empoderamiento-card .num {
+    font-size: 0.6rem;
+    font-weight: 900;
+    color: rgba(0,168,107,0.6);
+    letter-spacing: 0.2em;
+    display: block;
+    margin-bottom: 0.6rem;
+  }
+  .empoderamiento-card .emoji { font-size: 1.5rem; margin-bottom: 0.6rem; display: block; }
+  .empoderamiento-card .etiqueta {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 0.4rem;
+  }
+  .empoderamiento-card .detalle {
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.4;
+  }
+
+  /* ── REENCUADRE CENTRAL ──────────────────────── */
+  .reencuadre {
+    background: linear-gradient(135deg, rgba(0,168,107,0.08), rgba(15,40,92,0.3));
+    border: 1px solid rgba(0,168,107,0.2);
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .reencuadre::before {
+    content: '❝';
+    position: absolute;
+    top: 1rem; left: 1.5rem;
+    font-size: 4rem;
+    color: rgba(0,168,107,0.08);
+    font-family: Georgia, serif;
+    line-height: 1;
+  }
+  .reencuadre blockquote {
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.6;
+    max-width: 760px;
+    margin: 0 auto 1.2rem;
+    font-style: italic;
+    position: relative;
+  }
+  .reencuadre cite {
+    font-size: 0.65rem;
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(0,168,107,0.7);
+    font-style: normal;
+  }
+
+  /* ── SINDICATOS ──────────────────────────────── */
+  .sindicatos {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+    margin-bottom: 3rem;
+  }
+  .sind-card {
+    background: var(--card);
+    border: 1px solid var(--borde);
+    border-radius: 1.2rem;
+    padding: 1.4rem;
+    text-align: center;
+    position: relative;
+  }
+  .sind-card.primero { border-color: rgba(0,168,107,0.4); }
+  .sind-first-badge {
+    position: absolute;
+    top: -0.6rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #00A86B;
+    color: #fff;
+    font-size: 0.55rem;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.8rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .sind-nombre {
+    font-size: 1rem;
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 0.3rem;
+  }
+  .sind-desc {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 0.8rem;
+  }
+  .sind-stat {
+    display: inline-block;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 999px;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: rgba(255,255,255,0.6);
+  }
+
+  /* ── FOOTER ──────────────────────────────────── */
+  .footer {
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 2rem;
+    text-align: center;
+    color: rgba(255,255,255,0.2);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+  .footer strong { color: rgba(255,255,255,0.4); }
+
+  /* ── RESPONSIVE ──────────────────────────────── */
+  @media (max-width: 768px) {
+    .niveles, .monetizacion, .sindicatos { grid-template-columns: 1fr; }
+    .empoderamiento { grid-template-columns: repeat(2, 1fr); }
+    .flujo { grid-template-columns: 1fr; }
+    .flujo-arrow { transform: rotate(90deg); text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-badge">ConnectX Servicios S.A. de C.V. · Tepic, Nayarit · 2026</div>
+  <h1>Academia Digital <span>ConnectX</span></h1>
+  <p class="header-sub">Programa de Certificación "Servidor Público Digital" · Diagrama Estratégico Interno</p>
+</div>
+
+<div class="page">
+
+  <!-- FLUJO MACRO -->
+  <div class="section-label">Arquitectura del Modelo</div>
+  <div class="flujo">
+    <div class="flujo-node">
+      <div class="icon">🏛</div>
+      <div class="label">Sindicato</div>
+      <div class="sub">SUTSEM / SNTE</div>
+    </div>
+    <div class="flujo-arrow">→</div>
+    <div class="flujo-node highlight">
+      <div class="icon">🎓</div>
+      <div class="label">Academia ConnectX</div>
+      <div class="sub">Alianza de marca doble</div>
+    </div>
+    <div class="flujo-arrow">→</div>
+    <div class="flujo-node">
+      <div class="icon">👷</div>
+      <div class="label">Trabajador</div>
+      <div class="sub">Certificado B/P/O</div>
+    </div>
+    <div class="flujo-arrow">→</div>
+    <div class="flujo-node">
+      <div class="icon">🏙</div>
+      <div class="label">Gobierno Digital</div>
+      <div class="sub">LNETB 100%</div>
+    </div>
+  </div>
+
+  <!-- NIVELES DE CERTIFICACIÓN -->
+  <div class="section-label">Niveles de Certificación · Servidor Público Digital</div>
+  <div class="niveles">
+
+    <!-- BRONCE -->
+    <div class="nivel-card bronce">
+      <div class="nivel-header">
+        <span class="nivel-medal">🥉</span>
+        <div class="nivel-name">Bronce</div>
+        <div class="nivel-duration">2 semanas · Módulo de Entrada</div>
+      </div>
+      <div class="nivel-body">
+        <span class="nivel-tag">Objetivo: Vencer el miedo</span>
+        <ul class="nivel-items">
+          <li>Portal Ciudadano Único y QR de trámites</li>
+          <li>Tareas repetitivas → automatización básica</li>
+          <li>Diagnóstico de brecha digital personal</li>
+          <li>Navegación segura y firma electrónica</li>
+          <li>Inteligencia artificial: qué es y para qué sirve</li>
+        </ul>
+      </div>
+      <div class="nivel-footer">SIN COSTO · CERTIFICADO DIGITAL</div>
+    </div>
+
+    <!-- PLATA -->
+    <div class="nivel-card plata">
+      <div class="nivel-header">
+        <span class="nivel-medal">🥈</span>
+        <div class="nivel-name">Plata</div>
+        <div class="nivel-duration">4 semanas · Módulo Operativo</div>
+      </div>
+      <div class="nivel-body">
+        <span class="nivel-tag">Objetivo: Dominar la IA en el trabajo</span>
+        <ul class="nivel-items">
+          <li>Actas digitales y expediente único</li>
+          <li>Reporte GPS de servicios urbanos</li>
+          <li>Triaje médico IA — atención sin papel</li>
+          <li>Tesorería digital y seguimiento de trámites</li>
+          <li>Indicadores de desempeño personal</li>
+        </ul>
+      </div>
+      <div class="nivel-footer">CERTIFICADO + SELLO CONNECTX + SELLO SINDICATO</div>
+    </div>
+
+    <!-- ORO -->
+    <div class="nivel-card oro">
+      <div class="nivel-header" style="position:relative">
+        <span class="oro-badge">Activo Oculto</span>
+        <span class="nivel-medal">🥇</span>
+        <div class="nivel-name">Oro</div>
+        <div class="nivel-duration">6 semanas · Módulo de Liderazgo</div>
+      </div>
+      <div class="nivel-body">
+        <span class="nivel-tag">Objetivo: Liderar la digitalización del área</span>
+        <ul class="nivel-items">
+          <li>Faro Fiscal — transparencia presupuestal</li>
+          <li>Panel de Administración C5</li>
+          <li>Gestión de proyectos con IA</li>
+          <li>Instrucción interna (convertirse en formador)</li>
+          <li><strong style="color:#F59E0B">Proyecto Final:</strong> mapa real de burocracia en su área</li>
+        </ul>
+      </div>
+      <div class="nivel-footer">INSTRUCTOR CERTIFICADO · DOBLE SELLO · BONO PRODUCTIVIDAD</div>
+    </div>
+
+  </div>
+
+  <!-- MODELO DE MONETIZACIÓN -->
+  <div class="section-label">Modelo de Sostenibilidad — 4 Fuentes de Ingreso</div>
+  <div class="monetizacion">
+
+    <div class="mono-card">
+      <div class="mono-num">1</div>
+      <div class="mono-content">
+        <div class="mono-title">Contrato con el Ayuntamiento</div>
+        <div class="mono-desc">El municipio paga la capacitación masiva como parte de su obligación de cumplimiento LNETB. ConnectX factura los servicios de formación directamente al gobierno.</div>
+        <span class="mono-pill">Obligación LNETB · Arts. 12–15</span>
+      </div>
+    </div>
+
+    <div class="mono-card">
+      <div class="mono-num">2</div>
+      <div class="mono-content">
+        <div class="mono-title">Comisiones por Eficiencia Generada</div>
+        <div class="mono-desc">Cuando un trabajador certificado digitaliza un trámite o reduce tiempos de respuesta, ConnectX cobra una comisión al Ayuntamiento por la eficiencia verificable. El trabajador puede recibir bono de productividad.</div>
+        <span class="mono-pill">Trazabilidad C5 · Dashboard IMDM</span>
+      </div>
+    </div>
+
+    <div class="mono-card">
+      <div class="mono-num">3</div>
+      <div class="mono-content">
+        <div class="mono-title">Red de Promotores Internos</div>
+        <div class="mono-desc">Los graduados Nivel Oro se certifican como instructores locales y reciben comisión por cada nuevo alumno que incorporan. Fortalece la estructura interna del sindicato sin costo adicional.</div>
+        <span class="mono-pill">Escalabilidad a costo casi nulo</span>
+      </div>
+    </div>
+
+    <div class="mono-card">
+      <div class="mono-num">4</div>
+      <div class="mono-content">
+        <div class="mono-title">Gestión de Fondos Federales</div>
+        <div class="mono-desc">ConnectX apoya al Ayuntamiento a gestionar recursos federales (FAISMUN, FORTAMUN) para financiar la capacitación. ConnectX cobra una tarifa de consultoría. El sindicato demuestra gestión inteligente de recursos públicos.</div>
+        <span class="mono-pill">Fondos Federales · Sin impacto al presupuesto</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- EMPODERAMIENTO SINDICAL -->
+  <div class="section-label">Transformación Sindical — De Defensivo a Estratégico</div>
+  <div class="empoderamiento">
+
+    <div class="empoderamiento-card">
+      <span class="num">01</span>
+      <span class="emoji">⚔️</span>
+      <div class="etiqueta">De Defensivo a Ofensivo</div>
+      <div class="detalle">En lugar de solo defender empleos, el sindicato lidera activamente la modernización del Estado.</div>
+    </div>
+
+    <div class="empoderamiento-card">
+      <span class="num">02</span>
+      <span class="emoji">🔑</span>
+      <div class="etiqueta">Control Operativo</div>
+      <div class="detalle">Los trabajadores certificados conocen el sistema mejor que ningún externo. Se vuelven indispensables.</div>
+    </div>
+
+    <div class="empoderamiento-card">
+      <span class="num">03</span>
+      <span class="emoji">💪</span>
+      <div class="etiqueta">Negociación Fortalecida</div>
+      <div class="detalle">Exigen mejores salarios y condiciones basados en habilidades digitales verificables con certificado.</div>
+    </div>
+
+    <div class="empoderamiento-card">
+      <span class="num">04</span>
+      <span class="emoji">🏆</span>
+      <div class="etiqueta">Legitimidad Social</div>
+      <div class="detalle">Dejan de verse como obstáculo burocrático y se convierten en garantes de la eficiencia pública.</div>
+    </div>
+
+    <div class="empoderamiento-card">
+      <span class="num">05</span>
+      <span class="emoji">📜</span>
+      <div class="etiqueta">Herencia Histórica</div>
+      <div class="detalle">Serán recordados como quienes llevaron el futuro digital al servicio público de Nayarit.</div>
+    </div>
+
+  </div>
+
+  <!-- SINDICATOS OBJETIVO -->
+  <div class="section-label">Sindicatos Objetivo — Estrategia de Primer Firmante</div>
+  <div class="sindicatos">
+
+    <div class="sind-card primero">
+      <div class="sind-first-badge">⚡ Objetivo Prioritario</div>
+      <div class="sind-nombre">SUTSEM</div>
+      <div class="sind-desc">Sindicato Único de Trabajadores al Servicio del Estado y Municipios · ~3,000 agremiados · Opera directamente los trámites ciudadanos</div>
+      <div>
+        <span class="sind-stat">Sec. Gral.: Óscar Flavio Cedano</span>
+      </div>
+    </div>
+
+    <div class="sind-card">
+      <div class="sind-nombre">SNTE Sección 49</div>
+      <div class="sind-desc">Magisterio Nayarit · Sindicato más numeroso del estado · +4,000 trabajadores · +447 escuelas</div>
+      <div>
+        <span class="sind-stat">+4,000 trabajadores</span>
+      </div>
+    </div>
+
+    <div class="sind-card">
+      <div class="sind-nombre">SNTE Sección 20</div>
+      <div class="sind-desc">Frente Sindical Nayarita · Segunda sección magisterial · Alcance regional complementario</div>
+      <div>
+        <span class="sind-stat">Frente Sindical Nayarita</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- REENCUADRE CENTRAL -->
+  <div class="reencuadre">
+    <blockquote>
+      "La tecnología va a llegar de todos modos porque la ley lo ordena.<br>
+      La única pregunta es si llega <em style="color:#00A86B">contra el trabajador</em> o <em style="color:#F59E0B">de la mano del trabajador.</em><br>
+      Eso lo decide el sindicato."
+    </blockquote>
+    <cite>Reencuadre estratégico central · ConnectX Servicios S.A. de C.V.</cite>
+  </div>
+
+  <!-- GANCHO COMPETITIVO -->
+  <div style="background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.2);border-radius:1.2rem;padding:1.5rem 2rem;margin-bottom:3rem;display:flex;gap:1.2rem;align-items:center;">
+    <div style="font-size:2rem;flex-shrink:0">⏱</div>
+    <div>
+      <div style="font-size:0.8rem;font-weight:900;color:#F59E0B;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.4rem">Gancho Competitivo — El Primer Lugar Solo lo Ocupa Uno</div>
+      <div style="font-size:0.8rem;color:rgba(255,255,255,0.6);line-height:1.5">La misma propuesta se presenta a los 3 sindicatos. El primero que firme establece el estándar de digitalización laboral para todo Nayarit. Los demás seguirán. El sindicato que lidera hoy, define las reglas del juego mañana.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <strong>ConnectX Servicios S.A. de C.V.</strong> · Tepic, Nayarit, México · contacto@connectx.mx<br>
+  Documento estratégico interno — Confidencial · 2026
+</div>
+
+</body>
+</html>
