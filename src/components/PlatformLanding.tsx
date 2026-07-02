@@ -413,6 +413,11 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
             ))}
           </div>
           <p className="text-slate-500 text-sm">El primer portal de gobierno en México que reconoce las lenguas indígenas de Nayarit.</p>
+          <p className="text-slate-600 text-xs mt-4 italic leading-relaxed max-w-md mx-auto">
+            El diseño incorpora patrones del arte tradicional wixárika del pueblo Nayeri,
+            en colaboración con comunidades artesanas de Nayarit.
+            En reconocimiento a los pueblos originarios del estado.
+          </p>
         </div>
       </section>
 
