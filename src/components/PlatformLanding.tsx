@@ -114,10 +114,10 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
         </div>
 
         <nav className="hidden lg:flex items-center gap-10">
-          <button onClick={() => onNavigate('citizen')} className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">Soluciones</button>
-          <button onClick={() => onNavigate('executive')} className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">Estrategia</button>
-          <button onClick={() => onNavigate('dev')} className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">Impacto</button>
-          <button onClick={() => onNavigate('c5')} className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">Transparencia</button>
+          <button onClick={() => onNavigate('citizen')} className="text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-widest">Soluciones</button>
+          <button onClick={() => onNavigate('executive')} className="text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-widest">Estrategia</button>
+          <button onClick={() => onNavigate('dev')} className="text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-widest">Impacto</button>
+          <button onClick={() => onNavigate('c5')} className="text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-widest">Transparencia</button>
           <button
             onClick={() => onNavigate('dev')}
             className="bg-[#0f285c] text-white px-7 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-[#0f285c]/20"
@@ -319,7 +319,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
             <h3 className="text-5xl md:text-6xl font-serif font-black text-[#0f285c] leading-tight mb-5">
               Un solo Nayarit.<br />Una sola plataforma.
             </h3>
-            <p className="text-slate-500 text-lg max-w-xl mx-auto leading-relaxed">
+            <p className="text-slate-600 text-lg max-w-xl mx-auto leading-relaxed">
               No son proyectos aislados. Es una infraestructura de estado donde cada módulo alimenta al siguiente.
             </p>
           </div>
