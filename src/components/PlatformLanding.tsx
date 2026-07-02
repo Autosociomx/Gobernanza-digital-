@@ -456,7 +456,10 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
             <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
           </button>
           <p className="mt-10 text-xs text-slate-400 font-medium tracking-wider">
-            ConnectX Servicios S.A. de C.V. · Tepic, Nayarit · 2026 · <span className="font-bold">#NayaritDigital</span>
+            © 2026 <span className="font-bold">Nayarit Digital</span> · Propiedad de ConnectX Servicios S.A. de C.V.
+          </p>
+          <p className="mt-1 text-[10px] text-slate-600 tracking-wide">
+            PI bajo custodia de Fundación ConnectX A.C. · Uso sujeto a contrato · <span className="underline underline-offset-2 cursor-pointer hover:text-slate-400 transition-colors">/aviso-legal</span>
           </p>
         </div>
       </section>
