@@ -63,6 +63,8 @@ import { SystemAuditView } from './SystemAuditView';
 import { BananaCommandCenter } from './BananaCommandCenter';
 import { StrategicAcademyView } from './StrategicAcademyView';
 
+import { AuraCertificationSeal } from './AuraCertificationSeal';
+
 type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria' | 'academy' | 'system_audit' | 'banana_command' | 'strategic_academy';
 type Language = 'es' | 'cora' | 'wixarika';
 
@@ -364,7 +366,9 @@ export function CitizenApp({
               {translations[lang].welcome.split(',')[0]},<br/>
               <span className="text-magenta-600" style={{color:'var(--magenta)'}}>{translations[lang].welcome.split(',')[1]}</span>
             </h1>
-            <div className="flex gap-2 mt-4">
+            <div className="flex items-center gap-3 mt-4">
+               <AuraCertificationSeal />
+               <div className="flex gap-2">
                {['es', 'cora', 'wixarika'].map(l => {
                  let activeClass = "";
                  let inlineStyle: any = {};
@@ -402,7 +406,8 @@ export function CitizenApp({
                })}
             </div>
           </div>
-          <div className="relative">
+        </div>
+        <div className="relative">
              <button onClick={() => setActiveTab('notifications')} className="w-10 h-10 rounded-full bg-slate-100 border-2 border-white shadow-sm overflow-hidden flex items-center justify-center cursor-pointer transition-colors hover:bg-slate-200">
                 <Bell className="w-5 h-5 text-slate-400" />
              </button>

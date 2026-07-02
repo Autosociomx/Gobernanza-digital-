@@ -15,6 +15,7 @@ import {
   Zap
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { AuraCertificationSeal } from './AuraCertificationSeal';
 
 const FlowStep = ({ title, subtitle, icon: Icon, color }: { title: string, subtitle: string, icon: any, color: string }) => (
   <motion.div 
@@ -58,9 +59,12 @@ export function StrategicAcademyView({ onBack }: { onBack: () => void }) {
                <ChevronLeft className="w-5 h-5" />
                <span className="text-[10px] font-black uppercase tracking-widest">Regresar</span>
             </button>
-            <div className="flex items-center gap-3">
-               <Network className="w-5 h-5 text-magenta-500" />
-               <h1 className="text-sm font-black uppercase tracking-[0.3em] text-white">Blueprint Estratégico</h1>
+            <div className="flex items-center gap-6">
+               <AuraCertificationSeal />
+               <div className="flex items-center gap-3">
+                  <Network className="w-5 h-5 text-magenta-500" />
+                  <h1 className="text-sm font-black uppercase tracking-[0.3em] text-white">Blueprint Estratégico</h1>
+               </div>
             </div>
          </div>
       </header>

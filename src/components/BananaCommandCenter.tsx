@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { Terminal, Zap, Shield, Code, ChevronLeft, Copy, Check, MessageSquare } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { AuraCertificationSeal } from './AuraCertificationSeal';
 
 export function BananaCommandCenter({ onBack }: { onBack: () => void }) {
   const [copied, setCopied] = useState<string | null>(null);
@@ -44,9 +45,12 @@ export function BananaCommandCenter({ onBack }: { onBack: () => void }) {
             <ChevronLeft className="w-5 h-5" />
             <span className="text-[10px] font-black uppercase tracking-widest">Exit Terminal</span>
          </button>
-         <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></div>
-            <h1 className="text-sm font-black uppercase tracking-[0.3em] text-white">Banana Command Center</h1>
+         <div className="flex items-center gap-6">
+            <AuraCertificationSeal />
+            <div className="flex items-center gap-3">
+               <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></div>
+               <h1 className="text-sm font-black uppercase tracking-[0.3em] text-white">Banana Command Center</h1>
+            </div>
          </div>
       </header>
 
