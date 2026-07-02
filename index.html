@@ -23,8 +23,21 @@
     <meta property="og:description" content="El sistema operativo del nuevo gobierno de Nayarit. Operativo en Tepic." />
     <meta property="og:type"        content="website" />
     <meta property="og:locale"      content="es_MX" />
+
+    <!-- Preconnect a APIs de datos oficiales -->
+    <link rel="preconnect" href="https://api.inegi.org.mx" />
+    <link rel="preconnect" href="https://datamexico.org" />
+    <link rel="preconnect" href="https://datos.gob.mx" />
+    <link rel="dns-prefetch" href="https://api.inegi.org.mx" />
+    <link rel="dns-prefetch" href="https://datamexico.org" />
   </head>
   <body>
+    <!-- Skip link de accesibilidad — WCAG 2.4.1 -->
+    <a href="#main-content"
+       class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[9999] focus:bg-emerald-500 focus:text-white focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:rounded"
+       style="position:absolute;left:-9999px">
+      Saltar al contenido principal
+    </a>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

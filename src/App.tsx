@@ -1,10 +1,22 @@
-import React, { useState } from 'react';
-import { PlatformLanding } from './components/PlatformLanding';
-import { C5Dashboard } from './components/C5Dashboard';
-import { CitizenApp } from './components/CitizenApp';
-import { DeveloperChecklist } from './components/DeveloperChecklist';
-import { ExecutiveFolder } from './components/ExecutiveFolder';
+import React, { useState, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+
+const PlatformLanding  = React.lazy(() => import('./components/PlatformLanding').then(m => ({ default: m.PlatformLanding })));
+const C5Dashboard      = React.lazy(() => import('./components/C5Dashboard').then(m => ({ default: m.C5Dashboard })));
+const CitizenApp       = React.lazy(() => import('./components/CitizenApp').then(m => ({ default: m.CitizenApp })));
+const DeveloperChecklist = React.lazy(() => import('./components/DeveloperChecklist').then(m => ({ default: m.DeveloperChecklist })));
+const ExecutiveFolder  = React.lazy(() => import('./components/ExecutiveFolder').then(m => ({ default: m.ExecutiveFolder })));
+
+function PageLoader() {
+  return (
+    <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        <span className="text-gray-500 text-xs font-mono tracking-widest uppercase">Cargando</span>
+      </div>
+    </div>
+  );
+}
 import { ChevronDown, LayoutDashboard, UserCircle2, FileText, Settings2 } from 'lucide-react';
 
 function App() {
@@ -13,19 +25,19 @@ function App() {
   const [citizenAction, setCitizenAction] = useState<any>(null);
 
   if (currentView === 'c5') {
-    return <C5Dashboard onLogout={() => setCurrentView('landing')} />;
+    return <Suspense fallback={<PageLoader />}><C5Dashboard onLogout={() => setCurrentView('landing')} /></Suspense>;
   }
 
   if (currentView === 'citizen') {
-    return <CitizenApp onLogout={() => setCurrentView('landing')} initialTab={citizenTab} initialAction={citizenAction} />;
+    return <Suspense fallback={<PageLoader />}><CitizenApp onLogout={() => setCurrentView('landing')} initialTab={citizenTab} initialAction={citizenAction} /></Suspense>;
   }
 
   if (currentView === 'dev') {
-    return <DeveloperChecklist onLogout={() => setCurrentView('landing')} />;
+    return <Suspense fallback={<PageLoader />}><DeveloperChecklist onLogout={() => setCurrentView('landing')} /></Suspense>;
   }
 
   if (currentView === 'executive') {
-    return <ExecutiveFolder onBack={() => setCurrentView('landing')} />;
+    return <Suspense fallback={<PageLoader />}><ExecutiveFolder onBack={() => setCurrentView('landing')} /></Suspense>;
   }
 
   const menuItems = [
@@ -60,15 +72,17 @@ function App() {
   ];
 
   return (
-    <div className="min-h-screen relative overflow-x-hidden">
-      <PlatformLanding onNavigate={(view, subView, action) => {
-        if (view === 'citizen') {
-          setCitizenTab(subView || 'home');
-          setCitizenAction(action || null);
-        }
-        setCurrentView(view);
-      }} />
-    </div>
+    <Suspense fallback={<PageLoader />}>
+      <main id="main-content" className="min-h-screen relative overflow-x-hidden">
+        <PlatformLanding onNavigate={(view, subView, action) => {
+          if (view === 'citizen') {
+            setCitizenTab(subView || 'home');
+            setCitizenAction(action || null);
+          }
+          setCurrentView(view);
+        }} />
+      </main>
+    </Suspense>
   );
 }
 
