@@ -27,7 +27,8 @@ import {
   Brain,
   Leaf,
   Landmark,
-  CreditCard
+  CreditCard,
+  Target
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
@@ -39,6 +40,7 @@ import { PatrimonioView } from './dashboard/PatrimonioView';
 import { MunicipioView } from './dashboard/MunicipioView';
 import { PagosView } from './dashboard/PagosView';
 import { ObservatorioView } from './dashboard/ObservatorioView';
+import { CazadorOportunidadesView } from './dashboard/CazadorOportunidadesView';
 
 type Language = 'es' | 'cora' | 'wixarika';
 
@@ -58,7 +60,7 @@ import {
   Legend
 } from 'recharts';
 
-type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio' | 'metricas' | 'parlamento' | 'analisis_politico' | 'interoperabilidad' | 'gabinete' | 'auditoria' | 'patrimonio' | 'municipio' | 'pagos';
+type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio' | 'metricas' | 'parlamento' | 'analisis_politico' | 'interoperabilidad' | 'gabinete' | 'auditoria' | 'patrimonio' | 'municipio' | 'pagos' | 'cazador';
 
 export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
   const [activeModule, setActiveModule] = useState<ModuleType>(() => (localStorage.getItem('activeModule') as ModuleType) || 'tesoreria');
@@ -86,6 +88,7 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
     { id: 'patrimonio', name: 'Nayarit Originario',     icon: Leaf,         color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
     { id: 'municipio',  name: 'Mapa Municipal Digital', icon: Landmark,     color: 'text-blue-400',    bg: 'bg-blue-400/10'    },
     { id: 'pagos',      name: 'Catálogo Único de Pagos', icon: CreditCard,  color: 'text-violet-400',  bg: 'bg-violet-400/10'  },
+    { id: 'cazador',   name: 'Cazador de Oportunidades', icon: Target,     color: 'text-purple-400',  bg: 'bg-purple-400/10'  },
   ] as const;
 
   return (
@@ -202,6 +205,7 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
               {activeModule === 'patrimonio' && <PatrimonioView />}
               {activeModule === 'municipio'  && <MunicipioView />}
               {activeModule === 'pagos'      && <PagosView />}
+              {activeModule === 'cazador'    && <CazadorOportunidadesView />}
             </motion.div>
           </AnimatePresence>
         </main>
