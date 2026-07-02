@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Building2, 
-  Map as MapIcon, 
-  AlertTriangle, 
-  Activity, 
-  Bot, 
+import {
+  Building2,
+  Map as MapIcon,
+  AlertTriangle,
+  Activity,
+  Bot,
   HeartHandshake,
   Menu,
   X,
@@ -24,13 +24,20 @@ import {
   FileText,
   ShieldCheck,
   ChevronLeft,
-  Brain
+  Brain,
+  Leaf,
+  Landmark,
+  CreditCard
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { NayaritMap } from './NayaritMap';
 import { ParlamentoView } from './dashboard/ParlamentoView';
 import { AnalisisPoliticoView } from './dashboard/AnalisisPoliticoView';
+import { AuditoriaView } from './dashboard/AuditoriaView';
+import { PatrimonioView } from './dashboard/PatrimonioView';
+import { MunicipioView } from './dashboard/MunicipioView';
+import { PagosView } from './dashboard/PagosView';
 
 type Language = 'es' | 'cora' | 'wixarika';
 
@@ -50,7 +57,7 @@ import {
   Legend
 } from 'recharts';
 
-type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio' | 'metricas' | 'parlamento' | 'analisis_politico' | 'interoperabilidad' | 'gabinete';
+type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio' | 'metricas' | 'parlamento' | 'analisis_politico' | 'interoperabilidad' | 'gabinete' | 'auditoria' | 'patrimonio' | 'municipio' | 'pagos';
 
 export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
   const [activeModule, setActiveModule] = useState<ModuleType>(() => (localStorage.getItem('activeModule') as ModuleType) || 'tesoreria');
@@ -74,6 +81,10 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
     { id: 'parlamento', name: 'Parlamento Municipal', icon: Users, color: 'text-indigo-400', bg: 'bg-indigo-400/10' },
     { id: 'analisis_politico', name: 'Análisis Estratégico', icon: Brain, color: 'text-purple-400', bg: 'bg-purple-400/10' },
     { id: 'interoperabilidad', name: 'Nodo Transparencia', icon: Building2, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
+    { id: 'auditoria',  name: 'Auditoría de Acciones',  icon: Shield,       color: 'text-rose-400',    bg: 'bg-rose-400/10'    },
+    { id: 'patrimonio', name: 'Nayarit Originario',     icon: Leaf,         color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
+    { id: 'municipio',  name: 'Mapa Municipal Digital', icon: Landmark,     color: 'text-blue-400',    bg: 'bg-blue-400/10'    },
+    { id: 'pagos',      name: 'Catálogo Único de Pagos', icon: CreditCard,  color: 'text-violet-400',  bg: 'bg-violet-400/10'  },
   ] as const;
 
   return (
@@ -186,6 +197,10 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
               {activeModule === 'parlamento' && <ParlamentoView />}
               {activeModule === 'analisis_politico' && <AnalisisPoliticoView />}
               {activeModule === 'interoperabilidad' && <InteroperabilidadView />}
+              {activeModule === 'auditoria'  && <AuditoriaView />}
+              {activeModule === 'patrimonio' && <PatrimonioView />}
+              {activeModule === 'municipio'  && <MunicipioView />}
+              {activeModule === 'pagos'      && <PagosView />}
             </motion.div>
           </AnimatePresence>
         </main>
