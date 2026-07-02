@@ -109,7 +109,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
           </div>
           <div>
             <h1 className="font-serif font-black text-2xl tracking-tight text-[#0f285c]">Nayarit<span className="text-blue-600">Digital</span></h1>
-            <p className="text-[0.6rem] uppercase tracking-[0.3em] font-bold text-slate-400">Gobierno sin excusas</p>
+            <p className="text-[0.6rem] uppercase tracking-[0.3em] font-bold text-slate-600">Gobierno sin excusas</p>
           </div>
         </div>
 
@@ -126,13 +126,13 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
           </button>
         </nav>
 
-        <button className="lg:hidden p-3 bg-white shadow-md rounded-xl">
-          <Menu className="w-6 h-6 text-[#0f285c]" />
+        <button className="lg:hidden p-3 bg-white shadow-md rounded-xl" aria-label="Abrir menú de navegación">
+          <Menu className="w-6 h-6 text-[#0f285c]" aria-hidden="true" />
         </button>
       </header>
 
       {/* Hero */}
-      <main className="px-6 md:px-12 py-12 md:py-24 max-w-[1600px] mx-auto relative z-10">
+      <section className="px-6 md:px-12 py-12 md:py-24 max-w-[1600px] mx-auto relative z-10" aria-label="Presentación principal">
         <div className="flex flex-col xl:flex-row gap-16 xl:gap-24 items-center">
 
           {/* Left Column */}
@@ -147,7 +147,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
               ].map((kpi, i) => (
                 <div key={i} className="flex items-center gap-2 bg-blue-600/8 border border-blue-600/15 rounded-full px-4 py-2">
                   <span className="text-blue-600 font-black text-sm">{kpi.value}</span>
-                  <span className="text-slate-500 text-xs font-bold">{kpi.label}</span>
+                  <span className="text-slate-600 text-xs font-bold">{kpi.label}</span>
                 </div>
               ))}
             </div>
@@ -181,15 +181,15 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
             <div className="grid grid-cols-3 gap-6 max-w-lg border-t border-slate-200 pt-12">
               <div>
                 <h4 className="text-3xl font-serif font-bold text-[#0f285c]">1</h4>
-                <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Ecosistema</p>
+                <p className="text-xs uppercase tracking-widest text-slate-600 font-bold mt-1">Ecosistema</p>
               </div>
               <div>
                 <h4 className="text-3xl font-serif font-bold text-[#0f285c]">20+</h4>
-                <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Secretarías</p>
+                <p className="text-xs uppercase tracking-widest text-slate-600 font-bold mt-1">Secretarías</p>
               </div>
               <div>
                 <h4 className="text-3xl font-serif font-bold text-[#0f285c]">1.5M</h4>
-                <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Ciudadanos</p>
+                <p className="text-xs uppercase tracking-widest text-slate-600 font-bold mt-1">Ciudadanos</p>
               </div>
             </div>
           </div>
@@ -231,7 +231,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
 
                   <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-gradient-to-b from-white via-white/80 to-transparent z-10 h-[60%]"></div>
-                    <img src={item.img} alt={item.title} className="w-full h-full object-cover pointer-events-none group-hover:scale-105 transition-transform duration-[2s]" />
+                    <img src={item.img} alt={item.title} loading="lazy" decoding="async" className="w-full h-full object-cover pointer-events-none group-hover:scale-105 transition-transform duration-[2s]" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0f285c]/90 via-[#0f285c]/20 to-transparent z-10"></div>
                     <div className="absolute bottom-8 left-0 right-0 z-20 px-8">
                       <button className="w-full py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white text-xs font-bold uppercase tracking-[0.2em] hover:bg-white hover:text-[#0f285c] transition-all">
@@ -244,7 +244,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
             </Swiper>
           </div>
         </div>
-      </main>
+      </section>
 
       {/* Social Proof Strip */}
       <section className="bg-[#0f285c] py-16 relative z-10">
@@ -253,17 +253,17 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
             <div className="py-4 px-6">
               <div className="text-5xl md:text-6xl font-serif font-black text-amber-400">50,000</div>
               <div className="text-xs font-bold text-slate-300 mt-2 uppercase tracking-widest">ciudadanos</div>
-              <div className="text-xs text-slate-500 mt-1">meta Tepic año 1</div>
+              <div className="text-xs text-slate-400 mt-1">meta Tepic año 1</div>
             </div>
             <div className="py-4 px-6">
               <div className="text-5xl md:text-6xl font-serif font-black text-blue-400">15</div>
               <div className="text-xs font-bold text-slate-300 mt-2 uppercase tracking-widest">meses</div>
-              <div className="text-xs text-slate-500 mt-1">para transformar Nayarit</div>
+              <div className="text-xs text-slate-400 mt-1">para transformar Nayarit</div>
             </div>
             <div className="py-4 px-6">
               <div className="text-5xl md:text-6xl font-serif font-black text-emerald-400">0</div>
               <div className="text-xs font-bold text-slate-300 mt-2 uppercase tracking-widest">papel ni filas</div>
-              <div className="text-xs text-slate-500 mt-1">desde el primer día</div>
+              <div className="text-xs text-slate-400 mt-1">desde el primer día</div>
             </div>
           </div>
         </div>
@@ -273,7 +273,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
       <section className="py-24 relative z-10 bg-[#fcfdfe]">
         <div className="max-w-[1100px] mx-auto px-6 md:px-12">
           <div className="text-center mb-14">
-            <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">El cambio en una línea</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-slate-600 mb-3">El cambio en una línea</p>
             <h3 className="text-4xl font-serif font-black text-[#0f285c]">Hoy vs. con Nayarit Digital</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -315,7 +315,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
       <section className="py-28 relative z-10 bg-white border-t border-slate-100">
         <div className="max-w-[1200px] mx-auto px-6 md:px-12">
           <div className="text-center mb-16">
-            <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Arquitectura de estado</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-slate-600 mb-3">Arquitectura de estado</p>
             <h3 className="text-5xl md:text-6xl font-serif font-black text-[#0f285c] leading-tight mb-5">
               Un solo Nayarit.<br />Una sola plataforma.
             </h3>
@@ -332,9 +332,9 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                 return (
                   <div key={p.id} className="flex items-center justify-end gap-4 p-5 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-100 transition-all">
                     <div className="text-right flex-1 min-w-0">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-0.5">{p.num}</p>
+                      <p className="text-[10px] font-black text-slate-600 uppercase tracking-wider mb-0.5">{p.num}</p>
                       <p className="text-sm font-black text-[#0f285c] leading-tight">{p.title}</p>
-                      <p className="text-[11px] text-slate-400 mt-0.5 leading-snug">{p.impact}</p>
+                      <p className="text-[11px] text-slate-600 mt-0.5 leading-snug">{p.impact}</p>
                     </div>
                     <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center shrink-0 bg-slate-50", p.color)}>
                       <Icon className="w-6 h-6" />
@@ -376,9 +376,9 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                       <Icon className="w-6 h-6" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-0.5">{p.num}</p>
+                      <p className="text-[10px] font-black text-slate-600 uppercase tracking-wider mb-0.5">{p.num}</p>
                       <p className="text-sm font-black text-[#0f285c] leading-tight">{p.title}</p>
-                      <p className="text-[11px] text-slate-400 mt-0.5 leading-snug">{p.impact}</p>
+                      <p className="text-[11px] text-slate-600 mt-0.5 leading-snug">{p.impact}</p>
                     </div>
                   </div>
                 );
@@ -408,12 +408,12 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
               <div key={i} className="bg-white/5 border border-white/10 rounded-2xl px-8 py-5 text-center min-w-[120px]">
                 <div className="text-3xl mb-2">{item.emoji}</div>
                 <div className="text-white font-bold text-sm">{item.lang}</div>
-                <div className="text-slate-500 text-xs mt-0.5">{item.note}</div>
+                <div className="text-slate-400 text-xs mt-0.5">{item.note}</div>
               </div>
             ))}
           </div>
-          <p className="text-slate-500 text-sm">El primer portal de gobierno en México que reconoce las lenguas indígenas de Nayarit.</p>
-          <p className="text-slate-600 text-xs mt-4 italic leading-relaxed max-w-md mx-auto">
+          <p className="text-slate-400 text-sm">El primer portal de gobierno en México que reconoce las lenguas indígenas de Nayarit.</p>
+          <p className="text-slate-400 text-xs mt-4 italic leading-relaxed max-w-md mx-auto">
             El diseño incorpora patrones del arte tradicional wixárika del pueblo Nayeri,
             en colaboración con comunidades artesanas de Nayarit.
             En reconocimiento a los pueblos originarios del estado.
@@ -444,12 +444,12 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
       <section className="py-28 relative z-10 bg-[#fcfdfe] text-center overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(ellipse at 50% 60%, #dbeafe 0%, transparent 65%)' }}></div>
         <div className="max-w-[700px] mx-auto px-6 relative z-10">
-          <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-5">Operativo hoy en Tepic</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-slate-600 mb-5">Operativo hoy en Tepic</p>
           <h3 className="text-5xl md:text-7xl font-serif font-black text-[#0f285c] leading-[0.9] tracking-tighter mb-8">
             Ya está<br /><span className="text-blue-600 italic">funcionando.</span>
           </h3>
-          <p className="text-xl text-slate-500 font-medium mb-6">La pregunta es cuándo quieres ser parte.</p>
-          <p className="text-sm text-slate-400 italic mb-14 max-w-lg mx-auto leading-relaxed">
+          <p className="text-xl text-slate-600 font-medium mb-6">La pregunta es cuándo quieres ser parte.</p>
+          <p className="text-sm text-slate-600 italic mb-14 max-w-lg mx-auto leading-relaxed">
             "Estonia tardó cinco años en construir su gobierno digital.<br className="hidden md:block" />
             Nayarit puede hacerlo en 15 meses."
           </p>
@@ -460,7 +460,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
             Ver el sistema en vivo — 20 minutos
             <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
           </button>
-          <p className="mt-10 text-xs text-slate-400 font-medium tracking-wider">
+          <p className="mt-10 text-xs text-slate-600 font-medium tracking-wider">
             © 2026 <span className="font-bold">Nayarit Digital</span> · Propiedad de ConnectX Servicios S.A. de C.V.
           </p>
           <p className="mt-1 text-[10px] text-slate-600 tracking-wide">
