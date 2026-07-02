@@ -38,6 +38,7 @@ import { AuditoriaView } from './dashboard/AuditoriaView';
 import { PatrimonioView } from './dashboard/PatrimonioView';
 import { MunicipioView } from './dashboard/MunicipioView';
 import { PagosView } from './dashboard/PagosView';
+import { ObservatorioView } from './dashboard/ObservatorioView';
 
 type Language = 'es' | 'cora' | 'wixarika';
 
@@ -850,7 +851,7 @@ function AgrovisionView() {
   );
 }
 
-function ObservatorioView() {
+function _ObservatorioViewLegacy_REMOVED() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeStrategyTab, setActiveStrategyTab] = useState<'federal' | 'blueocean' | 'business'>('federal');
 
