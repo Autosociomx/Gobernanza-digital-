@@ -1,5 +1,6 @@
 import React, { useState, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { ConsentGate } from './components/ConsentGate';
 
 const PlatformLanding  = React.lazy(() => import('./components/PlatformLanding').then(m => ({ default: m.PlatformLanding })));
 const C5Dashboard      = React.lazy(() => import('./components/C5Dashboard').then(m => ({ default: m.C5Dashboard })));
@@ -19,10 +20,26 @@ function PageLoader() {
 }
 import { ChevronDown, LayoutDashboard, UserCircle2, FileText, Settings2 } from 'lucide-react';
 
+const CONSENT_KEY = 'nyd-legal-v1';
+
 function App() {
+  const [consentGiven, setConsentGiven] = useState(() =>
+    typeof window !== 'undefined' && localStorage.getItem(CONSENT_KEY) === 'accepted'
+  );
   const [currentView, setCurrentView] = useState<'landing' | 'c5' | 'citizen' | 'dev' | 'executive'>('landing');
   const [citizenTab, setCitizenTab] = useState<any>('home');
   const [citizenAction, setCitizenAction] = useState<any>(null);
+
+  if (!consentGiven) {
+    return (
+      <ConsentGate
+        onAccept={() => {
+          localStorage.setItem(CONSENT_KEY, 'accepted');
+          setConsentGiven(true);
+        }}
+      />
+    );
+  }
 
   if (currentView === 'c5') {
     return <Suspense fallback={<PageLoader />}><C5Dashboard onLogout={() => setCurrentView('landing')} /></Suspense>;
