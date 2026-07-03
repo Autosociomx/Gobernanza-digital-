@@ -232,6 +232,63 @@ const PRECIOS_FALLBACK: PrecioProducto[] = [
   { producto: 'Aceite vegetal', precio_min: 38, precio_max: 46, unidad: 'litro', cadena: 'Walmart', estado: 'Nayarit' },
 ];
 
+// ─── SHCP Transparencia Presupuestaria — Nayarit 2023-2024 ───────────────────
+// Fuente: transparenciapresupuestaria.gob.mx
+// CSV abierto: https://www.transparenciapresupuestaria.gob.mx/Datos-Abiertos
+
+export const NAYARIT_SHCP = {
+  fuente: 'SHCP Transparencia Presupuestaria',
+  url: 'https://www.transparenciapresupuestaria.gob.mx/Entidades-Federativas',
+  ramo28_2023: {
+    fondoGeneral:        8363.57,  // mdp — Fondo General de Participaciones
+    fondoFomento:         601.77,  // mdp — Fondo de Fomento Municipal
+    fondoFiscalizacion:   414.66,  // mdp — Fondo de Fiscalización
+    totalEstimado:      10778.1,   // mdp total Ramo 28 Nayarit 2023
+  },
+  ramo33_2024: {
+    fortamundf:          1132.2,   // mdp — para los 20 municipios
+    fortamundf2025:      1187.3,   // mdp — estimado 2025
+  },
+  ramo28_2026: {
+    totalProyectado:    13400.0,   // mdp — proyección Paquete Económico 2026
+  },
+  // Ramo 28+33 = 89.6% de ingresos de estados/municipios en México (2023)
+  dependenciaFederal:    89.6,
+};
+
+// ─── SESNSP Incidencia Delictiva — Nayarit 2024 ──────────────────────────────
+// CSV mensual sin autenticación — municipio Tepic = clave 18017
+// Descarga: https://www.secretariadoejecutivo.gob.mx/incidencia-delictiva/incidencia-delictiva-datos-abiertos.php
+
+export const SESNSP_API = {
+  csvUrl: 'https://www.datos.gob.mx/dataset/incidencia_delictiva/resource/57fbd692-3e5c-4b1b-8621-694cb3a33035',
+  claveMunicipioTepic: '18017',
+  periodoDisponible: 'Enero 2015 — Diciembre 2025',
+  actualizacion: 'Mensual',
+};
+
+// ─── INEGI API Indicadores — endpoints verificados ───────────────────────────
+// Token gratuito: https://www.inegi.org.mx/app/indicadores/
+// Documentación: https://www.inegi.org.mx/servicios/api_indicadores.html
+
+export const INEGI_API = {
+  base: 'https://www.inegi.org.mx/app/api/indicadores/desarrolladores/jsonxml/INDICATOR',
+  claveNayarit: '18',
+  claveTepic: '18017',
+  indicadores: {
+    poblacionTotal:     '1002000001',
+    pibEstatal:         'disponible via ITAEE',
+    inpc:               '628229',
+  },
+  denue: {
+    base: 'https://www.inegi.org.mx/app/api/denue/v1/consulta',
+    buscarAreaAct: (entidad: string, municipio: string, scian: string) =>
+      `BuscarAreaAct/${entidad}/${municipio}/${scian}/0/0/0/0/0/1/50/{TOKEN}`,
+  },
+  requiereToken: true,
+  tokenUrl: 'https://www.inegi.org.mx/app/indicadores/',
+};
+
 // ─── Ley de Ingresos 2026 Tepic — tarifas reales ─────────────────────────────
 // Fuente: Congreso de Nayarit — Ley de Ingresos del Municipio de Tepic 2026
 // URL: congresonayarit.gob.mx/.../ley_ingresos_tepic_2026.pdf

@@ -6,11 +6,12 @@ import {
 import {
   Database, Globe, Wifi, WifiOff, ExternalLink, RefreshCw,
   Users, Briefcase, TrendingUp, Home, BookOpen, ShieldCheck,
-  Activity, AlertCircle
+  Activity, AlertCircle, Zap, Bot, Satellite, Scale, Sprout,
+  BarChart2, Shield, DollarSign, ArrowUpRight
 } from 'lucide-react';
 import {
   TEPIC_OFICIAL, NAYARIT_OFICIAL, TEPIC_SECTORES, TEPIC_VIVIENDA,
-  NAYARIT_CARENCIAS, buscarDatasets, fetchTepicPoblacion,
+  NAYARIT_CARENCIAS, NAYARIT_SHCP, buscarDatasets, fetchTepicPoblacion,
   type TepicStats, type DatasetGob
 } from '../../services/openData';
 
@@ -247,6 +248,77 @@ export function ObservatorioView() {
               <div className="text-[10px] text-slate-500 mt-1 uppercase tracking-wide">{item.label}</div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Ejército de Agentes IA */}
+      <div className="bg-[#0d0f14] border border-cyan-500/20 rounded-2xl p-6">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-2">
+            <Zap className="w-4 h-4 text-cyan-400" />
+            <h4 className="text-sm font-bold text-white uppercase tracking-wider">Ejército de Inteligencia — 6 Agentes IA</h4>
+          </div>
+          <span className="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full">6 ACTIVOS</span>
+        </div>
+        <p className="text-[11px] text-slate-500 mb-5">
+          Agentes especializados monitoreando Nayarit en paralelo · Arquitectura ConnectX Agent SDK
+        </p>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          {[
+            { nombre: 'ATLAS',    icon: Users,    desc: 'Demografía INEGI',  fuente: 'Censo 2020 / API',        color: 'text-blue-400',    bg: 'bg-blue-500/10',    estado: 'ACTIVO',  dato: '425,924 hab.' },
+            { nombre: 'MERCURIO', icon: Briefcase,desc: 'DENUE Negocios',    fuente: 'DENUE mayo 2025',         color: 'text-emerald-400', bg: 'bg-emerald-500/10', estado: 'ACTIVO',  dato: '34,891 UE' },
+            { nombre: 'CERES',    icon: Sprout,   desc: 'Agroalimentario',   fuente: 'SIAP / SADER',            color: 'text-green-400',   bg: 'bg-green-500/10',   estado: 'PRÓXIMO', dato: 'SIAP 2024' },
+            { nombre: 'HERMES',   icon: DollarSign,desc: 'Finanzas SHCP',   fuente: 'Ramo 28/33 2024',         color: 'text-amber-400',   bg: 'bg-amber-500/10',   estado: 'ACTIVO',  dato: '$10,778 mdp' },
+            { nombre: 'CRONOS',   icon: Shield,   desc: 'Seguridad SESNSP', fuente: 'Delitos ene–dic 2024',    color: 'text-rose-400',    bg: 'bg-rose-500/10',    estado: 'ACTIVO',  dato: 'CSV mensual' },
+            { nombre: 'THEMIS',   icon: Scale,    desc: 'Pobreza CONEVAL',  fuente: 'CONEVAL 2022 / 2024',     color: 'text-purple-400',  bg: 'bg-purple-500/10',  estado: 'ACTIVO',  dato: '31.4%' },
+          ].map(a => (
+            <div key={a.nombre} className={`rounded-xl p-3 border border-slate-800 ${a.bg} relative overflow-hidden`}>
+              <div className={`text-[9px] font-bold uppercase tracking-widest mb-2 ${a.estado === 'ACTIVO' ? 'text-emerald-400' : 'text-slate-500'}`}>
+                {a.estado === 'ACTIVO' ? '● ' : '○ '}{a.estado}
+              </div>
+              <a.icon className={`w-5 h-5 ${a.color} mb-2`} />
+              <div className={`text-xs font-black ${a.color} tracking-tight`}>{a.nombre}</div>
+              <div className="text-[10px] text-slate-400 mt-0.5">{a.desc}</div>
+              <div className="text-[9px] text-slate-600 mt-1 font-mono">{a.dato}</div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 p-3 bg-slate-900/50 rounded-xl border border-slate-800">
+          <p className="text-[10px] text-slate-500 font-mono">
+            <span className="text-cyan-400">$</span> Promise.all([ATLAS, MERCURIO, CERES, HERMES, CRONOS, THEMIS].map(a =&gt; a.fetch()))
+            <span className="text-slate-600 ml-2">// parallel · Firebase cache · 24h TTL</span>
+          </p>
+        </div>
+      </div>
+
+      {/* Transferencias Federales SHCP */}
+      <div className="bg-[#161920] border border-amber-500/20 rounded-2xl p-6">
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-2">
+            <DollarSign className="w-4 h-4 text-amber-400" />
+            <h4 className="text-sm font-bold text-white uppercase tracking-wider">Transferencias Federales — Nayarit</h4>
+          </div>
+          <FuenteBadge texto="SHCP Transparencia Presupuestaria" />
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
+          {[
+            { label: 'Ramo 28 — 2023',         valor: '$10,778 mdp',  sub: 'Participaciones federales',     color: 'text-amber-400' },
+            { label: 'FORTAMUNDF — 2024',       valor: '$1,132 mdp',   sub: 'Para los 20 municipios',        color: 'text-emerald-400' },
+            { label: 'Proyección Ramo 28 2026', valor: '$13,400 mdp',  sub: 'Paquete Económico 2026',        color: 'text-blue-400' },
+            { label: 'Dependencia federal',     valor: '89.6%',        sub: 'De ingresos vía transferencias', color: 'text-rose-400' },
+          ].map((item, i) => (
+            <div key={i} className="bg-slate-900/50 rounded-xl p-4 border border-slate-800">
+              <div className={`text-lg font-black font-mono ${item.color}`}>{item.valor}</div>
+              <div className="text-xs font-bold text-slate-300 mt-1">{item.label}</div>
+              <div className="text-[10px] text-slate-500 mt-0.5">{item.sub}</div>
+            </div>
+          ))}
+        </div>
+        <div className="p-3 bg-amber-500/5 rounded-xl border border-amber-500/20 flex items-start gap-2">
+          <ArrowUpRight className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+          <p className="text-xs text-amber-300">
+            <span className="font-bold">Oportunidad:</span> El 89.6% de dependencia federal significa que optimizar la recaudación propia municipal (predial, agua, licencias) tiene impacto directo en la autonomía financiera del municipio. Un incremento del 10% en recaudación propia = +$30 mdp anuales para Tepic.
+          </p>
         </div>
       </div>
 
