@@ -513,6 +513,76 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
 
       <WixSep />
 
+      {/* Mandato Federal — Ley de Simplificación y Digitalización */}
+      <section className="py-24 relative z-10 bg-gradient-to-b from-[#08111e] to-[#0a2040] overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.04] wix-bg pointer-events-none"></div>
+        <div className="max-w-[1100px] mx-auto px-6 md:px-12 relative z-10">
+
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 bg-[#D81E5B]/15 border border-[#D81E5B]/35 px-5 py-2 rounded-full mb-6">
+              <ShieldCheck className="w-4 h-4 text-[#D81E5B]" />
+              <span className="text-[#D81E5B] text-xs font-bold uppercase tracking-widest">Ley Nacional de Simplificación y Digitalización · 2025</span>
+            </div>
+            <h3 className="text-4xl md:text-5xl font-serif font-black text-white leading-tight mb-5">
+              Mandato Federal.<br /><span className="text-[#0FA3B1] italic font-medium">Solución Municipal.</span>
+            </h3>
+            <p className="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed">
+              La Presidenta Sheinbaum convirtió la digitalización en ley constitucional. El 85% de los trámites
+              que afectan a los ciudadanos son locales — y ahí es exactamente donde actúa ConnectX.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-12">
+            {[
+              {
+                icon: ShieldCheck, color: '#D81E5B',
+                stat: '2026', label: 'Fecha límite federal',
+                desc: 'Meta constitucional: 80% de trámites municipales digitalizados. La ley aplica a los tres órdenes de gobierno — sin excepción.'
+              },
+              {
+                icon: Globe, color: '#0FA3B1',
+                stat: '85%', label: 'Gap que la ATDT no cubre',
+                desc: 'De los trámites que afectan al ciudadano son estatales o municipales. La Fábrica de Software federal no los toca. ConnectX sí.'
+              },
+              {
+                icon: Landmark, color: '#F5A623',
+                stat: 'Art. 74', label: 'LlaveMx — cumplimiento LNETB',
+                desc: 'Único municipio nayarita con integración nativa al sistema federal de identidad digital. Verificado desde el primer día de operación.'
+              },
+            ].map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-7 hover:bg-white/8 transition-all group">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-5" style={{ background: `${item.color}22` }}>
+                    <Icon className="w-5 h-5" style={{ color: item.color }} />
+                  </div>
+                  <div className="text-3xl font-serif font-black mb-2" style={{ color: item.color }}>{item.stat}</div>
+                  <div className="text-white font-black text-xs mb-3 uppercase tracking-widest">{item.label}</div>
+                  <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="text-center">
+            <p className="text-slate-500 text-sm italic mb-6 max-w-lg mx-auto leading-relaxed">
+              "Al eliminar los trámites burocráticos se elimina la corrupción."
+              <span className="block not-italic text-slate-600 text-xs mt-1">— Dra. Claudia Sheinbaum, Presidenta de México</span>
+            </p>
+            <button
+              onClick={() => onNavigate('c5')}
+              className="bg-[#D81E5B] hover:bg-[#B5154A] text-white px-10 py-4 rounded-full text-sm font-bold transition-all shadow-xl shadow-[#D81E5B]/30 inline-flex items-center gap-3 group"
+            >
+              Ver cómo Tepic supera el mandato federal
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+
+        </div>
+      </section>
+
+      <WixSep />
+
       {/* Nayarit ID — Identidad en 3 lenguas */}
       <section className="bg-[#080f1e] py-24 relative z-10 overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/8 rounded-full blur-3xl pointer-events-none"></div>
