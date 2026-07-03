@@ -107,7 +107,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
     <div className="min-h-screen bg-[#fcfdfe] font-sans overflow-x-hidden selection:bg-blue-100 relative">
       <OjosEscena />
 
-      <div className="h-1.5 w-full bg-gradient-to-r from-blue-600 via-amber-500 to-emerald-500 opacity-80"></div>
+      <div className="h-1.5 w-full bg-gradient-to-r from-[#D81E5B] via-[#F5A623] to-[#4C9F70]"></div>
 
       {/* Mobile Nav Overlay */}
       {mobileNavOpen && (
@@ -130,7 +130,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
             ))}
             <button
               onClick={() => { setMobileNavOpen(false); onNavigate('dev'); }}
-              className="mt-6 bg-blue-500 text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-lg shadow-xl"
+              className="mt-6 bg-[#D81E5B] text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-lg shadow-xl shadow-[#D81E5B]/30"
             >
               Acceso Elite
             </button>
@@ -141,7 +141,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
       {/* Header */}
       <header className="px-6 md:px-12 py-8 flex justify-between items-center relative z-20">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20">
+          <div className="w-12 h-12 bg-[#D81E5B] rounded-xl flex items-center justify-center shadow-lg shadow-[#D81E5B]/25">
             <Radio className="text-white w-7 h-7" />
           </div>
           <div>
@@ -157,7 +157,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
           <button onClick={() => onNavigate('c5')} className="text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-widest">Transparencia</button>
           <button
             onClick={() => onNavigate('dev')}
-            className="bg-[#0f285c] text-white px-7 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-[#0f285c]/20"
+            className="bg-[#D81E5B] text-white px-7 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-[#D81E5B]/30"
           >
             Acceso Elite
           </button>
@@ -182,16 +182,16 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                 { value: '20+',  label: 'Secretarías integradas'  },
                 { value: '1.5M', label: 'Ciudadanos conectados'   },
               ].map((kpi, i) => (
-                <div key={i} className="flex items-center gap-2 bg-blue-600/8 border border-blue-600/15 rounded-full px-4 py-2">
-                  <span className="text-blue-600 font-black text-sm">{kpi.value}</span>
-                  <span className="text-slate-600 text-xs font-bold">{kpi.label}</span>
+                <div key={i} className="flex items-center gap-2 bg-[#D81E5B]/6 border border-[#D81E5B]/20 rounded-full px-4 py-2">
+                  <span className="text-[#D81E5B] font-black text-sm">{kpi.value}</span>
+                  <span className="text-slate-500 text-xs font-bold">{kpi.label}</span>
                 </div>
               ))}
             </div>
 
             <h2 className="text-5xl md:text-6xl lg:text-[4.8rem] font-serif font-black text-[#0f285c] leading-[0.95] tracking-tighter mb-10">
               El sistema operativo<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 italic font-medium">del nuevo gobierno</span><br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D81E5B] to-[#0FA3B1] italic font-medium">del nuevo gobierno</span><br />
               de Nayarit.
             </h2>
 
@@ -202,7 +202,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
             <div className="flex flex-wrap items-center gap-4 mb-20">
               <button
                 onClick={() => onNavigate('citizen')}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-5 rounded-full text-base font-bold transition-all shadow-2xl shadow-blue-600/40 flex items-center gap-3 group"
+                className="bg-[#D81E5B] hover:bg-[#B5154A] text-white px-8 py-5 rounded-full text-base font-bold transition-all shadow-2xl shadow-[#D81E5B]/40 flex items-center gap-3 group"
               >
                 Descubrir la Plataforma <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
@@ -215,18 +215,18 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
             </div>
 
             {/* 3-col stats */}
-            <div className="grid grid-cols-3 gap-6 max-w-lg border-t border-slate-200 pt-12">
+            <div className="grid grid-cols-3 gap-6 max-w-lg border-t border-[#D81E5B]/20 pt-12">
               <div>
-                <h4 className="text-3xl font-serif font-bold text-[#0f285c]">1</h4>
-                <p className="text-xs uppercase tracking-widest text-slate-600 font-bold mt-1">Ecosistema</p>
+                <h4 className="text-3xl font-serif font-bold text-[#D81E5B]">1</h4>
+                <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Ecosistema</p>
               </div>
               <div>
-                <h4 className="text-3xl font-serif font-bold text-[#0f285c]">20+</h4>
-                <p className="text-xs uppercase tracking-widest text-slate-600 font-bold mt-1">Secretarías</p>
+                <h4 className="text-3xl font-serif font-bold text-[#D81E5B]">20+</h4>
+                <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Secretarías</p>
               </div>
               <div>
-                <h4 className="text-3xl font-serif font-bold text-[#0f285c]">1.5M</h4>
-                <p className="text-xs uppercase tracking-widest text-slate-600 font-bold mt-1">Ciudadanos</p>
+                <h4 className="text-3xl font-serif font-bold text-[#D81E5B]">1.5M</h4>
+                <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Ciudadanos</p>
               </div>
             </div>
           </div>
@@ -253,9 +253,9 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                 >
                   <div className="p-10 text-center flex flex-col items-center bg-white z-10 relative">
                     <div className="flex items-center gap-2 mb-6">
-                      <span className="w-8 h-[1px] bg-blue-600/20"></span>
-                      <span className="text-blue-600 font-black text-sm tracking-[0.2em] uppercase">{item.num}</span>
-                      <span className="w-8 h-[1px] bg-blue-600/20"></span>
+                      <span className="w-8 h-[1px] bg-[#D81E5B]/20"></span>
+                      <span className="text-[#D81E5B] font-black text-sm tracking-[0.2em] uppercase">{item.num}</span>
+                      <span className="w-8 h-[1px] bg-[#D81E5B]/20"></span>
                     </div>
                     <div className={cn("p-5 rounded-2xl mb-6 bg-slate-50 group-hover:scale-110 transition-transform duration-500", item.color)}>
                       {React.createElement(item.icon, { className: "w-10 h-10" })}
@@ -292,21 +292,22 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
       </section>
 
       {/* Social Proof Strip */}
-      <section className="bg-[#0f285c] py-16 relative z-10">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-12">
+      <section className="bg-[#14213D] py-16 relative z-10 overflow-hidden">
+        <div className="absolute inset-0 opacity-5 wix-bg pointer-events-none"></div>
+        <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative">
           <div className="grid grid-cols-3 divide-x divide-white/10 text-center">
             <div className="py-4 px-6">
-              <div className="text-5xl md:text-6xl font-serif font-black text-amber-400">50,000</div>
+              <div className="text-5xl md:text-6xl font-serif font-black text-[#F5A623]">50,000</div>
               <div className="text-xs font-bold text-slate-300 mt-2 uppercase tracking-widest">ciudadanos</div>
               <div className="text-xs text-slate-400 mt-1">meta Tepic año 1</div>
             </div>
             <div className="py-4 px-6">
-              <div className="text-5xl md:text-6xl font-serif font-black text-blue-400">15</div>
+              <div className="text-5xl md:text-6xl font-serif font-black text-[#0FA3B1]">15</div>
               <div className="text-xs font-bold text-slate-300 mt-2 uppercase tracking-widest">meses</div>
               <div className="text-xs text-slate-400 mt-1">para transformar Nayarit</div>
             </div>
             <div className="py-4 px-6">
-              <div className="text-5xl md:text-6xl font-serif font-black text-emerald-400">0</div>
+              <div className="text-5xl md:text-6xl font-serif font-black text-[#4C9F70]">0</div>
               <div className="text-xs font-bold text-slate-300 mt-2 uppercase tracking-widest">papel ni filas</div>
               <div className="text-xs text-slate-400 mt-1">desde el primer día</div>
             </div>

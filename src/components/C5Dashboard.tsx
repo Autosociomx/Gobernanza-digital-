@@ -104,7 +104,7 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
           >
             <div className="p-6 border-b border-slate-800">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded bg-gradient-to-br from-purple-500 to-rose-500 flex items-center justify-center font-bold text-white shadow-lg">
+                <div className="w-8 h-8 rounded bg-gradient-to-br from-[#D81E5B] to-[#14213D] flex items-center justify-center font-bold text-white shadow-lg shadow-[#D81E5B]/30">
                   N
                 </div>
                 <div>
@@ -122,9 +122,9 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
                   onClick={() => setActiveModule(m.id as ModuleType)}
                   className={cn(
                     "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group text-left",
-                    activeModule === m.id 
-                      ? "bg-slate-800/50 text-white" 
-                      : "text-slate-400 hover:bg-slate-800/30 hover:text-slate-200"
+                    activeModule === m.id
+                      ? "bg-[#D81E5B]/10 border-l-2 border-[#D81E5B] text-white pl-[10px]"
+                      : "text-slate-400 hover:bg-slate-800/30 hover:text-slate-200 border-l-2 border-transparent"
                   )}
                 >
                   <div className={cn("p-1.5 rounded-md transition-colors", activeModule === m.id ? m.bg : "bg-slate-800/50 group-hover:bg-slate-800")}>
@@ -168,8 +168,8 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
           
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 bg-slate-800/50 px-3 py-1.5 rounded-full border border-slate-700/50">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse"></div>
-              <span className="text-xs font-mono text-emerald-400">STATE: ONLINE</span>
+              <div className="w-2 h-2 rounded-full bg-[#D81E5B] shadow-[0_0_8px_rgba(216,30,91,0.6)] animate-pulse"></div>
+              <span className="text-xs font-mono text-[#D81E5B]">NAYARIT: EN LÍNEA</span>
             </div>
             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-rose-400 to-orange-400 border-2 border-slate-800 overflow-hidden">
                <img src="/geraldine-perfil.jpg" alt="Profile" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1586996292898-71f4036c4e07?w=100&h=100&fit=crop&crop=faces" }}/>
