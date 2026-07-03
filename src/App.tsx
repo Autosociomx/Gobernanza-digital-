@@ -1,60 +1,31 @@
-import React, { useState, Suspense } from 'react';
+import React, { useState } from 'react';
+import { PlatformLanding } from './components/PlatformLanding';
+import { C5Dashboard } from './components/C5Dashboard';
+import { CitizenApp } from './components/CitizenApp';
+import { DeveloperChecklist } from './components/DeveloperChecklist';
+import { ExecutiveFolder } from './components/ExecutiveFolder';
 import { motion, AnimatePresence } from 'motion/react';
-import { ConsentGate } from './components/ConsentGate';
-
-const PlatformLanding  = React.lazy(() => import('./components/PlatformLanding').then(m => ({ default: m.PlatformLanding })));
-const C5Dashboard      = React.lazy(() => import('./components/C5Dashboard').then(m => ({ default: m.C5Dashboard })));
-const CitizenApp       = React.lazy(() => import('./components/CitizenApp').then(m => ({ default: m.CitizenApp })));
-const DeveloperChecklist = React.lazy(() => import('./components/DeveloperChecklist').then(m => ({ default: m.DeveloperChecklist })));
-const ExecutiveFolder  = React.lazy(() => import('./components/ExecutiveFolder').then(m => ({ default: m.ExecutiveFolder })));
-
-function PageLoader() {
-  return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-        <span className="text-gray-500 text-xs font-mono tracking-widest uppercase">Cargando</span>
-      </div>
-    </div>
-  );
-}
 import { ChevronDown, LayoutDashboard, UserCircle2, FileText, Settings2 } from 'lucide-react';
 
-const CONSENT_KEY = 'nyd-legal-v1';
-
 function App() {
-  const [consentGiven, setConsentGiven] = useState(() =>
-    typeof window !== 'undefined' && localStorage.getItem(CONSENT_KEY) === 'accepted'
-  );
   const [currentView, setCurrentView] = useState<'landing' | 'c5' | 'citizen' | 'dev' | 'executive'>('landing');
   const [citizenTab, setCitizenTab] = useState<any>('home');
   const [citizenAction, setCitizenAction] = useState<any>(null);
 
-  if (!consentGiven) {
-    return (
-      <ConsentGate
-        onAccept={() => {
-          localStorage.setItem(CONSENT_KEY, 'accepted');
-          setConsentGiven(true);
-        }}
-      />
-    );
-  }
-
   if (currentView === 'c5') {
-    return <Suspense fallback={<PageLoader />}><C5Dashboard onLogout={() => setCurrentView('landing')} /></Suspense>;
+    return <C5Dashboard onLogout={() => setCurrentView('landing')} />;
   }
 
   if (currentView === 'citizen') {
-    return <Suspense fallback={<PageLoader />}><CitizenApp onLogout={() => setCurrentView('landing')} initialTab={citizenTab} initialAction={citizenAction} /></Suspense>;
+    return <CitizenApp onLogout={() => setCurrentView('landing')} initialTab={citizenTab} initialAction={citizenAction} />;
   }
 
   if (currentView === 'dev') {
-    return <Suspense fallback={<PageLoader />}><DeveloperChecklist onLogout={() => setCurrentView('landing')} /></Suspense>;
+    return <DeveloperChecklist onLogout={() => setCurrentView('landing')} />;
   }
 
   if (currentView === 'executive') {
-    return <Suspense fallback={<PageLoader />}><ExecutiveFolder onBack={() => setCurrentView('landing')} /></Suspense>;
+    return <ExecutiveFolder onBack={() => setCurrentView('landing')} />;
   }
 
   const menuItems = [
@@ -89,17 +60,15 @@ function App() {
   ];
 
   return (
-    <Suspense fallback={<PageLoader />}>
-      <main id="main-content" className="min-h-screen relative overflow-x-hidden">
-        <PlatformLanding onNavigate={(view, subView, action) => {
-          if (view === 'citizen') {
-            setCitizenTab(subView || 'home');
-            setCitizenAction(action || null);
-          }
-          setCurrentView(view);
-        }} />
-      </main>
-    </Suspense>
+    <div className="min-h-screen relative overflow-x-hidden">
+      <PlatformLanding onNavigate={(view, subView, action) => {
+        if (view === 'citizen') {
+          setCitizenTab(subView || 'home');
+          setCitizenAction(action || null);
+        }
+        setCurrentView(view);
+      }} />
+    </div>
   );
 }
 
