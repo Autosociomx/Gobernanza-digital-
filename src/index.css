@@ -196,6 +196,11 @@ body {
   box-shadow: 0 28px 70px rgba(0,0,0,.4);
 }
 
+/* OjoNierika 2D spin — for SVG section accents */
+@keyframes ojo-spin-2d { to { transform: rotate(360deg); } }
+.ojo-spin-2d { animation: ojo-spin-2d 20s linear infinite; }
+.ojo-spin-2d-rev { animation: ojo-spin-2d 28s linear infinite reverse; }
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--hueso); }

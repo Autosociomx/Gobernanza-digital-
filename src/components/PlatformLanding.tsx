@@ -19,12 +19,79 @@ interface PlatformLandingProps {
 
 const ecosystemPillars = [
   { id: 1, num: '01', title: 'Gobierno Inteligente', impact: '20+ dependencias en un solo panel', icon: Landmark,      color: 'text-blue-700',   img: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=400&h=600&fit=crop' },
-  { id: 2, num: '02', title: 'Salud Digital',        impact: 'Citas, expediente y orientación médica',  icon: HeartPulse,    color: 'text-rose-500',   img: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=400&h=600&fit=crop' },
+  { id: 2, num: '02', title: 'Salud Digital',        impact: 'Citas, expediente y orientación médica',  icon: HeartPulse,    color: 'text-teal-500',   img: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=400&h=600&fit=crop' },
   { id: 3, num: '03', title: 'Educación Inteligente',impact: 'Becas, inscripciones y seguimiento escolar', icon: GraduationCap, color: 'text-indigo-600', img: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=400&h=600&fit=crop' },
   { id: 4, num: '04', title: 'Campo Inteligente',    impact: 'Apoyos al campo nayarita en tiempo real', icon: Leaf,          color: 'text-emerald-600',img: 'https://images.unsplash.com/photo-1560493676-04071c5f467b?q=80&w=400&h=600&fit=crop' },
   { id: 5, num: '05', title: 'Turismo y Gastronomía',impact: 'El destino y la mesa, conectados',        icon: Utensils,      color: 'text-amber-600',  img: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=400&h=600&fit=crop' },
   { id: 6, num: '06', title: 'Economía Digital',     impact: 'Licencias, créditos y trámites en 3 min', icon: Briefcase,     color: 'text-purple-600', img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=400&h=600&fit=crop' },
 ];
+
+/* ─── Wixárika canvas banda (top strip) ───────────────────── */
+const WixBanda = ({ height = 48 }: { height?: number }) => {
+  const ref = React.useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const c = ref.current; if (!c) return;
+    const ctx = c.getContext('2d'); if (!ctx) return;
+    const W = c.parentElement?.offsetWidth || window.innerWidth, H = height;
+    c.width = W; c.height = H;
+    const CL = ['#D81E5B','#F5A623','#0FA3B1','#4C9F70','#E85D04'];
+    ctx.fillStyle = '#080c14'; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle = 'rgba(255,255,255,0.1)';
+    for (let x=5;x<W;x+=10) for (let y=5;y<H;y+=10) { ctx.beginPath();ctx.arc(x,y,.7,0,Math.PI*2);ctx.fill(); }
+    const dia = (cx:number,cy:number,r:number,col:string,lw:number,a:number) => {
+      ctx.globalAlpha=a; ctx.strokeStyle=col; ctx.lineWidth=lw;
+      ctx.beginPath(); ctx.moveTo(cx,cy-r); ctx.lineTo(cx+r,cy); ctx.lineTo(cx,cy+r); ctx.lineTo(cx-r,cy); ctx.closePath(); ctx.stroke(); ctx.globalAlpha=1;
+    };
+    const xS=52, yS=26; let row=0;
+    for (let y=yS/2; y<H+yS; y+=yS) {
+      const xO=(row%2)*(xS/2);
+      for (let x=xO; x<W+xS; x+=xS) {
+        const ci=Math.abs(Math.floor(x/xS+y/yS))%5, r=Math.min(H*.42,14);
+        dia(x,y,r,CL[ci],1.2,.72); dia(x,y,r*.6,CL[(ci+1)%5],1,.5); dia(x,y,r*.27,CL[(ci+2)%5],.8,.55);
+        ctx.globalAlpha=.55; ctx.fillStyle=CL[(ci+3)%5]; ctx.beginPath(); ctx.arc(x,y,1.5,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+      }
+      row++;
+    }
+  }, [height]);
+  return <div style={{height,background:'#080c14',overflow:'hidden'}}><canvas ref={ref} style={{display:'block',width:'100%',height:`${height}px`}}/></div>;
+};
+
+/* ─── Wixárika canvas section separator ───────────────────── */
+const WixSep = () => {
+  const ref = React.useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const c = ref.current; if (!c) return;
+    const ctx = c.getContext('2d'); if (!ctx) return;
+    const W = c.parentElement?.offsetWidth || window.innerWidth, H = 32;
+    c.width = W; c.height = H;
+    const CL = ['#D81E5B','#F5A623','#0FA3B1','#4C9F70','#E85D04'];
+    ctx.fillStyle = '#080c14'; ctx.fillRect(0,0,W,H);
+    const dia = (cx:number,cy:number,r:number,col:string,lw:number,a:number) => {
+      ctx.globalAlpha=a; ctx.strokeStyle=col; ctx.lineWidth=lw;
+      ctx.beginPath(); ctx.moveTo(cx,cy-r); ctx.lineTo(cx+r,cy); ctx.lineTo(cx,cy+r); ctx.lineTo(cx-r,cy); ctx.closePath(); ctx.stroke(); ctx.globalAlpha=1;
+    };
+    for (let x=24; x<W+48; x+=48) {
+      const ci=Math.abs(Math.floor(x/48))%5;
+      dia(x,H/2,12,CL[ci],1.2,.75); dia(x,H/2,6.6,CL[(ci+1)%5],.9,.5);
+      ctx.globalAlpha=.5; ctx.fillStyle=CL[(ci+2)%5]; ctx.beginPath(); ctx.arc(x,H/2,1.5,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+    }
+  }, []);
+  return <div style={{height:32,background:'#080c14',overflow:'hidden'}}><canvas ref={ref} style={{display:'block',width:'100%',height:'32px'}}/></div>;
+};
+
+/* ─── Ojo de dios / nierika SVG for section accents ────────── */
+const OjoNierika = ({ size = 80, className = '' }: { size?: number; className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 200 200" className={className}>
+    <polygon points="100,6 194,100 100,194 6,100" fill="none" stroke="#D81E5B" strokeWidth="2.5"/>
+    <polygon points="100,22 178,100 100,178 22,100" fill="none" stroke="#F5A623" strokeWidth="2.5"/>
+    <polygon points="100,40 160,100 100,160 40,100" fill="none" stroke="#0FA3B1" strokeWidth="2.5"/>
+    <polygon points="100,58 142,100 100,142 58,100" fill="none" stroke="#4C9F70" strokeWidth="2.5"/>
+    <polygon points="100,76 124,100 100,124 76,100" fill="none" stroke="#E85D04" strokeWidth="2.5"/>
+    <circle cx="100" cy="100" r="9" fill="#D81E5B"/>
+    <circle cx="100" cy="100" r="4.5" fill="#F5A623"/>
+    <circle cx="100" cy="100" r="2" fill="white"/>
+  </svg>
+);
 
 const OjosEscena = () => {
   const [offset, setOffset] = useState({ cx: 0, cy: 0, tx: 0, ty: 0 });
@@ -107,7 +174,8 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
     <div className="min-h-screen bg-[#fcfdfe] font-sans overflow-x-hidden selection:bg-blue-100 relative">
       <OjosEscena />
 
-      <div className="h-1.5 w-full bg-gradient-to-r from-[#D81E5B] via-[#F5A623] to-[#4C9F70]"></div>
+      <WixBanda height={48} />
+      <div className="h-[3px] w-full bg-gradient-to-r from-[#D81E5B] via-[#F5A623] via-[#0FA3B1] via-[#4C9F70] to-[#E85D04]"></div>
 
       {/* Mobile Nav Overlay */}
       {mobileNavOpen && (
@@ -320,6 +388,8 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
         </div>
       </section>
 
+      <WixSep />
+
       {/* Before / After */}
       <section className="py-24 relative z-10 bg-[#fcfdfe]">
         <div className="max-w-[1100px] mx-auto px-6 md:px-12">
@@ -361,6 +431,8 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
           </div>
         </div>
       </section>
+
+      <WixSep />
 
       {/* Un solo Nayarit — Convergence Hub */}
       <section className="py-28 relative z-10 bg-white border-t border-slate-100">
@@ -439,10 +511,18 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
         </div>
       </section>
 
+      <WixSep />
+
       {/* Nayarit ID — Identidad en 3 lenguas */}
       <section className="bg-[#080f1e] py-24 relative z-10 overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/8 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-600/8 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute top-6 left-6 pointer-events-none ojo-spin-2d opacity-20">
+          <OjoNierika size={96} />
+        </div>
+        <div className="absolute bottom-6 right-6 pointer-events-none ojo-spin-2d-rev opacity-15">
+          <OjoNierika size={72} />
+        </div>
         <div className="max-w-[900px] mx-auto px-6 md:px-12 text-center relative z-10">
           <div className="inline-flex items-center gap-2 bg-blue-600/20 border border-blue-500/30 px-5 py-2 rounded-full mb-8">
             <Globe className="w-4 h-4 text-blue-400" />
@@ -494,6 +574,9 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
       {/* Final CTA */}
       <section className="py-28 relative z-10 bg-[#fcfdfe] text-center overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(ellipse at 50% 60%, #dbeafe 0%, transparent 65%)' }}></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none ojo-spin-2d opacity-[0.06]">
+          <OjoNierika size={520} />
+        </div>
         <div className="max-w-[700px] mx-auto px-6 relative z-10">
           <p className="text-xs font-bold uppercase tracking-widest text-slate-600 mb-5">Operativo hoy en Tepic</p>
           <h3 className="text-5xl md:text-7xl font-serif font-black text-[#0f285c] leading-[0.9] tracking-tighter mb-8">
