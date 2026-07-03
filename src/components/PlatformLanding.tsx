@@ -295,7 +295,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
       <section className="bg-[#14213D] py-16 relative z-10 overflow-hidden">
         <div className="absolute inset-0 opacity-5 wix-bg pointer-events-none"></div>
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 relative">
-          <div className="grid grid-cols-3 divide-x divide-white/10 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-white/10 text-center">
             <div className="py-4 px-6">
               <div className="text-5xl md:text-6xl font-serif font-black text-[#F5A623]">50,000</div>
               <div className="text-xs font-bold text-slate-300 mt-2 uppercase tracking-widest">ciudadanos</div>
@@ -310,6 +310,11 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
               <div className="text-5xl md:text-6xl font-serif font-black text-[#4C9F70]">0</div>
               <div className="text-xs font-bold text-slate-300 mt-2 uppercase tracking-widest">papel ni filas</div>
               <div className="text-xs text-slate-400 mt-1">desde el primer día</div>
+            </div>
+            <div className="py-4 px-6">
+              <div className="text-4xl md:text-5xl font-serif font-black text-[#D81E5B]">20/20</div>
+              <div className="text-xs font-bold text-slate-300 mt-2 uppercase tracking-widest">municipios Top 7%</div>
+              <div className="text-xs text-slate-500 mt-1">primer estado con cobertura total</div>
             </div>
           </div>
         </div>

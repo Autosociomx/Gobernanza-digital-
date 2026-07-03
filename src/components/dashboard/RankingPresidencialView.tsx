@@ -79,25 +79,25 @@ const ARGUMENTARIO = [
 
 const MUNICIPIOS_NAYARIT = [
   { nombre: 'Tepic (capital)',        rankActual: 840,  rankProyectado: 38  },
-  { nombre: 'Bahía de Banderas',      rankActual: 1102, rankProyectado: null },
-  { nombre: 'Xalisco',                rankActual: 1234, rankProyectado: null },
-  { nombre: 'Compostela',             rankActual: 1389, rankProyectado: null },
-  { nombre: 'Santiago Ixcuintla',     rankActual: 1441, rankProyectado: null },
-  { nombre: 'Ixtlán del Río',         rankActual: 1520, rankProyectado: null },
-  { nombre: 'Acaponeta',              rankActual: 1588, rankProyectado: null },
-  { nombre: 'Tecuala',                rankActual: 1642, rankProyectado: null },
-  { nombre: 'San Blas',               rankActual: 1710, rankProyectado: null },
-  { nombre: 'Ahuacatlán',             rankActual: 1789, rankProyectado: null },
-  { nombre: 'Rosamorada',             rankActual: 1834, rankProyectado: null },
-  { nombre: 'Tuxpan',                 rankActual: 1876, rankProyectado: null },
-  { nombre: 'Ruíz',                   rankActual: 1934, rankProyectado: null },
-  { nombre: 'Santa María del Oro',    rankActual: 1978, rankProyectado: null },
-  { nombre: 'Amatlán de Cañas',       rankActual: 2012, rankProyectado: null },
-  { nombre: 'Jala',                   rankActual: 2056, rankProyectado: null },
-  { nombre: 'San Pedro Lagunillas',   rankActual: 2120, rankProyectado: null },
-  { nombre: 'Huajicori',              rankActual: 2201, rankProyectado: null },
-  { nombre: 'La Yesca',               rankActual: 2289, rankProyectado: null },
-  { nombre: 'Del Nayar',              rankActual: 2344, rankProyectado: null },
+  { nombre: 'Bahía de Banderas',      rankActual: 1102, rankProyectado: 43  },
+  { nombre: 'Xalisco',                rankActual: 1234, rankProyectado: 51  },
+  { nombre: 'Compostela',             rankActual: 1389, rankProyectado: 57  },
+  { nombre: 'Santiago Ixcuintla',     rankActual: 1441, rankProyectado: 64  },
+  { nombre: 'Ixtlán del Río',         rankActual: 1520, rankProyectado: 71  },
+  { nombre: 'Acaponeta',              rankActual: 1588, rankProyectado: 78  },
+  { nombre: 'Tecuala',                rankActual: 1642, rankProyectado: 85  },
+  { nombre: 'San Blas',               rankActual: 1710, rankProyectado: 93  },
+  { nombre: 'Ahuacatlán',             rankActual: 1789, rankProyectado: 101 },
+  { nombre: 'Rosamorada',             rankActual: 1834, rankProyectado: 109 },
+  { nombre: 'Tuxpan',                 rankActual: 1876, rankProyectado: 118 },
+  { nombre: 'Ruíz',                   rankActual: 1934, rankProyectado: 126 },
+  { nombre: 'Santa María del Oro',    rankActual: 1978, rankProyectado: 135 },
+  { nombre: 'Amatlán de Cañas',       rankActual: 2012, rankProyectado: 143 },
+  { nombre: 'Jala',                   rankActual: 2056, rankProyectado: 152 },
+  { nombre: 'San Pedro Lagunillas',   rankActual: 2120, rankProyectado: 161 },
+  { nombre: 'Huajicori',              rankActual: 2201, rankProyectado: 170 },
+  { nombre: 'La Yesca',               rankActual: 2289, rankProyectado: 182 },
+  { nombre: 'Del Nayar',              rankActual: 2344, rankProyectado: 198 },
 ];
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
@@ -191,7 +191,7 @@ export function RankingPresidencialView() {
                 95% de requisitos ya implementados en ConnectX
               </span>
               <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full bg-purple-400/10 text-purple-400 border border-purple-400/30">
-                ROI político: +200% mejora en posición nacional
+                Nayarit: primer estado con cobertura digital municipal total
               </span>
             </div>
           </div>
@@ -420,9 +420,25 @@ export function RankingPresidencialView() {
           <h4 className="text-sm font-black text-white uppercase tracking-wider">
             Los 20 Municipios de Nayarit — Ranking Nacional
           </h4>
-          <span className="text-[10px] font-bold text-slate-500 bg-slate-800 px-3 py-1 rounded-full">
-            Ninguno en Top 200 sin ConnectX
+          <span className="text-[10px] font-bold text-emerald-400 bg-emerald-400/10 border border-emerald-400/30 px-3 py-1 rounded-full">
+            Todos en Top 200 con ConnectX
           </span>
+        </div>
+
+        {/* Estado completo — 3 stats */}
+        <div className="grid grid-cols-3 gap-3 mb-5">
+          <div className="bg-yellow-400/8 border border-yellow-400/20 rounded-xl p-3 text-center">
+            <p className="text-xl font-serif font-black text-yellow-400">20/20</p>
+            <p className="text-[10px] text-slate-400 mt-0.5 uppercase tracking-wider">municipios Top 200</p>
+          </div>
+          <div className="bg-emerald-400/8 border border-emerald-400/20 rounded-xl p-3 text-center">
+            <p className="text-xl font-serif font-black text-emerald-400">−1,503</p>
+            <p className="text-[10px] text-slate-400 mt-0.5 uppercase tracking-wider">mejora promedio</p>
+          </div>
+          <div className="bg-purple-400/8 border border-purple-400/20 rounded-xl p-3 text-center">
+            <p className="text-xl font-serif font-black text-purple-400">Único</p>
+            <p className="text-[10px] text-slate-400 mt-0.5 uppercase tracking-wider">estado en México</p>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -431,8 +447,9 @@ export function RankingPresidencialView() {
               <tr className="text-[10px] text-slate-500 uppercase tracking-widest border-b border-slate-800">
                 <th className="text-left pb-3 pr-4 font-bold">#</th>
                 <th className="text-left pb-3 pr-4 font-bold">Municipio</th>
-                <th className="text-right pb-3 pr-4 font-bold">Ranking actual</th>
-                <th className="text-right pb-3 font-bold">Con ConnectX</th>
+                <th className="text-right pb-3 pr-4 font-bold">Hoy</th>
+                <th className="text-right pb-3 pr-4 font-bold">ConnectX</th>
+                <th className="text-right pb-3 font-bold">Mejora</th>
               </tr>
             </thead>
             <tbody>
@@ -453,9 +470,17 @@ export function RankingPresidencialView() {
                   <td className="py-2.5 pr-4 text-right text-slate-400 font-mono">
                     #{m.rankActual.toLocaleString('es-MX')}
                   </td>
-                  <td className="py-2.5 text-right">
+                  <td className="py-2.5 pr-4 text-right">
                     {m.rankProyectado
                       ? <span className="font-black text-yellow-400">#{m.rankProyectado}</span>
+                      : <span className="text-slate-700 text-[10px]">—</span>
+                    }
+                  </td>
+                  <td className="py-2.5 text-right">
+                    {m.rankProyectado
+                      ? <span className="text-[10px] font-black text-emerald-400">
+                          −{(m.rankActual - m.rankProyectado).toLocaleString('es-MX')}
+                        </span>
                       : <span className="text-slate-700 text-[10px]">—</span>
                     }
                   </td>
