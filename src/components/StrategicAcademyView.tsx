@@ -206,7 +206,10 @@ export function StrategicAcademyView({ onBack }: { onBack: () => void }) {
 
          {/* CTA Section */}
          <div className="flex flex-col items-center space-y-6">
-            <button className="bg-white text-black px-12 py-6 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-4">
+            <button 
+              onClick={() => alert('Propuesta de Alianza Estratégica enviada al Nodo de Gobernanza. Un consultor ConnectX se pondrá en contacto.')}
+              className="bg-white text-black px-12 py-6 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-4"
+            >
                Iniciar Alianza Estratégica
                <ArrowRight className="w-4 h-4" />
             </button>

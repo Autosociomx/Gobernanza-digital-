@@ -62,10 +62,11 @@ import { ConnectXAcademy } from './ConnectXAcademy';
 import { SystemAuditView } from './SystemAuditView';
 import { BananaCommandCenter } from './BananaCommandCenter';
 import { StrategicAcademyView } from './StrategicAcademyView';
+import { MasterStrategicPlan } from './MasterStrategicPlan';
 
 import { AuraCertificationSeal } from './AuraCertificationSeal';
 
-type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria' | 'academy' | 'system_audit' | 'banana_command' | 'strategic_academy';
+type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria' | 'academy' | 'system_audit' | 'banana_command' | 'strategic_academy' | 'strategic_plan';
 type Language = 'es' | 'cora' | 'wixarika';
 
 export function CitizenApp({ 
@@ -438,6 +439,8 @@ export function CitizenApp({
                   onGoToSystemAudit={() => setActiveTab('system_audit')}
                   onGoToBanana={() => setActiveTab('banana_command')}
                   onGoToStrategy={() => setActiveTab('strategic_academy')}
+                  onGoToStrategicPlan={() => setActiveTab('strategic_plan')}
+                  onViewManifest={() => setActiveTab('strategic_plan')}
                 />
               )}
               {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} />}
@@ -453,6 +456,7 @@ export function CitizenApp({
               {activeTab === 'system_audit' && <SystemAuditView onBack={() => setActiveTab('home')} />}
               {activeTab === 'banana_command' && <BananaCommandCenter onBack={() => setActiveTab('home')} />}
               {activeTab === 'strategic_academy' && <StrategicAcademyView onBack={() => setActiveTab('home')} />}
+              {activeTab === 'strategic_plan' && <MasterStrategicPlan onBack={() => setActiveTab('home')} />}
 
             </motion.div>
           </AnimatePresence>
@@ -938,7 +942,9 @@ function HomeView({
   onGoToAcademy,
   onGoToSystemAudit,
   onGoToBanana,
-  onGoToStrategy
+  onGoToStrategy,
+  onGoToStrategicPlan,
+  onViewManifest
 }: { 
   profile: any,
   onShowMap: () => void, 
@@ -950,7 +956,9 @@ function HomeView({
   onGoToAcademy: () => void,
   onGoToSystemAudit: () => void,
   onGoToBanana: () => void,
-  onGoToStrategy: () => void
+  onGoToStrategy: () => void,
+  onGoToStrategicPlan: () => void,
+  onViewManifest?: () => void
 }) {
   return (
     <div className="space-y-6 pt-2">
@@ -987,7 +995,10 @@ function HomeView({
                 <span className="text-slate-400">en Evolución Activa</span>
               </h2>
               <div className="flex items-center gap-4 pt-2">
-                <button className="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 px-6 py-3 rounded-2xl group/play hover:bg-white/20 transition-all">
+                <button 
+                  onClick={onViewManifest}
+                  className="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 px-6 py-3 rounded-2xl group/play hover:bg-white/20 transition-all"
+                >
                   <div className="w-8 h-8 rounded-full bg-magenta-600 flex items-center justify-center shadow-lg group-hover/play:scale-110 transition-transform">
                     <Play className="w-4 h-4 text-white fill-white ml-0.5" />
                   </div>
@@ -1089,7 +1100,7 @@ function HomeView({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <LegalComplianceDisclaimer />
+        <LegalComplianceDisclaimer onViewCert={onGoToStrategicPlan} />
       </motion.div>
       
       {/* Primary Services Grid */}
@@ -1148,6 +1159,27 @@ function HomeView({
         </div>
         <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-yellow-500 transition-all">
           <ArrowRight className="w-5 h-5 text-yellow-500 group-hover:text-black" />
+        </div>
+      </button>
+
+      {/* Master Strategic Plan CTA */}
+      <button 
+        onClick={onGoToStrategicPlan}
+        className="w-full bg-gradient-to-r from-indigo-950 to-slate-950 rounded-[2.5rem] p-8 flex items-center justify-between border border-white/10 shadow-2xl relative overflow-hidden group"
+      >
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(99,102,241,0.1),transparent_50%)]"></div>
+        <div className="flex items-center gap-6 relative z-10">
+           <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-center text-indigo-400 shadow-2xl group-hover:scale-110 transition-transform">
+              <Activity className="w-8 h-8" />
+           </div>
+           <div className="text-left">
+              <p className="text-[10px] text-indigo-400 font-black uppercase tracking-[0.3em] mb-1">Estrategia & Resiliencia</p>
+              <p className="font-serif font-black text-2xl leading-tight text-white">Plan Maestro 2026</p>
+              <p className="text-xs text-slate-500 font-medium mt-1">Simulación de Estrés y Pilares de Trabajo</p>
+           </div>
+        </div>
+        <div className="w-12 h-12 bg-indigo-500 rounded-full flex items-center justify-center shadow-lg shadow-indigo-500/30 group-hover:bg-white transition-all">
+          <ChevronRight className="w-6 h-6 text-white group-hover:text-indigo-900" />
         </div>
       </button>
 

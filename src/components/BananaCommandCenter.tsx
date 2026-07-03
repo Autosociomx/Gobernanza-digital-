@@ -98,7 +98,10 @@ export function BananaCommandCenter({ onBack }: { onBack: () => void }) {
             <p className="text-slate-400 text-xs max-w-sm">
                La arquitectura "Banana" permite actualizaciones en caliente de los protocolos de comunicación. Contacta al equipo de ConnectX para expansiones de red.
             </p>
-            <button className="mt-4 px-8 py-4 bg-yellow-400 text-black rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-yellow-300 transition-all">
+            <button 
+              onClick={() => alert('Sugerencia de Optimización Banana enviada al centro de datos.')}
+              className="mt-4 px-8 py-4 bg-yellow-400 text-black rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-yellow-300 transition-all"
+            >
                Sugerir Optimización
             </button>
          </div>
