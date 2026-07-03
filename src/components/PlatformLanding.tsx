@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Menu, Radio, HeartPulse, ArrowRight,
+  Menu, X, Radio, HeartPulse, ArrowRight,
   ShieldCheck, Globe, Leaf,
   Landmark, GraduationCap, Utensils, Briefcase
 } from 'lucide-react';
@@ -94,12 +94,49 @@ const OjosEscena = () => {
 };
 
 export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  const navItems = [
+    { label: 'Soluciones', view: 'citizen' as const },
+    { label: 'Estrategia', view: 'executive' as const },
+    { label: 'Impacto', view: 'dev' as const },
+    { label: 'Transparencia', view: 'c5' as const },
+  ];
 
   return (
     <div className="min-h-screen bg-[#fcfdfe] font-sans overflow-x-hidden selection:bg-blue-100 relative">
       <OjosEscena />
 
       <div className="h-1.5 w-full bg-gradient-to-r from-blue-600 via-amber-500 to-emerald-500 opacity-80"></div>
+
+      {/* Mobile Nav Overlay */}
+      {mobileNavOpen && (
+        <div className="fixed inset-0 z-50 bg-[#0f285c] flex flex-col p-8">
+          <div className="flex justify-between items-center mb-12">
+            <h2 className="font-serif font-black text-2xl text-white">Nayarit<span className="text-blue-400">Digital</span></h2>
+            <button onClick={() => setMobileNavOpen(false)} aria-label="Cerrar menú" className="p-3 bg-white/10 rounded-xl">
+              <X className="w-6 h-6 text-white" aria-hidden="true" />
+            </button>
+          </div>
+          <nav className="flex flex-col gap-4" role="navigation" aria-label="Menú principal">
+            {navItems.map(item => (
+              <button
+                key={item.view}
+                onClick={() => { setMobileNavOpen(false); onNavigate(item.view); }}
+                className="text-left text-2xl font-bold text-white/80 hover:text-white py-4 border-b border-white/10 uppercase tracking-widest transition-colors"
+              >
+                {item.label}
+              </button>
+            ))}
+            <button
+              onClick={() => { setMobileNavOpen(false); onNavigate('dev'); }}
+              className="mt-6 bg-blue-500 text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-lg shadow-xl"
+            >
+              Acceso Elite
+            </button>
+          </nav>
+        </div>
+      )}
 
       {/* Header */}
       <header className="px-6 md:px-12 py-8 flex justify-between items-center relative z-20">
@@ -126,13 +163,13 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
           </button>
         </nav>
 
-        <button className="lg:hidden p-3 bg-white shadow-md rounded-xl" aria-label="Abrir menú de navegación">
+        <button onClick={() => setMobileNavOpen(true)} className="lg:hidden p-3 bg-white shadow-md rounded-xl" aria-label="Abrir menú de navegación">
           <Menu className="w-6 h-6 text-[#0f285c]" aria-hidden="true" />
         </button>
       </header>
 
       {/* Hero */}
-      <section className="px-6 md:px-12 py-12 md:py-24 max-w-[1600px] mx-auto relative z-10" aria-label="Presentación principal">
+      <section aria-label="Presentación principal" className="px-6 md:px-12 py-12 md:py-24 max-w-[1600px] mx-auto relative z-10">
         <div className="flex flex-col xl:flex-row gap-16 xl:gap-24 items-center">
 
           {/* Left Column */}
@@ -234,7 +271,15 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                     <img src={item.img} alt={item.title} loading="lazy" decoding="async" className="w-full h-full object-cover pointer-events-none group-hover:scale-105 transition-transform duration-[2s]" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0f285c]/90 via-[#0f285c]/20 to-transparent z-10"></div>
                     <div className="absolute bottom-8 left-0 right-0 z-20 px-8">
-                      <button className="w-full py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white text-xs font-bold uppercase tracking-[0.2em] hover:bg-white hover:text-[#0f285c] transition-all">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (item.id === 1) onNavigate('c5');
+                          else if (item.id === 2) onNavigate('citizen', 'services', 'triage');
+                          else onNavigate('citizen');
+                        }}
+                        className="w-full py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white text-xs font-bold uppercase tracking-[0.2em] hover:bg-white hover:text-[#0f285c] transition-all"
+                      >
                         Acceder ahora
                       </button>
                     </div>
@@ -464,7 +509,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
             © 2026 <span className="font-bold">Nayarit Digital</span> · Propiedad de ConnectX Servicios S.A. de C.V.
           </p>
           <p className="mt-1 text-[10px] text-slate-600 tracking-wide">
-            PI bajo custodia de Fundación ConnectX A.C. · Uso sujeto a contrato · <span className="underline underline-offset-2 cursor-pointer hover:text-slate-400 transition-colors">/aviso-legal</span>
+            PI bajo custodia de Fundación ConnectX A.C. · Uso sujeto a contrato · <a href="/aviso-legal.html" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-slate-400 transition-colors">/aviso-legal</a>
           </p>
         </div>
       </section>

@@ -193,8 +193,8 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
               {activeModule === 'servicios' && <ServiciosView />}
               {activeModule === 'salud' && <SaludView />}
               {activeModule === 'bienestar' && <BienestarView />}
-              {activeModule === 'gabinete' && <GabineteView />}
-              {activeModule === 'ia' && <IAView />}
+              {activeModule === 'gabinete' && <GabineteView onAudit={() => setActiveModule('auditoria')} />}
+              {activeModule === 'ia' && <IAView onGoToAudit={() => setActiveModule('auditoria')} />}
               {activeModule === 'agrovision' && <AgrovisionView />}
               {activeModule === 'observatorio' && <ObservatorioView />}
               {activeModule === 'metricas' && <MetricView />}
@@ -577,7 +577,7 @@ function SaludView() {
   );
 }
 
-function IAView() {
+function IAView({ onGoToAudit }: { onGoToAudit: () => void }) {
   const [lang, setLang] = useState<Language>('es');
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([
     { role: 'assistant', content: 'Presidenta Geraldine Ponce, el Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?' }
@@ -761,7 +761,10 @@ function IAView() {
               <p className="text-sm text-white/60 leading-relaxed font-medium mb-8">
                 ConnectX es ahora el sistema operativo municipal más avanzado de México, diseñado para la trazabilidad absoluta.
               </p>
-              <button className="w-full py-4 bg-white text-indigo-900 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl transition-all active:scale-95">
+              <button
+                onClick={onGoToAudit}
+                className="w-full py-4 bg-white text-indigo-900 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl transition-all active:scale-95 hover:bg-indigo-50"
+              >
                 Consultar Auditoría Google Cloud
               </button>
            </div>
@@ -1288,7 +1291,7 @@ function MetricView() {
   );
 }
 
-function GabineteView() {
+function GabineteView({ onAudit }: { onAudit: () => void }) {
   const officials = [
     {
       name: "Geraldine Ponce",
@@ -1391,9 +1394,12 @@ function GabineteView() {
                 <span className="text-slate-300 text-sm font-mono">{official.projects} Activos</span>
               </div>
             </div>
-            <div className="p-4 bg-emerald-500/10 border-t border-emerald-500/20 text-center cursor-pointer hover:bg-emerald-500/20 transition-colors">
+            <button
+              onClick={onAudit}
+              className="w-full p-4 bg-emerald-500/10 border-t border-emerald-500/20 text-center hover:bg-emerald-500/20 transition-colors"
+            >
               <span className="text-emerald-400 text-xs font-bold uppercase tracking-widest">Auditar Funcionario</span>
-            </div>
+            </button>
           </div>
         ))}
       </div>
