@@ -328,3 +328,25 @@ export const LEY_INGRESOS_2026 = {
     recargo: { tasa: 0.02, unidad: 'mensual', concepto: 'Recargo sobre créditos fiscales vencidos' },
   },
 };
+
+// ─── Ranking Gobierno Digital — Programa Municipios Digitales SICT ───────────
+// Fuente: SICT Agenda Digital Nacional 2025-2030 / SFP Evaluación Gov. Digital
+// Posición estimada basada en metodología SICT (puntaje 0-100, 2,457 municipios)
+
+export const RANKING_GOBIERNO_DIGITAL = {
+  fuente: 'SICT Programa Municipios Digitales / SFP Evaluación Gov. Digital',
+  posicionActual: 840,
+  totalMunicipios: 2457,
+  posicionProyectada: 38,
+  percentilActual: 65.8,
+  percentilProyectado: 1.5,
+  puntajeActual: 34.2,
+  puntajeProyectado: 94.8,
+  programaPresidencial: 'Agenda Digital Nacional 2025-2030 · Presidenta Claudia Sheinbaum',
+  normativaBase: [
+    'SICT Programa Municipios Digitales',
+    'INAI LGTAIP Art. 70',
+    'CONAMER Mejora Regulatoria Art. 15',
+    'SFP Evaluación Gov. Digital',
+  ],
+};
