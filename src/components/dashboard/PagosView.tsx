@@ -1,233 +1,15 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
-  CreditCard, Search, Home, Droplets,
-  HardHat, Leaf, Car, ShoppingBag, GraduationCap,
-  HeartHandshake, Building2, FileText,
-  Clock, ChevronRight, Shield,
-  Landmark, Package, Coins, AlertCircle, QrCode,
+  Search, Clock, ChevronRight,
+  Landmark, AlertCircle, QrCode,
   Store, Smartphone, Banknote, CheckCircle2, X
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import { CATALOGO_PAGOS, GRUPOS, type GrupoPago, type PagoConcepto } from '../../data/pagosMunicipales';
 
-type PagoCategoria = 'todos' | 'municipal' | 'estatal';
-type PagoStatus = 'disponible' | 'proximo';
+type FiltroCategoria = 'todos' | 'municipal' | 'estatal';
 
-interface Pago {
-  id: string;
-  nombre: string;
-  descripcion: string;
-  dependencia: string;
-  monto: string;
-  periodicidad: string;
-  status: PagoStatus;
-  icon: React.ElementType;
-  color: string;
-  categoria: 'municipal' | 'estatal';
-  tag?: string;
-}
-
-const PAGOS: Pago[] = [
-  // ── MUNICIPALES ──────────────────────────────────────────────
-  {
-    id: 'predial',
-    nombre: 'Predial',
-    descripcion: 'Impuesto sobre la propiedad inmobiliaria urbana y rural',
-    dependencia: 'Tesorería Municipal',
-    monto: 'Según valor catastral',
-    periodicidad: 'Semestral',
-    status: 'disponible',
-    icon: Home,
-    color: 'text-emerald-400',
-    categoria: 'municipal',
-    tag: 'Más pagado',
-  },
-  {
-    id: 'agua',
-    nombre: 'Servicio de Agua Potable',
-    descripcion: 'Agua y drenaje — COAPATAP / Sistema Municipal de Agua',
-    dependencia: 'Tesorería Municipal',
-    monto: 'Por consumo bimestral',
-    periodicidad: 'Bimestral',
-    status: 'disponible',
-    icon: Droplets,
-    color: 'text-blue-400',
-    categoria: 'municipal',
-    tag: 'Alta demanda',
-  },
-  {
-    id: 'licencia_negocio',
-    nombre: 'Licencia de Funcionamiento',
-    descripcion: 'Apertura y renovación de negocios comerciales y de servicios',
-    dependencia: 'Desarrollo Económico',
-    monto: 'Según giro y m²',
-    periodicidad: 'Anual',
-    status: 'disponible',
-    icon: ShoppingBag,
-    color: 'text-amber-400',
-    categoria: 'municipal',
-  },
-  {
-    id: 'licencia_construccion',
-    nombre: 'Licencia de Construcción',
-    descripcion: 'Permiso para obra nueva, ampliación o remodelación',
-    dependencia: 'Obras Públicas',
-    monto: 'Por m² de construcción',
-    periodicidad: 'Por trámite',
-    status: 'disponible',
-    icon: HardHat,
-    color: 'text-orange-400',
-    categoria: 'municipal',
-  },
-  {
-    id: 'uso_suelo',
-    nombre: 'Cambio de Uso de Suelo',
-    descripcion: 'Autorización para modificar la clasificación catastral del predio',
-    dependencia: 'Ordenamiento Territorial',
-    monto: 'Según tipo de cambio',
-    periodicidad: 'Por trámite',
-    status: 'disponible',
-    icon: FileText,
-    color: 'text-indigo-400',
-    categoria: 'municipal',
-  },
-  {
-    id: 'infracciones_transito',
-    nombre: 'Infracciones de Tránsito',
-    descripcion: 'Pago de multas de vialidad y restricciones de circulación',
-    dependencia: 'Seguridad Pública y Vialidad',
-    monto: 'Según infracción',
-    periodicidad: 'Por evento',
-    status: 'disponible',
-    icon: Car,
-    color: 'text-rose-400',
-    categoria: 'municipal',
-  },
-  {
-    id: 'mercado_municipal',
-    nombre: 'Derechos de Mercado',
-    descripcion: 'Pago de renta por locales en mercados municipales de Tepic',
-    dependencia: 'Servicios Públicos Municipales',
-    monto: 'Por local / mensual',
-    periodicidad: 'Mensual',
-    status: 'disponible',
-    icon: Package,
-    color: 'text-cyan-400',
-    categoria: 'municipal',
-  },
-  {
-    id: 'anuncios',
-    nombre: 'Publicidad Exterior y Anuncios',
-    descripcion: 'Registro y derechos por anuncios espectaculares, lonas y banners en vía pública',
-    dependencia: 'Servicios Públicos Municipales',
-    monto: 'Por m² y tipo de anuncio',
-    periodicidad: 'Anual',
-    status: 'disponible',
-    icon: Building2,
-    color: 'text-purple-400',
-    categoria: 'municipal',
-  },
-  {
-    id: 'panteones',
-    nombre: 'Servicios de Panteón',
-    descripcion: 'Inhumaciones, exhumaciones y concesión de gavetas municipales',
-    dependencia: 'Servicios Públicos Municipales',
-    monto: 'Por servicio',
-    periodicidad: 'Por evento',
-    status: 'disponible',
-    icon: Leaf,
-    color: 'text-slate-400',
-    categoria: 'municipal',
-  },
-  {
-    id: 'catastro',
-    nombre: 'Trámites Catastrales',
-    descripcion: 'Constancias de valor catastral, escrituración, fusión o subdivisión de predios',
-    dependencia: 'Catastro Municipal',
-    monto: 'Por tipo de trámite',
-    periodicidad: 'Por trámite',
-    status: 'disponible',
-    icon: Coins,
-    color: 'text-yellow-400',
-    categoria: 'municipal',
-  },
-  {
-    id: 'eventos',
-    nombre: 'Permisos de Eventos',
-    descripcion: 'Autorización para eventos públicos, ferias, conciertos y espectáculos',
-    dependencia: 'Secretaría del Ayuntamiento',
-    monto: 'Según tipo y aforo',
-    periodicidad: 'Por evento',
-    status: 'disponible',
-    icon: GraduationCap,
-    color: 'text-pink-400',
-    categoria: 'municipal',
-  },
-
-  // ── ESTATALES (futuros) ───────────────────────────────────────
-  {
-    id: 'tenencia',
-    nombre: 'Tenencia Vehicular',
-    descripcion: 'Impuesto sobre la tenencia y uso de vehículos — Gobierno de Nayarit',
-    dependencia: 'Secretaría de Finanzas Nayarit',
-    monto: 'Según valor del vehículo',
-    periodicidad: 'Anual',
-    status: 'proximo',
-    icon: Car,
-    color: 'text-blue-300',
-    categoria: 'estatal',
-    tag: 'Próximo',
-  },
-  {
-    id: 'refrendo',
-    nombre: 'Refrendo de Placas',
-    descripcion: 'Renovación anual de placas vehiculares del Estado de Nayarit',
-    dependencia: 'Secretaría de Finanzas Nayarit',
-    monto: 'Tarifa fija anual',
-    periodicidad: 'Anual',
-    status: 'proximo',
-    icon: Shield,
-    color: 'text-blue-300',
-    categoria: 'estatal',
-  },
-  {
-    id: 'actas_estado',
-    nombre: 'Actas del Registro Civil',
-    descripcion: 'Nacimiento, matrimonio, defunción y demás constancias del Registro Civil Estatal',
-    dependencia: 'Registro Civil Nayarit',
-    monto: 'Por tipo de acta',
-    periodicidad: 'Por trámite',
-    status: 'proximo',
-    icon: FileText,
-    color: 'text-indigo-300',
-    categoria: 'estatal',
-  },
-  {
-    id: 'infraestructura_estatal',
-    nombre: 'Derechos de Infraestructura Estatal',
-    descripcion: 'Aprovechamiento de vías estatales, concesiones y permisos de carreteras de Nayarit',
-    dependencia: 'SIOP Nayarit',
-    monto: 'Según concesión',
-    periodicidad: 'Anual',
-    status: 'proximo',
-    icon: HardHat,
-    color: 'text-amber-300',
-    categoria: 'estatal',
-  },
-  {
-    id: 'salud_estatal',
-    nombre: 'Servicios de Salud Estatales',
-    descripcion: 'Cuotas de recuperación en hospitales y clínicas del ISSSTEEN / SSN de Nayarit',
-    dependencia: 'Secretaría de Salud Nayarit',
-    monto: 'Por servicio',
-    periodicidad: 'Por evento',
-    status: 'proximo',
-    icon: HeartHandshake,
-    color: 'text-rose-300',
-    categoria: 'estatal',
-  },
-];
-
-function OxxoModal({ pago, onClose }: { pago: Pago; onClose: () => void }) {
+function OxxoModal({ pago, onClose }: { pago: PagoConcepto; onClose: () => void }) {
   const ref = `TEP${Date.now().toString().slice(-12)}`;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
@@ -298,20 +80,31 @@ function OxxoModal({ pago, onClose }: { pago: Pago; onClose: () => void }) {
   );
 }
 
+const GRUPOS_MUNICIPALES = Object.keys(GRUPOS).filter(g => g !== 'estatal') as GrupoPago[];
+const INGRESO_POTENCIAL_TOTAL = GRUPOS_MUNICIPALES.reduce((sum, g) => sum + GRUPOS[g].ingresoPotencialMDP, 0);
+
 export function PagosView() {
-  const [categoria, setCategoria] = useState<PagoCategoria>('todos');
+  const [categoria, setCategoria] = useState<FiltroCategoria>('todos');
+  const [grupo, setGrupo] = useState<GrupoPago | 'todos'>('todos');
   const [busqueda, setBusqueda] = useState('');
-  const [pagoSeleccionado, setPagoSeleccionado] = useState<Pago | null>(null);
+  const [pagoSeleccionado, setPagoSeleccionado] = useState<PagoConcepto | null>(null);
 
-  const municipales = PAGOS.filter(p => p.categoria === 'municipal');
-  const estatales = PAGOS.filter(p => p.categoria === 'estatal');
-  const disponibles = PAGOS.filter(p => p.status === 'disponible');
+  const municipales = CATALOGO_PAGOS.filter(p => p.categoria === 'municipal');
+  const estatales = CATALOGO_PAGOS.filter(p => p.categoria === 'estatal');
+  const disponibles = CATALOGO_PAGOS.filter(p => p.status === 'disponible');
 
-  const filtrados = PAGOS.filter(p => {
+  const conteoPorGrupo = useMemo(() => {
+    const conteo = new Map<GrupoPago, number>();
+    for (const p of CATALOGO_PAGOS) conteo.set(p.grupo, (conteo.get(p.grupo) ?? 0) + 1);
+    return conteo;
+  }, []);
+
+  const filtrados = CATALOGO_PAGOS.filter(p => {
     const matchCategoria = categoria === 'todos' || p.categoria === categoria;
+    const matchGrupo = grupo === 'todos' || p.grupo === grupo;
     const matchBusqueda = p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
       p.dependencia.toLowerCase().includes(busqueda.toLowerCase());
-    return matchCategoria && matchBusqueda;
+    return matchCategoria && matchGrupo && matchBusqueda;
   });
 
   return (
@@ -330,7 +123,7 @@ export function PagosView() {
           Catálogo Único de Pagos
         </h3>
         <p className="text-slate-500 text-sm max-w-2xl leading-relaxed">
-          Un solo acceso para todos los pagos municipales — y en el futuro, estatales.
+          {municipales.length} conceptos municipales en 11 categorías — y en el futuro, estatales.
           Sin filas. Sin ventanillas. Sin excusas.
         </p>
       </div>
@@ -339,7 +132,7 @@ export function PagosView() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-[#161920] border border-slate-800 p-4 rounded-xl">
           <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-1">Total de pagos</p>
-          <p className="text-3xl font-serif font-black text-white">{PAGOS.length}</p>
+          <p className="text-3xl font-serif font-black text-white">{CATALOGO_PAGOS.length}</p>
           <p className="text-xs text-slate-600 mt-0.5">en catálogo</p>
         </div>
         <div className="bg-[#161920] border border-emerald-500/20 p-4 rounded-xl">
@@ -353,9 +146,9 @@ export function PagosView() {
           <p className="text-xs text-slate-600 mt-0.5">H. Ayuntamiento Tepic</p>
         </div>
         <div className="bg-[#161920] border border-violet-500/20 p-4 rounded-xl">
-          <p className="text-[10px] text-violet-500 uppercase tracking-widest mb-1">Estatales (hoja de ruta)</p>
-          <p className="text-3xl font-serif font-black text-violet-400">{estatales.length}</p>
-          <p className="text-xs text-slate-600 mt-0.5">Gobierno de Nayarit</p>
+          <p className="text-[10px] text-violet-500 uppercase tracking-widest mb-1">Ingreso potencial anual</p>
+          <p className="text-3xl font-serif font-black text-violet-400">${INGRESO_POTENCIAL_TOTAL.toLocaleString('es-MX')}</p>
+          <p className="text-xs text-slate-600 mt-0.5">MDP · estimado Tepic</p>
         </div>
       </div>
 
@@ -392,38 +185,80 @@ export function PagosView() {
       </div>
 
       {/* Search + Filter */}
-      <div className="flex flex-col md:flex-row gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-          <input
-            type="text"
-            placeholder="Buscar pago o dependencia..."
-            value={busqueda}
-            onChange={e => setBusqueda(e.target.value)}
-            className="w-full bg-[#161920] border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-300 placeholder:text-slate-600 focus:outline-none focus:border-violet-500/50 transition-colors"
-          />
+      <div className="space-y-3">
+        <div className="flex flex-col md:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <input
+              type="text"
+              placeholder="Buscar pago o dependencia..."
+              value={busqueda}
+              onChange={e => setBusqueda(e.target.value)}
+              className="w-full bg-[#161920] border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-300 placeholder:text-slate-600 focus:outline-none focus:border-violet-500/50 transition-colors"
+            />
+          </div>
+          <div className="flex gap-2">
+            {(['todos', 'municipal', 'estatal'] as FiltroCategoria[]).map(c => (
+              <button
+                key={c}
+                onClick={() => { setCategoria(c); setGrupo('todos'); }}
+                className={cn(
+                  'px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider border transition-all',
+                  categoria === c
+                    ? 'bg-violet-500/20 border-violet-500/40 text-violet-300'
+                    : 'bg-[#161920] border-slate-800 text-slate-500 hover:text-slate-300'
+                )}
+              >
+                {c === 'todos' ? 'Todos' : c === 'municipal' ? 'Municipal' : 'Estatal'}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="flex gap-2">
-          {(['todos', 'municipal', 'estatal'] as PagoCategoria[]).map(c => (
+
+        {/* Group filter chips (municipal categories) */}
+        {categoria !== 'estatal' && (
+          <div className="flex flex-wrap gap-2">
             <button
-              key={c}
-              onClick={() => setCategoria(c)}
+              onClick={() => setGrupo('todos')}
               className={cn(
-                'px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider border transition-all',
-                categoria === c
-                  ? 'bg-violet-500/20 border-violet-500/40 text-violet-300'
+                'px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all',
+                grupo === 'todos'
+                  ? 'bg-slate-700/40 border-slate-600 text-white'
                   : 'bg-[#161920] border-slate-800 text-slate-500 hover:text-slate-300'
               )}
             >
-              {c === 'todos' ? 'Todos' : c === 'municipal' ? 'Municipal' : 'Estatal'}
+              Todas las categorías
             </button>
-          ))}
-        </div>
+            {GRUPOS_MUNICIPALES.map(g => {
+              const meta = GRUPOS[g];
+              const Icon = meta.icon;
+              return (
+                <button
+                  key={g}
+                  onClick={() => setGrupo(g)}
+                  className={cn(
+                    'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-all',
+                    grupo === g
+                      ? 'bg-slate-700/40 border-slate-600 text-white'
+                      : 'bg-[#161920] border-slate-800 text-slate-500 hover:text-slate-300'
+                  )}
+                >
+                  <Icon className={cn('w-3 h-3', meta.color)} />
+                  {meta.label}
+                  <span className="text-slate-600">({conteoPorGrupo.get(g) ?? 0})</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Payment grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtrados.map(pago => (
+        {filtrados.map(pago => {
+          const meta = GRUPOS[pago.grupo];
+          const Icon = meta.icon;
+          return (
           <div
             key={pago.id}
             className={cn(
@@ -434,13 +269,13 @@ export function PagosView() {
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2.5">
                 <div className="p-2 rounded-lg bg-slate-800/60">
-                  <pago.icon className={cn('w-4 h-4', pago.color)} />
+                  <Icon className={cn('w-4 h-4', meta.color)} />
                 </div>
                 <div>
                   <p className={cn('text-[9px] font-bold uppercase tracking-widest',
                     pago.categoria === 'municipal' ? 'text-blue-500' : 'text-violet-500'
                   )}>
-                    {pago.categoria}
+                    {meta.label}
                   </p>
                 </div>
               </div>
@@ -473,7 +308,7 @@ export function PagosView() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-[9px] text-slate-600 uppercase tracking-widest">Monto</span>
-                <span className={cn('text-[10px] font-bold', pago.color)}>{pago.monto}</span>
+                <span className={cn('text-[10px] font-bold', meta.color)}>{pago.monto}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-[9px] text-slate-600 uppercase tracking-widest">Frecuencia</span>
@@ -501,7 +336,8 @@ export function PagosView() {
               </div>
             )}
           </div>
-        ))}
+          );
+        })}
       </div>
 
       {filtrados.length === 0 && (
@@ -511,6 +347,39 @@ export function PagosView() {
         </div>
       )}
 
+      {/* Resumen ejecutivo por categoría */}
+      <div className="bg-[#161920] border border-slate-800 rounded-xl p-5 space-y-3">
+        <p className="text-xs font-bold text-slate-300">Resumen ejecutivo · ingreso potencial anual estimado (Tepic)</p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="border-b border-slate-800 text-slate-600 uppercase tracking-widest text-[9px]">
+                <th className="text-left py-2 font-bold">Categoría</th>
+                <th className="text-right py-2 font-bold">Conceptos</th>
+                <th className="text-right py-2 font-bold">Ingreso potencial (MDP)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {GRUPOS_MUNICIPALES.map(g => {
+                const meta = GRUPOS[g];
+                return (
+                  <tr key={g} className="border-b border-slate-900">
+                    <td className="py-2 text-slate-300 font-medium">{meta.label}</td>
+                    <td className="py-2 text-right text-slate-400">{conteoPorGrupo.get(g) ?? 0}</td>
+                    <td className={cn('py-2 text-right font-bold', meta.color)}>${meta.ingresoPotencialMDP.toLocaleString('es-MX')}</td>
+                  </tr>
+                );
+              })}
+              <tr>
+                <td className="pt-3 text-white font-black">Total</td>
+                <td className="pt-3 text-right text-white font-black">{municipales.length}</td>
+                <td className="pt-3 text-right text-white font-black">${INGRESO_POTENCIAL_TOTAL.toLocaleString('es-MX')}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       {/* Roadmap note */}
       <div className="bg-[#161920] border border-violet-500/10 rounded-xl p-5 space-y-3">
         <div className="flex items-center gap-2">
@@ -519,7 +388,7 @@ export function PagosView() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            { fase: 'Fase 1', titulo: 'Municipal · Tepic', desc: `${municipales.length} pagos del H. Ayuntamiento integrados en un solo portal`, color: 'text-emerald-400', status: 'En curso' },
+            { fase: 'Fase 1', titulo: 'Municipal · Tepic', desc: `${disponibles.length} pagos activos hoy, ${municipales.length} conceptos mapeados en el catálogo completo`, color: 'text-emerald-400', status: 'En curso' },
             { fase: 'Fase 2', titulo: 'Nayarit Estatal', desc: `${estatales.length}+ pagos del Gobierno del Estado (finanzas, movilidad, registro civil)`, color: 'text-blue-400', status: 'Hoja de ruta' },
             { fase: 'Fase 3', titulo: 'Pagos Federales CEDN', desc: 'Interoperabilidad con Llave MX para pagos SAT, IMSS e INFONAVIT', color: 'text-violet-400', status: 'Visión' },
           ].map(f => (
