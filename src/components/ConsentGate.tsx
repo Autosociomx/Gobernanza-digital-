@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { ShieldCheck, FileText, Scale, Lock, ExternalLink } from 'lucide-react';
+import { db } from '../firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 interface ConsentGateProps {
   onAccept: () => void;
@@ -9,10 +11,19 @@ export function ConsentGate({ onAccept }: ConsentGateProps) {
   const [checked, setChecked] = useState(false);
   const [accepting, setAccepting] = useState(false);
 
-  function handleAccept() {
+  async function handleAccept() {
     if (!checked) return;
     setAccepting(true);
-    setTimeout(onAccept, 600);
+    try {
+      await addDoc(collection(db, 'consent_logs'), {
+        acceptedAt: serverTimestamp(),
+        version: 'NYD-2026-v1',
+        userAgent: navigator.userAgent.slice(0, 200),
+      });
+    } catch {
+      // non-blocking — proceed even if write fails (network error, etc.)
+    }
+    setTimeout(onAccept, 300);
   }
 
   const docs = [
@@ -39,7 +50,7 @@ export function ConsentGate({ onAccept }: ConsentGateProps) {
       href: '/privacidad.html',
       icon: ShieldCheck,
       label: 'Aviso de Privacidad',
-      desc: 'Tratamiento de datos personales · LFPDPPP Art. 15 — NYD-203',
+      desc: 'Tratamiento de datos personales · LGPDPPSO Art. 27 — NYD-203',
       color: 'text-emerald-400',
       bg: 'bg-emerald-400/10 border-emerald-400/20',
     },
@@ -116,7 +127,7 @@ export function ConsentGate({ onAccept }: ConsentGateProps) {
             Tu actividad quedará <strong className="text-white">registrada con trazabilidad completa</strong> conforme a las obligaciones ASF e INAI. La confidencialidad es permanente.
           </p>
           <p>
-            Tus datos personales se tratan conforme a la <strong className="text-white">LFPDPPP</strong>. Puedes ejercer derechos ARCO en{' '}
+            Tus datos personales se tratan conforme a la <strong className="text-white">LGPDPPSO</strong>. Puedes ejercer derechos ARCO en{' '}
             <strong className="text-white">privacidad@connectx.mx</strong>.
           </p>
         </div>

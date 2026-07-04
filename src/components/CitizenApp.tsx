@@ -298,9 +298,13 @@ export function CitizenApp({
   };
 
   const generatePaymentRef = async () => {
-    const curp = "PEGJ900101HNT";
+    const sessionId = sessionStorage.getItem('_pref_sid') || (() => {
+      const id = crypto.randomUUID();
+      sessionStorage.setItem('_pref_sid', id);
+      return id;
+    })();
     const servicio = payingItem?.title || "SERVICIO";
-    const seed = `${curp}|${servicio}|${Date.now()}|${Math.random()}`;
+    const seed = `${sessionId}|${servicio}|${Date.now()}|${Math.random()}`;
     const encoder = new TextEncoder();
     const data = encoder.encode(seed);
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
