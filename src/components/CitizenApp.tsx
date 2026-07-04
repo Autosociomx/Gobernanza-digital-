@@ -36,7 +36,17 @@ import {
   Code,
   Zap,
   Network,
-  ArrowRight
+  ArrowRight,
+  Coins,
+  HardHat,
+  ShoppingBag,
+  Car,
+  Package,
+  Ticket,
+  BedDouble,
+  Leaf,
+  Layers,
+  Landmark
 } from 'lucide-react';
   import { motion, AnimatePresence } from 'motion/react';
   import { cn } from '../lib/utils';
@@ -63,6 +73,7 @@ import { SystemAuditView } from './SystemAuditView';
 import { BananaCommandCenter } from './BananaCommandCenter';
 import { StrategicAcademyView } from './StrategicAcademyView';
 import { MasterStrategicPlan } from './MasterStrategicPlan';
+import { CATALOGO_PAGOS, type GrupoPago } from '../data/pagosMunicipales';
 
 import { AuraCertificationSeal } from './AuraCertificationSeal';
 
@@ -1418,55 +1429,135 @@ function RedesCiudadanasView({ profile, onBack }: { profile: any, onBack: () => 
 }
 
 
+const CATEGORIAS_PAGO: Record<GrupoPago, { label: string; icon: React.ElementType; badge: string; text: string }> = {
+  impuestos: { label: 'Impuestos', icon: Coins, badge: 'bg-emerald-50', text: 'text-emerald-600' },
+  agua: { label: 'Agua y Saneamiento', icon: Droplets, badge: 'bg-blue-50', text: 'text-blue-600' },
+  obras: { label: 'Obras Públicas', icon: HardHat, badge: 'bg-orange-50', text: 'text-orange-600' },
+  comercio: { label: 'Licencias y Comercio', icon: ShoppingBag, badge: 'bg-amber-50', text: 'text-amber-600' },
+  transito: { label: 'Tránsito y Vialidad', icon: Car, badge: 'bg-rose-50', text: 'text-rose-600' },
+  servicios: { label: 'Servicios Públicos', icon: Package, badge: 'bg-cyan-50', text: 'text-cyan-600' },
+  tramites: { label: 'Trámites y Certificados', icon: FileText, badge: 'bg-indigo-50', text: 'text-indigo-600' },
+  espectaculos: { label: 'Espectáculos y Eventos', icon: Ticket, badge: 'bg-pink-50', text: 'text-pink-600' },
+  hospedaje: { label: 'Hospedaje y Turismo', icon: BedDouble, badge: 'bg-fuchsia-50', text: 'text-fuchsia-600' },
+  ambiente: { label: 'Medio Ambiente', icon: Leaf, badge: 'bg-lime-50', text: 'text-lime-600' },
+  otros: { label: 'Otros Ingresos', icon: Layers, badge: 'bg-slate-100', text: 'text-slate-600' },
+  estatal: { label: 'Estatal', icon: Landmark, badge: 'bg-violet-50', text: 'text-violet-600' },
+};
+
 function TesoreriaYTramitesView({ onPay, onBack }: { onPay: (item: any) => void, onBack: () => void }) {
+  const [busqueda, setBusqueda] = useState('');
+  const [grupo, setGrupo] = useState<GrupoPago | 'todos'>('todos');
+
+  const disponibles = CATALOGO_PAGOS.filter(p => p.status === 'disponible');
+  const filtrados = CATALOGO_PAGOS.filter(p => {
+    const matchGrupo = grupo === 'todos' || p.grupo === grupo;
+    const q = busqueda.toLowerCase();
+    const matchBusqueda = p.nombre.toLowerCase().includes(q) || p.dependencia.toLowerCase().includes(q);
+    return matchGrupo && matchBusqueda;
+  });
+
   return (
     <div className="pt-2 space-y-6 pb-20">
       <ViewHeader title="Tesorería Digital" onBack={onBack} />
-      
+
       <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl">
          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full -mr-10 -mt-10 blur-2xl"></div>
          <div className="flex items-center gap-2 mb-4">
             <ShieldCheck className="w-5 h-5 text-emerald-400" />
             <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Cumplimiento Ley Federal de Digitalización</span>
          </div>
-         <p className="text-[10px] font-bold uppercase tracking-widest text-white/60 mb-2">Obligación Fiscal Auditada</p>
-         <h3 className="text-4xl font-serif font-black mb-1">$240.00</h3>
-         <p className="text-xs text-white/60">Periodo vigente con validez jurídica (Llave MX)</p>
+         <p className="text-[10px] font-bold uppercase tracking-widest text-white/60 mb-2">Catálogo Único de Pagos Municipales</p>
+         <h3 className="text-4xl font-serif font-black mb-1">{CATALOGO_PAGOS.length} conceptos</h3>
+         <p className="text-xs text-white/60">{disponibles.length} disponibles hoy vía QR OXXO (Llave MX)</p>
+      </div>
+
+      <div className="px-4 space-y-3">
+        <div className="relative">
+          <Search className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            value={busqueda}
+            onChange={e => setBusqueda(e.target.value)}
+            placeholder="Buscar pago o dependencia..."
+            className="w-full bg-slate-50 border border-slate-200 rounded-full pl-10 pr-4 py-3 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-emerald-300"
+          />
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4 [&::-webkit-scrollbar]:hidden">
+          <button
+            onClick={() => setGrupo('todos')}
+            className={cn(
+              "flex-shrink-0 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wide border transition-colors",
+              grupo === 'todos' ? "bg-slate-900 border-slate-900 text-white" : "bg-white border-slate-200 text-slate-500"
+            )}
+          >
+            Todas
+          </button>
+          {(Object.keys(CATEGORIAS_PAGO) as GrupoPago[]).filter(g => g !== 'estatal').map(g => {
+            const ChipIcon = CATEGORIAS_PAGO[g].icon;
+            return (
+              <button
+                key={g}
+                onClick={() => setGrupo(g)}
+                className={cn(
+                  "flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wide border transition-colors",
+                  grupo === g ? "bg-slate-900 border-slate-900 text-white" : "bg-white border-slate-200 text-slate-500"
+                )}
+              >
+                <ChipIcon className="w-3 h-3" />
+                {CATEGORIAS_PAGO[g].label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="space-y-4">
         <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4 flex items-center gap-2">
            <Barcode className="w-3 h-3" />
-           Módulo 01 — Ecosistema de Pagos Digitales
+           Módulo 01 — Catálogo Único de Pagos ({filtrados.length})
         </h3>
-        {[
-          { icon: Droplets, title: 'Servicio de Agua - Junio 2026', val: '$240.00', status: 'Certificado', color: 'text-blue-500' },
-          { icon: FileText, title: 'Renovación de Licencia', val: '$850.00', status: 'Certificado', color: 'text-magenta-500' },
-        ].map((item, i) => (
-          <div key={i} className="flex items-center justify-between p-5 bg-white border border-slate-200 rounded-[2rem] shadow-sm hover:border-emerald-200 transition-colors">
-             <div className="flex items-center gap-4">
-                <div className={cn("p-3 rounded-2xl bg-slate-50", item.color)}>
-                   <item.icon className="w-5 h-5" />
-                </div>
-                <div>
-                   <p className="text-sm font-bold text-slate-900">{item.title}</p>
-                   <p className="text-[9px] text-emerald-600 uppercase font-black tracking-widest flex items-center gap-1 mt-1">
-                      <ShieldCheck className="w-3 h-3" />
-                      {item.status}
-                   </p>
-                </div>
-             </div>
-             <div className="text-right">
-                <p className="text-sm font-black text-slate-900 mb-2">{item.val}</p>
-                <button 
-                  onClick={() => onPay(item)}
-                  className="px-4 py-2 bg-emerald-600 text-white rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-emerald-600/20 active:scale-95 transition-transform flex items-center gap-2" 
-                >
-                  <QrCode className="w-3 h-3" /> QR Mágico
-                </button>
-             </div>
-          </div>
-        ))}
+        {filtrados.map((item) => {
+          const meta = CATEGORIAS_PAGO[item.grupo];
+          const Icon = meta.icon;
+          return (
+            <div
+              key={item.id}
+              className={cn(
+                "flex items-center justify-between p-5 bg-white border rounded-[2rem] shadow-sm transition-colors",
+                item.status === 'disponible' ? "border-slate-200 hover:border-emerald-200" : "border-slate-100 opacity-60"
+              )}
+            >
+               <div className="flex items-center gap-4 min-w-0">
+                  <div className={cn("p-3 rounded-2xl flex-shrink-0", meta.badge, meta.text)}>
+                     <Icon className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                     <p className="text-sm font-bold text-slate-900 truncate">{item.nombre}</p>
+                     <p className="text-[9px] text-slate-400 uppercase font-black tracking-widest mt-1 truncate">
+                        {item.dependencia}
+                     </p>
+                  </div>
+               </div>
+               <div className="text-right flex-shrink-0 pl-3">
+                  {item.status === 'disponible' ? (
+                    <button
+                      onClick={() => onPay({ title: item.nombre, val: item.monto, status: item.dependencia })}
+                      className="px-4 py-2 bg-emerald-600 text-white rounded-full text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-emerald-600/20 active:scale-95 transition-transform flex items-center gap-2"
+                    >
+                      <QrCode className="w-3 h-3" /> QR Mágico
+                    </button>
+                  ) : (
+                    <span className="px-3 py-1.5 rounded-full text-[9px] font-bold uppercase tracking-widest bg-slate-50 text-slate-400 border border-slate-100">
+                      Próximamente
+                    </span>
+                  )}
+               </div>
+            </div>
+          );
+        })}
+        {filtrados.length === 0 && (
+          <p className="text-center text-sm text-slate-400 py-10">No se encontraron pagos para "{busqueda}"</p>
+        )}
       </div>
 
       <div className="space-y-4 pt-4">

@@ -31,7 +31,6 @@ import { cn } from '../lib/utils';
 import { NayaritMap } from './NayaritMap';
 import { ParlamentoView } from './dashboard/ParlamentoView';
 import { AnalisisPoliticoView } from './dashboard/AnalisisPoliticoView';
-import { PagosView } from './dashboard/PagosView';
 
 type Language = 'es' | 'cora' | 'wixarika';
 
@@ -51,7 +50,7 @@ import {
   Legend
 } from 'recharts';
 
-type ModuleType = 'tesoreria' | 'pagos' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio' | 'metricas' | 'parlamento' | 'analisis_politico' | 'interoperabilidad' | 'gabinete';
+type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio' | 'metricas' | 'parlamento' | 'analisis_politico' | 'interoperabilidad' | 'gabinete';
 
 export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
   const [activeModule, setActiveModule] = useState<ModuleType>(() => (localStorage.getItem('activeModule') as ModuleType) || 'tesoreria');
@@ -63,7 +62,6 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
 
   const modules = [
     { id: 'tesoreria', name: 'Tesorería Digital', icon: Building2, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    { id: 'pagos', name: 'Catálogo Único de Pagos', icon: Coins, color: 'text-amber-400', bg: 'bg-amber-400/10' },
     { id: 'obras', name: 'Trazabilidad Obras', icon: MapIcon, color: 'text-amber-500', bg: 'bg-amber-500/10' },
     { id: 'servicios', name: 'Servicios Públicos', icon: AlertTriangle, color: 'text-blue-500', bg: 'bg-blue-500/10' },
     { id: 'salud', name: 'Salud Inteligente Nayarit ID', icon: Activity, color: 'text-rose-500', bg: 'bg-rose-500/10' },
@@ -176,7 +174,6 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
               className="max-w-6xl mx-auto"
             >
               {activeModule === 'tesoreria' && <TesoreriaView />}
-              {activeModule === 'pagos' && <PagosView />}
               {activeModule === 'obras' && <ObrasView />}
               {activeModule === 'servicios' && <ServiciosView />}
               {activeModule === 'salud' && <SaludView />}
