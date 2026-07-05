@@ -248,7 +248,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
               {[
                 { value: '1',    label: 'Ecosistema Digital'      },
                 { value: '20+',  label: 'Secretarías integradas'  },
-                { value: '1.5M', label: 'Ciudadanos conectados'   },
+                { value: '1.2M+', label: 'Ciudadanos en Nayarit'   },
               ].map((kpi, i) => (
                 <div key={i} className="flex items-center gap-2 bg-[#D81E5B]/6 border border-[#D81E5B]/20 rounded-full px-4 py-2">
                   <span className="text-[#D81E5B] font-black text-sm">{kpi.value}</span>
@@ -293,8 +293,8 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                 <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Secretarías</p>
               </div>
               <div>
-                <h4 className="text-3xl font-serif font-bold text-[#D81E5B]">1.5M</h4>
-                <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Ciudadanos</p>
+                <h4 className="text-3xl font-serif font-bold text-[#D81E5B]">1.2M+</h4>
+                <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Nayaritas</p>
               </div>
             </div>
           </div>
@@ -546,8 +546,8 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
               },
               {
                 icon: Landmark, color: '#F5A623',
-                stat: 'Art. 74', label: 'LlaveMx — cumplimiento LNETB',
-                desc: 'Único municipio nayarita con integración nativa al sistema federal de identidad digital. Verificado desde el primer día de operación.'
+                stat: 'Art. 74', label: 'Arquitectura LlaveMx-ready',
+                desc: 'Diseñado conforme al Art. 74 LNETB para integración con el sistema federal de identidad digital. Activable en la fase de despliegue municipal.'
               },
             ].map((item, i) => {
               const Icon = item.icon;
@@ -627,16 +627,16 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
         <div className="max-w-[900px] mx-auto px-6 md:px-12 text-center">
           <div className="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/30 px-5 py-2 rounded-full mb-8">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span className="text-emerald-400 text-xs font-bold uppercase tracking-widest">Cumplimiento LNETB — Art. 74</span>
+            <span className="text-emerald-400 text-xs font-bold uppercase tracking-widest">Arquitectura conforme LNETB — Art. 74</span>
           </div>
-          <h3 className="text-3xl md:text-4xl font-serif font-black text-white mb-6">Integrado con Llave MX desde el día 1</h3>
+          <h3 className="text-3xl md:text-4xl font-serif font-black text-white mb-6">Preparado para Llave MX desde el diseño</h3>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-            El único sistema en Nayarit que cumple la obligación federal de inicio de sesión único.<br className="hidden md:block" />
-            El ciudadano usa sus credenciales federales — sin crear otra contraseña.
+            El sistema está arquitectado conforme al Art. 74 LNETB para habilitar inicio de sesión único federal.<br className="hidden md:block" />
+            El ciudadano usará sus credenciales federales — sin crear otra contraseña — en la fase de despliegue.
           </p>
-          <div className="inline-flex items-center gap-3 bg-emerald-500 px-8 py-3.5 rounded-full">
+          <div className="inline-flex items-center gap-3 bg-emerald-500/80 px-8 py-3.5 rounded-full">
             <ShieldCheck className="w-5 h-5 text-white" />
-            <span className="text-white font-black text-sm tracking-wide">Verificado · DOF 16-VII-2025</span>
+            <span className="text-white font-black text-sm tracking-wide">Diseñado conforme al · DOF 16-VII-2025 · Art. 74 LNETB</span>
           </div>
         </div>
       </section>
@@ -648,9 +648,9 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
           <OjoNierika size={520} />
         </div>
         <div className="max-w-[700px] mx-auto px-6 relative z-10">
-          <p className="text-xs font-bold uppercase tracking-widest text-slate-600 mb-5">Operativo hoy en Tepic</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-slate-600 mb-5">Demo lista · Piloto en Tepic</p>
           <h3 className="text-5xl md:text-7xl font-serif font-black text-[#0f285c] leading-[0.9] tracking-tighter mb-8">
-            Ya está<br /><span className="text-blue-600 italic">funcionando.</span>
+            Listo para<br /><span className="text-blue-600 italic">arrancar.</span>
           </h3>
           <p className="text-xl text-slate-600 font-medium mb-6">La pregunta es cuándo quieres ser parte.</p>
           <p className="text-sm text-slate-600 italic mb-14 max-w-lg mx-auto leading-relaxed">
