@@ -57,6 +57,7 @@ import { db, auth, handleFirestoreError, OperationType } from '../firebase';
 import { doc, setDoc, getDoc, onSnapshot, collection, addDoc, getDocs, query, where, deleteDoc } from 'firebase/firestore';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { getMasterRegistry, InfrastructureAsset } from '../services/infrastructureService';
+import { sendAiChat } from '../services/aiChatService';
 import { CanjesView } from './CanjesView';
 import { ConnectXAcademy } from './ConnectXAcademy';
 import { SystemAuditView } from './SystemAuditView';
@@ -273,22 +274,10 @@ export function CitizenApp({
     setIsTyping(true);
 
     try {
-      const response = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          message: `${userMsg} (Language selected: ${lang})`,
-          useThinking,
-          useMaps,
-          useSearch
-        })
-      });
-      const data = await response.json();
-      
-      if (data.error) throw new Error(data.error);
-      
+      const response = await sendAiChat(`${userMsg} (Language selected: ${lang})`, { useThinking, useMaps, useSearch });
+
       setIsAiMode(true);
-      setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: response }]);
     } catch (err: any) {
       console.warn("AI endpoint failed, using local fallback", err);
       setIsAiMode(false);

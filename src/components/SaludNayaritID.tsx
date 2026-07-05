@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
+import { sendAiChat } from '../services/aiChatService';
 
 type RolType = 'paciente' | 'familiar' | 'promotor';
 type TriageLevel = 'ROJO' | 'AMARILLO' | 'VERDE' | null;
@@ -57,25 +58,17 @@ export function SaludNayaritID({ onClose }: { onClose: () => void }) {
     setIsTyping(true);
 
     try {
-      const response = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          message: userMsg,
-          context: `MODO_SALUD_INTELIGENTE_NAYARIT_ID: Eres el asistente de Salud Inteligente Nayarit ID en modo ${rol} con estándar CIE-11. Clasifica según sistema Manchester al final con [TRIAJE:ROJO/AMARILLO/VERDE]. Si el síntoma sugiere gravedad (Rojo o Amarillo, ej. dolor intenso de cabeza y luces), DEBES omitir el consejo genérico de 've a un centro de salud' y en su lugar informar brevemente el criterio neurológico o de urgencia y ofrecer conectar con un especialista del Centro de Salud Digital por videollamada.`
-        })
+      const response = await sendAiChat(userMsg, {
+        context: `MODO_SALUD_INTELIGENTE_NAYARIT_ID: Eres el asistente de Salud Inteligente Nayarit ID en modo ${rol} con estándar CIE-11. Clasifica según sistema Manchester al final con [TRIAJE:ROJO/AMARILLO/VERDE]. Si el síntoma sugiere gravedad (Rojo o Amarillo, ej. dolor intenso de cabeza y luces), DEBES omitir el consejo genérico de 've a un centro de salud' y en su lugar informar brevemente el criterio neurológico o de urgencia y ofrecer conectar con un especialista del Centro de Salud Digital por videollamada.`
       });
-      const data = await response.json();
-      
-      if (data.error) throw new Error(data.error);
-      
+
       // Parse triage from response
       let triage: TriageLevel = null;
-      if (data.response.includes('[TRIAJE:ROJO]')) triage = 'ROJO';
-      if (data.response.includes('[TRIAJE:AMARILLO]')) triage = 'AMARILLO';
-      if (data.response.includes('[TRIAJE:VERDE]')) triage = 'VERDE';
+      if (response.includes('[TRIAJE:ROJO]')) triage = 'ROJO';
+      if (response.includes('[TRIAJE:AMARILLO]')) triage = 'AMARILLO';
+      if (response.includes('[TRIAJE:VERDE]')) triage = 'VERDE';
 
-      const cleanedContent = data.response.replace(/\[TRIAJE:(ROJO|AMARILLO|VERDE)\]/gi, '').trim();
+      const cleanedContent = response.replace(/\[TRIAJE:(ROJO|AMARILLO|VERDE)\]/gi, '').trim();
 
       setMessages(prev => [...prev, { role: 'assistant', content: cleanedContent, triage }]);
     } catch (err: any) {
