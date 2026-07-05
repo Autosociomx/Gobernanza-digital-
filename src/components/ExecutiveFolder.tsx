@@ -266,10 +266,16 @@ export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
         {/* Page Footer */}
         <div className="p-[4rem] pt-0 flex flex-col md:flex-row justify-between items-center gap-6 border-t border-black/5 bg-slate-50/50">
            <div className="flex gap-4">
-              <button className="flex items-center gap-2 text-[10px] font-bold text-slate-500 hover:text-[var(--magenta)] transition-colors uppercase tracking-widest">
+              <button
+                onClick={() => window.print()}
+                className="flex items-center gap-2 text-[10px] font-bold text-slate-500 hover:text-[var(--magenta)] transition-colors uppercase tracking-widest"
+              >
                  <Printer className="w-4 h-4" /> Imprimir Documento
               </button>
-              <button className="flex items-center gap-2 text-[10px] font-bold text-slate-500 hover:text-[var(--magenta)] transition-colors uppercase tracking-widest">
+              <button
+                onClick={() => navigator.clipboard.writeText(window.location.href).then(() => alert('Enlace copiado al portapapeles')).catch(() => alert('No se pudo copiar el enlace'))}
+                className="flex items-center gap-2 text-[10px] font-bold text-slate-500 hover:text-[var(--magenta)] transition-colors uppercase tracking-widest"
+              >
                  <Share2 className="w-4 h-4" /> Compartir PDF
               </button>
            </div>
