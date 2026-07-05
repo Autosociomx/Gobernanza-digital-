@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   CheckCircle2, 
   Circle, 
@@ -29,7 +29,6 @@ interface ModuleProgress {
 }
 
 export function DeveloperChecklist({ onLogout }: { onLogout: () => void }) {
-  const [updatedModules, setUpdatedModules] = useState<Record<string, boolean>>({});
   const modules: ModuleProgress[] = [
     {
       name: 'Landing Page (Nayarit Digital)',
@@ -177,17 +176,8 @@ export function DeveloperChecklist({ onLogout }: { onLogout: () => void }) {
               </div>
 
               <div className="px-6 py-4 bg-slate-900/50 border-t border-slate-800 flex justify-between items-center">
-                 <button
-                   onClick={() => {
-                     setUpdatedModules(prev => ({ ...prev, [module.name]: true }));
-                     setTimeout(() => setUpdatedModules(prev => ({ ...prev, [module.name]: false })), 2000);
-                   }}
-                   className={cn(
-                     "text-[10px] font-bold transition-colors uppercase tracking-widest",
-                     updatedModules[module.name] ? "text-emerald-400" : "text-cyan-400 hover:text-cyan-300"
-                   )}
-                 >
-                   {updatedModules[module.name] ? '✓ Actualizado' : 'Update Sprint'}
+                 <button className="text-[10px] font-bold text-cyan-400 hover:text-cyan-300 transition-colors uppercase tracking-widest">
+                   Update Sprint
                  </button>
                  <div className="flex gap-1">
                     {[1,2,3].map(dot => <div key={dot} className="w-1.5 h-1.5 rounded-full bg-slate-700"></div>)}
