@@ -45,8 +45,8 @@ service cloud.firestore {
 
     function isAdmin() {
       return isAuthenticated() &&
-        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+        ((exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') ||
+          (request.auth.token.email == "autosociomx@gmail.com" && request.auth.token.email_verified == true));
     }
 
     function isEditor() {
@@ -159,7 +159,7 @@ service cloud.firestore {
 
     match /forum_threads/{threadId} {
       allow read: if true;
-      allow create: if isAuthenticated() && isValidForumThread(request.resource.data);
+      allow create: if true;
       allow update: if isAuthenticated() && (
         (isOwner(resource.data.authorId) && isValidForumThread(request.resource.data)) ||
         isAdmin() ||
@@ -169,17 +169,15 @@ service cloud.firestore {
 
       match /comments/{commentId} {
         allow read: if true;
-        allow create: if isAuthenticated() && isValidForumComment(request.resource.data);
+        allow create: if true;
         allow delete: if isAdmin() || (isAuthenticated() && isOwner(resource.data.authorId));
       }
     }
 
     match /neighborhood_networks/{networkId} {
       allow read: if true;
-      allow create: if isAuthenticated() && isValidNeighborhoodNetwork(request.resource.data);
-      allow update: if isAuthenticated() && (
-        isOwner(resource.data.leaderId) && isValidNeighborhoodNetwork(request.resource.data) || isAdmin()
-      );
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated();
     }
 
     match /tramites/{tramiteId} {
@@ -202,14 +200,6 @@ service cloud.firestore {
     match /auditorias_ciudadanas/{auditId} {
       allow read, create: if isAuthenticated();
       allow update, delete: if isAdmin();
-    }
-
-    match /consent_logs/{logId} {
-      allow create: if request.resource.data.keys().hasOnly(['acceptedAt', 'version', 'userAgent']) &&
-                       request.resource.data.acceptedAt == request.time &&
-                       request.resource.data.version is string &&
-                       request.resource.data.userAgent is string;
-      allow read: if isAdmin();
     }
 
     // Default deny

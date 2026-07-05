@@ -4,30 +4,13 @@ import { C5Dashboard } from './components/C5Dashboard';
 import { CitizenApp } from './components/CitizenApp';
 import { DeveloperChecklist } from './components/DeveloperChecklist';
 import { ExecutiveFolder } from './components/ExecutiveFolder';
-import { ConsentGate } from './components/ConsentGate';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, LayoutDashboard, UserCircle2, FileText, Settings2 } from 'lucide-react';
 
-const CONSENT_KEY = 'nyd-legal-v1';
-
 function App() {
-  const [consentGiven, setConsentGiven] = useState(() =>
-    typeof window !== 'undefined' && localStorage.getItem(CONSENT_KEY) === 'accepted'
-  );
   const [currentView, setCurrentView] = useState<'landing' | 'c5' | 'citizen' | 'dev' | 'executive'>('landing');
   const [citizenTab, setCitizenTab] = useState<any>('home');
   const [citizenAction, setCitizenAction] = useState<any>(null);
-
-  if (!consentGiven) {
-    return (
-      <ConsentGate
-        onAccept={() => {
-          localStorage.setItem(CONSENT_KEY, 'accepted');
-          setConsentGiven(true);
-        }}
-      />
-    );
-  }
 
   if (currentView === 'c5') {
     return <C5Dashboard onLogout={() => setCurrentView('landing')} />;
