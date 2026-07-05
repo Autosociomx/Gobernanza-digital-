@@ -2,16 +2,41 @@ import React, { useState, useEffect } from 'react';
 import {
   Menu, X, Radio, HeartPulse, ArrowRight,
   ShieldCheck, Globe, Leaf,
-  Landmark, GraduationCap, Utensils, Briefcase
+  Landmark, GraduationCap, Utensils, Briefcase,
+  Sparkles, Users
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { EffectCards, Navigation, Pagination } from 'swiper/modules';
+import { OnboardingTour, type OnboardingStep } from './OnboardingTour';
 
 import 'swiper/css';
 import 'swiper/css/effect-cards';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
+
+const LANDING_TOUR_STEPS: OnboardingStep[] = [
+  {
+    icon: Sparkles,
+    title: '¡Bienvenido a Nayarit Digital!',
+    body: 'Esta es la puerta de entrada al gobierno digital de Nayarit. En unos pasos muy breves te explico qué puedes hacer aquí — sin necesidad de saber de tecnología.',
+  },
+  {
+    icon: Users,
+    title: '"Descubrir la Plataforma"',
+    body: 'Este botón es para ti como ciudadano: te lleva a tu portal, donde puedes pagar trámites, hacer reportes y ver avisos de tu municipio.',
+  },
+  {
+    icon: ShieldCheck,
+    title: '"Panel de Transparencia"',
+    body: 'Este botón muestra en tiempo real cómo trabaja el gobierno: recaudación, obras públicas y servicios. Está abierto para cualquier persona que quiera revisarlo.',
+  },
+  {
+    icon: Landmark,
+    title: 'Menú de arriba',
+    body: 'En "Soluciones", "Estrategia" e "Impacto" encuentras más información sobre la plataforma y sus resultados. Puedes volver a este tutorial cuando quieras con el botón "Tutorial".',
+  },
+];
 
 interface PlatformLandingProps {
   onNavigate: (view: 'landing' | 'c5' | 'citizen' | 'dev' | 'executive', subView?: string, action?: string) => void;
@@ -172,6 +197,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
 
   return (
     <div className="min-h-screen bg-[#fcfdfe] font-sans overflow-x-hidden selection:bg-blue-100 relative">
+      <OnboardingTour steps={LANDING_TOUR_STEPS} storageKey="nyd-onboarding-landing-v1" />
       <OjosEscena />
 
       <WixBanda height={48} />

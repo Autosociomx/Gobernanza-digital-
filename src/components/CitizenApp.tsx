@@ -75,11 +75,50 @@ import { BananaCommandCenter } from './BananaCommandCenter';
 import { StrategicAcademyView } from './StrategicAcademyView';
 import { MasterStrategicPlan } from './MasterStrategicPlan';
 import { CATALOGO_PAGOS, type GrupoPago } from '../data/pagosMunicipales';
+import { OnboardingTour, type OnboardingStep } from './OnboardingTour';
 
 import { AuraCertificationSeal } from './AuraCertificationSeal';
 
 type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria' | 'academy' | 'system_audit' | 'banana_command' | 'strategic_academy' | 'strategic_plan';
 type Language = 'es' | 'cora' | 'wixarika';
+
+const CITIZEN_TOUR_STEPS: OnboardingStep[] = [
+  {
+    icon: Sparkles,
+    title: '¡Bienvenido a Nayarit Digital!',
+    body: 'Soy tu guía. En unos pasos muy sencillos te muestro para qué sirve cada botón de esta pantalla, para que nunca te sientas perdido. Puedes tocar "Siguiente" cuando quieras avanzar.',
+  },
+  {
+    icon: Home,
+    title: 'Inicio',
+    body: 'Aquí ves tus avisos y accesos más importantes de un vistazo: pagos pendientes, noticias de tu colonia y novedades del municipio.',
+  },
+  {
+    icon: Users,
+    title: 'Redes Ciudadanas',
+    body: 'Este botón te conecta con los vecinos de tu colonia: puedes ver o unirte a comités y grupos organizados cerca de ti.',
+  },
+  {
+    icon: MessageSquare,
+    title: 'Foro',
+    body: 'Aquí puedes leer y participar en las conversaciones públicas del municipio, como si fuera una plaza pública digital.',
+  },
+  {
+    icon: CreditCard,
+    title: 'Pagos y trámites',
+    body: 'Desde aquí pagas tu predial, agua, licencias y muchos trámites más, sin filas ni ventanillas. Puedes pagar en línea o imprimir una ficha para pagar en efectivo en OXXO.',
+  },
+  {
+    icon: User,
+    title: 'Perfil',
+    body: 'Aquí guardas tus datos, revisas tu historial de pagos y controlas la seguridad de tu cuenta.',
+  },
+  {
+    icon: Bot,
+    title: 'Tu asistente, cuando lo necesites',
+    body: 'Toca el ícono del robot en cualquier momento y te ayudo a resolver dudas o a hacer cualquier trámite paso a paso, como si me preguntaras a mí en persona.',
+  },
+];
 
 export function CitizenApp({ 
   onLogout, 
@@ -353,7 +392,8 @@ export function CitizenApp({
         <div className="flex justify-center bg-slate-100 min-h-screen">
           {/* Mobile Frame Simulation */}
           <div className="w-full max-w-[430px] bg-white min-h-screen shadow-2xl relative flex flex-col overflow-hidden border-x border-slate-200">
-            
+            <OnboardingTour steps={CITIZEN_TOUR_STEPS} storageKey="nyd-onboarding-citizen-v1" reopenClassName="bottom-24 left-4" />
+
             {/* StatusBar Mock */}
         <div className="px-6 pt-4 pb-2 flex justify-between items-center text-[10px] font-bold text-slate-800">
           <span>9:41</span>

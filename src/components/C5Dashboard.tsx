@@ -37,6 +37,25 @@ import { ObservatorioView } from './dashboard/ObservatorioView';
 import { RankingPresidencialView } from './dashboard/RankingPresidencialView';
 import { AgentesFederalesView } from './dashboard/AgentesFederalesView';
 import { sendAiChat } from '../services/aiChatService';
+import { OnboardingTour, type OnboardingStep } from './OnboardingTour';
+
+const C5_TOUR_STEPS: OnboardingStep[] = [
+  {
+    icon: Bot,
+    title: 'Bienvenido al C5',
+    body: 'Este es el centro de mando del gobierno de Nayarit: aquí se ve en tiempo real cómo avanza cada área municipal. Te muestro rápido cómo moverte.',
+  },
+  {
+    icon: Menu,
+    title: 'Menú de módulos',
+    body: 'En el menú de la izquierda cada botón es un área distinta de gobierno (Tesorería, Obras, Servicios, Salud...). Toca cualquiera para ver su información. En el celular, el menú se abre como un panel deslizable.',
+  },
+  {
+    icon: Users,
+    title: '¿Dudas sobre algún dato?',
+    body: 'Usa el módulo "Asistente IA" del menú para preguntar directamente sobre cualquier cifra o reporte, en el momento que lo necesites.',
+  },
+];
 
 type Language = 'es' | 'cora' | 'wixarika';
 
@@ -90,6 +109,8 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
 
   return (
     <div className="min-h-screen bg-[#0f1115] text-slate-300 font-sans flex overflow-hidden">
+      <OnboardingTour steps={C5_TOUR_STEPS} storageKey="nyd-onboarding-c5-v1" dark />
+
       {/* Mobile backdrop */}
       <AnimatePresence>
         {sidebarOpen && (
