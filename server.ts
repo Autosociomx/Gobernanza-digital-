@@ -3,27 +3,11 @@ import { createServer as createViteServer } from "vite";
 import path from "path";
 import fs from "fs/promises";
 import Database from "better-sqlite3";
-import { GoogleGenAI, ThinkingLevel } from "@google/genai";
+import { ThinkingLevel } from "@google/genai";
 import Stripe from "stripe";
-
-let aiClient: GoogleGenAI | null = null;
-function getAI() {
-  if (!aiClient) {
-    const key = process.env.GEMINI_API_KEY;
-    if (!key) {
-      throw new Error("GEMINI_API_KEY no configurada. Por favor, añádela en Settings > Secrets.");
-    }
-    aiClient = new GoogleGenAI({
-      apiKey: key,
-      httpOptions: {
-        headers: {
-          'User-Agent': 'aistudio-build',
-        }
-      }
-    });
-  }
-  return aiClient;
-}
+import { getAI } from "./server/aiClients";
+import { startRun, getRun } from "./server/agentsOrchestrator";
+import { analyzeRisks } from "./server/riskAnalysis";
 
 // Initialize Stripe
 let stripeClient: Stripe | null = null;
@@ -130,6 +114,31 @@ async function startServer() {
     } catch (error: any) {
       console.error("AI Assistant Error:", error);
       res.status(500).json({ error: error.message || "Error procesando la solicitud de IA" });
+    }
+  });
+
+  // Agentes Federales: inicia un run paralelo contra las plataformas de datos abiertos
+  app.post("/api/agents/run", (req, res) => {
+    res.json(startRun());
+  });
+
+  app.get("/api/agents/run/:runId", (req, res) => {
+    const run = getRun(req.params.runId);
+    if (!run) {
+      return res.status(404).json({ error: "Run no encontrado" });
+    }
+    res.json(run);
+  });
+
+  // Análisis de riesgos (antes se ejecutaba en el navegador exponiendo la API key)
+  app.post("/api/ai/risk-analysis", async (req, res) => {
+    const { departments, logs } = req.body;
+    try {
+      const result = await analyzeRisks(departments ?? [], logs ?? []);
+      res.json(result);
+    } catch (error: any) {
+      console.error("AI Risk Analysis Error:", error);
+      res.status(500).json({ error: error.message || "Error en el análisis de riesgos" });
     }
   });
 

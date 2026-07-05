@@ -25,7 +25,8 @@ import {
   ShieldCheck,
   ChevronLeft,
   Brain,
-  Trophy
+  Trophy,
+  Network
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
@@ -34,6 +35,8 @@ import { ParlamentoView } from './dashboard/ParlamentoView';
 import { AnalisisPoliticoView } from './dashboard/AnalisisPoliticoView';
 import { ObservatorioView } from './dashboard/ObservatorioView';
 import { RankingPresidencialView } from './dashboard/RankingPresidencialView';
+import { AgentesFederalesView } from './dashboard/AgentesFederalesView';
+import { sendAiChat } from '../services/aiChatService';
 
 type Language = 'es' | 'cora' | 'wixarika';
 
@@ -53,7 +56,7 @@ import {
   Legend
 } from 'recharts';
 
-type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio' | 'metricas' | 'parlamento' | 'analisis_politico' | 'interoperabilidad' | 'gabinete' | 'ranking_presidencial';
+type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio' | 'metricas' | 'parlamento' | 'analisis_politico' | 'interoperabilidad' | 'gabinete' | 'ranking_presidencial' | 'agentes_federales';
 
 export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
   const [activeModule, setActiveModule] = useState<ModuleType>(() => (localStorage.getItem('activeModule') as ModuleType) || 'tesoreria');
@@ -78,6 +81,7 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
     { id: 'analisis_politico', name: 'Análisis Estratégico', icon: Brain, color: 'text-purple-400', bg: 'bg-purple-400/10' },
     { id: 'interoperabilidad', name: 'Nodo Transparencia', icon: Building2, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
     { id: 'ranking_presidencial', name: 'Posición Nacional — Gob. Digital', icon: Trophy, color: 'text-yellow-400', bg: 'bg-yellow-400/10' },
+    { id: 'agentes_federales', name: 'Agentes Federales', icon: Network, color: 'text-orange-400', bg: 'bg-orange-400/10' },
   ] as const;
 
   return (
@@ -191,6 +195,7 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
               {activeModule === 'analisis_politico' && <AnalisisPoliticoView />}
               {activeModule === 'interoperabilidad' && <InteroperabilidadView />}
               {activeModule === 'ranking_presidencial' && <RankingPresidencialView />}
+              {activeModule === 'agentes_federales' && <AgentesFederalesView />}
             </motion.div>
           </AnimatePresence>
         </main>
@@ -596,14 +601,8 @@ function IAView() {
     setIsTyping(true);
 
     try {
-      const response = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: `${userMsg} (Context: Governance Admin, Language: ${lang})` })
-      });
-      const data = await response.json();
-      if (data.error) throw new Error(data.error);
-      setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
+      const response = await sendAiChat(`${userMsg} (Context: Governance Admin, Language: ${lang})`);
+      setMessages(prev => [...prev, { role: 'assistant', content: response }]);
     } catch (err: any) {
       setMessages(prev => [...prev, { role: 'assistant', content: `Error: ${err.message}` }]);
     } finally {
