@@ -136,15 +136,24 @@ async function startServer() {
   // Payment Intent Route
   app.post("/api/create-payment-intent", async (req, res) => {
     const { amount, currency } = req.body;
+
+    const parsedAmount = Number(amount);
+    if (!Number.isInteger(parsedAmount) || parsedAmount < 100 || parsedAmount > 10_000_000) {
+      return res.status(400).json({ error: "Monto inválido. Rango permitido: $1.00 — $100,000 MXN." });
+    }
+
+    const allowedCurrencies = ['mxn', 'usd'];
+    const safeCurrency = allowedCurrencies.includes(currency) ? currency : 'mxn';
+
     const stripe = getStripe();
     if (!stripe) {
       return res.status(500).json({ error: "Stripe no configurado." });
     }
-    
+
     try {
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: amount, // amount in cents
-        currency: currency || 'mxn',
+        amount: parsedAmount,
+        currency: safeCurrency,
       });
       res.json({ clientSecret: paymentIntent.client_secret });
     } catch (error: any) {
