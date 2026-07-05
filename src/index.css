@@ -33,18 +33,19 @@ html {
 }
 
 :root {
-  --magenta:  #1a73e8; /* Vibrant Gemini Blue */
-  --turq:     #188038; /* Subtle Teal/Green */
-  --solar:    #4285f4; /* Primary Blue */
-  --verde:    #34a853; /* Success/Green */
-  --coral:    #d93025; /* Alert/Red */
-  --morado:   #5e35b1; /* Deep Purple accent */
+  /* Paleta Wixárika / Nierika — colores sagrados del pueblo Huichol */
+  --magenta:  #D81E5B; /* Nierika — ojo divino, poder, identidad sagrada */
+  --solar:    #F5A623; /* Sol — prosperidad, calor, comunidad, KPIs */
+  --turq:     #0FA3B1; /* Río Jesús María — inteligencia, agua, tecnología */
+  --verde:    #4C9F70; /* Monte — tierra, vida, estados verificados */
+  --coral:    #E85D04; /* Fuego — alerta, urgencia moderada */
+  --morado:   #5E35B1; /* Noche profunda — autoridad secundaria */
 
-  --tinta:    #001d3d; /* Darkest Navy */
-  --crema:    #f1f7fe; /* Pale blue-white */
-  --hueso:    #d1e2f3; /* Bone/Border Blue */
+  --tinta:    #14213D; /* Noche — fondo de autoridad */
+  --crema:    #F8F6F1; /* Hueso cálido — fondo neutro con temperatura */
+  --hueso:    #E8E0D4; /* Borde cálido */
   --blanco:   #ffffff;
-  --gris:     #486581; /* Steel gray text */
+  --gris:     #5A6478; /* Niebla — texto secundario, azul-gris elegido */
 
   --frau: 'Fraunces', serif;
   --inst: 'Instrument Sans', sans-serif;
@@ -194,6 +195,11 @@ body {
   overflow: hidden;
   box-shadow: 0 28px 70px rgba(0,0,0,.4);
 }
+
+/* OjoNierika 2D spin — for SVG section accents */
+@keyframes ojo-spin-2d { to { transform: rotate(360deg); } }
+.ojo-spin-2d { animation: ojo-spin-2d 20s linear infinite; }
+.ojo-spin-2d-rev { animation: ojo-spin-2d 28s linear infinite reverse; }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
