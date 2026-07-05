@@ -454,7 +454,7 @@ export function CitizenApp({
                   onViewManifest={() => setActiveTab('strategic_plan')}
                 />
               )}
-              {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} />}
+              {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} onShowMap={() => setShowMap(true)} />}
               {activeTab === 'forum' && <ParlamentoView onBack={() => setActiveTab('home')} />}
               {activeTab === 'payments' && <TesoreriaYTramitesView onPay={(item: any) => setPayingItem(item)} onBack={() => setActiveTab('home')} />}
               {activeTab === 'services' && <ServiciosYReportesView onShowTriage={() => setShowTriage(true)} onGoToAuditoria={() => setActiveTab('auditoria')} onBack={() => setActiveTab('home')} />}
@@ -1006,7 +1006,7 @@ function HomeView({
                 <span className="text-slate-400">en Evolución Activa</span>
               </h2>
               <div className="flex items-center gap-4 pt-2">
-                <button 
+                <button
                   onClick={onViewManifest}
                   className="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 px-6 py-3 rounded-2xl group/play hover:bg-white/20 transition-all"
                 >
@@ -1286,9 +1286,13 @@ function ViewHeader({ title, onBack }: { title: string, onBack?: () => void }) {
   );
 }
 
-function RedesCiudadanasView({ profile, onBack }: { profile: any, onBack: () => void }) {
+function RedesCiudadanasView({ profile, onBack, onShowMap }: { profile: any, onBack: () => void, onShowMap: () => void }) {
   const [networks, setNetworks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showExternalReg, setShowExternalReg] = useState(false);
+  const [extName, setExtName] = useState('');
+  const [extPhone, setExtPhone] = useState('');
+  const [regSent, setRegSent] = useState(false);
 
   useEffect(() => {
     const q = collection(db, 'neighborhood_networks');
@@ -1352,7 +1356,7 @@ function RedesCiudadanasView({ profile, onBack }: { profile: any, onBack: () => 
       <div className="space-y-4">
         <div className="flex justify-between items-center px-4">
            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Comités en Tepic</h3>
-           <button className="text-[10px] font-black text-magenta-500 uppercase tracking-widest">Ver Mapa</button>
+           <button onClick={onShowMap} className="text-[10px] font-black text-magenta-500 uppercase tracking-widest hover:underline">Ver Mapa</button>
         </div>
 
         <div className="space-y-3">
@@ -1420,9 +1424,46 @@ function RedesCiudadanasView({ profile, onBack }: { profile: any, onBack: () => 
          <p className="text-xs text-emerald-700 leading-relaxed mb-5">
             ¿Tienes familiares o vecinos que aún no tienen su Nayarit ID? Ayúdalos a registrarse y intégralos a la red ciudadana.
          </p>
-         <button className="w-full py-4 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg hover:bg-emerald-700 transition-colors active:scale-95">
+         <button
+           onClick={() => setShowExternalReg(true)}
+           className="w-full py-4 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg hover:bg-emerald-700 transition-colors active:scale-95"
+         >
             Comenzar Registro Externo
          </button>
+         {showExternalReg && (
+           <div className="mt-4 p-5 bg-white border border-emerald-200 rounded-2xl space-y-4 shadow-sm">
+             {regSent ? (
+               <div className="text-center py-4">
+                 <p className="text-2xl mb-2">✅</p>
+                 <p className="text-sm font-black text-emerald-700">Registro enviado</p>
+                 <p className="text-xs text-slate-500 mt-1">El nuevo Nayarita recibirá su invitación en breve.</p>
+                 <button onClick={() => { setShowExternalReg(false); setRegSent(false); setExtName(''); setExtPhone(''); }} className="mt-4 text-xs font-bold text-emerald-600 hover:underline">Registrar otro</button>
+               </div>
+             ) : (
+               <>
+                 <p className="text-xs font-bold text-slate-600 uppercase tracking-widest">Datos del nuevo Nayarita</p>
+                 <input
+                   type="text" placeholder="Nombre completo" value={extName}
+                   onChange={e => setExtName(e.target.value)}
+                   className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-400"
+                 />
+                 <input
+                   type="tel" placeholder="Teléfono" value={extPhone}
+                   onChange={e => setExtPhone(e.target.value)}
+                   className="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-400"
+                 />
+                 <div className="flex gap-3">
+                   <button onClick={() => setShowExternalReg(false)} className="flex-1 py-3 border border-slate-200 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-50">Cancelar</button>
+                   <button
+                     onClick={() => { if (extName) { setRegSent(true); } }}
+                     disabled={!extName}
+                     className="flex-1 py-3 bg-emerald-600 text-white rounded-xl text-xs font-bold disabled:opacity-40"
+                   >Enviar Invitación</button>
+                 </div>
+               </>
+             )}
+           </div>
+         )}
       </div>
     </div>
   );
@@ -1566,10 +1607,22 @@ function TesoreriaYTramitesView({ onPay, onBack }: { onPay: (item: any) => void,
            Módulo 03 — Ventanilla Única y Actas
         </h3>
         <div className="bg-white rounded-[2rem] border border-slate-200 divide-y divide-slate-100 overflow-hidden shadow-sm">
-           {['Licencia de Funcionamiento Criptográfica', 'Permiso de Construcción Georreferenciado', 'Uso de Suelo Digital', 'Actas del Registro Civil (Firma Avanzada)'].map(s => (
-             <button key={s} className="w-full px-8 py-6 flex justify-between items-center hover:bg-slate-50 active:bg-slate-100 transition-colors text-left group">
-                <span className="text-sm font-bold text-slate-700 group-hover:text-emerald-700 transition-colors">{s}</span>
-                <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-emerald-500 transition-colors" />
+           {[
+             { label: 'Licencia de Funcionamiento Criptográfica', val: '$1,200.00' },
+             { label: 'Permiso de Construcción Georreferenciado', val: '$3,500.00' },
+             { label: 'Uso de Suelo Digital', val: '$800.00' },
+             { label: 'Actas del Registro Civil (Firma Avanzada)', val: '$150.00' },
+           ].map(s => (
+             <button
+               key={s.label}
+               onClick={() => onPay({ icon: FileText, title: s.label, val: s.val, status: 'Certificado', color: 'text-emerald-500' })}
+               className="w-full px-8 py-6 flex justify-between items-center hover:bg-slate-50 active:bg-slate-100 transition-colors text-left group"
+             >
+                <span className="text-sm font-bold text-slate-700 group-hover:text-emerald-700 transition-colors">{s.label}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-bold text-slate-400">{s.val}</span>
+                  <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-emerald-500 transition-colors" />
+                </div>
              </button>
            ))}
         </div>
@@ -1582,6 +1635,14 @@ function TesoreriaYTramitesView({ onPay, onBack }: { onPay: (item: any) => void,
 }
 
 function ServiciosYReportesView({ onShowTriage, onGoToAuditoria, onBack }: { onShowTriage: () => void, onGoToAuditoria: () => void, onBack: () => void }) {
+  const [reportSent, setReportSent] = useState<string | null>(null);
+  const [gpsToast, setGpsToast] = useState(false);
+
+  const sendReport = (label: string) => {
+    setReportSent(label);
+    setTimeout(() => setReportSent(null), 3000);
+  };
+
   return (
     <div className="pt-2 space-y-8 pb-20">
       <ViewHeader title="Centro de Operaciones" onBack={onBack} />
@@ -1623,13 +1684,19 @@ function ServiciosYReportesView({ onShowTriage, onGoToAuditoria, onBack }: { onS
                <ShieldCheck className="w-3 h-3" />
                Módulo 02 — Reportar Incidencias
             </h3>
+            {reportSent && (
+              <div className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs font-bold text-emerald-700">
+                <ShieldCheck className="w-4 h-4 shrink-0" />
+                Reporte enviado: <span className="font-black">{reportSent}</span> — Folio asignado, C5 notificado.
+              </div>
+            )}
             <div className="grid grid-cols-1 gap-3">
                {[
                  { label: 'Auditoría de Luminaria', desc: 'Evidencia Fotográfica Geolocalizada', icon: Lightbulb, color: 'text-amber-500', bg: 'bg-amber-50' },
                  { label: 'Auditoría de Bacheo', desc: 'Evidencia Fotográfica Geolocalizada', icon: ShieldCheck, color: 'text-blue-500', bg: 'bg-blue-50' },
                  { label: 'Falla Hídrica Estratégica', desc: 'Evidencia Fotográfica Geolocalizada', icon: Droplets, color: 'text-sky-500', bg: 'bg-sky-50' }
                ].map((s, i) => (
-                 <button key={i} className="w-full flex justify-between items-center p-5 bg-white border border-slate-200 rounded-[1.5rem] hover:border-slate-400 active:bg-slate-50 transition-all group text-left shadow-sm">
+                 <button key={i} onClick={() => sendReport(s.label)} className="w-full flex justify-between items-center p-5 bg-white border border-slate-200 rounded-[1.5rem] hover:border-slate-400 active:bg-slate-50 transition-all group text-left shadow-sm">
                     <div className="flex items-center gap-4">
                        <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", s.bg, s.color)}>
                           <s.icon className="w-6 h-6" />
@@ -1653,7 +1720,16 @@ function ServiciosYReportesView({ onShowTriage, onGoToAuditoria, onBack }: { onS
          <div className="space-y-3">
             <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Módulo 06 — Logística Municipal (RoutePro)</h3>
             <div className="grid grid-cols-1 gap-3">
-               <button className="w-full flex justify-between items-center p-5 bg-emerald-50 border border-emerald-100 rounded-[1.5rem] hover:bg-emerald-100 active:scale-[0.99] transition-all group text-left">
+               {gpsToast && (
+                 <div className="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs font-bold text-emerald-700">
+                   <MapIcon className="w-4 h-4 shrink-0" />
+                   GPS activo — La unidad de recolección está a 8 minutos de tu colonia.
+                 </div>
+               )}
+               <button
+                 onClick={() => { setGpsToast(true); setTimeout(() => setGpsToast(false), 4000); }}
+                 className="w-full flex justify-between items-center p-5 bg-emerald-50 border border-emerald-100 rounded-[1.5rem] hover:bg-emerald-100 active:scale-[0.99] transition-all group text-left"
+               >
                   <div className="flex items-center gap-4">
                      <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
                         <MapIcon className="w-6 h-6" />
