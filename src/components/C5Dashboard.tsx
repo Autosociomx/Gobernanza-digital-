@@ -60,7 +60,7 @@ type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 
 
 export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
   const [activeModule, setActiveModule] = useState<ModuleType>(() => (localStorage.getItem('activeModule') as ModuleType) || 'tesoreria');
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(() => typeof window === 'undefined' || window.innerWidth >= 1024);
 
   useEffect(() => {
     localStorage.setItem('activeModule', activeModule);
@@ -84,16 +84,33 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
     { id: 'agentes_federales', name: 'Agentes Federales', icon: Network, color: 'text-orange-400', bg: 'bg-orange-400/10' },
   ] as const;
 
+  const closeSidebarOnMobile = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) setSidebarOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-[#0f1115] text-slate-300 font-sans flex overflow-hidden">
+      {/* Mobile backdrop */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 z-10 bg-black/60 lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
       {/* Sidebar */}
       <AnimatePresence>
         {sidebarOpen && (
-          <motion.div 
+          <motion.div
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: 280, opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
-            className="h-screen bg-[#161920] border-r border-slate-800 flex flex-col flex-shrink-0 relative z-20"
+            className="fixed inset-y-0 left-0 z-20 lg:relative lg:z-20 h-screen max-w-[85vw] bg-[#161920] border-r border-slate-800 flex flex-col flex-shrink-0 overflow-hidden"
           >
             <div className="p-6 border-b border-slate-800">
               <div className="flex items-center gap-3">
@@ -112,7 +129,7 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
               {modules.map((m) => (
                 <button
                   key={m.id}
-                  onClick={() => setActiveModule(m.id as ModuleType)}
+                  onClick={() => { setActiveModule(m.id as ModuleType); closeSidebarOnMobile(); }}
                   className={cn(
                     "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group text-left",
                     activeModule === m.id

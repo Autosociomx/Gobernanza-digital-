@@ -278,7 +278,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                 onClick={() => onNavigate('c5')}
                 className="border-2 border-[#0f285c] text-[#0f285c] hover:bg-[#0f285c] hover:text-white px-8 py-5 rounded-full text-base font-bold transition-all flex items-center gap-3 group"
               >
-                Soy funcionario — Ver demo <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                Panel de Transparencia <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
 

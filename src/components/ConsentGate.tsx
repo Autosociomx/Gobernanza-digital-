@@ -14,15 +14,16 @@ export function ConsentGate({ onAccept }: ConsentGateProps) {
   async function handleAccept() {
     if (!checked) return;
     setAccepting(true);
-    try {
-      await addDoc(collection(db, 'consent_logs'), {
-        acceptedAt: serverTimestamp(),
-        version: 'NYD-2026-v1',
-        userAgent: navigator.userAgent.slice(0, 200),
-      });
-    } catch {
-      // non-blocking — proceed even if write fails (network error, etc.)
-    }
+    const logWrite = addDoc(collection(db, 'consent_logs'), {
+      acceptedAt: serverTimestamp(),
+      version: 'NYD-2026-v1',
+      userAgent: navigator.userAgent.slice(0, 200),
+    }).catch(() => {
+      // ignore — proceed even if the write rejects (network error, offline, etc.)
+    });
+    const timeout = new Promise(resolve => setTimeout(resolve, 2500));
+    // Best-effort: never block entry on the logging write
+    await Promise.race([logWrite, timeout]);
     setTimeout(onAccept, 300);
   }
 
