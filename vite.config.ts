@@ -8,7 +8,8 @@ export default defineConfig(({mode}) => {
   return {
     plugins: [react(), tailwindcss()],
     define: {
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+      // Nota de seguridad: la credencial del motor de IA (ANTHROPIC_API_KEY)
+      // vive solo en el servidor y nunca se inyecta en el bundle del cliente.
       'process.env.GOOGLE_MAPS_PLATFORM_KEY': JSON.stringify(env.GOOGLE_MAPS_PLATFORM_KEY),
     },
     resolve: {
