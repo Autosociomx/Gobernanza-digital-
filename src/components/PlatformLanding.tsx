@@ -23,6 +23,7 @@ const WixarikaBanda = () => (
 );
 
 export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#F8F6F1] font-sans overflow-x-hidden selection:bg-[#D81E5B]/20">
@@ -58,7 +59,41 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                Entrar al Sistema
              </button>
            </nav>
+
+           <button
+             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+             aria-label={mobileMenuOpen ? 'Cerrar menú de navegación' : 'Abrir menú de navegación'}
+             aria-expanded={mobileMenuOpen}
+             className="lg:hidden p-2 text-[#F8F6F1] hover:text-[#0FA3B1] transition-colors"
+           >
+             <Menu className="w-7 h-7" />
+           </button>
         </header>
+
+        {/* Menú móvil */}
+        {mobileMenuOpen && (
+          <nav className="lg:hidden relative z-30 mx-6 mb-4 bg-[#1a2b52] border border-[#F8F6F1]/15 rounded-xl overflow-hidden shadow-2xl">
+            {[
+              { label: 'Portal Ciudadano', view: 'citizen' as const },
+              { label: 'C5 Dashboard', view: 'c5' as const },
+              { label: 'Executive Folder', view: 'executive' as const },
+            ].map((item) => (
+              <button
+                key={item.view}
+                onClick={() => { setMobileMenuOpen(false); onNavigate(item.view); }}
+                className="w-full text-left px-6 py-4 text-sm font-bold uppercase tracking-widest text-[#F8F6F1] hover:bg-[#0FA3B1]/20 border-b border-[#F8F6F1]/10 flex items-center justify-between"
+              >
+                {item.label} <ChevronRight className="w-4 h-4 text-[#0FA3B1]" />
+              </button>
+            ))}
+            <button
+              onClick={() => { setMobileMenuOpen(false); onNavigate('c5'); }}
+              className="w-full text-left px-6 py-4 text-sm font-bold uppercase tracking-widest bg-[#D81E5B] text-white"
+            >
+              Entrar al Sistema
+            </button>
+          </nav>
+        )}
 
         {/* Main Hero Content */}
         <main className="flex-1 flex flex-col justify-center items-center text-center px-6 relative z-10 py-12">
@@ -69,17 +104,17 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
           </h1>
           
           <p className="text-lg md:text-xl text-[#F8F6F1]/70 max-w-2xl font-sans tracking-wider mb-14 leading-relaxed">
-            Carta de Presentación Estratégica. Plataforma integral de gobernanza digital alineada a la Ley Nacional de Simplificación y Digitalización — lista para producción.
+            Carta de Presentación Estratégica. Plataforma integral de gobernanza digital alineada a la Ley Nacional de Simplificación y Digitalización.
           </p>
 
           {/* KPI Chips */}
           <div className="flex flex-wrap justify-center gap-3 max-w-3xl mb-16">
              <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#D81E5B]/20 text-[#ff8ab8] border border-[#D81E5B]/40 uppercase">18 Módulos Activos</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#0FA3B1]/20 text-[#7ee8f2] border border-[#0FA3B1]/40 uppercase">3 Agentes Federales IA</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#F5A623]/20 text-[#ffc96a] border border-[#F5A623]/40 uppercase">100+ Pagos Municipales</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#4C9F70]/20 text-[#7de3a8] border border-[#4C9F70]/40 uppercase">20/20 Municipios</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#D81E5B]/20 text-[#ff8ab8] border border-[#D81E5B]/40 uppercase">14 Leyes Cumplidas</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#0FA3B1]/20 text-[#7ee8f2] border border-[#0FA3B1]/40 uppercase">LlaveMx Art. 74</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#0FA3B1]/20 text-[#7ee8f2] border border-[#0FA3B1]/40 uppercase">Asistente IA Integrado</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#F5A623]/20 text-[#ffc96a] border border-[#F5A623]/40 uppercase">Catálogo de Pagos Municipales</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#4C9F70]/20 text-[#7de3a8] border border-[#4C9F70]/40 uppercase">Meta: 20/20 Municipios</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#D81E5B]/20 text-[#ff8ab8] border border-[#D81E5B]/40 uppercase">Marco LNETB</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#0FA3B1]/20 text-[#7ee8f2] border border-[#0FA3B1]/40 uppercase">Preparado para LlaveMx · Art. 74</span>
           </div>
 
           <div className="flex flex-wrap justify-center gap-6">
@@ -91,7 +126,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
              </button>
           </div>
 
-          <p className="text-[#a0aec0] text-xs tracking-[0.2em] uppercase mt-20">Julio 2026 · Documento Confidencial · v3.0</p>
+          <p className="text-[#a0aec0] text-xs tracking-[0.2em] uppercase mt-20">Julio 2026 · Nayarit Digital · v3.0</p>
         </main>
       </div>
 
@@ -121,7 +156,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                 <Lock className="w-8 h-8 text-[#0FA3B1] shrink-0" />
                 <div>
                   <h4 className="font-bold text-[17px] mb-2 text-[#1a2438]">LlaveMx Art. 74 LNETB</h4>
-                  <p className="text-sm text-[#4a5568] leading-relaxed">ConnectX es el único sistema municipal integrado con LlaveMx desde el día 1 — el estándar de identidad federal obligatorio.</p>
+                  <p className="text-sm text-[#4a5568] leading-relaxed">ConnectX está diseñado desde su arquitectura para integrarse con LlaveMx — el estándar de identidad federal obligatorio — como parte de su hoja de ruta de cumplimiento.</p>
                 </div>
               </div>
             </div>
@@ -152,7 +187,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                  <h4 className="text-[#4C9F70] text-[11px] font-bold uppercase tracking-widest mb-3">Oportunidad Política — Subirse al barco</h4>
                  <ul className="space-y-2 text-[14px] text-[#e8e0d4]">
                    <li className="flex gap-3"><span className="text-[#4C9F70] font-bold">✅</span> <span>Liderar la narrativa nacional. Primera ciudad 100% digital.</span></li>
-                   <li className="flex gap-3"><span className="text-[#4C9F70] font-bold">✅</span> <span>Resultados visibles en 30 días, listos para campaña 2027.</span></li>
+                   <li className="flex gap-3"><span className="text-[#4C9F70] font-bold">✅</span> <span>Resultados visibles para la ciudadanía en los primeros 30 días.</span></li>
                  </ul>
                </div>
              </div>
@@ -166,7 +201,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
         {/* 03: 5 Capas */}
         <div className="max-w-6xl mx-auto mb-32">
           <div className="text-center mb-16">
-             <p className="text-[#0FA3B1] text-xs font-bold tracking-[0.2em] uppercase mb-4">03 · Arquitectura del Ecosistema</p>
+             <p className="text-[#0FA3B1] text-xs font-bold tracking-[0.2em] uppercase mb-4">02 · Arquitectura del Ecosistema</p>
              <h2 className="text-4xl md:text-5xl font-serif font-black leading-tight text-[#1a2438]">5 capas. Un solo sistema nervioso.</h2>
           </div>
 
@@ -217,10 +252,10 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
         <div className="max-w-6xl mx-auto bg-white border border-[#d4ccc2] rounded-2xl p-8 md:p-14 shadow-sm">
            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div>
-                 <div className="inline-block border border-[#F5A623]/50 text-[#b47a19] px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase mb-6 bg-[#F5A623]/10">Ranking Gobierno Digital</div>
-                 <h2 className="text-3xl md:text-4xl font-serif font-black leading-tight mb-6 text-[#1a2438]">Tepic: del #840 al #38 en 90 días.</h2>
+                 <div className="inline-block border border-[#F5A623]/50 text-[#b47a19] px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase mb-6 bg-[#F5A623]/10">03 · Ranking Gobierno Digital</div>
+                 <h2 className="text-3xl md:text-4xl font-serif font-black leading-tight mb-6 text-[#1a2438]">Tepic: proyección del #840 al #38 en 90 días.</h2>
                  <p className="text-[#4a5568] text-[16px] leading-relaxed mb-8">
-                    Con el 95% del Programa Municipios Digitales implementado, Nayarit se proyecta como el único estado de México con cobertura digital municipal total (20/20).
+                    Con el Programa Municipios Digitales como vehículo, Nayarit se proyecta como el único estado de México con cobertura digital municipal total (20/20).
                  </p>
                  <div className="flex gap-12">
                     <div>
