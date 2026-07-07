@@ -135,10 +135,10 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
         </div>
         
         <nav className="hidden lg:flex items-center gap-10">
-          <button onClick={() => onNavigate('citizen')} className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">Soluciones</button>
-          <button onClick={() => onNavigate('executive')} className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">Estrategia</button>
-          <button onClick={() => onNavigate('dev')} className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">Impacto</button>
-          <button onClick={() => onNavigate('c5')} className="text-sm font-bold text-slate-500 hover:text-blue-600 transition-colors uppercase tracking-widest">Transparencia</button>
+          <button onClick={() => onNavigate('citizen')} className="text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-widest">Soluciones</button>
+          <button onClick={() => onNavigate('executive')} className="text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-widest">Estrategia</button>
+          <button onClick={() => onNavigate('dev')} className="text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-widest">Impacto</button>
+          <button onClick={() => onNavigate('c5')} className="text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-widest">Transparencia</button>
           <button 
             onClick={() => onNavigate('dev')}
             className="bg-[#0f285c] text-white px-7 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-[#0f285c]/20"
@@ -235,7 +235,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                       <h3 className="font-serif font-black text-2xl text-[#0f285c] leading-tight px-4 mb-2">
                         {item.title}
                       </h3>
-                      <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Nayarit Digital Elite</p>
+                      <p className="text-slate-600 text-xs font-bold uppercase tracking-widest">Nayarit Digital Elite</p>
                    </div>
                    
                    {/* Image background that blends into the top */}
@@ -318,7 +318,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
 
             <div className="flex gap-12 relative z-10">
                <div className="text-center">
-                  <div className="text-amber-400 text-3xl font-black font-serif">1.5M</div>
+                  <div className="text-amber-400 text-3xl font-black font-serif">1.2M+</div>
                   <div className="text-[0.6rem] uppercase tracking-widest font-bold text-slate-400 mt-1">Ciudadanos</div>
                </div>
                <div className="text-center">
