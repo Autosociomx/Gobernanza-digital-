@@ -64,7 +64,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
         <main className="flex-1 flex flex-col justify-center items-center text-center px-6 relative z-10 py-12">
           <h1 className="text-5xl md:text-7xl lg:text-[4.8rem] font-serif font-normal leading-[1.1] tracking-tight mb-8 max-w-5xl">
              El sistema operativo<br/>
-             del <em className="italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-[#D81E5B] to-[#0FA3B1]">nuevo gobierno</em><br/>
+             del <em aria-hidden="true" className="italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-[#D81E5B] to-[#0FA3B1]">nuevo gobierno</em><span className="sr-only">nuevo gobierno</span><br/>
              de Nayarit
           </h1>
           
@@ -113,14 +113,14 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
               <div className="flex gap-5 p-6 bg-white border border-[#d4ccc2] rounded-xl border-l-4 border-l-[#D81E5B] shadow-sm">
                 <Scale className="w-8 h-8 text-[#D81E5B] shrink-0" />
                 <div>
-                  <h4 className="font-bold text-[17px] mb-2 text-[#1a2438]">Obligación Constitucional</h4>
+                  <h3 className="font-bold text-[17px] mb-2 text-[#1a2438]">Obligación Constitucional</h3>
                   <p className="text-sm text-[#4a5568] leading-relaxed">No cumplir expone al municipio a observaciones de la ASF y al Presidente Municipal a responsabilidad ante la SFP.</p>
                 </div>
               </div>
               <div className="flex gap-5 p-6 bg-white border border-[#d4ccc2] rounded-xl border-l-4 border-l-[#0FA3B1] shadow-sm">
                 <Lock className="w-8 h-8 text-[#0FA3B1] shrink-0" />
                 <div>
-                  <h4 className="font-bold text-[17px] mb-2 text-[#1a2438]">LlaveMx Art. 74 LNETB</h4>
+                  <h3 className="font-bold text-[17px] mb-2 text-[#1a2438]">LlaveMx Art. 74 LNETB</h3>
                   <p className="text-sm text-[#4a5568] leading-relaxed">ConnectX es el único sistema municipal integrado con LlaveMx desde el día 1 — el estándar de identidad federal obligatorio.</p>
                 </div>
               </div>
@@ -142,14 +142,14 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
 
              <div className="space-y-8">
                <div>
-                 <h4 className="text-[#D81E5B] text-[11px] font-bold uppercase tracking-widest mb-3">Riesgo Legal — Quedarse en el muelle</h4>
+                 <h3 className="text-[#D81E5B] text-[11px] font-bold uppercase tracking-widest mb-3">Riesgo Legal — Quedarse en el muelle</h3>
                  <ul className="space-y-2 text-[14px] text-[#e8e0d4]">
                    <li className="flex gap-3"><span className="text-[#D81E5B] font-bold">✖</span> <span>Daño político colateral y sanciones de la ASF.</span></li>
                    <li className="flex gap-3"><span className="text-[#D81E5B] font-bold">✖</span> <span>Recuperar terreno después es 10x más costoso.</span></li>
                  </ul>
                </div>
                <div>
-                 <h4 className="text-[#4C9F70] text-[11px] font-bold uppercase tracking-widest mb-3">Oportunidad Política — Subirse al barco</h4>
+                 <h3 className="text-[#4C9F70] text-[11px] font-bold uppercase tracking-widest mb-3">Oportunidad Política — Subirse al barco</h3>
                  <ul className="space-y-2 text-[14px] text-[#e8e0d4]">
                    <li className="flex gap-3"><span className="text-[#4C9F70] font-bold">✅</span> <span>Liderar la narrativa nacional. Primera ciudad 100% digital.</span></li>
                    <li className="flex gap-3"><span className="text-[#4C9F70] font-bold">✅</span> <span>Resultados visibles en 30 días, listos para campaña 2027.</span></li>
@@ -174,7 +174,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
              <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
                <div className="absolute top-0 left-0 right-0 h-1 bg-[#D81E5B]"></div>
                <div className="w-12 h-12 bg-[#D81E5B]/10 text-[#D81E5B] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">1</div>
-               <h4 className="font-bold text-[#1a2438] mb-2 text-lg">Landing Page</h4>
+               <h3 className="font-bold text-[#1a2438] mb-2 text-lg">Landing Page</h3>
                <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">La cara pública del ecosistema. Narrativa wixárika y posicionamiento estatal.</p>
                <button onClick={() => window.scrollTo({top:0, behavior:'smooth'})} className="text-[#D81E5B] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Inicio <ChevronRight className="w-3 h-3"/></button>
              </div>
@@ -182,7 +182,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
              <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
                <div className="absolute top-0 left-0 right-0 h-1 bg-[#0FA3B1]"></div>
                <div className="w-12 h-12 bg-[#0FA3B1]/10 text-[#0FA3B1] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">2</div>
-               <h4 className="font-bold text-[#1a2438] mb-2 text-lg">C5 Dashboard</h4>
+               <h3 className="font-bold text-[#1a2438] mb-2 text-lg">C5 Dashboard</h3>
                <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">Centro de mando de gobierno. 14 módulos de gestión, tesorería y auditoría.</p>
                <button onClick={() => onNavigate('c5')} className="text-[#0FA3B1] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Dashboard <ChevronRight className="w-3 h-3"/></button>
              </div>
@@ -190,7 +190,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
              <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
                <div className="absolute top-0 left-0 right-0 h-1 bg-[#4C9F70]"></div>
                <div className="w-12 h-12 bg-[#4C9F70]/10 text-[#4C9F70] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">3</div>
-               <h4 className="font-bold text-[#1a2438] mb-2 text-lg">CitizenApp</h4>
+               <h3 className="font-bold text-[#1a2438] mb-2 text-lg">CitizenApp</h3>
                <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">El gobierno en el bolsillo. 15 servicios, ventanilla única y expediente digital.</p>
                <button onClick={() => onNavigate('citizen')} className="text-[#4C9F70] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Abrir App <ChevronRight className="w-3 h-3"/></button>
              </div>
@@ -198,7 +198,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
              <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
                <div className="absolute top-0 left-0 right-0 h-1 bg-[#F5A623]"></div>
                <div className="w-12 h-12 bg-[#F5A623]/10 text-[#F5A623] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">4</div>
-               <h4 className="font-bold text-[#1a2438] mb-2 text-lg">Agentes IA</h4>
+               <h3 className="font-bold text-[#1a2438] mb-2 text-lg">Agentes IA</h3>
                <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">Inteligencia de datos en tiempo real (datos.gob.mx, INEGI). Reporte CEO Agent.</p>
                <button onClick={() => onNavigate('c5')} className="text-[#F5A623] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Ver IA <ChevronRight className="w-3 h-3"/></button>
              </div>
@@ -206,9 +206,61 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
              <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
                <div className="absolute top-0 left-0 right-0 h-1 bg-[#E85D04]"></div>
                <div className="w-12 h-12 bg-[#E85D04]/10 text-[#E85D04] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">5</div>
-               <h4 className="font-bold text-[#1a2438] mb-2 text-lg">Executive Folder</h4>
+               <h3 className="font-bold text-[#1a2438] mb-2 text-lg">Executive Folder</h3>
                <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">Inteligencia confidencial y expedientes de negociación para la mesa de decisión.</p>
                <button onClick={() => onNavigate('executive')} className="text-[#E85D04] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Carpeta <ChevronRight className="w-3 h-3"/></button>
+             </div>
+          </div>
+        </div>
+
+        {/* 04: Pueblos Originarios */}
+        <div className="max-w-6xl mx-auto mb-32">
+          <div className="text-center mb-16">
+             <p className="text-[#4C9F70] text-xs font-bold tracking-[0.2em] uppercase mb-4">04 · Pueblos Originarios Primero</p>
+             <h2 className="text-4xl md:text-5xl font-serif font-black leading-tight text-[#1a2438]">Las ciudades indígenas<br/>dejan de ser las últimas de la fila.</h2>
+             <p className="text-[#4a5568] text-lg leading-relaxed max-w-3xl mx-auto mt-6">
+                La transformación digital que solo llega a la capital no es transformación: es privilegio.
+                ConnectX se diseñó para que el gobierno llegue al teléfono en la sierra — sin que nadie
+                tenga que bajar a Tepic a hacer fila.
+             </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+             <div className="bg-[#14213D] text-white p-8 rounded-xl relative overflow-hidden shadow-lg">
+               <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#D81E5B] via-[#F5A623] to-[#0FA3B1]"></div>
+               <Users className="w-8 h-8 text-[#F5A623] mb-5" />
+               <h3 className="font-bold text-lg mb-3">Del Nayar entra al Top 200</h3>
+               <p className="text-[14px] text-[#a0aec0] leading-relaxed mb-5">
+                  El municipio más remoto del estado — corazón náayeri y wixárika — proyecta pasar
+                  del lugar <span className="text-white font-bold">#2,344</span> al
+                  <span className="text-[#F5A623] font-bold"> #198</span> nacional en gobierno digital.
+                  Ese dato es el argumento para toda la sierra: La Yesca y Huajicori siguen la misma ruta.
+               </p>
+               <p className="text-[10px] uppercase tracking-widest font-bold text-[#4C9F70]">Cobertura 20/20 · Nadie se queda fuera</p>
+             </div>
+
+             <div className="bg-white border border-[#d4ccc2] p-8 rounded-xl relative overflow-hidden shadow-sm">
+               <div className="absolute top-0 left-0 right-0 h-1 bg-[#4C9F70]"></div>
+               <Globe className="w-8 h-8 text-[#4C9F70] mb-5" />
+               <h3 className="font-bold text-lg mb-3 text-[#1a2438]">En su lengua, no solo en español</h3>
+               <p className="text-[14px] text-[#4a5568] leading-relaxed mb-5">
+                  La plataforma opera en español, náayeri (cora) y wixárika. Un trámite que no se
+                  entiende es una fila disfrazada: aquí el ciudadano de la sierra lee su gobierno
+                  en su propia lengua.
+               </p>
+               <p className="text-[10px] uppercase tracking-widest font-bold text-[#4C9F70]">3 lenguas · Selector integrado en el C5</p>
+             </div>
+
+             <div className="bg-white border border-[#d4ccc2] p-8 rounded-xl relative overflow-hidden shadow-sm">
+               <div className="absolute top-0 left-0 right-0 h-1 bg-[#E85D04]"></div>
+               <Smartphone className="w-8 h-8 text-[#E85D04] mb-5" />
+               <h3 className="font-bold text-lg mb-3 text-[#1a2438]">Infraestructura con fondo propio</h3>
+               <p className="text-[14px] text-[#4a5568] leading-relaxed mb-5">
+                  El FAISPIAM — el fondo federal de infraestructura para pueblos indígenas y
+                  afromexicanos — está integrado en la tesorería del sistema: cada peso destinado
+                  a la sierra queda trazado y auditable.
+               </p>
+               <p className="text-[10px] uppercase tracking-widest font-bold text-[#E85D04]">Trazabilidad ASF · Bienestar social</p>
              </div>
           </div>
         </div>
@@ -224,11 +276,11 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                  </p>
                  <div className="flex gap-12">
                     <div>
-                       <h4 className="text-4xl font-black text-[#F5A623] font-sans">#38</h4>
+                       <h3 className="text-4xl font-black text-[#F5A623] font-sans">#38</h3>
                        <p className="text-[10px] uppercase tracking-widest text-[#4a5568] mt-2 font-bold">Lugar Nacional</p>
                     </div>
                     <div>
-                       <h4 className="text-4xl font-black text-[#4C9F70] font-sans">20/20</h4>
+                       <h3 className="text-4xl font-black text-[#4C9F70] font-sans">20/20</h3>
                        <p className="text-[10px] uppercase tracking-widest text-[#4a5568] mt-2 font-bold">Cobertura Estatal</p>
                     </div>
                  </div>
