@@ -6,3 +6,6 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Base de datos local del servidor
+government_data.db

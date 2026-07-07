@@ -5,6 +5,7 @@ import fs from "fs/promises";
 import Database from "better-sqlite3";
 import { GoogleGenAI, ThinkingLevel } from "@google/genai";
 import Stripe from "stripe";
+import { ESPECIALISTAS, PREAMBULO_GABINETE, type Especialista } from "./gabinete.config";
 
 let aiClient: GoogleGenAI | null = null;
 function getAI() {
@@ -131,6 +132,127 @@ async function startServer() {
       console.error("AI Assistant Error:", error);
       res.status(500).json({ error: error.message || "Error procesando la solicitud de IA" });
     }
+  });
+
+  // ── Gabinete Digital de Especialistas ─────────────────────────────────
+  // 15 agentes de dominio repartidos en 3 proveedores (Groq/Gemini/Anthropic)
+  // para que ningún límite de tokens de un solo proveedor detenga una sesión.
+  // Ver docs/agentes/GABINETE_ESPECIALISTAS.md y docs/agentes/PLAN_ESTRATEGICO_GABINETE.md
+
+  const keyDe = (proveedor: Especialista["proveedor"]) =>
+    proveedor === "groq" ? process.env.GROQ_API_KEY
+    : proveedor === "anthropic" ? process.env.ANTHROPIC_API_KEY
+    : process.env.GEMINI_API_KEY;
+
+  async function consultarEspecialista(esp: Especialista, tema: string): Promise<string> {
+    const system = `${PREAMBULO_GABINETE}\n\nSilla ${esp.id} · ${esp.nombre}.\n${esp.prompt}\nMódulos bajo vigilancia: ${esp.vigila.join(", ")}.`;
+
+    if (esp.proveedor === "gemini") {
+      const ai = getAI();
+      const response = await ai.models.generateContent({
+        model: esp.modelo,
+        contents: [{ role: "user", parts: [{ text: tema }] }],
+        config: { systemInstruction: system },
+      });
+      return response.text ?? "";
+    }
+
+    if (esp.proveedor === "groq") {
+      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: esp.modelo,
+          messages: [
+            { role: "system", content: system },
+            { role: "user", content: tema },
+          ],
+          max_tokens: 1024,
+        }),
+      });
+      if (!res.ok) throw new Error(`Groq ${res.status}: ${await res.text()}`);
+      const data = await res.json();
+      return data.choices?.[0]?.message?.content ?? "";
+    }
+
+    // anthropic
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": process.env.ANTHROPIC_API_KEY ?? "",
+        "anthropic-version": "2023-06-01",
+      },
+      body: JSON.stringify({
+        model: esp.modelo,
+        max_tokens: 1024,
+        system,
+        messages: [{ role: "user", content: tema }],
+      }),
+    });
+    if (!res.ok) throw new Error(`Anthropic ${res.status}: ${await res.text()}`);
+    const data = await res.json();
+    return data.content?.[0]?.text ?? "";
+  }
+
+  // Roster: quiénes son y quiénes están disponibles (según keys configuradas)
+  app.get("/api/gabinete", (_req, res) => {
+    res.json(
+      ESPECIALISTAS.map(({ id, nombre, area, proveedor, vigila }) => ({
+        id, nombre, area, proveedor, vigila,
+        disponible: Boolean(keyDe(proveedor)),
+      }))
+    );
+  });
+
+  // Consulta a un especialista individual
+  app.post("/api/gabinete/:id/consulta", async (req, res) => {
+    const esp = ESPECIALISTAS.find((e) => e.id === req.params.id.toUpperCase());
+    if (!esp) return res.status(404).json({ error: `No existe la silla ${req.params.id}` });
+    if (!keyDe(esp.proveedor)) {
+      return res.status(503).json({
+        error: `Silla ${esp.id} ausente: falta la key de ${esp.proveedor} en el servidor.`,
+      });
+    }
+    const { tema } = req.body;
+    if (!tema) return res.status(400).json({ error: "Falta el campo 'tema'." });
+
+    try {
+      const intervencion = await consultarEspecialista(esp, tema);
+      res.json({ id: esp.id, nombre: esp.nombre, proveedor: esp.proveedor, intervencion });
+    } catch (error: any) {
+      console.error(`Gabinete ${esp.id} error:`, error);
+      res.status(500).json({ error: error.message || "Error consultando al especialista" });
+    }
+  });
+
+  // Sesión plenaria: los 15 en paralelo; las sillas sin key constan como ausentes
+  app.post("/api/gabinete/plenaria", async (req, res) => {
+    const { tema } = req.body;
+    if (!tema) return res.status(400).json({ error: "Falta el campo 'tema'." });
+
+    const resultados = await Promise.allSettled(
+      ESPECIALISTAS.map(async (esp) => {
+        if (!keyDe(esp.proveedor)) throw new Error(`falta key de ${esp.proveedor}`);
+        return { esp, intervencion: await consultarEspecialista(esp, tema) };
+      })
+    );
+
+    const intervenciones: any[] = [];
+    const ausentes: any[] = [];
+    resultados.forEach((r, i) => {
+      const { id, nombre, proveedor } = ESPECIALISTAS[i];
+      if (r.status === "fulfilled") {
+        intervenciones.push({ id, nombre, proveedor, intervencion: r.value.intervencion });
+      } else {
+        ausentes.push({ id, nombre, proveedor, motivo: String(r.reason?.message ?? r.reason) });
+      }
+    });
+
+    res.json({ tema, fecha: new Date().toISOString(), intervenciones, ausentes });
   });
 
   // AI Risk Analysis Endpoint (antes corría en el navegador y exponía la key)
