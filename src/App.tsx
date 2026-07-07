@@ -1,11 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { PlatformLanding } from './components/PlatformLanding';
-import { C5Dashboard } from './components/C5Dashboard';
-import { CitizenApp } from './components/CitizenApp';
-import { DeveloperChecklist } from './components/DeveloperChecklist';
-import { ExecutiveFolder } from './components/ExecutiveFolder';
-import { motion, AnimatePresence } from 'motion/react';
-import { ChevronDown, LayoutDashboard, UserCircle2, FileText, Settings2 } from 'lucide-react';
+
+// Las vistas pesadas se cargan bajo demanda: el visitante de la landing
+// no descarga el dashboard, la app ciudadana ni sus librerías (recharts,
+// tesseract, jspdf…) hasta que navega a ellas.
+const C5Dashboard = lazy(() =>
+  import('./components/C5Dashboard').then((m) => ({ default: m.C5Dashboard }))
+);
+const CitizenApp = lazy(() =>
+  import('./components/CitizenApp').then((m) => ({ default: m.CitizenApp }))
+);
+const DeveloperChecklist = lazy(() =>
+  import('./components/DeveloperChecklist').then((m) => ({ default: m.DeveloperChecklist }))
+);
+const ExecutiveFolder = lazy(() =>
+  import('./components/ExecutiveFolder').then((m) => ({ default: m.ExecutiveFolder }))
+);
+
+function ViewFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#F8F6F1]" role="status" aria-live="polite">
+      <span className="text-[#5A6478] text-sm tracking-widest uppercase">Cargando módulo…</span>
+    </div>
+  );
+}
 
 function App() {
   const [currentView, setCurrentView] = useState<'landing' | 'c5' | 'citizen' | 'dev' | 'executive'>('landing');
@@ -13,51 +31,36 @@ function App() {
   const [citizenAction, setCitizenAction] = useState<any>(null);
 
   if (currentView === 'c5') {
-    return <C5Dashboard onLogout={() => setCurrentView('landing')} />;
+    return (
+      <Suspense fallback={<ViewFallback />}>
+        <C5Dashboard onLogout={() => setCurrentView('landing')} />
+      </Suspense>
+    );
   }
 
   if (currentView === 'citizen') {
-    return <CitizenApp onLogout={() => setCurrentView('landing')} initialTab={citizenTab} initialAction={citizenAction} />;
+    return (
+      <Suspense fallback={<ViewFallback />}>
+        <CitizenApp onLogout={() => setCurrentView('landing')} initialTab={citizenTab} initialAction={citizenAction} />
+      </Suspense>
+    );
   }
 
   if (currentView === 'dev') {
-    return <DeveloperChecklist onLogout={() => setCurrentView('landing')} />;
+    return (
+      <Suspense fallback={<ViewFallback />}>
+        <DeveloperChecklist onLogout={() => setCurrentView('landing')} />
+      </Suspense>
+    );
   }
 
   if (currentView === 'executive') {
-    return <ExecutiveFolder onBack={() => setCurrentView('landing')} />;
+    return (
+      <Suspense fallback={<ViewFallback />}>
+        <ExecutiveFolder onBack={() => setCurrentView('landing')} />
+      </Suspense>
+    );
   }
-
-  const menuItems = [
-    { 
-      id: 'c5', 
-      label: 'C5 HUB GOBIERNO', 
-      sub: 'Centro de Inteligencia', 
-      color: 'bg-emerald-500', 
-      icon: LayoutDashboard 
-    },
-    { 
-      id: 'citizen', 
-      label: 'DEMO CIUDADANA', 
-      sub: 'Experiencia Ciudadana RUTA', 
-      color: 'bg-cyan-500', 
-      icon: UserCircle2 
-    },
-    { 
-      id: 'executive', 
-      label: 'CARPETA EJECUTIVA', 
-      sub: 'Estrategia de Gobernanza AI', 
-      color: 'bg-magenta-500', 
-      icon: FileText 
-    },
-    { 
-      id: 'dev', 
-      label: 'ROADMAP TÉCNICO', 
-      sub: 'Estado de Implementación', 
-      color: 'bg-purple-500', 
-      icon: Settings2 
-    },
-  ];
 
   return (
     <div className="min-h-screen relative overflow-x-hidden">

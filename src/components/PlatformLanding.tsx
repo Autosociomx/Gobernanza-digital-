@@ -130,7 +130,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
           </div>
           <div>
             <h1 className="font-serif font-black text-2xl tracking-tight text-[#0f285c]">Nayarit<span className="text-blue-600">Digital</span></h1>
-            <p className="text-[0.6rem] uppercase tracking-[0.3em] font-bold text-slate-400">Excelencia Gubernamental</p>
+            <p className="text-[0.6rem] uppercase tracking-[0.3em] font-bold text-slate-600">Excelencia Gubernamental</p>
           </div>
         </div>
         
@@ -147,7 +147,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
           </button>
         </nav>
 
-        <button className="lg:hidden p-3 bg-white shadow-md rounded-xl">
+        <button className="lg:hidden p-3 bg-white shadow-md rounded-xl" aria-label="Abrir menú de navegación">
           <Menu className="w-6 h-6 text-[#0f285c]" />
         </button>
       </header>
@@ -189,12 +189,12 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
 
             <div className="grid grid-cols-2 gap-8 max-w-lg border-t border-slate-200 pt-12">
                <div>
-                 <h4 className="text-3xl font-serif font-bold text-[#0f285c]">100%</h4>
-                 <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Transparencia</p>
+                 <p className="text-3xl font-serif font-bold text-[#0f285c]">100%</p>
+                 <p className="text-xs uppercase tracking-widest text-slate-600 font-bold mt-1">Transparencia</p>
                </div>
                <div>
-                 <h4 className="text-3xl font-serif font-bold text-[#0f285c]">24/7</h4>
-                 <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mt-1">Disponibilidad</p>
+                 <p className="text-3xl font-serif font-bold text-[#0f285c]">24/7</p>
+                 <p className="text-xs uppercase tracking-widest text-slate-600 font-bold mt-1">Disponibilidad</p>
                </div>
             </div>
           </div>
