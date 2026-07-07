@@ -36,7 +36,8 @@ import {
   Code,
   Zap,
   Network,
-  ArrowRight
+  ArrowRight,
+  WifiOff
 } from 'lucide-react';
   import { motion, AnimatePresence } from 'motion/react';
   import { cn } from '../lib/utils';
@@ -96,6 +97,27 @@ export function CitizenApp({
   const isProfileComplete = profile.name && profile.address && profile.documentId;
 
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isOnline, setIsOnline] = useState(typeof window !== 'undefined' ? navigator.onLine : true);
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mediaQuery.matches);
+    const handler = (e: any) => setReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
+  }, []);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    }
+  }, []);
 
   useEffect(() => {
     // Fetch infrastructure
@@ -252,6 +274,23 @@ export function CitizenApp({
   const [useMaps, setUseMaps] = useState(false);
   const [useSearch, setUseSearch] = useState(false);
 
+  const handleShowMap = React.useCallback(() => setShowMap(true), []);
+  const handleShowTriage = React.useCallback(() => setShowTriage(true), []);
+  const handleGoToForum = React.useCallback(() => setActiveTab('forum'), []);
+  const handleGoToProfile = React.useCallback(() => setActiveTab('profile'), []);
+  const handleGoToPayments = React.useCallback(() => setActiveTab('payments'), []);
+  const handleGoToServices = React.useCallback(() => setActiveTab('services'), []);
+  const handleGoToAcademy = React.useCallback(() => setActiveTab('academy'), []);
+  const handleGoToSystemAudit = React.useCallback(() => setActiveTab('system_audit'), []);
+  const handleGoToBanana = React.useCallback(() => setActiveTab('banana_command'), []);
+  const handleGoToStrategy = React.useCallback(() => setActiveTab('strategic_academy'), []);
+  const handleGoToStrategicPlan = React.useCallback(() => setActiveTab('strategic_plan'), []);
+  const handleGoToLetters = React.useCallback(() => setActiveTab('municipal_letters'), []);
+  const handleGoToHome = React.useCallback(() => setActiveTab('home'), []);
+  const handleGoToAuditoria = React.useCallback(() => setActiveTab('auditoria'), []);
+  const handleGoToSecurity = React.useCallback(() => setActiveTab('security'), []);
+  const handleGoToCanjes = React.useCallback(() => setActiveTab('canjes'), []);
+
   const quickActions = {
     es: ["Pagar Predial", "Reportar Bache", "Mapa de Obras", "Ayuda"],
     cora: ["Tyu'upay", "Reportar", "Mapa", "Ayuda"],
@@ -315,6 +354,58 @@ export function CitizenApp({
   };
 
   const barcodeRef = React.useRef<SVGSVGElement>(null);
+  const mapMarkers = React.useMemo(() => [
+    { lat: 21.5090, lng: -104.8947, title: "Obra Reencarpetamiento San Juan", color: "#E5007A" },
+    { lat: 21.5120, lng: -104.8970, title: "Luminaria Reportada", color: "#FACC15" }
+  ], []);
+
+  const renderedTab = React.useMemo(() => {
+    switch (activeTab) {
+      case 'home':
+        return (
+          <HomeView 
+            profile={profile}
+            isOnline={isOnline}
+            reducedMotion={reducedMotion}
+            onShowMap={handleShowMap} 
+            onShowTriage={handleShowTriage}
+            onGoToForum={handleGoToForum}
+            onGoToProfile={handleGoToProfile}
+            onGoToPayments={handleGoToPayments}
+            onGoToServices={handleGoToServices}
+            onGoToAcademy={handleGoToAcademy}
+            onGoToSystemAudit={handleGoToSystemAudit}
+            onGoToBanana={handleGoToBanana}
+            onGoToStrategy={handleGoToStrategy}
+            onGoToStrategicPlan={handleGoToStrategicPlan}
+            onViewManifest={handleGoToStrategicPlan}
+            onGoToLetters={handleGoToLetters}
+          />
+        );
+      case 'networks': return <RedesCiudadanasView profile={profile} onBack={handleGoToHome} />;
+      case 'forum': return <ParlamentoView onBack={handleGoToHome} />;
+      case 'payments': return <TesoreriaYTramitesView onPay={(item: any) => setPayingItem(item)} onBack={handleGoToHome} />;
+      case 'services': return <ServiciosYReportesView onShowTriage={handleShowTriage} onGoToAuditoria={handleGoToAuditoria} onBack={handleGoToHome} />;
+      case 'profile': return <ProfileView profile={profile} onUpdate={updateProfile} onLogout={onLogout} onBack={handleGoToHome} onGoToSecurity={handleGoToSecurity} onGoToCanjes={handleGoToCanjes} />;
+      case 'security': return <SecurityCenterView user={user} onBack={handleGoToProfile} />;
+      case 'canjes': return <CanjesView user={user!} onBack={handleGoToProfile} />;
+      case 'auditoria': return <MysteryShopperView user={user} onBack={handleGoToServices} />;
+      case 'notifications': return <NotificationView onBack={handleGoToHome} />;
+      case 'academy': return <ConnectXAcademy onGoToStrategy={handleGoToStrategy} onBack={handleGoToHome} />;
+      case 'system_audit': return <SystemAuditView onBack={handleGoToHome} />;
+      case 'banana_command': return <BananaCommandCenter onBack={handleGoToHome} />;
+      case 'strategic_academy': return <StrategicAcademyView onBack={handleGoToHome} />;
+      case 'strategic_plan': return <MasterStrategicPlan onBack={handleGoToHome} />;
+      case 'municipal_letters': return <MunicipalLettersView onBack={handleGoToHome} profile={profile} />;
+      default: return null;
+    }
+  }, [
+    activeTab, profile, isOnline, reducedMotion, user,
+    handleShowMap, handleShowTriage, handleGoToForum, handleGoToProfile,
+    handleGoToPayments, handleGoToServices, handleGoToAcademy, handleGoToSystemAudit,
+    handleGoToBanana, handleGoToStrategy, handleGoToStrategicPlan, handleGoToLetters,
+    handleGoToHome, handleGoToAuditoria, handleGoToSecurity, handleGoToCanjes
+  ]);
 
   useEffect(() => {
     if (paymentStep === 'cash_instructions' && paymentRef && barcodeRef.current) {
@@ -351,8 +442,15 @@ export function CitizenApp({
           {/* Mobile Frame Simulation */}
           <div className="w-full max-w-[430px] bg-white min-h-screen shadow-2xl relative flex flex-col overflow-hidden border-x border-slate-200">
             
+            {/* Offline Banner */}
+            {!isOnline && (
+              <div className="bg-amber-500 text-white px-4 py-2 flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest z-[100] shadow-md w-full shrink-0">
+                <WifiOff className="w-4 h-4" /> Modo Sin Conexión Activado
+              </div>
+            )}
+
             {/* StatusBar Mock */}
-        <div className="px-6 pt-4 pb-2 flex justify-between items-center text-[10px] font-bold text-slate-800">
+        <div className="px-6 pt-4 pb-2 flex justify-between items-center text-[10px] font-bold text-slate-800 shrink-0">
           <span>9:41</span>
           <div className="flex gap-1.5 items-center">
             <span className="w-4 h-3 border border-slate-800 rounded-[2px] relative after:content-[''] after:absolute after:-right-1 after:top-0.5 after:w-0.5 after:h-2 after:bg-slate-800"></span>
@@ -363,7 +461,10 @@ export function CitizenApp({
         {/* Header */}
         <header className="px-6 py-8 flex justify-between items-start">
           <div className="space-y-1">
-            <p className="text-[10px] uppercase tracking-[0.3em] font-black text-magenta-500 mb-1" style={{color:'var(--magenta)'}}>Gobernanza ConnectX</p>
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-[10px] uppercase tracking-[0.3em] font-black text-magenta-500" style={{color:'var(--magenta)'}}>S.O. Municipal de Tepic</span>
+              <span className="px-2 py-0.5 bg-indigo-500/10 text-indigo-600 rounded-full text-[8px] font-black tracking-widest border border-indigo-500/20">VER 18.0</span>
+            </div>
             <h1 className="text-3xl font-serif font-black text-slate-900 leading-[0.9] tracking-tighter">
               {translations[lang].welcome.split(',')[0]},<br/>
               <span className="text-magenta-600" style={{color:'var(--magenta)'}}>{translations[lang].welcome.split(',')[1]}</span>
@@ -427,40 +528,7 @@ export function CitizenApp({
               exit={{ opacity: 0, x: -10 }}
               transition={{ duration: 0.2 }}
             >
-              {activeTab === 'home' && (
-                <HomeView 
-                  profile={profile}
-                  onShowMap={() => setShowMap(true)} 
-                  onShowTriage={() => setShowTriage(true)}
-                  onGoToForum={() => setActiveTab('forum')}
-                  onGoToProfile={() => setActiveTab('profile')}
-                  onGoToPayments={() => setActiveTab('payments')}
-                  onGoToServices={() => setActiveTab('services')}
-                  onGoToAcademy={() => setActiveTab('academy')}
-                  onGoToSystemAudit={() => setActiveTab('system_audit')}
-                  onGoToBanana={() => setActiveTab('banana_command')}
-                  onGoToStrategy={() => setActiveTab('strategic_academy')}
-                  onGoToStrategicPlan={() => setActiveTab('strategic_plan')}
-                  onViewManifest={() => setActiveTab('strategic_plan')}
-                  onGoToLetters={() => setActiveTab('municipal_letters')}
-                />
-              )}
-              {activeTab === 'networks' && <RedesCiudadanasView profile={profile} onBack={() => setActiveTab('home')} />}
-              {activeTab === 'forum' && <ParlamentoView onBack={() => setActiveTab('home')} />}
-              {activeTab === 'payments' && <TesoreriaYTramitesView onPay={(item: any) => setPayingItem(item)} onBack={() => setActiveTab('home')} />}
-              {activeTab === 'services' && <ServiciosYReportesView onShowTriage={() => setShowTriage(true)} onGoToAuditoria={() => setActiveTab('auditoria')} onBack={() => setActiveTab('home')} />}
-              {activeTab === 'profile' && <ProfileView profile={profile} onUpdate={updateProfile} onLogout={onLogout} onBack={() => setActiveTab('home')} onGoToSecurity={() => setActiveTab('security')} onGoToCanjes={() => setActiveTab('canjes')} />}
-              {activeTab === 'security' && <SecurityCenterView user={user} onBack={() => setActiveTab('profile')} />}
-              {activeTab === 'canjes' && <CanjesView user={user!} onBack={() => setActiveTab('profile')} />}
-              {activeTab === 'auditoria' && <MysteryShopperView user={user} onBack={() => setActiveTab('services')} />}
-              {activeTab === 'notifications' && <NotificationView onBack={() => setActiveTab('home')} />}
-              {activeTab === 'academy' && <ConnectXAcademy onGoToStrategy={() => setActiveTab('strategic_academy')} onBack={() => setActiveTab('home')} />}
-              {activeTab === 'system_audit' && <SystemAuditView onBack={() => setActiveTab('home')} />}
-              {activeTab === 'banana_command' && <BananaCommandCenter onBack={() => setActiveTab('home')} />}
-              {activeTab === 'strategic_academy' && <StrategicAcademyView onBack={() => setActiveTab('home')} />}
-              {activeTab === 'strategic_plan' && <MasterStrategicPlan onBack={() => setActiveTab('home')} />}
-              {activeTab === 'municipal_letters' && <MunicipalLettersView onBack={() => setActiveTab('home')} profile={profile} />}
-
+              {renderedTab}
             </motion.div>
           </AnimatePresence>
 
@@ -475,7 +543,7 @@ export function CitizenApp({
         </main>
 
         {/* Navigation Bar */}
-        <nav className="absolute bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-slate-100 px-2 py-3 pb-8 flex justify-around items-center z-40">
+        <nav className={cn("absolute bottom-0 left-0 right-0 border-t border-slate-100 px-2 py-3 pb-8 flex justify-around items-center z-40", (!reducedMotion && isOnline) ? "bg-white/80 backdrop-blur-md" : "bg-white")}>
            <TabButton icon={Home} label={translations[lang].home} active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
            <TabButton icon={Users} label={translations[lang].networks} active={activeTab === 'networks'} onClick={() => setActiveTab('networks')} />
            <TabButton icon={MessageSquare} label={translations[lang].forum} active={activeTab === 'forum'} onClick={() => setActiveTab('forum')} />
@@ -640,10 +708,7 @@ export function CitizenApp({
                    <NayaritMap 
                      center={{ lat: 21.5090, lng: -104.8947 }}
                      zoom={15}
-                     markers={[
-                       { lat: 21.5090, lng: -104.8947, title: "Obra Reencarpetamiento San Juan", color: "#E5007A" },
-                       { lat: 21.5120, lng: -104.8970, title: "Luminaria Reportada", color: "#FACC15" }
-                     ]}
+                     markers={mapMarkers}
                    />
                    
                    {/* Floating Project Info */}
@@ -740,7 +805,7 @@ export function CitizenApp({
                             <h4 className="text-xl font-bold">{payingItem.title}</h4>
                             <p className="text-slate-500 text-sm">{payingItem.status}</p>
                          </div>
-                         <div className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100">
+                         <div className="bg-slate-50 p-6 rounded-3xl border border-slate-100">
                             <div className="flex justify-between items-center mb-4">
                                <span className="text-slate-500 text-sm">Subtotal</span>
                                <span className="font-bold">{payingItem.val}</span>
@@ -934,8 +999,10 @@ function TabButton({ icon: Icon, label, active, onClick }: { icon: any, label: s
   );
 }
 
-function HomeView({ 
+const HomeView = React.memo(function HomeView({ 
   profile,
+  isOnline = true,
+  reducedMotion = false,
   onShowMap, 
   onShowTriage, 
   onGoToForum, 
@@ -951,6 +1018,8 @@ function HomeView({
   onGoToLetters
 }: { 
   profile: any,
+  isOnline?: boolean,
+  reducedMotion?: boolean,
   onShowMap: () => void, 
   onShowTriage: () => void, 
   onGoToForum: () => void, 
@@ -970,39 +1039,41 @@ function HomeView({
 
       {/* Visual Hero ConnectX - Neuro-Experience */}
       <div className="px-1 mb-2">
-        <div className="relative h-72 w-full rounded-[3rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] group cursor-pointer border border-white/5">
+        <div className="relative h-64 md:h-72 w-full rounded-3xl overflow-hidden shadow-2xl group cursor-pointer border border-white/5">
           {/* Animated Background Simulation */}
           <div className="absolute inset-0 bg-slate-950">
-             <div className="absolute inset-0 opacity-30">
-                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(236,72,153,0.15),transparent_70%)] animate-pulse"></div>
-                <div className="absolute top-[20%] right-[10%] w-64 h-64 bg-magenta-500/10 rounded-full blur-[100px] animate-bounce duration-[10000ms]"></div>
-                <div className="absolute bottom-[10%] left-[5%] w-72 h-72 bg-emerald-500/5 rounded-full blur-[120px] animate-pulse duration-[8000ms]"></div>
-             </div>
+             {(!reducedMotion && isOnline) && (
+               <div className="absolute inset-0 opacity-30">
+                  <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(236,72,153,0.15),transparent_70%)] animate-pulse"></div>
+                  <div className="absolute top-[20%] right-[10%] w-64 h-64 bg-magenta-500/10 rounded-full blur-[100px] animate-bounce duration-[10000ms]"></div>
+                  <div className="absolute bottom-[10%] left-[5%] w-72 h-72 bg-emerald-500/5 rounded-full blur-[120px] animate-pulse duration-[8000ms]"></div>
+               </div>
+             )}
              {/* Tech Grid Overlay */}
              <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:24px_24px]"></div>
           </div>
 
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
           
-          <div className="absolute inset-0 flex flex-col justify-end p-10">
+          <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.1 }}
               className="space-y-4"
             >
               <div className="flex items-center gap-2">
                  <div className="w-1.5 h-1.5 rounded-full bg-magenta-500 animate-pulse"></div>
                  <p className="text-[10px] font-black text-magenta-500 uppercase tracking-[0.4em]">Protocolo SSS-2026</p>
               </div>
-              <h2 className="text-4xl font-serif font-black text-white leading-[0.9] tracking-tighter">
+              <h2 className="text-3xl md:text-4xl font-serif font-black text-white leading-[1] tracking-tight">
                 Soberanía Digital<br/>
-                <span className="text-slate-400">en Evolución Activa</span>
+                <span className="text-slate-400">en Evolución</span>
               </h2>
               <div className="flex items-center gap-4 pt-2">
                 <button 
                   onClick={onViewManifest}
-                  className="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 px-6 py-3 rounded-2xl group/play hover:bg-white/20 transition-all"
+                  className={cn("flex items-center gap-3 border border-white/20 px-6 py-3 rounded-2xl group/play hover:bg-white/20 transition-all", (!reducedMotion && isOnline) ? "bg-white/10 backdrop-blur-md" : "bg-slate-900/50")}
                 >
                   <div className="w-8 h-8 rounded-full bg-magenta-600 flex items-center justify-center shadow-lg group-hover/play:scale-110 transition-transform">
                     <Play className="w-4 h-4 text-white fill-white ml-0.5" />
@@ -1029,7 +1100,7 @@ function HomeView({
                 <span className="text-[8px] font-black text-white/40 uppercase tracking-widest">Nayarit Digital</span>
                 <span className="text-[10px] font-mono text-white/80">LAT: 21.50 N / LON: 104.89 W</span>
              </div>
-             <div className="px-3 py-1.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-xl flex items-center gap-2">
+             <div className={cn("px-3 py-1.5 border border-white/10 rounded-xl flex items-center gap-2", (!reducedMotion && isOnline) ? "bg-black/40 backdrop-blur-md" : "bg-black/80")}>
                 <Zap className="w-3 h-3 text-yellow-400" />
                 <span className="text-[9px] font-black text-white uppercase tracking-widest">Soberanía: 98.4%</span>
              </div>
@@ -1039,9 +1110,9 @@ function HomeView({
 
       {/* Portal Ciudadano Fusión */}
       <div 
-        className="bg-slate-950 rounded-[2.5rem] p-8 shadow-2xl shadow-slate-900/50 relative overflow-hidden group"
+        className="bg-slate-950 rounded-3xl p-8 shadow-2xl shadow-slate-900/50 relative overflow-hidden group"
       >
-        <div className="absolute top-0 right-0 w-40 h-40 bg-magenta-500/10 rounded-full blur-[60px] -mr-20 -mt-20 group-hover:bg-magenta-500/20 transition-colors"></div>
+        {(!reducedMotion && isOnline) && <div className="absolute top-0 right-0 w-40 h-40 bg-magenta-500/10 rounded-full blur-[60px] -mr-20 -mt-20 group-hover:bg-magenta-500/20 transition-colors"></div>}
         <div className="relative z-10">
           <h2 className="text-[10px] font-black text-magenta-500 uppercase tracking-[0.4em] mb-4">Núcleo de Ciudadanía</h2>
           <p className="text-white font-serif text-2xl font-black leading-none tracking-tighter mb-8">Gestión de<br/><span className="text-slate-400">Poder Digital</span></p>
@@ -1050,7 +1121,7 @@ function HomeView({
             {/* Nayarit ID Card */}
             <div 
                onClick={onGoToProfile}
-               className="bg-slate-900 border border-slate-800 rounded-[2rem] p-6 text-white flex flex-col cursor-pointer transition-all hover:bg-slate-800 active:scale-95 group/card"
+               className="bg-slate-900 border border-slate-800 rounded-3xl p-6 text-white flex flex-col cursor-pointer transition-all hover:bg-slate-800 active:scale-95 group/card"
             >
                <div className="w-10 h-10 bg-slate-800 rounded-2xl flex items-center justify-center mb-4 group-hover/card:bg-slate-700 transition-colors">
                   <Fingerprint className="w-5 h-5 text-magenta-500" />
@@ -1062,7 +1133,7 @@ function HomeView({
             {/* Ventanilla Única */}
             <div 
                onClick={onGoToServices}
-               className="bg-magenta-600 rounded-[2rem] p-6 text-white flex flex-col cursor-pointer transition-all hover:bg-magenta-500 active:scale-95 shadow-xl shadow-magenta-600/20 group/card"
+               className="bg-magenta-600 rounded-3xl p-6 text-white flex flex-col cursor-pointer transition-all hover:bg-magenta-500 active:scale-95 shadow-xl shadow-magenta-600/20 group/card"
                style={{backgroundColor:'var(--magenta)'}}
             >
                <div className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center mb-4 group-hover/card:bg-white/30 transition-colors">
@@ -1077,15 +1148,15 @@ function HomeView({
 
 
       {/* Asistente de Acciones Directas */}
-      <div className="bg-emerald-600 rounded-[2.5rem] p-8 text-white shadow-2xl shadow-emerald-900/30 relative overflow-hidden group">
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -ml-16 -mb-16 group-hover:bg-white/20 transition-colors"></div>
+      <div className="bg-emerald-600 rounded-3xl p-8 text-white shadow-2xl shadow-emerald-900/30 relative overflow-hidden group">
+        {(!reducedMotion && isOnline) && <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -ml-16 -mb-16 group-hover:bg-white/20 transition-colors"></div>}
         <div className="relative z-10 flex flex-col gap-6">
           <div className="flex justify-between items-start">
             <div className="space-y-1">
               <h3 className="font-serif font-black text-2xl tracking-tighter">Operaciones Directas</h3>
               <p className="text-emerald-100 text-[10px] font-bold uppercase tracking-widest">IA Predictiva: Acción requerida</p>
             </div>
-            <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
+            <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center", (!reducedMotion && isOnline) ? "bg-white/20 backdrop-blur-md" : "bg-white/30")}>
               <Sparkles className="w-6 h-6" />
             </div>
           </div>
@@ -1108,6 +1179,56 @@ function HomeView({
         <LegalComplianceDisclaimer onViewCert={onGoToStrategicPlan} />
       </motion.div>
       
+      {/* Novedades V18 - Most Visible Progress */}
+      <div className="space-y-4">
+        <h2 className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.3em] flex items-center gap-3">
+           <div className="w-6 h-[1px] bg-indigo-500"></div>
+           Novedades v18.0 - Ecosistema Municipal
+        </h2>
+
+        {/* Cartas Municipales Digitales CTA */}
+        <button 
+          onClick={onGoToLetters}
+          className="w-full bg-gradient-to-r from-slate-900 to-indigo-950 rounded-3xl p-8 flex items-center justify-between border border-indigo-500/30 shadow-2xl relative overflow-hidden group"
+        >
+          {(!reducedMotion && isOnline) && <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_50%,rgba(99,102,241,0.15),transparent_50%)]"></div>}
+          <div className="flex items-center gap-6 relative z-10">
+             <div className="w-16 h-16 bg-indigo-500/10 border border-indigo-400/20 rounded-3xl flex items-center justify-center text-indigo-400 shadow-2xl group-hover:scale-110 transition-transform">
+                <FileText className="w-8 h-8" />
+             </div>
+             <div className="text-left">
+                <p className="text-[10px] text-indigo-400 font-black uppercase tracking-[0.3em] mb-1">Trámites e Identidad Digital</p>
+                <p className="font-serif font-black text-2xl leading-tight text-white">Cartas Municipales</p>
+                <p className="text-xs text-slate-400 font-medium mt-1 leading-snug">Constancia de Residencia, Buena Conducta y No Adeudo con Firma Criptográfica SHA-256</p>
+             </div>
+          </div>
+          <div className="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center shadow-lg shadow-indigo-600/30 group-hover:bg-white transition-all shrink-0">
+            <ChevronRight className="w-6 h-6 text-white group-hover:text-indigo-950" />
+          </div>
+        </button>
+
+        {/* Master Strategic Plan CTA */}
+        <button 
+          onClick={onGoToStrategicPlan}
+          className="w-full bg-gradient-to-r from-slate-950 to-[#0a0a14] rounded-3xl p-8 flex items-center justify-between border border-slate-800 shadow-2xl relative overflow-hidden group hover:border-slate-600 transition-colors"
+        >
+          {(!reducedMotion && isOnline) && <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.03),transparent_50%)]"></div>}
+          <div className="flex items-center gap-6 relative z-10">
+             <div className="w-16 h-16 bg-slate-900 border border-slate-700 rounded-3xl flex items-center justify-center text-slate-300 shadow-2xl group-hover:scale-110 transition-transform">
+                <Activity className="w-8 h-8" />
+             </div>
+             <div className="text-left">
+                <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mb-1">Estrategia & Resiliencia</p>
+                <p className="font-serif font-black text-2xl leading-tight text-white">Plan Maestro 2026</p>
+                <p className="text-xs text-slate-500 font-medium mt-1 leading-snug">Simulación de Estrés y Pilares de Trabajo Político-Tecnológico</p>
+             </div>
+          </div>
+          <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center shadow-lg group-hover:bg-white transition-all shrink-0">
+            <ChevronRight className="w-6 h-6 text-slate-400 group-hover:text-slate-900" />
+          </div>
+        </button>
+      </div>
+
       {/* Primary Services Grid */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
@@ -1128,7 +1249,7 @@ function HomeView({
       {/* Academy CTA for Workers */}
       <button 
         onClick={onGoToAcademy}
-        className="w-full bg-magenta-50 rounded-[2rem] p-6 flex items-center justify-between border border-magenta-100 shadow-xl shadow-magenta-500/5 group relative overflow-hidden"
+        className="w-full bg-magenta-50 rounded-3xl p-6 flex items-center justify-between border border-magenta-100 shadow-xl shadow-magenta-500/5 group relative overflow-hidden"
       >
         <div className="absolute right-0 bottom-0 opacity-10 transform translate-x-4 translate-y-4 group-hover:scale-110 transition-transform">
            <GraduationCap className="w-24 h-24 text-magenta-500" />
@@ -1142,7 +1263,7 @@ function HomeView({
               <p className="text-[10px] text-magenta-500 font-bold uppercase tracking-widest">Certificación: Servidor Público Digital</p>
            </div>
         </div>
-        <div className="w-10 h-10 bg-magenta-100 rounded-full flex items-center justify-center group-hover:bg-magenta-500 transition-colors">
+        <div className="w-10 h-10 bg-magenta-100 rounded-full flex items-center justify-center group-hover:bg-magenta-500 transition-colors shrink-0">
           <ChevronRight className="w-5 h-5 text-magenta-500 group-hover:text-white" />
         </div>
       </button>
@@ -1150,9 +1271,9 @@ function HomeView({
       {/* Strategic Blueprint CTA */}
       <button 
         onClick={onGoToStrategy}
-        className="w-full bg-[#0a0a0a] rounded-[2rem] p-6 flex items-center justify-between border border-yellow-500/20 shadow-2xl relative overflow-hidden group"
+        className="w-full bg-[#0a0a0a] rounded-3xl p-6 flex items-center justify-between border border-yellow-500/20 shadow-2xl relative overflow-hidden group"
       >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(234,179,8,0.05),transparent_50%)]"></div>
+        {(!reducedMotion && isOnline) && <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(234,179,8,0.05),transparent_50%)]"></div>}
         <div className="flex items-center gap-5 relative z-10">
            <div className="w-12 h-12 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl flex items-center justify-center text-yellow-500 shadow-lg shadow-yellow-500/5">
               <Network className="w-6 h-6" />
@@ -1162,59 +1283,17 @@ function HomeView({
               <p className="text-[10px] text-yellow-500 font-bold uppercase tracking-widest">Modelo de Soberanía y Sostenibilidad</p>
            </div>
         </div>
-        <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-yellow-500 transition-all">
+        <div className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center group-hover:bg-yellow-500 transition-all shrink-0">
           <ArrowRight className="w-5 h-5 text-yellow-500 group-hover:text-black" />
-        </div>
-      </button>
-
-      {/* Master Strategic Plan CTA */}
-      <button 
-        onClick={onGoToStrategicPlan}
-        className="w-full bg-gradient-to-r from-indigo-950 to-slate-950 rounded-[2.5rem] p-8 flex items-center justify-between border border-white/10 shadow-2xl relative overflow-hidden group"
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(99,102,241,0.1),transparent_50%)]"></div>
-        <div className="flex items-center gap-6 relative z-10">
-           <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-center text-indigo-400 shadow-2xl group-hover:scale-110 transition-transform">
-              <Activity className="w-8 h-8" />
-           </div>
-           <div className="text-left">
-              <p className="text-[10px] text-indigo-400 font-black uppercase tracking-[0.3em] mb-1">Estrategia & Resiliencia</p>
-              <p className="font-serif font-black text-2xl leading-tight text-white">Plan Maestro 2026</p>
-              <p className="text-xs text-slate-500 font-medium mt-1">Simulación de Estrés y Pilares de Trabajo</p>
-           </div>
-        </div>
-        <div className="w-12 h-12 bg-indigo-500 rounded-full flex items-center justify-center shadow-lg shadow-indigo-500/30 group-hover:bg-white transition-all">
-          <ChevronRight className="w-6 h-6 text-white group-hover:text-indigo-900" />
-        </div>
-      </button>
-
-      {/* Cartas Municipales Digitales CTA */}
-      <button 
-        onClick={onGoToLetters}
-        className="w-full bg-gradient-to-r from-slate-900 to-indigo-950 rounded-[2.5rem] p-8 flex items-center justify-between border border-indigo-500/20 shadow-2xl relative overflow-hidden group"
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_50%,rgba(99,102,241,0.08),transparent_50%)]"></div>
-        <div className="flex items-center gap-6 relative z-10">
-           <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-3xl flex items-center justify-center text-indigo-400 shadow-2xl group-hover:scale-110 transition-transform">
-              <FileText className="w-8 h-8" />
-           </div>
-           <div className="text-left">
-              <p className="text-[10px] text-indigo-400 font-black uppercase tracking-[0.3em] mb-1">Trámites e Identidad Digital</p>
-              <p className="font-serif font-black text-2xl leading-tight text-white">Cartas Municipales</p>
-              <p className="text-xs text-slate-500 font-medium mt-1">Constancia de Residencia, Buena Conducta y No Adeudo con Firma Criptográfica</p>
-           </div>
-        </div>
-        <div className="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center shadow-lg shadow-indigo-600/30 group-hover:bg-white transition-all">
-          <ChevronRight className="w-6 h-6 text-white group-hover:text-indigo-950" />
         </div>
       </button>
 
       {/* System Integrity Auditor (Mystery Shopper) */}
       <button 
         onClick={onGoToSystemAudit}
-        className="w-full bg-slate-900 rounded-[2rem] p-6 flex items-center justify-between border border-slate-800 shadow-2xl relative overflow-hidden group"
+        className="w-full bg-slate-900 rounded-3xl p-6 flex items-center justify-between border border-slate-800 shadow-2xl relative overflow-hidden group"
       >
-        <div className="absolute top-0 right-0 w-32 h-32 bg-magenta-500/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-magenta-500/20 transition-colors"></div>
+        {(!reducedMotion && isOnline) && <div className="absolute top-0 right-0 w-32 h-32 bg-magenta-500/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-magenta-500/20 transition-colors"></div>}
         <div className="flex items-center gap-5 relative z-10">
            <div className="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center text-magenta-500 shadow-inner">
               <ShieldCheck className="w-6 h-6" />
@@ -1232,7 +1311,7 @@ function HomeView({
       {/* Forum CTA for Neighborhood Networks */}
       <button 
         onClick={onGoToForum}
-        className="w-full bg-slate-900 rounded-[2rem] p-6 flex items-center justify-between text-white shadow-xl overflow-hidden relative group"
+        className="w-full bg-slate-900 rounded-3xl p-6 flex items-center justify-between text-white shadow-xl overflow-hidden relative group"
       >
         <div className="absolute right-0 top-0 opacity-10 transform translate-x-4 -translate-y-4 group-hover:scale-110 transition-transform">
            <Users className="w-24 h-24" />
@@ -1250,7 +1329,7 @@ function HomeView({
       </button>
 
       {/* Transparency / Obras */}
-      <div className="bg-slate-50 rounded-[2rem] p-6 border border-slate-100 shadow-inner">
+      <div className="bg-slate-50 rounded-3xl p-6 border border-slate-100 shadow-inner">
          <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
                <div className="w-2 h-2 rounded-full bg-magenta-500 animate-pulse"></div>
@@ -1268,14 +1347,14 @@ function HomeView({
       </div>
     </div>
   );
-}
+});
 
 function QuickAction({ icon: Icon, label, color, description, onClick }: { icon: any, label: string, color: string, description?: string, onClick?: () => void }) {
   return (
     <button 
       onClick={onClick}
       className={cn(
-        "p-5 rounded-[2rem] flex flex-col items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-sm border border-transparent hover:border-slate-200 text-left",
+        "p-5 rounded-3xl flex flex-col items-center gap-3 transition-all hover:scale-105 active:scale-95 shadow-sm border border-transparent hover:border-slate-200 text-left",
         color
       )}
     >
@@ -1343,7 +1422,7 @@ function RedesCiudadanasView({ profile, onBack }: { profile: any, onBack: () => 
       <ViewHeader title="Red de Apoyo" onBack={onBack} />
       
       {/* Intro Stats */}
-      <div className="p-8 bg-slate-900 rounded-[2.5rem] text-white relative overflow-hidden shadow-xl">
+      <div className="p-8 bg-slate-900 rounded-3xl text-white relative overflow-hidden shadow-xl">
          <div className="absolute top-0 right-0 w-32 h-32 bg-magenta-500/10 rounded-full blur-3xl"></div>
          <div className="flex justify-between items-center mb-6">
             <h3 className="text-2xl font-serif font-black">{profile.neighborhood || 'Tepic'} Unida</h3>
@@ -1378,13 +1457,13 @@ function RedesCiudadanasView({ profile, onBack }: { profile: any, onBack: () => 
            ) : (
              <>
                {networks.length === 0 && (
-                 <div className="p-8 bg-white border border-slate-100 rounded-[2rem] text-center">
+                 <div className="p-8 bg-white border border-slate-100 rounded-3xl text-center">
                     <p className="text-sm font-bold text-slate-900 mb-2">Aún no hay comités registrados</p>
                     <p className="text-xs text-slate-400">Sé el primero en organizar tu colonia.</p>
                  </div>
                )}
                {networks.map((net: any) => (
-                 <div key={net.id} className="p-6 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm hover:shadow-md transition-shadow group cursor-pointer">
+                 <div key={net.id} className="p-6 bg-white border border-slate-100 rounded-3xl shadow-sm hover:shadow-md transition-shadow group cursor-pointer">
                     <div className="flex justify-between items-start mb-4">
                        <div className="flex items-center gap-4">
                           <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-xl shadow-inner group-hover:bg-magenta-50 transition-colors">
@@ -1422,7 +1501,7 @@ function RedesCiudadanasView({ profile, onBack }: { profile: any, onBack: () => 
       </div>
 
       {/* Campaign Support CTA */}
-      <div className="bg-emerald-50 rounded-[2rem] p-6 border border-emerald-100 shadow-inner">
+      <div className="bg-emerald-50 rounded-3xl p-6 border border-emerald-100 shadow-inner">
          <div className="flex items-center gap-4 mb-4">
             <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
                <Plus className="w-6 h-6 text-white" />
@@ -1449,7 +1528,7 @@ function TesoreriaYTramitesView({ onPay, onBack }: { onPay: (item: any) => void,
     <div className="pt-2 space-y-6 pb-20">
       <ViewHeader title="Tesorería Digital" onBack={onBack} />
       
-      <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl">
+      <div className="bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl">
          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full -mr-10 -mt-10 blur-2xl"></div>
          <div className="flex items-center gap-2 mb-4">
             <ShieldCheck className="w-5 h-5 text-emerald-400" />
@@ -1469,7 +1548,7 @@ function TesoreriaYTramitesView({ onPay, onBack }: { onPay: (item: any) => void,
           { icon: Droplets, title: 'Servicio de Agua - Junio 2026', val: '$240.00', status: 'Certificado', color: 'text-blue-500' },
           { icon: FileText, title: 'Renovación de Licencia', val: '$850.00', status: 'Certificado', color: 'text-magenta-500' },
         ].map((item, i) => (
-          <div key={i} className="flex items-center justify-between p-5 bg-white border border-slate-200 rounded-[2rem] shadow-sm hover:border-emerald-200 transition-colors">
+          <div key={i} className="flex items-center justify-between p-5 bg-white border border-slate-200 rounded-3xl shadow-sm hover:border-emerald-200 transition-colors">
              <div className="flex items-center gap-4">
                 <div className={cn("p-3 rounded-2xl bg-slate-50", item.color)}>
                    <item.icon className="w-5 h-5" />
@@ -1500,7 +1579,7 @@ function TesoreriaYTramitesView({ onPay, onBack }: { onPay: (item: any) => void,
            <FileText className="w-3 h-3" />
            Módulo 03 — Ventanilla Única y Actas
         </h3>
-        <div className="bg-white rounded-[2rem] border border-slate-200 divide-y divide-slate-100 overflow-hidden shadow-sm">
+        <div className="bg-white rounded-3xl border border-slate-200 divide-y divide-slate-100 overflow-hidden shadow-sm">
            {['Licencia de Funcionamiento Criptográfica', 'Permiso de Construcción Georreferenciado', 'Uso de Suelo Digital', 'Actas del Registro Civil (Firma Avanzada)'].map(s => (
              <button key={s} className="w-full px-8 py-6 flex justify-between items-center hover:bg-slate-50 active:bg-slate-100 transition-colors text-left group">
                 <span className="text-sm font-bold text-slate-700 group-hover:text-emerald-700 transition-colors">{s}</span>
@@ -1524,11 +1603,11 @@ function ServiciosYReportesView({ onShowTriage, onGoToAuditoria, onBack }: { onS
       <div className="space-y-6">
          {/* Salud Inteligente Priority */}
          <div className="relative">
-            <div className="absolute -inset-1 bg-gradient-to-r from-rose-500 to-magenta-500 rounded-[2.5rem] blur opacity-20"></div>
+            <div className="absolute -inset-1 bg-gradient-to-r from-rose-500 to-magenta-500 rounded-3xl blur opacity-20"></div>
             <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4 mb-3 relative">Módulo 05 — Prioridad de Salud Pública</h3>
             <button 
                onClick={onShowTriage}
-               className="w-full flex justify-between items-center p-6 bg-slate-900 rounded-[2rem] cursor-pointer group shadow-xl relative text-left"
+               className="w-full flex justify-between items-center p-6 bg-slate-900 rounded-3xl cursor-pointer group shadow-xl relative text-left"
             >
                <div className="flex items-center gap-5">
                  <div className="w-14 h-14 bg-rose-500/20 rounded-2xl flex items-center justify-center border border-rose-500/30">
@@ -1676,7 +1755,7 @@ function ProfileView({
       <ViewHeader title="Mi Perfil Nayarit ID" onBack={onBack} />
       
       {/* Block 1: Profile Header & Stats */}
-      <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100/50 flex flex-col items-center relative">
+      <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100/50 flex flex-col items-center relative">
         <button 
            onClick={() => setIsEditing(!isEditing)}
            className="absolute top-6 right-6 p-2 bg-slate-50 text-slate-400 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors"
@@ -1773,7 +1852,7 @@ function ProfileView({
       <div className="space-y-3">
          <button 
            onClick={onGoToSecurity}
-           className="w-full bg-white px-8 py-6 rounded-[2rem] shadow-sm border border-slate-100/50 text-left flex items-center justify-between group transition-all hover:bg-slate-50"
+           className="w-full bg-white px-8 py-6 rounded-3xl shadow-sm border border-slate-100/50 text-left flex items-center justify-between group transition-all hover:bg-slate-50"
          >
             <span className="text-lg font-bold text-slate-800">Seguridad y Nayarit ID</span>
             <ShieldCheck className="w-5 h-5 text-emerald-500" />
@@ -1784,14 +1863,14 @@ function ProfileView({
       <div className="space-y-4 pt-4">
          <button 
            onClick={onLogout}
-           className="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black text-center shadow-lg transition-transform active:scale-[0.98]"
+           className="w-full py-6 bg-slate-900 text-white rounded-3xl font-black text-center shadow-lg transition-transform active:scale-[0.98]"
          >
            VOLVER AL PORTAL DE ESTRATEGIA
          </button>
          
          <button 
            onClick={() => window.location.reload()} 
-           className="w-full py-6 bg-red-50 text-red-500 rounded-[2rem] font-black text-center border border-red-100/50 transition-colors hover:bg-red-100"
+           className="w-full py-6 bg-red-50 text-red-500 rounded-3xl font-black text-center border border-red-100/50 transition-colors hover:bg-red-100"
          >
            CERRAR SESIÓN NAYARIT ID
          </button>
@@ -1871,7 +1950,7 @@ function SecurityCenterView({ user, onBack }: { user: FirebaseUser | null, onBac
       <ViewHeader title="Seguridad y Nayarit ID" onBack={onBack} />
       
       {/* Block 1: Technical Certification - The Proof */}
-      <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl">
+      <div className="bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl">
          <div className="absolute top-0 right-0 w-32 h-32 bg-magenta-500/20 rounded-full -mr-10 -mt-10 blur-3xl"></div>
          <div className="relative z-10">
             <div className="flex items-center gap-3 mb-4">
@@ -1904,7 +1983,7 @@ function SecurityCenterView({ user, onBack }: { user: FirebaseUser | null, onBac
       </div>
 
       {/* Block 2: House-to-House Protocol (New) */}
-      <div className="bg-emerald-50 rounded-[2.5rem] p-8 border border-emerald-100">
+      <div className="bg-emerald-50 rounded-3xl p-8 border border-emerald-100">
          <div className="flex items-center gap-4 mb-4">
             <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
                <Users className="w-6 h-6" />
@@ -1935,7 +2014,7 @@ function SecurityCenterView({ user, onBack }: { user: FirebaseUser | null, onBac
          <p className="text-[10px] px-4 text-slate-500 font-medium leading-relaxed">
             Conforme al artículo 22 de la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP), tienes derecho a conocer, rectificar y cancelar tus datos.
          </p>
-         <div className="bg-white rounded-[2rem] border border-slate-100 p-2 shadow-sm space-y-2">
+         <div className="bg-white rounded-3xl border border-slate-100 p-2 shadow-sm space-y-2">
             <button 
                onClick={handleDownloadData}
                className="w-full p-4 rounded-3xl bg-slate-50 hover:bg-slate-100 transition-colors flex items-center justify-between group"
@@ -1970,7 +2049,7 @@ function SecurityCenterView({ user, onBack }: { user: FirebaseUser | null, onBac
 
       <div className="space-y-4">
          <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Configuración de Acceso</h4>
-         <div className="bg-white rounded-[2rem] border border-slate-100 divide-y divide-slate-50 overflow-hidden shadow-sm">
+         <div className="bg-white rounded-3xl border border-slate-100 divide-y divide-slate-50 overflow-hidden shadow-sm">
             {[
               { label: 'Autenticación Biométrica', isToggle: true, enabled: isBiometricEnabled, onToggle: () => setIsBiometricEnabled(!isBiometricEnabled) },
               { label: 'Cifrado de Extremo a Extremo', status: 'Activo', color: 'text-emerald-500' },
@@ -2002,7 +2081,7 @@ function SecurityCenterView({ user, onBack }: { user: FirebaseUser | null, onBac
 
       <div className="space-y-4">
          <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Sesiones Activas</h4>
-         <div className="bg-slate-50 rounded-[2rem] p-6 space-y-4">
+         <div className="bg-slate-50 rounded-3xl p-6 space-y-4">
             <div className="flex justify-between items-center">
                <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm">📱</div>

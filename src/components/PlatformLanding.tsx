@@ -1,339 +1,270 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Menu, Radio, GraduationCap, Shield, Users, BarChart2, Leaf, Briefcase, HeartPulse, Bus, Wifi,
-  TrendingUp, ArrowRight, Flower2, UsersRound, ShieldAlert,
-  Map, Utensils, Trash2, Activity, Clock
+  Menu, ShieldCheck, Activity, Users, FileText, Lock, Globe, Monitor, Smartphone, CheckCircle2, ChevronRight, Clock, ArrowRight, Zap, Scale, LayoutDashboard
 } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCards, Navigation, Pagination } from 'swiper/modules';
-
-import 'swiper/css';
-import 'swiper/css/effect-cards';
-import 'swiper/css/pagination';
-import 'swiper/css/navigation';
 
 interface PlatformLandingProps {
   onNavigate: (view: 'landing' | 'c5' | 'citizen' | 'dev' | 'executive', subView?: string, action?: string) => void;
 }
 
-const carouselItems = [
-  { id: 1, num: '01', title: 'Ruta PRO', icon: Bus, color: 'text-blue-600', img: 'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?q=80&w=400&h=600&fit=crop' },
-  { id: 2, num: '02', title: 'Nayarit Chef', icon: Utensils, color: 'text-orange-600', img: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=400&h=600&fit=crop' },
-  { id: 3, num: '03', title: 'Gestión de Residuos Médicos', icon: Trash2, color: 'text-emerald-600', img: 'https://images.unsplash.com/photo-1583324113626-70df0f4deaab?q=80&w=400&h=600&fit=crop' },
-  { id: 4, num: '04', title: 'Tu Salud', icon: HeartPulse, color: 'text-red-500', img: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=400&h=600&fit=crop' },
-  { id: 5, num: '05', title: 'Autoanálisis', icon: Activity, color: 'text-purple-600', img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=400&h=600&fit=crop' },
-  { id: 6, num: '06', title: 'Optimiza tus Días', icon: Clock, color: 'text-yellow-600', img: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=400&h=600&fit=crop' },
-];
-
-const OjosEscena = () => {
-  const [offset, setOffset] = useState({ cx: 0, cy: 0, tx: 0, ty: 0 });
-
-  useEffect(() => {
-    let animationFrameId: number;
-    let currentTx = 0, currentTy = 0;
-    let currentCx = 0, currentCy = 0;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      currentTx = (e.clientX / window.innerWidth - 0.5) * 2;
-      currentTy = (e.clientY / window.innerHeight - 0.5) * 2;
-    };
-
-    const handleDeviceOrientation = (e: DeviceOrientationEvent) => {
-      if (e.gamma !== null && e.beta !== null) {
-        currentTx = Math.max(-1, Math.min(1, e.gamma / 30));
-        currentTy = Math.max(-1, Math.min(1, (e.beta - 45) / 30));
-      }
-    };
-
-    const isTouch = 'ontouchstart' in window;
-    if (!isTouch) {
-      window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    } else {
-      window.addEventListener('deviceorientation', handleDeviceOrientation, { passive: true });
-    }
-
-    const animate = () => {
-      currentCx += (currentTx - currentCx) * 0.05;
-      currentCy += (currentTy - currentCy) * 0.05;
-      setOffset({ cx: currentCx, cy: currentCy, tx: currentTx, ty: currentTy });
-      animationFrameId = requestAnimationFrame(animate);
-    };
-    animate();
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('deviceorientation', handleDeviceOrientation);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, []);
-
-  return (
-    <div className="ojos-escena fixed inset-0 opacity-20 pointer-events-none z-0" id="ojosEscena">
-      {/* Ojo A - Principal (Bottom Left) */}
-      <div className="ojo ojo-a" style={{ 
-        transform: `translate(${offset.cx * 30}px, ${offset.cy * 30}px) scale(1.2)`,
-        left: '5%',
-        bottom: '10%'
-      }}>
-        <div className="ojo-giro">
-          <div className="capa c1"></div><div className="capa c2"></div><div className="capa c3"></div>
-          <div className="capa c4"></div><div className="capa c5"></div><div className="capa c6"></div>
-        </div>
+const WixarikaBanda = () => (
+  <div className="w-full h-2.5 flex relative z-50">
+    {Array.from({length: 20}).map((_, i) => (
+      <div key={i} className="flex-1 flex">
+        <div className="flex-1 bg-[#D81E5B]"></div>
+        <div className="flex-1 bg-[#F5A623]"></div>
+        <div className="flex-1 bg-[#0FA3B1]"></div>
+        <div className="flex-1 bg-[#4C9F70]"></div>
+        <div className="flex-1 bg-[#E85D04]"></div>
       </div>
-
-      {/* Ojo B - Secondary (Top Right) */}
-      <div className="ojo ojo-b" style={{ 
-        transform: `translate(${offset.cx * 50}px, ${offset.cy * 50}px) rotate(15deg)`,
-        right: '8%',
-        top: '15%'
-      }}>
-        <div className="ojo-giro">
-          <div className="capa c1"></div><div className="capa c2"></div><div className="capa c3"></div>
-          <div className="capa c4"></div><div className="capa c5"></div><div className="capa c6"></div>
-        </div>
-      </div>
-
-      {/* Ojo C - Tertiary (Top Left) */}
-      <div className="ojo ojo-c" style={{ 
-        transform: `translate(${offset.cx * 80}px, ${offset.cy * 80}px) scale(0.8)`,
-        left: '15%',
-        top: '10%'
-      }}>
-        <div className="ojo-giro">
-          <div className="capa c1"></div><div className="capa c2"></div><div className="capa c3"></div>
-          <div className="capa c4"></div><div className="capa c5"></div>
-        </div>
-      </div>
-
-      {/* Subtle Tech accents */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] border border-blue-500/5 rounded-full pointer-events-none"></div>
-    </div>
-  );
-};
+    ))}
+  </div>
+);
 
 export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
 
   return (
-    <div className="min-h-screen bg-[#fcfdfe] font-sans overflow-x-hidden selection:bg-blue-100 relative">
-      {/* Background Ojos & Tech Accents */}
-      <OjosEscena />
+    <div className="min-h-screen bg-[#F8F6F1] font-sans overflow-x-hidden selection:bg-[#D81E5B]/20">
+      <WixarikaBanda />
+      
+      {/* HERO COVER (Tinta background) */}
+      <div className="bg-[#14213D] text-[#F8F6F1] min-h-[95vh] flex flex-col relative overflow-hidden">
+        {/* Background Nierika pattern abstraction */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
+          backgroundImage: 'radial-gradient(circle at 20px 20px, #F8F6F1 2px, transparent 0)',
+          backgroundSize: '40px 40px'
+        }}></div>
 
-      {/* Decorative Top Border - Subtle & Elite */}
-      <div className="h-1.5 w-full bg-gradient-to-r from-blue-600 via-amber-500 to-emerald-500 opacity-80"></div>
-
-      {/* Header */}
-      <header className="px-6 md:px-12 py-8 flex justify-between items-center relative z-20">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20">
-            <Radio className="text-white w-7 h-7" />
-          </div>
-          <div>
-            <h1 className="font-serif font-black text-2xl tracking-tight text-[#0f285c]">Nayarit<span className="text-blue-600">Digital</span></h1>
-            <p className="text-[0.6rem] uppercase tracking-[0.3em] font-bold text-slate-600">Excelencia Gubernamental</p>
-          </div>
-        </div>
-        
-        <nav className="hidden lg:flex items-center gap-10">
-          <button onClick={() => onNavigate('citizen')} className="text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-widest">Soluciones</button>
-          <button onClick={() => onNavigate('executive')} className="text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-widest">Estrategia</button>
-          <button onClick={() => onNavigate('dev')} className="text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-widest">Impacto</button>
-          <button onClick={() => onNavigate('c5')} className="text-sm font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-widest">Transparencia</button>
-          <button 
-            onClick={() => onNavigate('dev')}
-            className="bg-[#0f285c] text-white px-7 py-3 rounded-full text-xs font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-[#0f285c]/20"
-          >
-            Acceso Elite
-          </button>
-        </nav>
-
-        <button className="lg:hidden p-3 bg-white shadow-md rounded-xl" aria-label="Abrir menú de navegación">
-          <Menu className="w-6 h-6 text-[#0f285c]" />
-        </button>
-      </header>
-
-      {/* Main Content */}
-      <main className="px-6 md:px-12 py-12 md:py-24 max-w-[1600px] mx-auto relative z-10">
-        <div className="flex flex-col xl:flex-row gap-16 xl:gap-24 items-center">
-          
-          {/* Left Column: Typography & CTAs */}
-          <div className="xl:w-1/2 flex flex-col justify-center shrink-0">
-            <div className="flex items-center gap-3 mb-8">
-               <div className="h-[1px] w-12 bg-blue-600/30"></div>
-               <span className="text-blue-600 font-bold tracking-[0.3em] text-[0.7rem] uppercase">6 Pilares de Transformación</span>
-               <div className="h-[1px] w-12 bg-blue-600/30"></div>
-            </div>
-            
-            <h2 className="text-6xl md:text-7xl lg:text-[5.5rem] font-serif font-black text-[#0f285c] leading-[0.95] tracking-tighter mb-10">
-               La Nueva Era <br />
-               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 italic font-medium">Digital</span> de Nayarit
-            </h2>
-            
-            <p className="text-slate-600 text-xl leading-relaxed mb-12 max-w-xl font-medium opacity-90">
-               Una infraestructura inteligente diseñada para la eficiencia, la transparencia y el bienestar ciudadano. Tecnología de élite al servicio del pueblo.
-            </p>
-            
-            <div className="flex flex-wrap items-center gap-6 mb-20">
-               <button 
-                 onClick={() => onNavigate('citizen')}
-                 className="bg-blue-600 hover:bg-blue-700 text-white px-10 py-5 rounded-full text-lg font-bold transition-all shadow-2xl shadow-blue-600/40 flex items-center gap-4 group"
-               >
-                 Explorar Ecosistema <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-               </button>
-               
-               <button className="flex items-center gap-3 text-[#0f285c] font-bold hover:gap-5 transition-all group">
-                 <span>Ver Estrategia 2024</span>
-                 <div className="w-10 h-[2px] bg-[#0f285c] group-hover:w-16 transition-all"></div>
-               </button>
-            </div>
-
-            <div className="grid grid-cols-2 gap-8 max-w-lg border-t border-slate-200 pt-12">
-               <div>
-                 <p className="text-3xl font-serif font-bold text-[#0f285c]">100%</p>
-                 <p className="text-xs uppercase tracking-widest text-slate-600 font-bold mt-1">Transparencia</p>
-               </div>
-               <div>
-                 <p className="text-3xl font-serif font-bold text-[#0f285c]">24/7</p>
-                 <p className="text-xs uppercase tracking-widest text-slate-600 font-bold mt-1">Disponibilidad</p>
-               </div>
-            </div>
-          </div>
-
-          {/* Right Column: Swiper 3D Carousel - Elite Cards */}
-          <div className="xl:w-1/2 w-full max-w-[450px] md:max-w-[500px] relative h-[550px] md:h-[700px] flex items-center justify-center">
-             <Swiper
-               effect={'cards'}
-               grabCursor={true}
-               modules={[EffectCards, Pagination, Navigation]}
-               className="w-full h-[500px] md:h-[600px]"
-               pagination={{
-                 clickable: true,
-                 dynamicBullets: true,
-               }}
-               navigation={true}
+        {/* Header */}
+        <header className="px-6 md:px-12 py-8 flex justify-between items-center relative z-20">
+           <div className="flex items-center gap-4">
+             <div className="w-14 h-14 bg-gradient-to-br from-[#D81E5B] to-[#0FA3B1] rounded-full flex items-center justify-center font-black text-2xl shadow-[0_0_40px_rgba(216,30,91,0.4)] text-white">
+               N
+             </div>
+             <div>
+               <p className="text-[11px] uppercase tracking-[0.3em] font-bold text-[#F5A623]">NayaritDigital · ConnectX</p>
+             </div>
+           </div>
+           
+           <nav className="hidden lg:flex items-center gap-8">
+             <button onClick={() => onNavigate('citizen')} className="text-xs font-bold text-[#a0aec0] hover:text-[#0FA3B1] transition-colors uppercase tracking-widest">Portal Ciudadano</button>
+             <button onClick={() => onNavigate('c5')} className="text-xs font-bold text-[#a0aec0] hover:text-[#0FA3B1] transition-colors uppercase tracking-widest">C5 Dashboard</button>
+             <button onClick={() => onNavigate('executive')} className="text-xs font-bold text-[#a0aec0] hover:text-[#0FA3B1] transition-colors uppercase tracking-widest">Executive Folder</button>
+             <button 
+               onClick={() => onNavigate('c5')}
+               className="bg-[#D81E5B] text-white px-6 py-3 rounded text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#D81E5B]/80 transition-all shadow-lg"
              >
-               {carouselItems.map((item) => (
-                 <SwiperSlide 
-                   key={item.id} 
-                   className="rounded-[2.5rem] overflow-hidden shadow-[0_40px_80px_-15px_rgba(15,40,92,0.3)] bg-white flex flex-col border border-white/50 cursor-grab active:cursor-grabbing group"
-                   onClick={() => {
-                      if (item.id === 1) onNavigate('c5');
-                      else if (item.id === 4) onNavigate('citizen', 'services');
-                      else if (item.id === 8) onNavigate('citizen', 'services', 'triage');
-                      else onNavigate('citizen');
-                   }}
-                 >
-                   <div className="p-10 text-center flex flex-col items-center bg-white z-10 relative">
-                      <div className="flex items-center gap-2 mb-6">
-                        <span className="w-8 h-[1px] bg-blue-600/20"></span>
-                        <span className="text-blue-600 font-black text-xl tracking-tighter italic">Pilar {item.num}</span>
-                        <span className="w-8 h-[1px] bg-blue-600/20"></span>
-                      </div>
-                      <div className={cn("p-5 rounded-2xl mb-6 bg-slate-50 group-hover:scale-110 transition-transform duration-500", item.color)}>
-                        {React.createElement(item.icon, { className: "w-10 h-10" })}
-                      </div>
-                      <h3 className="font-serif font-black text-2xl text-[#0f285c] leading-tight px-4 mb-2">
-                        {item.title}
-                      </h3>
-                      <p className="text-slate-600 text-xs font-bold uppercase tracking-widest">Nayarit Digital Elite</p>
-                   </div>
-                   
-                   {/* Image background that blends into the top */}
-                   <div className="absolute inset-0 z-0">
-                     <div className="absolute inset-0 bg-gradient-to-b from-white via-white/80 to-transparent z-10 h-[60%]"></div>
-                     <img src={item.img} alt={item.title} className="w-full h-full object-cover pointer-events-none group-hover:scale-105 transition-transform duration-[2s]" />
-                     <div className="absolute inset-0 bg-gradient-to-t from-[#0f285c]/90 via-[#0f285c]/20 to-transparent z-10"></div>
-                     
-                     <div className="absolute bottom-8 left-0 right-0 z-20 px-8">
-                        <button className="w-full py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white text-xs font-bold uppercase tracking-[0.2em] hover:bg-white hover:text-[#0f285c] transition-all">
-                          Ver Detalles
-                        </button>
-                     </div>
-                   </div>
-                 </SwiperSlide>
-               ))}
-             </Swiper>
+               Entrar al Sistema
+             </button>
+           </nav>
+        </header>
+
+        {/* Main Hero Content */}
+        <main className="flex-1 flex flex-col justify-center items-center text-center px-6 relative z-10 py-12">
+          <h1 className="text-5xl md:text-7xl lg:text-[4.8rem] font-serif font-normal leading-[1.1] tracking-tight mb-8 max-w-5xl">
+             El sistema operativo<br/>
+             del <em className="italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-[#D81E5B] to-[#0FA3B1]">nuevo gobierno</em><br/>
+             de Nayarit
+          </h1>
+          
+          <p className="text-lg md:text-xl text-[#F8F6F1]/70 max-w-2xl font-sans tracking-wider mb-14 leading-relaxed">
+            Carta de Presentación Estratégica. Plataforma integral de gobernanza digital alineada a la Ley Nacional de Simplificación y Digitalización — lista para producción.
+          </p>
+
+          {/* KPI Chips */}
+          <div className="flex flex-wrap justify-center gap-3 max-w-3xl mb-16">
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#D81E5B]/20 text-[#ff8ab8] border border-[#D81E5B]/40 uppercase">18 Módulos Activos</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#0FA3B1]/20 text-[#7ee8f2] border border-[#0FA3B1]/40 uppercase">3 Agentes Federales IA</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#F5A623]/20 text-[#ffc96a] border border-[#F5A623]/40 uppercase">100+ Pagos Municipales</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#4C9F70]/20 text-[#7de3a8] border border-[#4C9F70]/40 uppercase">20/20 Municipios</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#D81E5B]/20 text-[#ff8ab8] border border-[#D81E5B]/40 uppercase">14 Leyes Cumplidas</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#0FA3B1]/20 text-[#7ee8f2] border border-[#0FA3B1]/40 uppercase">LlaveMx Art. 74</span>
           </div>
-        </div>
-      </main>
 
-      {/* Bottom Features Bar */}
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 pb-12 relative z-20 mt-12 xl:mt-0">
-         <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-xl border border-white p-6 md:p-8 flex flex-wrap justify-center md:justify-between items-center gap-8 relative overflow-hidden">
-            {/* Left/Right Decorative patterns */}
-            <div className="absolute left-0 top-0 bottom-0 w-32 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 10px 10px, blue 2px, transparent 0)', backgroundSize: '20px 20px' }}></div>
-            <div className="absolute right-0 top-0 bottom-0 w-32 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 10px 10px, red 2px, transparent 0)', backgroundSize: '20px 20px' }}></div>
+          <div className="flex flex-wrap justify-center gap-6">
+             <button onClick={() => onNavigate('citizen')} className="bg-[#D81E5B] hover:bg-[#D81E5B]/90 text-white px-8 py-4 rounded-md text-sm font-bold tracking-widest uppercase transition-all shadow-[0_8px_32px_rgba(216,30,91,0.35)] flex items-center gap-3">
+               <Smartphone className="w-5 h-5" /> Portal Ciudadano
+             </button>
+             <button onClick={() => onNavigate('c5')} className="bg-[#F8F6F1]/10 hover:bg-[#F8F6F1]/20 text-[#F8F6F1] border border-[#F8F6F1]/30 px-8 py-4 rounded-md text-sm font-bold tracking-widest uppercase transition-all flex items-center gap-3">
+               <Monitor className="w-5 h-5" /> C5 Governance Hub
+             </button>
+          </div>
 
-            <div className="flex items-center gap-4 relative z-10">
-              <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
-                <TrendingUp className="w-6 h-6" />
-              </div>
-              <p className="text-sm font-bold text-slate-700 max-w-[120px] leading-tight">Tecnología para el bienestar</p>
-            </div>
-
-            <div className="hidden md:block w-px h-12 bg-slate-200"></div>
-
-            <div className="flex items-center gap-4 relative z-10">
-              <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
-                <UsersRound className="w-6 h-6" />
-              </div>
-              <p className="text-sm font-bold text-slate-700 max-w-[120px] leading-tight">Gobierno abierto y transparente</p>
-            </div>
-
-            <div className="hidden md:block w-px h-12 bg-slate-200"></div>
-
-            <div className="flex items-center gap-4 relative z-10">
-              <div className="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center text-red-600">
-                <ShieldAlert className="w-6 h-6" />
-              </div>
-              <p className="text-sm font-bold text-slate-700 max-w-[120px] leading-tight">Seguridad y confianza en cada paso</p>
-            </div>
-
-            <div className="hidden md:block w-px h-12 bg-slate-200"></div>
-
-            <div className="flex items-center gap-4 relative z-10">
-              <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
-                <Leaf className="w-6 h-6" />
-              </div>
-              <p className="text-sm font-bold text-slate-700 max-w-[120px] leading-tight">Un futuro sostenible para Nayarit</p>
-            </div>
-         </div>
+          <p className="text-[#a0aec0] text-xs tracking-[0.2em] uppercase mt-20">Julio 2026 · Documento Confidencial · v3.0</p>
+        </main>
       </div>
 
-      {/* Footer Branding - Elite Ribbon */}
-      <div className="max-w-[1400px] mx-auto px-6 md:px-12 pb-16 relative z-20">
-         <div className="bg-[#0f285c] text-white rounded-[2.5rem] shadow-2xl border border-white/10 p-8 md:p-12 flex flex-wrap justify-between items-center gap-8 relative overflow-hidden">
-            {/* Geometric patterns */}
-            <div className="absolute right-0 top-0 bottom-0 w-64 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 10px 10px, white 1px, transparent 0)', backgroundSize: '30px 30px' }}></div>
-            
-            <div className="flex items-center gap-6 relative z-10">
-               <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20">
-                  <ShieldAlert className="text-amber-400 w-8 h-8" />
+      <WixarikaBanda />
+
+      {/* CONTENT SECTION (Light Theme) */}
+      <div className="bg-[#F8F6F1] text-[#1a2438] py-24 px-6 md:px-12 relative">
+        
+        {/* 01: El Mandato Federal & Reloj Digital */}
+        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 mb-32">
+          <div>
+            <p className="text-[#D81E5B] text-xs font-bold tracking-[0.2em] uppercase mb-4">01 · Marco de Obligación Legal</p>
+            <h2 className="text-4xl md:text-5xl font-serif font-black leading-[1.1] mb-6 text-[#1a2438]">Ya no es una opción.<br/>Es la ley.</h2>
+            <p className="text-[#4a5568] text-lg leading-relaxed mb-8">
+               La Ley Nacional de Simplificación y Digitalización (2025) tiene rango constitucional bajo los Arts. 25 y 73. Tepic <em>debe</em> digitalizar. La fecha límite federal para el 80% de trámites es 2026. Hoy es julio de 2026.
+            </p>
+
+            <div className="space-y-6">
+              <div className="flex gap-5 p-6 bg-white border border-[#d4ccc2] rounded-xl border-l-4 border-l-[#D81E5B] shadow-sm">
+                <Scale className="w-8 h-8 text-[#D81E5B] shrink-0" />
+                <div>
+                  <h4 className="font-bold text-[17px] mb-2 text-[#1a2438]">Obligación Constitucional</h4>
+                  <p className="text-sm text-[#4a5568] leading-relaxed">No cumplir expone al municipio a observaciones de la ASF y al Presidente Municipal a responsabilidad ante la SFP.</p>
+                </div>
+              </div>
+              <div className="flex gap-5 p-6 bg-white border border-[#d4ccc2] rounded-xl border-l-4 border-l-[#0FA3B1] shadow-sm">
+                <Lock className="w-8 h-8 text-[#0FA3B1] shrink-0" />
+                <div>
+                  <h4 className="font-bold text-[17px] mb-2 text-[#1a2438]">LlaveMx Art. 74 LNETB</h4>
+                  <p className="text-sm text-[#4a5568] leading-relaxed">ConnectX es el único sistema municipal integrado con LlaveMx desde el día 1 — el estándar de identidad federal obligatorio.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Digital Clock Panel */}
+          <div className="bg-[#14213D] text-white rounded-2xl p-8 md:p-10 relative overflow-hidden shadow-2xl flex flex-col justify-center">
+             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#D81E5B] via-[#F5A623] to-[#0FA3B1]"></div>
+             
+             <div className="flex items-center gap-3 mb-6">
+               <Clock className="w-7 h-7 text-[#F5A623]" />
+               <h3 className="text-2xl font-serif font-normal tracking-wide">El Reloj Digital ya está corriendo</h3>
+             </div>
+
+             <p className="text-[#a0aec0] mb-8 text-[15px] leading-relaxed">
+               La LNETB marcó vencimientos en enero y febrero de 2026. Hay más de 5 meses de irregularidad acumulada, con responsabilidad personal creciendo cada día.
+             </p>
+
+             <div className="space-y-8">
+               <div>
+                 <h4 className="text-[#D81E5B] text-[11px] font-bold uppercase tracking-widest mb-3">Riesgo Legal — Quedarse en el muelle</h4>
+                 <ul className="space-y-2 text-[14px] text-[#e8e0d4]">
+                   <li className="flex gap-3"><span className="text-[#D81E5B] font-bold">✖</span> <span>Daño político colateral y sanciones de la ASF.</span></li>
+                   <li className="flex gap-3"><span className="text-[#D81E5B] font-bold">✖</span> <span>Recuperar terreno después es 10x más costoso.</span></li>
+                 </ul>
                </div>
                <div>
-                  <h3 className="text-2xl font-serif font-black tracking-tight">Compromiso Nayarit</h3>
-                  <p className="text-slate-400 text-sm font-medium">Liderando la transformación digital del Pacífico.</p>
+                 <h4 className="text-[#4C9F70] text-[11px] font-bold uppercase tracking-widest mb-3">Oportunidad Política — Subirse al barco</h4>
+                 <ul className="space-y-2 text-[14px] text-[#e8e0d4]">
+                   <li className="flex gap-3"><span className="text-[#4C9F70] font-bold">✅</span> <span>Liderar la narrativa nacional. Primera ciudad 100% digital.</span></li>
+                   <li className="flex gap-3"><span className="text-[#4C9F70] font-bold">✅</span> <span>Resultados visibles en 30 días, listos para campaña 2027.</span></li>
+                 </ul>
                </div>
-            </div>
+             </div>
 
-            <div className="flex gap-12 relative z-10">
-               <div className="text-center">
-                  <div className="text-amber-400 text-3xl font-black font-serif">1.2M+</div>
-                  <div className="text-[0.6rem] uppercase tracking-widest font-bold text-slate-400 mt-1">Ciudadanos</div>
-               </div>
-               <div className="text-center">
-                  <div className="text-blue-400 text-3xl font-black font-serif">20+</div>
-                  <div className="text-[0.6rem] uppercase tracking-widest font-bold text-slate-400 mt-1">Secretarías</div>
-               </div>
-            </div>
+             <button onClick={() => onNavigate('executive')} className="mt-10 w-full bg-[#F5A623] hover:bg-[#F5A623]/90 text-[#14213D] py-4 rounded-md font-bold uppercase tracking-widest text-[11px] transition-colors shadow-lg">
+               Revisar Propuesta Estratégica
+             </button>
+          </div>
+        </div>
 
-            <div className="relative z-10">
-               <button className="bg-white text-[#0f285c] px-8 py-4 rounded-full font-bold text-sm uppercase tracking-widest hover:bg-amber-400 transition-colors shadow-lg">
-                  Panel de Control
-               </button>
-            </div>
-         </div>
+        {/* 03: 5 Capas */}
+        <div className="max-w-6xl mx-auto mb-32">
+          <div className="text-center mb-16">
+             <p className="text-[#0FA3B1] text-xs font-bold tracking-[0.2em] uppercase mb-4">03 · Arquitectura del Ecosistema</p>
+             <h2 className="text-4xl md:text-5xl font-serif font-black leading-tight text-[#1a2438]">5 capas. Un solo sistema nervioso.</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+             <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
+               <div className="absolute top-0 left-0 right-0 h-1 bg-[#D81E5B]"></div>
+               <div className="w-12 h-12 bg-[#D81E5B]/10 text-[#D81E5B] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">1</div>
+               <h4 className="font-bold text-[#1a2438] mb-2 text-lg">Landing Page</h4>
+               <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">La cara pública del ecosistema. Narrativa wixárika y posicionamiento estatal.</p>
+               <button onClick={() => window.scrollTo({top:0, behavior:'smooth'})} className="text-[#D81E5B] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Inicio <ChevronRight className="w-3 h-3"/></button>
+             </div>
+             
+             <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
+               <div className="absolute top-0 left-0 right-0 h-1 bg-[#0FA3B1]"></div>
+               <div className="w-12 h-12 bg-[#0FA3B1]/10 text-[#0FA3B1] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">2</div>
+               <h4 className="font-bold text-[#1a2438] mb-2 text-lg">C5 Dashboard</h4>
+               <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">Centro de mando de gobierno. 14 módulos de gestión, tesorería y auditoría.</p>
+               <button onClick={() => onNavigate('c5')} className="text-[#0FA3B1] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Dashboard <ChevronRight className="w-3 h-3"/></button>
+             </div>
+             
+             <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
+               <div className="absolute top-0 left-0 right-0 h-1 bg-[#4C9F70]"></div>
+               <div className="w-12 h-12 bg-[#4C9F70]/10 text-[#4C9F70] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">3</div>
+               <h4 className="font-bold text-[#1a2438] mb-2 text-lg">CitizenApp</h4>
+               <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">El gobierno en el bolsillo. 15 servicios, ventanilla única y expediente digital.</p>
+               <button onClick={() => onNavigate('citizen')} className="text-[#4C9F70] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Abrir App <ChevronRight className="w-3 h-3"/></button>
+             </div>
+             
+             <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
+               <div className="absolute top-0 left-0 right-0 h-1 bg-[#F5A623]"></div>
+               <div className="w-12 h-12 bg-[#F5A623]/10 text-[#F5A623] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">4</div>
+               <h4 className="font-bold text-[#1a2438] mb-2 text-lg">Agentes IA</h4>
+               <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">Inteligencia de datos en tiempo real (datos.gob.mx, INEGI). Reporte CEO Agent.</p>
+               <button onClick={() => onNavigate('c5')} className="text-[#F5A623] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Ver IA <ChevronRight className="w-3 h-3"/></button>
+             </div>
+             
+             <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
+               <div className="absolute top-0 left-0 right-0 h-1 bg-[#E85D04]"></div>
+               <div className="w-12 h-12 bg-[#E85D04]/10 text-[#E85D04] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">5</div>
+               <h4 className="font-bold text-[#1a2438] mb-2 text-lg">Executive Folder</h4>
+               <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">Inteligencia confidencial y expedientes de negociación para la mesa de decisión.</p>
+               <button onClick={() => onNavigate('executive')} className="text-[#E85D04] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Carpeta <ChevronRight className="w-3 h-3"/></button>
+             </div>
+          </div>
+        </div>
+
+        {/* 07: Modelo Financiero & Ranking */}
+        <div className="max-w-6xl mx-auto bg-white border border-[#d4ccc2] rounded-2xl p-8 md:p-14 shadow-sm">
+           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              <div>
+                 <div className="inline-block border border-[#F5A623]/50 text-[#b47a19] px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase mb-6 bg-[#F5A623]/10">Ranking Gobierno Digital</div>
+                 <h2 className="text-3xl md:text-4xl font-serif font-black leading-tight mb-6 text-[#1a2438]">Tepic: del #840 al #38 en 90 días.</h2>
+                 <p className="text-[#4a5568] text-[16px] leading-relaxed mb-8">
+                    Con el 95% del Programa Municipios Digitales implementado, Nayarit se proyecta como el único estado de México con cobertura digital municipal total (20/20).
+                 </p>
+                 <div className="flex gap-12">
+                    <div>
+                       <h4 className="text-4xl font-black text-[#F5A623] font-sans">#38</h4>
+                       <p className="text-[10px] uppercase tracking-widest text-[#4a5568] mt-2 font-bold">Lugar Nacional</p>
+                    </div>
+                    <div>
+                       <h4 className="text-4xl font-black text-[#4C9F70] font-sans">20/20</h4>
+                       <p className="text-[10px] uppercase tracking-widest text-[#4a5568] mt-2 font-bold">Cobertura Estatal</p>
+                    </div>
+                 </div>
+              </div>
+
+              <div className="bg-[#F8F6F1] p-8 rounded-xl border border-[#d4ccc2]">
+                 <h3 className="font-bold text-xl mb-6 text-[#1a2438] flex items-center gap-3">
+                   <Activity className="w-5 h-5 text-[#D81E5B]" />
+                   Modelo de Ingresos
+                 </h3>
+                 <p className="text-sm text-[#4a5568] mb-6">El catálogo digitaliza 100+ conceptos, proyectando una recaudación propia masiva, disminuyendo la dependencia federal del 89.6%.</p>
+                 <div className="space-y-4">
+                    <div className="flex justify-between items-center border-b border-[#d4ccc2] pb-3">
+                       <span className="text-[#4a5568] text-sm">Agua y Saneamiento (15)</span>
+                       <span className="font-bold text-[#4C9F70] font-mono">$120–180 M</span>
+                    </div>
+                    <div className="flex justify-between items-center border-b border-[#d4ccc2] pb-3">
+                       <span className="text-[#4a5568] text-sm">Impuesto Predial (12)</span>
+                       <span className="font-bold text-[#4C9F70] font-mono">$45–80 M</span>
+                    </div>
+                    <div className="flex justify-between items-center border-b border-[#d4ccc2] pb-3">
+                       <span className="text-[#4a5568] text-sm">Obras y Desarrollo (18)</span>
+                       <span className="font-bold text-[#4C9F70] font-mono">$8–25 M</span>
+                    </div>
+                    <div className="flex justify-between items-center pt-2">
+                       <span className="text-[#1a2438] font-black uppercase text-xs tracking-widest">Potencial Total</span>
+                       <span className="font-black text-[#D81E5B] font-mono">$185–321 M / año</span>
+                    </div>
+                 </div>
+              </div>
+           </div>
+        </div>
+
       </div>
+
+      <WixarikaBanda />
     </div>
   );
 };
