@@ -296,21 +296,21 @@ La implementación de Nayarit Digital no es un "big bang" tecnológico, sino un 
 
 ---
 
-### 8. El Rol de la Infraestructura de Google Cloud
+### 8. Infraestructura tecnológica: Anthropic + nube de clase mundial
 
-ConnectX utiliza la tecnología más avanzada del mundo para garantizar que el sistema de Tepic nunca caiga y sea infranqueable.
+ConnectX combina el motor de inteligencia artificial más avanzado del mercado (Anthropic Claude) con infraestructura de nube probada, para garantizar que el sistema de Tepic nunca caiga y sea infranqueable.
 
-| Herramienta de Google | Función en Nayarit Digital |
+| Herramienta | Función en Nayarit Digital |
 | :--- | :--- |
-| **Vertex AI (Gemini 1.5 Pro)** | El "cerebro" del Asistente IA. Permite procesar lenguaje natural en wixárika y cora, y clasificar reportes con precisión humana. |
+| **Anthropic Claude (Opus 4.8)** | El "cerebro" del Asistente IA. Razonamiento adaptativo para consultas complejas, análisis de riesgos con salidas verificables (JSON Schema) y hoja de ruta multilingüe hacia wixárika y cora. |
 | **Google Maps Platform** | La base visual para la Trazabilidad de Obras y reportes. Permite seguir en tiempo real la ubicación de cuadrillas y maquinaria. |
 | **BigQuery (Data Warehouse)** | El motor del **Observatorio Digital**. Procesa millones de registros de recaudación y salud en milisegundos para generar los tableros del C5. |
 | **Cloud Firestore** | Base de datos para la interoperabilidad. Garantiza que si un ciudadano paga en Tesorería, el Asistente IA lo sepa instantáneamente. |
-| **Google Kubernetes Engine** | Infraestructura de grado militar que escala automáticamente. Si 100,000 personas entran a pagar el predial al mismo tiempo, el sistema no se satura. |
+| **Infraestructura elástica en la nube** | Escala automáticamente. Si 100,000 personas entran a pagar el predial al mismo tiempo, el sistema no se satura. |
 
 ---
 
 ### 9. Próximos pasos concretos
 1. **Reunión con Geraldine Ponce:** Presentar el "Dashboard del Despacho" (C5) para control directo.
 2. **Selección de la Colonia Piloto.**
-3. **Inicio de Auditoría de Datos:** Conectar APIs existentes de Tesorería y Agua a la nube de Google.
+3. **Inicio de Auditoría de Datos:** Conectar APIs existentes de Tesorería y Agua a la plataforma en la nube.
