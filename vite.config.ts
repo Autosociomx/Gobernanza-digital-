@@ -22,5 +22,17 @@ export default defineConfig(({mode}) => {
       // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id: string) {
+            // Solo react se agrupa a mano; el resto se divide solo por los
+            // import() dinamicos de las vistas (evita que helpers compartidos
+            // arrastren chunks pesados a la carga inicial de la landing).
+            if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/') || id.includes('node_modules/scheduler')) return 'vendor-react';
+          },
+        },
+      },
+    },
   };
 });
