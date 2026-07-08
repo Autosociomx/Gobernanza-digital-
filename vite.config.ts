@@ -8,8 +8,7 @@ export default defineConfig(({mode}) => {
   return {
     plugins: [react(), tailwindcss()],
     define: {
-      // La key de Gemini NUNCA se inyecta al cliente: toda llamada a IA pasa
-      // por el servidor (/api/ai/*), donde la key vive como variable de entorno.
+      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
       'process.env.GOOGLE_MAPS_PLATFORM_KEY': JSON.stringify(env.GOOGLE_MAPS_PLATFORM_KEY),
     },
     resolve: {

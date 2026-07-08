@@ -72,7 +72,7 @@ export function ConnectXAcademy({ onBack, onGoToStrategy }: { onBack: () => void
       animate={{ opacity: 1, x: 0 }}
       className="flex flex-col min-h-screen bg-slate-50"
     >
-      <header className="p-8 bg-slate-900 text-white rounded-b-[3rem] shadow-2xl shadow-slate-900/20">
+      <header className="p-6 bg-slate-900 text-white rounded-b-[3rem] shadow-2xl shadow-slate-900/20">
         <div className="flex justify-between items-start mb-8">
           <div className="flex-1">
             <p className="text-[10px] uppercase tracking-[0.3em] font-black text-magenta-400 mb-2">ConnectX Academy</p>
@@ -109,7 +109,7 @@ export function ConnectXAcademy({ onBack, onGoToStrategy }: { onBack: () => void
         </div>
       </header>
 
-      <main className="p-8 space-y-6">
+      <main className="p-6 space-y-6">
         <div className="flex items-center gap-3 mb-4">
           <Sparkles className="w-5 h-5 text-magenta-500" />
           <h2 className="text-sm font-black text-slate-900 uppercase tracking-tight">Ruta de Conquista Laboral</h2>
@@ -139,7 +139,7 @@ export function ConnectXAcademy({ onBack, onGoToStrategy }: { onBack: () => void
           benefits={["Tesina de Innovación Aplicada", "Doble Sello de Autoridad", "Perfil de Estratega Digital"]}
         />
 
-        <div className="bg-[#0f285c] rounded-[2.5rem] p-8 text-white">
+        <div className="bg-[#0f285c] rounded-[2.5rem] p-6 text-white">
           <BookOpen className="w-10 h-10 mb-4 text-cyan-400" />
           <h4 className="text-xl font-serif font-black mb-2">Manifiesto del Trabajador Digital</h4>
           <p className="text-xs text-white/70 leading-relaxed mb-6">

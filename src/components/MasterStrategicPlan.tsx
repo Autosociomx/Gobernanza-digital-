@@ -31,7 +31,7 @@ interface ProposalCardProps {
 }
 
 const ProposalCard = ({ title, subtitle, icon: Icon, points, color }: ProposalCardProps) => (
-  <div className="bg-slate-900/50 border border-white/5 p-8 rounded-[2.5rem] space-y-6 hover:border-white/10 transition-all group">
+  <div className="bg-slate-900/50 border border-white/5 p-6 rounded-[2.5rem] space-y-6 hover:border-white/10 transition-all group">
     <div className="flex items-center gap-4">
       <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg", color)}>
         <Icon className="w-7 h-7 text-white" />
@@ -93,28 +93,30 @@ export function MasterStrategicPlan({ onBack }: { onBack: () => void }) {
       animate={{ opacity: 1 }}
       className="flex flex-col min-h-screen bg-[#05060a] text-slate-300 font-sans pb-24"
     >
-      <header className="p-8 border-b border-white/5 bg-slate-950/40 backdrop-blur-2xl sticky top-0 z-50">
-        <div className="flex items-center justify-between max-w-7xl mx-auto w-full">
+      <header className="p-4  border-b border-white/5 bg-slate-950/40 backdrop-blur-2xl sticky top-0 z-50">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between max-w-7xl mx-auto w-full gap-4">
           <button onClick={onBack} className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors">
-            <ChevronLeft className="w-5 h-5" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Panel Principal</span>
+            <ChevronLeft className="w-5 h-5 shrink-0" />
+            <span className="text-[10px] font-black uppercase tracking-widest truncate">Panel Principal</span>
           </button>
-          <div className="flex items-center gap-6">
-            <AuraCertificationSeal />
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:block">
+              <AuraCertificationSeal />
+            </div>
             <div className="flex items-center gap-3">
-              <Shield className="w-5 h-5 text-emerald-500" />
-              <h1 className="text-sm font-black uppercase tracking-[0.3em] text-white">Plan Estratégico Maestro</h1>
+              <Shield className="w-5 h-5 text-emerald-500 shrink-0" />
+              <h1 className="text-xs sm:text-sm font-black uppercase tracking-[0.2em] text-white truncate">Plan Estratégico</h1>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="p-8 max-w-7xl mx-auto w-full space-y-16">
+      <main className="p-6 max-w-7xl mx-auto w-full space-y-16">
         {/* Hero Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1  gap-6 items-center">
           <div className="space-y-6">
             <p className="text-[10px] font-black text-magenta-500 uppercase tracking-[0.5em]">Gobernanza ConnectX v2.6</p>
-            <h2 className="text-5xl md:text-7xl font-serif font-black text-white tracking-tighter leading-[0.85]">
+            <h2 className="text-4xl font-serif font-black text-white tracking-tighter leading-[0.85]">
               Arquitectura de<br/>
               <span className="text-slate-500">Soberanía Total</span>
             </h2>
@@ -124,10 +126,10 @@ export function MasterStrategicPlan({ onBack }: { onBack: () => void }) {
           </div>
 
           {/* Stress Test Simulator Visual */}
-          <div className="bg-slate-900 border border-white/10 rounded-[3rem] p-8 space-y-8 relative overflow-hidden">
+          <div className="bg-slate-900 border border-white/10 rounded-[3rem] p-6 space-y-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-magenta-500/10 blur-3xl -mr-16 -mt-16"></div>
             
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col  items-start  justify-between gap-4">
                <div className="flex items-center gap-3">
                   <Activity className="w-5 h-5 text-magenta-500" />
                   <h3 className="text-xs font-black text-white uppercase tracking-widest">Simulador de Estrés</h3>
@@ -190,7 +192,7 @@ export function MasterStrategicPlan({ onBack }: { onBack: () => void }) {
              <h3 className="text-xs font-black text-white uppercase tracking-[0.3em]">Propuestas de Trabajo Estratégico</h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1  gap-6">
             <ProposalCard 
               title="Pilar Político"
               subtitle="Alianza y Soberanía"
@@ -237,7 +239,7 @@ export function MasterStrategicPlan({ onBack }: { onBack: () => void }) {
               <h3 className="text-xs font-black text-white uppercase tracking-[0.3em]">Integración de Datos Abiertos (México)</h3>
            </div>
            
-           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+           <div className="grid grid-cols-1  gap-6">
               {[
                 { name: 'PNT México', status: 'Connected', desc: 'Plataforma Nacional de Transparencia' },
                 { name: 'Datos.gob.mx', status: 'Syncing', desc: 'Catálogo de Datos Abiertos de México' },
@@ -264,8 +266,8 @@ export function MasterStrategicPlan({ onBack }: { onBack: () => void }) {
         </div>
 
         {/* Work Plan Timeline */}
-        <div className="bg-white/5 rounded-[3rem] p-12 border border-white/10 space-y-10">
-           <div className="flex items-center justify-between">
+        <div className="bg-white/5 rounded-[3rem] p-6 border border-white/10 space-y-10">
+           <div className="flex flex-col  items-start  justify-between gap-4">
               <div className="space-y-1">
                  <h3 className="text-2xl font-serif font-black text-white">Cronograma de Despliegue Sólido</h3>
                  <p className="text-xs text-slate-500 uppercase font-bold tracking-widest">Sin improvisaciones, solo ejecución</p>
@@ -276,7 +278,7 @@ export function MasterStrategicPlan({ onBack }: { onBack: () => void }) {
               </div>
            </div>
 
-           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+           <div className="grid grid-cols-1  gap-6">
               {[
                 { phase: 'FASE 1', title: 'Alineación', desc: 'Sincronización con liderazgos sindicales y diagnóstico técnico profundo.' },
                 { phase: 'FASE 2', title: 'Certificación', desc: 'Lanzamiento masivo de la Academia ConnectX (Nivel Bronce).' },
@@ -301,7 +303,7 @@ export function MasterStrategicPlan({ onBack }: { onBack: () => void }) {
            </p>
            <button 
              onClick={() => alert('Plan de Operaciones 2026 Aprobado y sincronizado con el Nodo de Gobernanza.')}
-             className="bg-white text-black px-12 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.4em] shadow-2xl hover:scale-105 transition-all"
+             className="bg-white text-black w-full py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.4em] shadow-2xl hover:scale-105 transition-all"
            >
               Aprobar Plan de Operaciones
            </button>

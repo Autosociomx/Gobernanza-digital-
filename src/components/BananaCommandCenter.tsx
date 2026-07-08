@@ -40,21 +40,23 @@ export function BananaCommandCenter({ onBack }: { onBack: () => void }) {
       animate={{ opacity: 1, scale: 1 }}
       className="flex flex-col min-h-screen bg-[#050505] text-slate-300 font-mono"
     >
-      <header className="p-8 border-b border-white/10 bg-black/40 backdrop-blur-xl flex items-center justify-between sticky top-0 z-20">
+      <header className="p-4  border-b border-white/10 bg-black/40 backdrop-blur-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sticky top-0 z-20">
          <button onClick={onBack} className="flex items-center gap-2 text-slate-500 hover:text-magenta-500 transition-colors">
-            <ChevronLeft className="w-5 h-5" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Exit Terminal</span>
+            <ChevronLeft className="w-5 h-5 shrink-0" />
+            <span className="text-[10px] font-black uppercase tracking-widest truncate">Exit Terminal</span>
          </button>
-         <div className="flex items-center gap-6">
-            <AuraCertificationSeal />
+         <div className="flex items-center gap-4">
+            <div className="hidden sm:block">
+              <AuraCertificationSeal />
+            </div>
             <div className="flex items-center gap-3">
-               <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></div>
-               <h1 className="text-sm font-black uppercase tracking-[0.3em] text-white">Banana Command Center</h1>
+               <div className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse shrink-0"></div>
+               <h1 className="text-xs sm:text-sm font-black uppercase tracking-[0.2em] text-white truncate">Banana Command</h1>
             </div>
          </div>
       </header>
 
-      <main className="p-8 space-y-10">
+      <main className="p-6 space-y-10">
          <div className="space-y-2">
             <p className="text-[10px] font-black text-yellow-400 uppercase tracking-[0.4em]">Advanced Prompt Engineering</p>
             <h2 className="text-4xl font-serif font-black text-white tracking-tighter">La Lógica Detrás<br/>del Sistema</h2>
@@ -65,7 +67,7 @@ export function BananaCommandCenter({ onBack }: { onBack: () => void }) {
 
          <div className="grid gap-6">
             {prompts.map((p) => (
-              <div key={p.id} className="bg-white/5 border border-white/10 rounded-[2rem] p-8 group hover:border-magenta-500/30 transition-all">
+              <div key={p.id} className="bg-white/5 border border-white/10 rounded-[2rem] p-6 group hover:border-magenta-500/30 transition-all">
                  <div className="flex justify-between items-start mb-6">
                     <div className="space-y-1">
                        <h3 className="text-xl font-serif font-black text-white">{p.title}</h3>
@@ -92,7 +94,7 @@ export function BananaCommandCenter({ onBack }: { onBack: () => void }) {
             ))}
          </div>
 
-         <div className="bg-yellow-400/10 border border-yellow-400/20 rounded-[2.5rem] p-10 flex flex-col items-center text-center space-y-4">
+         <div className="bg-yellow-400/10 border border-yellow-400/20 rounded-[2.5rem] p-6 flex flex-col items-center text-center space-y-4">
             <Zap className="w-10 h-10 text-yellow-400" />
             <h4 className="text-xl font-serif font-black text-white tracking-tight">¿Deseas Inyectar Nuevas Lógicas?</h4>
             <p className="text-slate-400 text-xs max-w-sm">
@@ -100,7 +102,7 @@ export function BananaCommandCenter({ onBack }: { onBack: () => void }) {
             </p>
             <button 
               onClick={() => alert('Sugerencia de Optimización Banana enviada al centro de datos.')}
-              className="mt-4 px-8 py-4 bg-yellow-400 text-black rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-yellow-300 transition-all"
+              className="mt-4 w-full py-4 bg-yellow-400 text-black rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-yellow-300 transition-all"
             >
                Sugerir Optimización
             </button>

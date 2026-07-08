@@ -53,23 +53,25 @@ export function StrategicAcademyView({ onBack }: { onBack: () => void }) {
       animate={{ opacity: 1 }}
       className="flex flex-col min-h-screen bg-[#05060a] text-slate-300 font-sans pb-20"
     >
-      <header className="p-8 border-b border-white/5 bg-slate-950/50 backdrop-blur-xl sticky top-0 z-20">
-         <div className="flex items-center justify-between">
+      <header className="p-4  border-b border-white/5 bg-slate-950/50 backdrop-blur-xl sticky top-0 z-20">
+         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <button onClick={onBack} className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors">
-               <ChevronLeft className="w-5 h-5" />
-               <span className="text-[10px] font-black uppercase tracking-widest">Regresar</span>
+               <ChevronLeft className="w-5 h-5 shrink-0" />
+               <span className="text-[10px] font-black uppercase tracking-widest truncate">Regresar</span>
             </button>
-            <div className="flex items-center gap-6">
-               <AuraCertificationSeal />
+            <div className="flex items-center gap-4">
+               <div className="hidden sm:block">
+                 <AuraCertificationSeal />
+               </div>
                <div className="flex items-center gap-3">
-                  <Network className="w-5 h-5 text-magenta-500" />
-                  <h1 className="text-sm font-black uppercase tracking-[0.3em] text-white">Blueprint Estratégico</h1>
+                  <Network className="w-5 h-5 text-magenta-500 shrink-0" />
+                  <h1 className="text-xs sm:text-sm font-black uppercase tracking-[0.2em] text-white truncate">Blueprint Estratégico</h1>
                </div>
             </div>
          </div>
       </header>
 
-      <main className="p-8 space-y-16 max-w-5xl mx-auto w-full">
+      <main className="p-6 space-y-16 max-w-5xl mx-auto w-full">
          {/* Hero Title */}
          <div className="space-y-4 text-center">
             <motion.p 
@@ -83,7 +85,7 @@ export function StrategicAcademyView({ onBack }: { onBack: () => void }) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-5xl md:text-7xl font-serif font-black text-white tracking-tighter leading-[0.85]"
+              className="text-4xl  font-serif font-black text-white tracking-tighter leading-[0.85]"
             >
               Construyendo<br/>
               <span className="text-slate-500">Poder Real</span>
@@ -97,13 +99,13 @@ export function StrategicAcademyView({ onBack }: { onBack: () => void }) {
                <h3 className="text-xs font-black text-white uppercase tracking-widest">Mapa de Valor Sistémico</h3>
             </div>
             
-            <div className="relative grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="relative grid grid-cols-1  gap-6">
                {/* Sindicato Node */}
-               <div className="md:col-span-4 flex justify-center mb-8">
+               <div className=" flex justify-center mb-8">
                   <motion.div 
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    className="px-12 py-8 bg-magenta-600 rounded-[3rem] text-center shadow-2xl shadow-magenta-600/30 border border-white/20 relative"
+                    className="px-6 py-6 bg-magenta-600 rounded-[3rem] text-center shadow-2xl shadow-magenta-600/30 border border-white/20 relative"
                   >
                      <Users2 className="w-10 h-10 text-white mx-auto mb-4" />
                      <h4 className="text-2xl font-serif font-black text-white">Sindicato SUTSEM</h4>
@@ -147,7 +149,7 @@ export function StrategicAcademyView({ onBack }: { onBack: () => void }) {
                <h3 className="text-xs font-black text-white uppercase tracking-widest">Ingeniería de Sostenibilidad</h3>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1  gap-6">
                <MonetizationCard 
                  title="Contratos Municipales"
                  desc="El ayuntamiento financia la capacitación para cumplir con la LNETB. Facturación directa por servicios de formación masiva."
@@ -172,7 +174,7 @@ export function StrategicAcademyView({ onBack }: { onBack: () => void }) {
          </div>
 
          {/* Empowerment Message */}
-         <div className="bg-gradient-to-br from-magenta-600 to-indigo-900 rounded-[3rem] p-12 text-white relative overflow-hidden group">
+         <div className="bg-gradient-to-br from-magenta-600 to-indigo-900 rounded-[3rem] p-6 text-white relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[80px] -mr-32 -mt-32"></div>
             
             <div className="relative z-10 space-y-8">
@@ -181,7 +183,7 @@ export function StrategicAcademyView({ onBack }: { onBack: () => void }) {
                   <h3 className="text-4xl font-serif font-black tracking-tighter leading-none">Empoderamiento Sindical<br/>de Nueva Generación</h3>
                </div>
                
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+               <div className="grid grid-cols-1  gap-6">
                   <div className="space-y-2">
                      <p className="text-[10px] font-black text-magenta-200 uppercase tracking-widest">Transformación de Rol</p>
                      <p className="text-sm text-white/80 leading-relaxed">
@@ -208,7 +210,7 @@ export function StrategicAcademyView({ onBack }: { onBack: () => void }) {
          <div className="flex flex-col items-center space-y-6">
             <button 
               onClick={() => alert('Propuesta de Alianza Estratégica enviada al Nodo de Gobernanza. Un consultor ConnectX se pondrá en contacto.')}
-              className="bg-white text-black px-12 py-6 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-4"
+              className="bg-white text-black w-full py-4 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-4"
             >
                Iniciar Alianza Estratégica
                <ArrowRight className="w-4 h-4" />

@@ -535,7 +535,7 @@ export function CitizenApp({
           {/* Floating AI Assistant Button */}
           <button 
             onClick={() => setShowChat(true)}
-            className="fixed bottom-32 right-8 w-14 h-14 bg-magenta-500 rounded-full flex items-center justify-center text-white shadow-xl shadow-magenta-500/30 transform hover:scale-110 transition-transform active:scale-95 z-40"
+            className="fixed bottom-32 right-6 w-14 h-14 bg-magenta-500 rounded-full flex items-center justify-center text-white shadow-xl shadow-magenta-500/30 transform hover:scale-110 transition-transform active:scale-95 z-40"
             style={{backgroundColor:'var(--magenta)'}}
           >
             <Bot className="w-6 h-6" />
@@ -740,7 +740,7 @@ export function CitizenApp({
                    <motion.div 
                      initial={{ y: '100%' }}
                      animate={{ y: 0 }}
-                     className="absolute bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-2xl p-8 z-50 overflow-y-auto max-h-[80%]"
+                     className="absolute bottom-0 left-0 right-0 bg-white rounded-t-[2.5rem] shadow-2xl p-6 z-50 overflow-y-auto max-h-[80%]"
                    >
                       <button 
                         onClick={() => setSelectedWork(null)}
@@ -795,7 +795,7 @@ export function CitizenApp({
                    </button>
                 </div>
 
-                <div className="flex-1 p-8 overflow-y-auto">
+                <div className="flex-1 p-6 overflow-y-auto">
                    {paymentStep === 'idle' && (
                       <div className="space-y-8">
                          <div className="text-center">
@@ -946,7 +946,7 @@ export function CitizenApp({
                    )}
                 </div>
 
-                <div className="p-8 pb-12">
+                <div className="p-6 pb-12">
                    {paymentStep === 'idle' && (
                       <button 
                         onClick={async () => {
@@ -1039,7 +1039,7 @@ const HomeView = React.memo(function HomeView({
 
       {/* Visual Hero ConnectX - Neuro-Experience */}
       <div className="px-1 mb-2">
-        <div className="relative h-64 md:h-72 w-full rounded-3xl overflow-hidden shadow-2xl group cursor-pointer border border-white/5">
+        <div className="relative h-64 w-full rounded-3xl overflow-hidden shadow-2xl group cursor-pointer border border-white/5">
           {/* Animated Background Simulation */}
           <div className="absolute inset-0 bg-slate-950">
              {(!reducedMotion && isOnline) && (
@@ -1055,7 +1055,7 @@ const HomeView = React.memo(function HomeView({
 
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
           
-          <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-10">
+          <div className="absolute inset-0 flex flex-col justify-end p-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -1066,7 +1066,7 @@ const HomeView = React.memo(function HomeView({
                  <div className="w-1.5 h-1.5 rounded-full bg-magenta-500 animate-pulse"></div>
                  <p className="text-[10px] font-black text-magenta-500 uppercase tracking-[0.4em]">Protocolo SSS-2026</p>
               </div>
-              <h2 className="text-3xl md:text-4xl font-serif font-black text-white leading-[1] tracking-tight">
+              <h2 className="text-3xl font-serif font-black text-white leading-[1] tracking-tight">
                 Soberanía Digital<br/>
                 <span className="text-slate-400">en Evolución</span>
               </h2>
@@ -1095,7 +1095,7 @@ const HomeView = React.memo(function HomeView({
           </div>
           
           {/* Top Indicators */}
-          <div className="absolute top-8 left-8 right-8 flex justify-between items-start">
+          <div className="absolute top-6 left-6 right-6 flex justify-between items-start">
              <div className="flex flex-col gap-1">
                 <span className="text-[8px] font-black text-white/40 uppercase tracking-widest">Nayarit Digital</span>
                 <span className="text-[10px] font-mono text-white/80">LAT: 21.50 N / LON: 104.89 W</span>
@@ -1110,7 +1110,7 @@ const HomeView = React.memo(function HomeView({
 
       {/* Portal Ciudadano Fusión */}
       <div 
-        className="bg-slate-950 rounded-3xl p-8 shadow-2xl shadow-slate-900/50 relative overflow-hidden group"
+        className="bg-slate-950 rounded-3xl p-6 shadow-2xl shadow-slate-900/50 relative overflow-hidden group"
       >
         {(!reducedMotion && isOnline) && <div className="absolute top-0 right-0 w-40 h-40 bg-magenta-500/10 rounded-full blur-[60px] -mr-20 -mt-20 group-hover:bg-magenta-500/20 transition-colors"></div>}
         <div className="relative z-10">
@@ -1148,7 +1148,7 @@ const HomeView = React.memo(function HomeView({
 
 
       {/* Asistente de Acciones Directas */}
-      <div className="bg-emerald-600 rounded-3xl p-8 text-white shadow-2xl shadow-emerald-900/30 relative overflow-hidden group">
+      <div className="bg-emerald-600 rounded-3xl p-6 text-white shadow-2xl shadow-emerald-900/30 relative overflow-hidden group">
         {(!reducedMotion && isOnline) && <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -ml-16 -mb-16 group-hover:bg-white/20 transition-colors"></div>}
         <div className="relative z-10 flex flex-col gap-6">
           <div className="flex justify-between items-start">
@@ -1189,7 +1189,7 @@ const HomeView = React.memo(function HomeView({
         {/* Cartas Municipales Digitales CTA */}
         <button 
           onClick={onGoToLetters}
-          className="w-full bg-gradient-to-r from-slate-900 to-indigo-950 rounded-3xl p-8 flex items-center justify-between border border-indigo-500/30 shadow-2xl relative overflow-hidden group"
+          className="w-full bg-gradient-to-r from-slate-900 to-indigo-950 rounded-3xl p-6 flex items-center justify-between border border-indigo-500/30 shadow-2xl relative overflow-hidden group"
         >
           {(!reducedMotion && isOnline) && <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_50%,rgba(99,102,241,0.15),transparent_50%)]"></div>}
           <div className="flex items-center gap-6 relative z-10">
@@ -1210,7 +1210,7 @@ const HomeView = React.memo(function HomeView({
         {/* Master Strategic Plan CTA */}
         <button 
           onClick={onGoToStrategicPlan}
-          className="w-full bg-gradient-to-r from-slate-950 to-[#0a0a14] rounded-3xl p-8 flex items-center justify-between border border-slate-800 shadow-2xl relative overflow-hidden group hover:border-slate-600 transition-colors"
+          className="w-full bg-gradient-to-r from-slate-950 to-[#0a0a14] rounded-3xl p-6 flex items-center justify-between border border-slate-800 shadow-2xl relative overflow-hidden group hover:border-slate-600 transition-colors"
         >
           {(!reducedMotion && isOnline) && <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.03),transparent_50%)]"></div>}
           <div className="flex items-center gap-6 relative z-10">
@@ -1422,7 +1422,7 @@ function RedesCiudadanasView({ profile, onBack }: { profile: any, onBack: () => 
       <ViewHeader title="Red de Apoyo" onBack={onBack} />
       
       {/* Intro Stats */}
-      <div className="p-8 bg-slate-900 rounded-3xl text-white relative overflow-hidden shadow-xl">
+      <div className="p-6 bg-slate-900 rounded-3xl text-white relative overflow-hidden shadow-xl">
          <div className="absolute top-0 right-0 w-32 h-32 bg-magenta-500/10 rounded-full blur-3xl"></div>
          <div className="flex justify-between items-center mb-6">
             <h3 className="text-2xl font-serif font-black">{profile.neighborhood || 'Tepic'} Unida</h3>
@@ -1451,13 +1451,13 @@ function RedesCiudadanasView({ profile, onBack }: { profile: any, onBack: () => 
 
         <div className="space-y-3">
            {loading ? (
-             <div className="flex justify-center p-12">
+             <div className="flex justify-center p-6">
                 <Loader2 className="w-6 h-6 animate-spin text-slate-300" />
              </div>
            ) : (
              <>
                {networks.length === 0 && (
-                 <div className="p-8 bg-white border border-slate-100 rounded-3xl text-center">
+                 <div className="p-6 bg-white border border-slate-100 rounded-3xl text-center">
                     <p className="text-sm font-bold text-slate-900 mb-2">Aún no hay comités registrados</p>
                     <p className="text-xs text-slate-400">Sé el primero en organizar tu colonia.</p>
                  </div>
@@ -1528,7 +1528,7 @@ function TesoreriaYTramitesView({ onPay, onBack }: { onPay: (item: any) => void,
     <div className="pt-2 space-y-6 pb-20">
       <ViewHeader title="Tesorería Digital" onBack={onBack} />
       
-      <div className="bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl">
+      <div className="bg-slate-900 rounded-3xl p-6 text-white relative overflow-hidden shadow-2xl">
          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full -mr-10 -mt-10 blur-2xl"></div>
          <div className="flex items-center gap-2 mb-4">
             <ShieldCheck className="w-5 h-5 text-emerald-400" />
@@ -1755,7 +1755,7 @@ function ProfileView({
       <ViewHeader title="Mi Perfil Nayarit ID" onBack={onBack} />
       
       {/* Block 1: Profile Header & Stats */}
-      <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100/50 flex flex-col items-center relative">
+      <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100/50 flex flex-col items-center relative">
         <button 
            onClick={() => setIsEditing(!isEditing)}
            className="absolute top-6 right-6 p-2 bg-slate-50 text-slate-400 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors"
@@ -1950,7 +1950,7 @@ function SecurityCenterView({ user, onBack }: { user: FirebaseUser | null, onBac
       <ViewHeader title="Seguridad y Nayarit ID" onBack={onBack} />
       
       {/* Block 1: Technical Certification - The Proof */}
-      <div className="bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl">
+      <div className="bg-slate-900 rounded-3xl p-6 text-white relative overflow-hidden shadow-2xl">
          <div className="absolute top-0 right-0 w-32 h-32 bg-magenta-500/20 rounded-full -mr-10 -mt-10 blur-3xl"></div>
          <div className="relative z-10">
             <div className="flex items-center gap-3 mb-4">
@@ -1983,7 +1983,7 @@ function SecurityCenterView({ user, onBack }: { user: FirebaseUser | null, onBac
       </div>
 
       {/* Block 2: House-to-House Protocol (New) */}
-      <div className="bg-emerald-50 rounded-3xl p-8 border border-emerald-100">
+      <div className="bg-emerald-50 rounded-3xl p-6 border border-emerald-100">
          <div className="flex items-center gap-4 mb-4">
             <div className="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-white shadow-lg">
                <Users className="w-6 h-6" />

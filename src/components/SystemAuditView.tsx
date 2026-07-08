@@ -134,15 +134,15 @@ export function SystemAuditView({ onBack }: { onBack: () => void }) {
       className="flex flex-col min-h-screen bg-slate-950 text-slate-300 font-mono"
     >
       {/* Header */}
-      <header className="p-6 border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-20">
-        <div className="flex items-center justify-between">
+      <header className="p-4  border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-20">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <button onClick={onBack} className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors">
-            <ChevronLeft className="w-5 h-5" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Regresar</span>
+            <ChevronLeft className="w-5 h-5 shrink-0" />
+            <span className="text-[10px] font-black uppercase tracking-widest truncate">Regresar</span>
           </button>
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-emerald-500" />
-            <h1 className="text-sm font-black uppercase tracking-[0.2em] text-white">System Auditor v2.6</h1>
+            <ShieldCheck className="w-5 h-5 text-emerald-500 shrink-0" />
+            <h1 className="text-xs sm:text-sm font-black uppercase tracking-[0.2em] text-white truncate">System Auditor</h1>
           </div>
         </div>
       </header>
@@ -184,7 +184,7 @@ export function SystemAuditView({ onBack }: { onBack: () => void }) {
         </div>
 
         {/* Collection Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1  gap-4">
            {collections.map(col => (
              <div 
                key={col.name}
@@ -271,7 +271,7 @@ export function SystemAuditView({ onBack }: { onBack: () => void }) {
         </div>
 
         {/* Infrastructure Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-10">
+        <div className="grid grid-cols-2  gap-4 pb-10">
            {[
              { label: 'Uptime', value: '99.98%', icon: Activity },
              { label: 'Latencia', value: '42ms', icon: Zap },

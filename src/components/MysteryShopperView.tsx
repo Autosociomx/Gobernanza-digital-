@@ -105,7 +105,7 @@ export function MysteryShopperView({ user, onBack }: { user: User | null, onBack
       </div>
 
       <div className="px-4">
-        <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl">
+        <div className="bg-slate-900 rounded-[2.5rem] p-6 text-white relative overflow-hidden shadow-2xl">
            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/20 rounded-full -mr-10 -mt-10 blur-3xl"></div>
            <div className="flex items-center gap-2 mb-4">
               <EyeOff className="w-5 h-5 text-indigo-400" />

@@ -76,7 +76,7 @@ export function CanjesView({ user, onBack }: { user: User, onBack: () => void })
       </div>
 
       <div className="px-4">
-         <div className="bg-gradient-to-br from-magenta-500 to-rose-500 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl shadow-magenta-500/20">
+         <div className="bg-gradient-to-br from-magenta-500 to-rose-500 rounded-[2.5rem] p-6 text-white relative overflow-hidden shadow-2xl shadow-magenta-500/20">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10 blur-3xl"></div>
             <p className="text-[10px] font-bold uppercase tracking-widest text-white/80 mb-2">Mi Saldo</p>
             <h3 className="text-5xl font-serif font-black mb-1 flex items-center gap-3">

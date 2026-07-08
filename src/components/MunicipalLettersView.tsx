@@ -227,28 +227,30 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
       className="flex flex-col min-h-screen bg-[#030408] text-slate-300 font-sans pb-24"
     >
       {/* Navigation Header */}
-      <header className="p-8 border-b border-white/5 bg-slate-950/40 backdrop-blur-2xl sticky top-0 z-50">
-        <div className="flex items-center justify-between max-w-7xl mx-auto w-full">
+      <header className="p-4  border-b border-white/5 bg-slate-950/40 backdrop-blur-2xl sticky top-0 z-50">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between max-w-7xl mx-auto w-full gap-4">
           <button onClick={onBack} className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors">
-            <ChevronLeft className="w-5 h-5" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Gobernanza Tepic</span>
+            <ChevronLeft className="w-5 h-5 shrink-0" />
+            <span className="text-[10px] font-black uppercase tracking-widest truncate">Gobernanza Tepic</span>
           </button>
-          <div className="flex items-center gap-6">
-            <AuraCertificationSeal />
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:block">
+              <AuraCertificationSeal />
+            </div>
             <div className="flex items-center gap-3">
-              <FileText className="w-5 h-5 text-indigo-400" />
-              <h1 className="text-sm font-black uppercase tracking-[0.3em] text-white">Cartas Municipales Digitales</h1>
+              <FileText className="w-5 h-5 text-indigo-400 shrink-0" />
+              <h1 className="text-xs sm:text-sm font-black uppercase tracking-[0.2em] text-white truncate">Cartas Digitales</h1>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="p-8 max-w-7xl mx-auto w-full space-y-16">
+      <main className="p-6 max-w-7xl mx-auto w-full space-y-16">
         {/* Intro Hero Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1  gap-6 items-center">
           <div className="space-y-6">
             <span className="text-[10px] font-black text-indigo-500 uppercase tracking-[0.5em]">Trámites Cero Burocracia v2.6</span>
-            <h2 className="text-5xl md:text-6xl font-serif font-black text-white tracking-tighter leading-[0.9]">
+            <h2 className="text-4xl font-serif font-black text-white tracking-tighter leading-[0.9]">
               Cartas y Constancias<br/>
               <span className="text-slate-500">con Firma Avanzada</span>
             </h2>
@@ -275,7 +277,7 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
           </div>
 
           {/* Interactive Document Generator Form */}
-          <div className="bg-slate-950 border border-white/10 rounded-[2.5rem] p-8 space-y-6 relative shadow-2xl">
+          <div className="bg-slate-950 border border-white/10 rounded-[2.5rem] p-6 space-y-6 relative shadow-2xl">
             <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-3xl -mr-16 -mt-16"></div>
             
             <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
@@ -402,10 +404,10 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -30 }}
-              className="grid grid-cols-1 lg:grid-cols-3 gap-12"
+              className="grid grid-cols-1  gap-6"
             >
               {/* Actual Document Sheet Mockup */}
-              <div className="lg:col-span-2 bg-white text-slate-800 p-12 rounded-[2.5rem] border border-slate-200 shadow-2xl relative space-y-8 font-serif leading-relaxed text-sm">
+              <div className=" bg-white text-slate-800 p-6 rounded-[2.5rem] border border-slate-200 shadow-2xl relative space-y-8 font-serif leading-relaxed text-sm">
                 {/* Official Stamp Header */}
                 <div className="flex justify-between items-start border-b border-slate-300 pb-6">
                   <div className="space-y-1">
@@ -499,7 +501,7 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
 
               {/* Action Sidebar / Verification controls */}
               <div className="space-y-8">
-                <div className="bg-slate-900 border border-white/10 rounded-[2.5rem] p-8 space-y-6 relative overflow-hidden">
+                <div className="bg-slate-900 border border-white/10 rounded-[2.5rem] p-6 space-y-6 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 blur-2xl -mr-12 -mt-12"></div>
                   
                   <div className="flex items-center gap-3">
@@ -553,7 +555,7 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
                 </div>
 
                 {/* Open Data Integration Metrics */}
-                <div className="bg-slate-900/60 border border-white/5 rounded-[2.5rem] p-8 space-y-6">
+                <div className="bg-slate-900/60 border border-white/5 rounded-[2.5rem] p-6 space-y-6">
                   <div className="flex items-center gap-3">
                     <Globe className="w-5 h-5 text-indigo-400" />
                     <h3 className="text-xs font-black text-white uppercase tracking-widest">Fuentes de Datos Abiertos</h3>
@@ -588,10 +590,10 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
         </AnimatePresence>
 
         {/* Real-time Resiliency Stress Test Simulator Panel */}
-        <div className="bg-slate-950 border border-white/10 rounded-[3rem] p-10 space-y-8 relative overflow-hidden">
+        <div className="bg-slate-950 border border-white/10 rounded-[3rem] p-6 space-y-8 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-48 h-48 bg-indigo-600/10 blur-[100px] -mr-24 -mt-24"></div>
           
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex flex-col   justify-between gap-6">
             <div className="space-y-1">
               <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em]">Simulador de Carga e Integridad</span>
               <h3 className="text-3xl font-serif font-black text-white tracking-tight">Simulación de Estrés de Emisión Masiva</h3>
@@ -609,7 +611,7 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
             </button>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2  gap-4">
             {[
               { label: 'Peticiones Totales', value: stressMetrics.totalRequests.toLocaleString(), icon: Users },
               { label: 'Firmas Exitosas', value: stressMetrics.successfulSignatures.toLocaleString(), icon: ShieldCheck },
@@ -657,9 +659,9 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
             <h3 className="text-xs font-black text-white uppercase tracking-[0.3em]">Propuesta de Trabajo en Tres Pilares</h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1  gap-6">
             {/* Pilar Político */}
-            <div className="bg-slate-950/60 border border-white/5 rounded-[2.5rem] p-8 space-y-6 hover:border-white/10 transition-colors">
+            <div className="bg-slate-950/60 border border-white/5 rounded-[2.5rem] p-6 space-y-6 hover:border-white/10 transition-colors">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center">
                   <Building2 className="w-6 h-6" />
@@ -686,7 +688,7 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
             </div>
 
             {/* Pilar Aplicación */}
-            <div className="bg-slate-950/60 border border-white/5 rounded-[2.5rem] p-8 space-y-6 hover:border-white/10 transition-colors">
+            <div className="bg-slate-950/60 border border-white/5 rounded-[2.5rem] p-6 space-y-6 hover:border-white/10 transition-colors">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-magenta-600/10 border border-magenta-500/20 text-magenta-400 rounded-2xl flex items-center justify-center">
                   <Cpu className="w-6 h-6" />
@@ -713,7 +715,7 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
             </div>
 
             {/* Pilar Ciudadano */}
-            <div className="bg-slate-950/60 border border-white/5 rounded-[2.5rem] p-8 space-y-6 hover:border-white/10 transition-colors">
+            <div className="bg-slate-950/60 border border-white/5 rounded-[2.5rem] p-6 space-y-6 hover:border-white/10 transition-colors">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-emerald-600/10 border border-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center">
                   <Scale className="w-6 h-6" />
@@ -742,7 +744,7 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
         </div>
 
         {/* Legal Framework Warning */}
-        <div className="bg-slate-900/40 p-8 rounded-[2rem] border border-white/5 flex flex-col md:flex-row items-start gap-6">
+        <div className="bg-slate-900/40 p-6 rounded-[2rem] border border-white/5 flex flex-col  items-start gap-6">
           <AlertCircle className="w-8 h-8 text-indigo-400 shrink-0" />
           <div className="space-y-2">
             <h4 className="text-sm font-black text-white uppercase tracking-wider">Cumplimiento Normativo y Apertura de Datos</h4>
