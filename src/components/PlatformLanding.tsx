@@ -166,7 +166,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
         {/* 03: 5 Capas */}
         <div className="max-w-6xl mx-auto mb-32">
           <div className="text-center mb-16">
-             <p className="text-[#0FA3B1] text-xs font-bold tracking-[0.2em] uppercase mb-4">03 · Arquitectura del Ecosistema</p>
+             <p className="text-[#0A6B75] text-xs font-bold tracking-[0.2em] uppercase mb-4">03 · Arquitectura del Ecosistema</p>
              <h2 className="text-4xl md:text-5xl font-serif font-black leading-tight text-[#1a2438]">5 capas. Un solo sistema nervioso.</h2>
           </div>
 
@@ -216,7 +216,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
         {/* 04: Pueblos Originarios */}
         <div className="max-w-6xl mx-auto mb-32">
           <div className="text-center mb-16">
-             <p className="text-[#4C9F70] text-xs font-bold tracking-[0.2em] uppercase mb-4">04 · Pueblos Originarios Primero</p>
+             <p className="text-[#35704E] text-xs font-bold tracking-[0.2em] uppercase mb-4">04 · Pueblos Originarios Primero</p>
              <h2 className="text-4xl md:text-5xl font-serif font-black leading-tight text-[#1a2438]">Las ciudades indígenas<br/>dejan de ser las últimas de la fila.</h2>
              <p className="text-[#4a5568] text-lg leading-relaxed max-w-3xl mx-auto mt-6">
                 La transformación digital que solo llega a la capital no es transformación: es privilegio.
@@ -295,15 +295,15 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                  <div className="space-y-4">
                     <div className="flex justify-between items-center border-b border-[#d4ccc2] pb-3">
                        <span className="text-[#4a5568] text-sm">Agua y Saneamiento (15)</span>
-                       <span className="font-bold text-[#4C9F70] font-mono">$120–180 M</span>
+                       <span className="font-bold text-[#35704E] font-mono">$120–180 M</span>
                     </div>
                     <div className="flex justify-between items-center border-b border-[#d4ccc2] pb-3">
                        <span className="text-[#4a5568] text-sm">Impuesto Predial (12)</span>
-                       <span className="font-bold text-[#4C9F70] font-mono">$45–80 M</span>
+                       <span className="font-bold text-[#35704E] font-mono">$45–80 M</span>
                     </div>
                     <div className="flex justify-between items-center border-b border-[#d4ccc2] pb-3">
                        <span className="text-[#4a5568] text-sm">Obras y Desarrollo (18)</span>
-                       <span className="font-bold text-[#4C9F70] font-mono">$8–25 M</span>
+                       <span className="font-bold text-[#35704E] font-mono">$8–25 M</span>
                     </div>
                     <div className="flex justify-between items-center pt-2">
                        <span className="text-[#1a2438] font-black uppercase text-xs tracking-widest">Potencial Total</span>
