@@ -146,7 +146,7 @@ export const MUNICIPIOS: Record<MunicipioId, MunicipioConfig> = {
       'Bahía de Banderas — el motor turístico del estado. Riviera Nayarit, valle agrícola y 10 localidades clave en la misma cuenta ciudadana.',
     chips: [
       { texto: '6 Módulos del Ecosistema', color: TEAL, colorTexto: TEAL_CLARO },
-      { texto: '≈200 mil habitantes', color: VERDE, colorTexto: VERDE_CLARO },
+      { texto: '187,632 habitantes · INEGI 2020', color: VERDE, colorTexto: VERDE_CLARO },
       { texto: '10 Localidades clave', color: SOLAR, colorTexto: SOLAR_CLARO },
       { texto: 'Riviera Nayarit', color: ROSA, colorTexto: ROSA_CLARO },
       { texto: 'Preparado para LlaveMx', color: TEAL, colorTexto: TEAL_CLARO },
@@ -256,7 +256,7 @@ export const MUNICIPIOS: Record<MunicipioId, MunicipioConfig> = {
       'Compostela — patrimonio de cinco siglos y costa que recauda: Guayabitos, La Peñita y Chacala con café de altura en la sierra.',
     chips: [
       { texto: '6 Módulos del Ecosistema', color: VERDE, colorTexto: VERDE_CLARO },
-      { texto: '≈75 mil habitantes', color: TEAL, colorTexto: TEAL_CLARO },
+      { texto: '77,436 habitantes · INEGI 2020', color: TEAL, colorTexto: TEAL_CLARO },
       { texto: 'Guayabitos · La Peñita', color: SOLAR, colorTexto: SOLAR_CLARO },
       { texto: 'Café de altura', color: ROSA, colorTexto: ROSA_CLARO },
       { texto: 'Preparado para LlaveMx', color: VERDE, colorTexto: VERDE_CLARO },
@@ -364,7 +364,7 @@ export const MUNICIPIOS: Record<MunicipioId, MunicipioConfig> = {
       'Xalisco — la puerta aérea del estado y la otra mitad de la zona metropolitana: el trámite ya no distingue de qué lado de la avenida vives.',
     chips: [
       { texto: '6 Módulos del Ecosistema', color: SOLAR, colorTexto: SOLAR_CLARO },
-      { texto: '≈60 mil habitantes', color: VERDE, colorTexto: VERDE_CLARO },
+      { texto: '65,229 habitantes · INEGI 2020', color: VERDE, colorTexto: VERDE_CLARO },
       { texto: 'Aeropuerto de Tepic', color: TEAL, colorTexto: TEAL_CLARO },
       { texto: 'Feria del Elote', color: ROSA, colorTexto: ROSA_CLARO },
       { texto: 'Preparado para LlaveMx', color: SOLAR, colorTexto: SOLAR_CLARO },
@@ -468,7 +468,7 @@ export const MUNICIPIOS: Record<MunicipioId, MunicipioConfig> = {
       'Santiago Ixcuintla — el gigante agrícola del norte, con Mexcaltitán Pueblo Mágico y el delta del río Santiago bajo alerta temprana.',
     chips: [
       { texto: '6 Módulos del Ecosistema', color: NARANJA, colorTexto: NARANJA_CLARO },
-      { texto: '≈90 mil habitantes', color: VERDE, colorTexto: VERDE_CLARO },
+      { texto: '93,981 habitantes · INEGI 2020', color: VERDE, colorTexto: VERDE_CLARO },
       { texto: 'Mexcaltitán · Pueblo Mágico', color: ROSA, colorTexto: ROSA_CLARO },
       { texto: 'Capital del tabaco', color: SOLAR, colorTexto: SOLAR_CLARO },
       { texto: 'Preparado para LlaveMx', color: NARANJA, colorTexto: NARANJA_CLARO },

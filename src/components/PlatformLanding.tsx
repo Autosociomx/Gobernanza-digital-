@@ -106,7 +106,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
             <p className="text-[#D81E5B] text-xs font-bold tracking-[0.2em] uppercase mb-4">01 · Tu derecho al trámite digital</p>
             <h2 className="text-4xl md:text-5xl font-serif font-black leading-[1.1] mb-6 text-[#1a2438]">Ya no es un favor.<br/>Es la ley.</h2>
             <p className="text-[#4a5568] text-lg leading-relaxed mb-8">
-               La Ley Nacional de Simplificación y Digitalización (2025) tiene rango constitucional bajo los Arts. 25 y 73: tu municipio <em>debe</em> ofrecerte trámites digitales. La fecha límite federal para el 80% de trámites es 2026. Hoy es julio de 2026.
+               La Ley Nacional para Eliminar Trámites Burocráticos (DOF 16 de julio de 2025), reglamentaria del Art. 25 constitucional, obliga a los tres órdenes de gobierno: tu municipio <em>debe</em> ofrecerte trámites digitales. Hoy, solo ~3% de los municipios del país ha registrado sus trámites en el Catálogo Nacional.
             </p>
 
             <div className="space-y-6">
@@ -137,7 +137,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
              </div>
 
              <p className="text-[#a0aec0] mb-8 text-[15px] leading-relaxed">
-               La LNETB marcó vencimientos en enero y febrero de 2026. Cada mes que un trámite sigue en papel es tiempo que el ciudadano pierde en filas y traslados.
+               La LNETB está vigente desde julio de 2025 y sus lineamientos desde octubre de 2025. Cada mes que un trámite sigue en papel es tiempo que el ciudadano pierde en filas y traslados.
              </p>
 
              <div className="space-y-8">
