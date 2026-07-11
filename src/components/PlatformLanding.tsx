@@ -142,7 +142,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
 
              <div className="space-y-8">
                <div>
-                 <h3 className="text-[#D81E5B] text-[11px] font-bold uppercase tracking-widest mb-3">Riesgo Legal — Quedarse en el muelle</h3>
+                 <h3 className="text-[#FF7AA8] text-[11px] font-bold uppercase tracking-widest mb-3">Riesgo Legal — Quedarse en el muelle</h3>
                  <ul className="space-y-2 text-[14px] text-[#e8e0d4]">
                    <li className="flex gap-3"><span className="text-[#D81E5B] font-bold">✖</span> <span>Daño político colateral y sanciones de la ASF.</span></li>
                    <li className="flex gap-3"><span className="text-[#D81E5B] font-bold">✖</span> <span>Recuperar terreno después es 10x más costoso.</span></li>
@@ -181,34 +181,34 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
              
              <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
                <div className="absolute top-0 left-0 right-0 h-1 bg-[#0FA3B1]"></div>
-               <div className="w-12 h-12 bg-[#0FA3B1]/10 text-[#0FA3B1] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">2</div>
+               <div className="w-12 h-12 bg-[#0FA3B1]/10 text-[#0B7C87] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">2</div>
                <h3 className="font-bold text-[#1a2438] mb-2 text-lg">C5 Dashboard</h3>
                <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">Centro de mando de gobierno. 14 módulos de gestión, tesorería y auditoría.</p>
-               <button onClick={() => onNavigate('c5')} className="text-[#0FA3B1] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Dashboard <ChevronRight className="w-3 h-3"/></button>
+               <button onClick={() => onNavigate('c5')} className="text-[#0B7C87] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Dashboard <ChevronRight className="w-3 h-3"/></button>
              </div>
              
              <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
                <div className="absolute top-0 left-0 right-0 h-1 bg-[#4C9F70]"></div>
-               <div className="w-12 h-12 bg-[#4C9F70]/10 text-[#4C9F70] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">3</div>
+               <div className="w-12 h-12 bg-[#4C9F70]/10 text-[#3B7A56] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">3</div>
                <h3 className="font-bold text-[#1a2438] mb-2 text-lg">CitizenApp</h3>
                <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">El gobierno en el bolsillo. 15 servicios, ventanilla única y expediente digital.</p>
-               <button onClick={() => onNavigate('citizen')} className="text-[#4C9F70] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Abrir App <ChevronRight className="w-3 h-3"/></button>
+               <button onClick={() => onNavigate('citizen')} className="text-[#3B7A56] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Abrir App <ChevronRight className="w-3 h-3"/></button>
              </div>
              
              <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
                <div className="absolute top-0 left-0 right-0 h-1 bg-[#F5A623]"></div>
-               <div className="w-12 h-12 bg-[#F5A623]/10 text-[#F5A623] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">4</div>
+               <div className="w-12 h-12 bg-[#F5A623]/10 text-[#8F5E06] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">4</div>
                <h3 className="font-bold text-[#1a2438] mb-2 text-lg">Agentes IA</h3>
                <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">Inteligencia de datos en tiempo real (datos.gob.mx, INEGI). Reporte CEO Agent.</p>
-               <button onClick={() => onNavigate('c5')} className="text-[#F5A623] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Ver IA <ChevronRight className="w-3 h-3"/></button>
+               <button onClick={() => onNavigate('c5')} className="text-[#8F5E06] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Ver IA <ChevronRight className="w-3 h-3"/></button>
              </div>
              
              <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
                <div className="absolute top-0 left-0 right-0 h-1 bg-[#E85D04]"></div>
-               <div className="w-12 h-12 bg-[#E85D04]/10 text-[#E85D04] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">5</div>
+               <div className="w-12 h-12 bg-[#E85D04]/10 text-[#B54903] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">5</div>
                <h3 className="font-bold text-[#1a2438] mb-2 text-lg">Executive Folder</h3>
                <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">Inteligencia confidencial y expedientes de negociación para la mesa de decisión.</p>
-               <button onClick={() => onNavigate('executive')} className="text-[#E85D04] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Carpeta <ChevronRight className="w-3 h-3"/></button>
+               <button onClick={() => onNavigate('executive')} className="text-[#B54903] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Carpeta <ChevronRight className="w-3 h-3"/></button>
              </div>
           </div>
         </div>
@@ -248,7 +248,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                   entiende es una fila disfrazada: aquí el ciudadano de la sierra lee su gobierno
                   en su propia lengua.
                </p>
-               <p className="text-[10px] uppercase tracking-widest font-bold text-[#4C9F70]">3 lenguas · Selector integrado en el C5</p>
+               <p className="text-[10px] uppercase tracking-widest font-bold text-[#3B7A56]">3 lenguas · Selector integrado en el C5</p>
              </div>
 
              <div className="bg-white border border-[#d4ccc2] p-8 rounded-xl relative overflow-hidden shadow-sm">
@@ -260,7 +260,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                   afromexicanos — está integrado en la tesorería del sistema: cada peso destinado
                   a la sierra queda trazado y auditable.
                </p>
-               <p className="text-[10px] uppercase tracking-widest font-bold text-[#E85D04]">Trazabilidad ASF · Bienestar social</p>
+               <p className="text-[10px] uppercase tracking-widest font-bold text-[#B54903]">Trazabilidad ASF · Bienestar social</p>
              </div>
           </div>
         </div>
@@ -269,14 +269,14 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
         <div className="max-w-6xl mx-auto bg-white border border-[#d4ccc2] rounded-2xl p-8 md:p-14 shadow-sm">
            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div>
-                 <div className="inline-block border border-[#F5A623]/50 text-[#b47a19] px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase mb-6 bg-[#F5A623]/10">Ranking Gobierno Digital</div>
+                 <div className="inline-block border border-[#F5A623]/50 text-[#7A5210] px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase mb-6 bg-[#F5A623]/10">Ranking Gobierno Digital</div>
                  <h2 className="text-3xl md:text-4xl font-serif font-black leading-tight mb-6 text-[#1a2438]">Tepic: del #840 al #38 en 90 días.</h2>
                  <p className="text-[#4a5568] text-[16px] leading-relaxed mb-8">
                     Con el 95% del Programa Municipios Digitales implementado, Nayarit se proyecta como el único estado de México con cobertura digital municipal total (20/20).
                  </p>
                  <div className="flex gap-12">
                     <div>
-                       <h3 className="text-4xl font-black text-[#F5A623] font-sans">#38</h3>
+                       <h3 className="text-4xl font-black text-[#8F5E06] font-sans">#38</h3>
                        <p className="text-[10px] uppercase tracking-widest text-[#4a5568] mt-2 font-bold">Lugar Nacional</p>
                     </div>
                     <div>
