@@ -3,9 +3,10 @@ import {
   Menu, ShieldCheck, Activity, Users, FileText, Lock, Globe, Monitor, Smartphone, CheckCircle2, ChevronRight, Clock, ArrowRight, Zap, Scale, LayoutDashboard
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { MUNICIPIOS, type AppView } from '../data/municipios';
 
 interface PlatformLandingProps {
-  onNavigate: (view: 'landing' | 'c5' | 'citizen' | 'dev' | 'executive', subView?: string, action?: string) => void;
+  onNavigate: (view: AppView, subView?: string, action?: string) => void;
 }
 
 const WixarikaBanda = () => (
@@ -48,6 +49,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
            </div>
            
            <nav className="hidden lg:flex items-center gap-8">
+             <button onClick={() => document.getElementById('despliegue-municipal')?.scrollIntoView({ behavior: 'smooth' })} className="text-xs font-bold text-[#a0aec0] hover:text-[#0FA3B1] transition-colors uppercase tracking-widest">Municipios</button>
              <button onClick={() => onNavigate('citizen')} className="text-xs font-bold text-[#a0aec0] hover:text-[#0FA3B1] transition-colors uppercase tracking-widest">Portal Ciudadano</button>
              <button onClick={() => onNavigate('c5')} className="text-xs font-bold text-[#a0aec0] hover:text-[#0FA3B1] transition-colors uppercase tracking-widest">C5 Dashboard</button>
              <button onClick={() => onNavigate('executive')} className="text-xs font-bold text-[#a0aec0] hover:text-[#0FA3B1] transition-colors uppercase tracking-widest">Executive Folder</button>
@@ -261,6 +263,60 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                   a la sierra queda trazado y auditable.
                </p>
                <p className="text-[10px] uppercase tracking-widest font-bold text-[#B54903]">Trazabilidad ASF · Bienestar social</p>
+             </div>
+          </div>
+        </div>
+
+        {/* 05: Despliegue Municipal */}
+        <div id="despliegue-municipal" className="max-w-6xl mx-auto mb-32 scroll-mt-8">
+          <div className="text-center mb-16">
+             <p className="text-[#0A6B75] text-xs font-bold tracking-[0.2em] uppercase mb-4">05 · Despliegue Municipal</p>
+             <h2 className="text-4xl md:text-5xl font-serif font-black leading-tight text-[#1a2438]">Un estado, 20 municipios.<br/>Instancia por instancia.</h2>
+             <p className="text-[#4a5568] text-lg leading-relaxed max-w-3xl mx-auto mt-6">
+                Cada municipio estrena su propia puerta de entrada al ecosistema —
+                misma cuenta ciudadana, misma plataforma, identidad local propia.
+                Hoy: la capital activa y cuatro municipios en despliegue.
+             </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+             <div className="bg-white border border-[#d4ccc2] p-8 rounded-xl relative overflow-hidden shadow-sm">
+               <div className="absolute top-0 left-0 right-0 h-1 bg-[#D81E5B]"></div>
+               <div className="flex items-center justify-between mb-5">
+                 <h3 className="font-bold text-lg text-[#1a2438]">1 · Tepic Digital</h3>
+                 <span className="px-3 py-1 rounded-full text-[9px] font-bold tracking-widest uppercase bg-[#4C9F70]/10 text-[#35704E] border border-[#4C9F70]/30">Activo</span>
+               </div>
+               <p className="text-[14px] text-[#4a5568] leading-relaxed mb-5">
+                  La capital fue el piloto: portal ciudadano, C5 y tesorería digital
+                  operando colonia por colonia. Es la instancia que ves en todo este sitio.
+               </p>
+               <button onClick={() => onNavigate('citizen')} className="text-[#D81E5B] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 hover:gap-2 transition-all">Abrir portal <ChevronRight className="w-3 h-3"/></button>
+             </div>
+
+             {Object.values(MUNICIPIOS).map((mun) => (
+               <div key={mun.id} className="bg-[#0F2733] text-white p-8 rounded-xl relative overflow-hidden shadow-lg">
+                 <div className="absolute top-0 left-0 right-0 h-1" style={{ background: `linear-gradient(to right, ${mun.gradiente[0]}, ${mun.gradiente[1]})` }}></div>
+                 <div className="flex items-center justify-between mb-5">
+                   <h3 className="font-bold text-lg">{mun.numero} · {mun.marca}</h3>
+                   <span className="px-3 py-1 rounded-full text-[9px] font-bold tracking-widest uppercase border" style={{ backgroundColor: `${mun.color}33`, borderColor: `${mun.color}66`, color: mun.colorTexto }}>En despliegue</span>
+                 </div>
+                 <p className="text-[14px] text-[#a0aec0] leading-relaxed mb-5">
+                    {mun.resumen}
+                 </p>
+                 <button onClick={() => onNavigate(mun.id)} className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 hover:gap-2 transition-all" style={{ color: mun.colorTexto }}>Conocer {mun.marca} <ChevronRight className="w-3 h-3"/></button>
+               </div>
+             ))}
+
+             <div className="bg-white border border-dashed border-[#d4ccc2] p-8 rounded-xl relative overflow-hidden">
+               <div className="flex items-center justify-between mb-5">
+                 <h3 className="font-bold text-lg text-[#4a5568]">6-20 · Siguientes</h3>
+                 <span className="px-3 py-1 rounded-full text-[9px] font-bold tracking-widest uppercase bg-[#F5A623]/10 text-[#8F5E06] border border-[#F5A623]/30">Hoja de ruta</span>
+               </div>
+               <p className="text-[14px] text-[#4a5568] leading-relaxed mb-5">
+                  San Blas, Ixtlán del Río, Del Nayar, Tecuala, Acaponeta… la meta
+                  20/20 replica este mismo patrón hasta cubrir todo Nayarit.
+               </p>
+               <p className="text-[10px] uppercase tracking-widest font-bold text-[#8F5E06]">Cobertura estatal 2027</p>
              </div>
           </div>
         </div>
