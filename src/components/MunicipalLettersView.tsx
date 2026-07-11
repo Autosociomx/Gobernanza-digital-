@@ -163,9 +163,9 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
     // Signatures
     doc.line(60, 165, 150, 165);
     doc.setFont('Helvetica', 'bold');
-    doc.text('C. GERALDINE PONCE MÉNDEZ', 105, 170, { align: 'center' });
+    doc.text('LA PRESIDENCIA MUNICIPAL', 105, 170, { align: 'center' });
     doc.setFont('Helvetica', 'normal');
-    doc.text('Presidenta Municipal de Tepic', 105, 174, { align: 'center' });
+    doc.text('Titular en funciones · Municipio de Tepic', 105, 174, { align: 'center' });
     doc.text('Soberanía Digital ConnectX Nayarit', 105, 178, { align: 'center' });
 
     // Legal disclaimer
@@ -434,7 +434,7 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
                   
                   {selectedTemplate === 'residencia' && (
                     <p>
-                      La que suscribe, <strong>C. GERALDINE PONCE MÉNDEZ</strong>, Presidenta Municipal de Tepic, Nayarit, en pleno uso de las facultades que me confiere el Artículo 115 Constitucional, la Ley Orgánica Municipal, y el Reglamento Interior de la Administración Pública Municipal, por medio de la presente hago constar que:
+                      La <strong>PRESIDENCIA MUNICIPAL DE TEPIC</strong>, Nayarit, a través de su titular en funciones y en pleno uso de las facultades que le confiere el Artículo 115 Constitucional, la Ley Orgánica Municipal, y el Reglamento Interior de la Administración Pública Municipal, por medio de la presente hace constar que:
                     </p>
                   )}
                   {selectedTemplate === 'residencia' && (
@@ -478,8 +478,8 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
 
                   <div className="text-center space-y-1">
                     <div className="w-32 h-[1px] bg-slate-400 mx-auto mt-8"></div>
-                    <p className="text-[10px] font-bold text-slate-800">C. GERALDINE PONCE MÉNDEZ</p>
-                    <p className="text-[8px] text-slate-500 uppercase font-black tracking-widest">Presidenta Municipal de Tepic</p>
+                    <p className="text-[10px] font-bold text-slate-800">LA PRESIDENCIA MUNICIPAL</p>
+                    <p className="text-[8px] text-slate-500 uppercase font-black tracking-widest">Titular en funciones · Municipio de Tepic</p>
                     <div className="inline-flex items-center gap-1 bg-emerald-100 border border-emerald-200 px-2 py-0.5 rounded-full text-[7px] text-emerald-700 font-bold mt-1">
                       <CheckCircle2 className="w-2.5 h-2.5 text-emerald-600" />
                       Firma Digital Activa
@@ -678,7 +678,7 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
                 </li>
                 <li className="flex items-start gap-2.5">
                   <div className="w-1 h-1 rounded-full bg-indigo-500 mt-2 shrink-0" />
-                  <span><strong>Marca Geraldine 2027:</strong> Asocia directamente la modernización digital con la visión progresista y transparente de la administración.</span>
+                  <span><strong>Sello institucional:</strong> Asocia la modernización digital con el municipio como institución — no con ninguna persona ni proyecto electoral.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <div className="w-1 h-1 rounded-full bg-indigo-500 mt-2 shrink-0" />

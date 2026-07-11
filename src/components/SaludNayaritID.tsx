@@ -165,7 +165,7 @@ export function SaludNayaritID({ onClose }: { onClose: () => void }) {
             
             <div className="bg-[#c9952a]/10 border border-[#c9952a]/30 rounded-full px-4 py-2 flex items-center gap-2 text-[#c9952a] text-xs font-bold mb-8">
               <span className="w-2 h-2 rounded-full bg-[#c9952a] animate-pulse"></span>
-              Infraestructura Salud Digital 2027
+              Infraestructura de Salud Digital
             </div>
 
             <p className="text-white/80 text-lg leading-relaxed max-w-sm mb-12">

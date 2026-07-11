@@ -69,13 +69,13 @@ export const MunicipioDigital = ({ municipioId, onNavigate }: MunicipioDigitalPr
               <ArrowLeft className="w-3.5 h-3.5" /> Nayarit Digital
             </button>
             <button onClick={() => onNavigate('autopista')} className="text-xs font-bold text-[#a0aec0] hover:text-white transition-colors uppercase tracking-widest">Autopista Digital</button>
-            <button onClick={() => onNavigate('citizen')} className="text-xs font-bold text-[#a0aec0] hover:text-white transition-colors uppercase tracking-widest">Portal Ciudadano</button>
+            <button onClick={() => onNavigate('c5')} className="text-xs font-bold text-[#a0aec0] hover:text-white transition-colors uppercase tracking-widest">Tablero de Gobierno</button>
             <button
-              onClick={() => onNavigate('c5')}
+              onClick={() => onNavigate('citizen')}
               className="text-white px-6 py-3 rounded text-[10px] font-bold uppercase tracking-[0.2em] hover:opacity-80 transition-all shadow-lg"
               style={{ backgroundColor: m.color }}
             >
-              Entrar al Sistema
+              Abrir Mi Ventanilla
             </button>
           </nav>
         </header>
@@ -120,10 +120,10 @@ export const MunicipioDigital = ({ municipioId, onNavigate }: MunicipioDigitalPr
               className="text-white px-8 py-4 rounded-md text-sm font-bold tracking-widest uppercase transition-all flex items-center gap-3 hover:opacity-90"
               style={{ backgroundColor: m.color, boxShadow: `0 8px 32px ${m.color}59` }}
             >
-              <Smartphone className="w-5 h-5" /> Portal Ciudadano
+              <Smartphone className="w-5 h-5" /> Abrir Mi Ventanilla
             </button>
             <button onClick={() => onNavigate('c5')} className="bg-[#F8F6F1]/10 hover:bg-[#F8F6F1]/20 text-[#F8F6F1] border border-[#F8F6F1]/30 px-8 py-4 rounded-md text-sm font-bold tracking-widest uppercase transition-all flex items-center gap-3">
-              <Monitor className="w-5 h-5" /> C5 Governance Hub
+              <Monitor className="w-5 h-5" /> Tablero de Gobierno · Demo
             </button>
           </div>
 
@@ -217,7 +217,7 @@ export const MunicipioDigital = ({ municipioId, onNavigate }: MunicipioDigitalPr
                   <h3 className="font-bold text-[#1a2438] mb-2 text-lg">{mod.nombre}</h3>
                   <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">{mod.detalle}</p>
                   <button onClick={() => onNavigate('citizen')} className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all" style={{ color: mod.color }}>
-                    Abrir en el portal <ChevronRight className="w-3 h-3" />
+                    Abrir en Mi Ventanilla <ChevronRight className="w-3 h-3" />
                   </button>
                 </div>
               );

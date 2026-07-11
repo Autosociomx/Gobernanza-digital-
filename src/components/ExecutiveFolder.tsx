@@ -117,7 +117,7 @@ export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
                 Estrategia <br/><em className="text-[var(--magenta)] italic">Nayarit 2026</em>
              </h1>
              <p className="text-[1.1rem] text-[var(--gris)] max-w-xl leading-relaxed">
-                Propuesta de Gobernanza Digital Certificada para la administración de <strong>Geraldine Ponce</strong>. Un sistema escalable que transforma la relación gobierno-ciudadano mediante datos e inteligencia artificial.
+                Propuesta de Gobernanza Digital Certificada para la <strong>administración municipal</strong>. Un sistema escalable que transforma la relación gobierno-ciudadano mediante datos e inteligencia artificial.
              </p>
           </motion.div>
         </div>
@@ -181,13 +181,13 @@ export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
            <section className="bg-slate-50 p-8 rounded-2xl border-2 border-dashed border-slate-200">
               <div className="flex items-center gap-3 mb-4">
                  <Share2 className="w-5 h-5 text-indigo-500" />
-                 <h2 className="text-xs font-bold uppercase tracking-widest text-slate-900">Email Ready: Propuesta Geraldine 2026</h2>
+                 <h2 className="text-xs font-bold uppercase tracking-widest text-slate-900">Email Ready: Propuesta Institucional 2026</h2>
               </div>
               <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm font-mono text-[11px] text-slate-700 leading-relaxed max-h-[300px] overflow-y-auto">
                  <p className="font-bold mb-4">Asunto: Propuesta Estratégica: Nayarit ID & Modelo de Gobernanza Digital 2026</p>
-                 <p>Estimada Presidenta Geraldine,</p>
+                 <p>Estimada Presidencia Municipal,</p>
                  <br/>
-                 <p>Me permito presentarle la plataforma <strong>Nayarit Digital OS</strong>, un ecosistema diseñado para consolidar su legado como la administración más eficiente y transparente en la historia de Tepic.</p>
+                 <p>Me permito presentarle la plataforma <strong>Nayarit Digital OS</strong>, un ecosistema diseñado para consolidar a Tepic como la administración más eficiente y transparente de su historia.</p>
                  <br/>
                  <p><strong>Puntos clave de la propuesta:</strong></p>
                  <p>1. <strong>Saturación de Valor (20/80)</strong>: Implementamos una validación casa por casa que vincula el Nayarit ID con la geolocalización real, permitiendo una recaudación inteligente y personalizada.</p>

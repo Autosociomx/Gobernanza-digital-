@@ -94,7 +94,7 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
                 </div>
                 <div>
                   <h1 className="font-serif font-black text-lg text-white tracking-tight leading-none mb-1">Nayarit Digital</h1>
-                  <p className="text-[10px] text-slate-500 font-mono tracking-widest uppercase">C5 Governance Hub</p>
+                  <p className="text-[10px] text-slate-500 font-mono tracking-widest uppercase">Tablero de Gobierno · C5</p>
                 </div>
               </div>
             </div>
@@ -157,7 +157,7 @@ export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
               <span className="text-xs font-mono text-emerald-400">STATE: ONLINE</span>
             </div>
             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-rose-400 to-orange-400 border-2 border-slate-800 overflow-hidden">
-               <img src="/geraldine-perfil.jpg" alt="Profile" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1586996292898-71f4036c4e07?w=100&h=100&fit=crop&crop=faces" }}/>
+               <img src="/perfil-institucional.jpg" alt="Perfil institucional" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1586996292898-71f4036c4e07?w=100&h=100&fit=crop&crop=faces" }}/>
             </div>
           </div>
         </header>
@@ -560,14 +560,14 @@ function SaludView() {
 function IAView() {
   const [lang, setLang] = useState<Language>('es');
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([
-    { role: 'assistant', content: 'Presidenta Geraldine Ponce, el Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?' }
+    { role: 'assistant', content: 'Presidencia Municipal: el Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?' }
   ]);
 
   useEffect(() => {
     const greets = {
-      es: 'Presidenta Geraldine Ponce, el Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?',
-      cora: "Presidenta Geraldine Ponce, ConnectX IA amu'u tyu'un. ¿Tyu'un ne'ij tyu'uti'in Tepic?",
-      wixarika: 'Geraldine Ponce keniu, ConnectX IA keniu. ¿Kewa pikanetsi\'iwau Tepic?'
+      es: 'Presidencia Municipal: el Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?',
+      cora: "ConnectX IA amu'u tyu'un. ¿Tyu'un ne'ij tyu'uti'in Tepic?",
+      wixarika: 'ConnectX IA keniu. ¿Kewa pikanetsi\'iwau Tepic?'
     };
     setMessages([{ role: 'assistant', content: greets[lang] }]);
   }, [lang]);
@@ -579,7 +579,7 @@ function IAView() {
     "Resumen Recaudación",
     "Optimización Bacheo",
     "Reporte Bienestar",
-    "Visión Tepic 2027"
+    "Visión Tepic"
   ];
 
   const handleSendMessage = async (text?: string) => {
@@ -656,7 +656,7 @@ function IAView() {
                    {msg.content}
                  </div>
                  <span className="text-[10px] text-slate-600 mt-3 font-black uppercase tracking-widest px-2">
-                   {msg.role === 'user' ? 'G. Ponce' : 'ConnectX Strategic AI'} · {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                   {msg.role === 'user' ? 'Presidencia' : 'ConnectX Strategic AI'} · {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                  </span>
               </motion.div>
             ))}
@@ -1170,7 +1170,7 @@ function ObservatorioView() {
           <div className="space-y-4">
              {[
                { name: 'Linda Vista', growth: 88, status: 'Saturado', color: 'bg-emerald-500' },
-               { name: 'San Juan', growth: 64, status: 'Campaña', color: 'bg-cyan-500' },
+               { name: 'San Juan', growth: 64, status: 'Difusión', color: 'bg-cyan-500' },
                { name: 'Lomas Altas', growth: 42, status: 'Alerta', color: 'bg-rose-500' },
                { name: 'Puga', growth: 28, status: 'Pendiente', color: 'bg-slate-700' },
              ].map((col, i) => (
@@ -1271,8 +1271,8 @@ function MetricView() {
 function GabineteView() {
   const officials = [
     {
-      name: "Geraldine Ponce",
-      title: "Presidenta Municipal",
+      name: "Presidencia Municipal",
+      title: "Titular en funciones",
       department: "Presidencia",
       kpiName: "Aprobación Ciudadana",
       kpiValue: "84%",

@@ -149,7 +149,7 @@ export const MUNICIPIOS: Record<MunicipioId, MunicipioConfig> = {
       { texto: '≈200 mil habitantes', color: VERDE, colorTexto: VERDE_CLARO },
       { texto: '10 Localidades clave', color: SOLAR, colorTexto: SOLAR_CLARO },
       { texto: 'Riviera Nayarit', color: ROSA, colorTexto: ROSA_CLARO },
-      { texto: 'LlaveMx Art. 74', color: TEAL, colorTexto: TEAL_CLARO },
+      { texto: 'Preparado para LlaveMx', color: TEAL, colorTexto: TEAL_CLARO },
     ],
     caso: {
       kicker: 'El caso Bahía de Banderas',
@@ -169,7 +169,7 @@ export const MUNICIPIOS: Record<MunicipioId, MunicipioConfig> = {
           color: VERDE,
           titulo: 'Mismo estándar que Tepic',
           texto:
-            'Identidad LlaveMx, expediente ciudadano único y datos abiertos por diseño. Bahía no estrena software experimental: hereda la plataforma ya validada en la capital.',
+            'Identidad preparada para LlaveMx, expediente ciudadano único y datos abiertos por diseño. Bahía no estrena software experimental: hereda la plataforma ya validada en la capital.',
         },
       ],
     },
@@ -259,7 +259,7 @@ export const MUNICIPIOS: Record<MunicipioId, MunicipioConfig> = {
       { texto: '≈75 mil habitantes', color: TEAL, colorTexto: TEAL_CLARO },
       { texto: 'Guayabitos · La Peñita', color: SOLAR, colorTexto: SOLAR_CLARO },
       { texto: 'Café de altura', color: ROSA, colorTexto: ROSA_CLARO },
-      { texto: 'LlaveMx Art. 74', color: VERDE, colorTexto: VERDE_CLARO },
+      { texto: 'Preparado para LlaveMx', color: VERDE, colorTexto: VERDE_CLARO },
     ],
     caso: {
       kicker: 'El caso Compostela',
@@ -279,7 +279,7 @@ export const MUNICIPIOS: Record<MunicipioId, MunicipioConfig> = {
           color: TEAL,
           titulo: 'Mismo estándar que Tepic',
           texto:
-            'Identidad LlaveMx, expediente ciudadano único y datos abiertos por diseño. Compostela hereda la plataforma ya validada en la capital y en Bahía.',
+            'Identidad preparada para LlaveMx, expediente ciudadano único y datos abiertos por diseño. Compostela hereda la plataforma ya validada en la capital y en Bahía.',
         },
       ],
     },
@@ -367,7 +367,7 @@ export const MUNICIPIOS: Record<MunicipioId, MunicipioConfig> = {
       { texto: '≈60 mil habitantes', color: VERDE, colorTexto: VERDE_CLARO },
       { texto: 'Aeropuerto de Tepic', color: TEAL, colorTexto: TEAL_CLARO },
       { texto: 'Feria del Elote', color: ROSA, colorTexto: ROSA_CLARO },
-      { texto: 'LlaveMx Art. 74', color: SOLAR, colorTexto: SOLAR_CLARO },
+      { texto: 'Preparado para LlaveMx', color: SOLAR, colorTexto: SOLAR_CLARO },
     ],
     caso: {
       kicker: 'El caso Xalisco',
@@ -387,7 +387,7 @@ export const MUNICIPIOS: Record<MunicipioId, MunicipioConfig> = {
           color: VERDE,
           titulo: 'Mismo estándar que Tepic',
           texto:
-            'Identidad LlaveMx, expediente ciudadano único y datos abiertos por diseño. Para el ciudadano metropolitano, cruzar la avenida ya no significa cambiar de época.',
+            'Identidad preparada para LlaveMx, expediente ciudadano único y datos abiertos por diseño. Para el ciudadano metropolitano, cruzar la avenida ya no significa cambiar de época.',
         },
       ],
     },
@@ -471,7 +471,7 @@ export const MUNICIPIOS: Record<MunicipioId, MunicipioConfig> = {
       { texto: '≈90 mil habitantes', color: VERDE, colorTexto: VERDE_CLARO },
       { texto: 'Mexcaltitán · Pueblo Mágico', color: ROSA, colorTexto: ROSA_CLARO },
       { texto: 'Capital del tabaco', color: SOLAR, colorTexto: SOLAR_CLARO },
-      { texto: 'LlaveMx Art. 74', color: NARANJA, colorTexto: NARANJA_CLARO },
+      { texto: 'Preparado para LlaveMx', color: NARANJA, colorTexto: NARANJA_CLARO },
     ],
     caso: {
       kicker: 'El caso Santiago Ixcuintla',

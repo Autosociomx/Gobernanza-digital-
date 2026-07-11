@@ -217,7 +217,7 @@ export function CitizenApp({
       welcome: `Hola, ${profile.name.split(' ')[0]}`,
       ai_greet: `¡Hola ${profile.name.split(' ')[0]}! Soy tu Asistente de Nayarit Digital Certificado. Puedo ayudarte con tus reportes técnicos, salud preventiva o cualquier duda sobre los Comités Ciudadanos. ¿En qué te puedo apoyar hoy?`,
       home: "Inicio",
-      forum: "Campaña",
+      forum: "Comunidad",
       networks: "Redes",
       payments: "Tesorería",
       services: "Gobierno",
