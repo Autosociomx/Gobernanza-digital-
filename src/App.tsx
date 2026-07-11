@@ -20,6 +20,9 @@ const ExecutiveFolder = lazy(() =>
 const MunicipioDigital = lazy(() =>
   import('./components/MunicipioDigital').then((m) => ({ default: m.MunicipioDigital }))
 );
+const AutopistaDigital = lazy(() =>
+  import('./components/AutopistaDigital').then((m) => ({ default: m.AutopistaDigital }))
+);
 
 function ViewFallback() {
   return (
@@ -60,6 +63,20 @@ function App() {
     return (
       <Suspense fallback={<ViewFallback />}>
         <DeveloperChecklist onLogout={() => setCurrentView('landing')} />
+      </Suspense>
+    );
+  }
+
+  if (currentView === 'autopista') {
+    return (
+      <Suspense fallback={<ViewFallback />}>
+        <AutopistaDigital onNavigate={(view, subView, action) => {
+          if (view === 'citizen') {
+            setCitizenTab(subView || 'home');
+            setCitizenAction(action || null);
+          }
+          setCurrentView(view);
+        }} />
       </Suspense>
     );
   }

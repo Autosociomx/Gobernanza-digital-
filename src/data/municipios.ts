@@ -16,7 +16,7 @@ import {
 
 export type MunicipioId = 'bahia' | 'compostela' | 'xalisco' | 'santiago';
 
-export type AppView = 'landing' | 'c5' | 'citizen' | 'dev' | 'executive' | MunicipioId;
+export type AppView = 'landing' | 'c5' | 'citizen' | 'dev' | 'executive' | 'autopista' | MunicipioId;
 
 export interface Localidad {
   nombre: string;
@@ -96,6 +96,35 @@ export const SECUENCIA_DESPLIEGUE: ReadonlyArray<{
   { id: 'compostela', marca: 'Compostela Digital', estado: 'En despliegue' },
   { id: 'xalisco', marca: 'Xalisco Digital', estado: 'En despliegue' },
   { id: 'santiago', marca: 'Santiago Digital', estado: 'En despliegue' },
+];
+
+// Las 20 "salidas" de la Autopista Digital: todos los municipios de
+// Nayarit. Los que ya tienen portal enlazan a su vista; el resto
+// aparece como salida "próxima" hasta que se sume su config.
+export const SALIDAS_NAYARIT: ReadonlyArray<{
+  nombre: string;
+  portal?: MunicipioId | 'tepic';
+}> = [
+  { nombre: 'Acaponeta' },
+  { nombre: 'Ahuacatlán' },
+  { nombre: 'Amatlán de Cañas' },
+  { nombre: 'Bahía de Banderas', portal: 'bahia' },
+  { nombre: 'Compostela', portal: 'compostela' },
+  { nombre: 'Del Nayar' },
+  { nombre: 'Huajicori' },
+  { nombre: 'Ixtlán del Río' },
+  { nombre: 'Jala' },
+  { nombre: 'La Yesca' },
+  { nombre: 'Rosamorada' },
+  { nombre: 'Ruiz' },
+  { nombre: 'San Blas' },
+  { nombre: 'San Pedro Lagunillas' },
+  { nombre: 'Santa María del Oro' },
+  { nombre: 'Santiago Ixcuintla', portal: 'santiago' },
+  { nombre: 'Tecuala' },
+  { nombre: 'Tepic', portal: 'tepic' },
+  { nombre: 'Tuxpan' },
+  { nombre: 'Xalisco', portal: 'xalisco' },
 ];
 
 export const MUNICIPIOS: Record<MunicipioId, MunicipioConfig> = {

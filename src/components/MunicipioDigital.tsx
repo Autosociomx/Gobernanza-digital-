@@ -68,6 +68,7 @@ export const MunicipioDigital = ({ municipioId, onNavigate }: MunicipioDigitalPr
             <button onClick={() => onNavigate('landing')} className="text-xs font-bold text-[#a0aec0] hover:text-white transition-colors uppercase tracking-widest flex items-center gap-2">
               <ArrowLeft className="w-3.5 h-3.5" /> Nayarit Digital
             </button>
+            <button onClick={() => onNavigate('autopista')} className="text-xs font-bold text-[#a0aec0] hover:text-white transition-colors uppercase tracking-widest">Autopista Digital</button>
             <button onClick={() => onNavigate('citizen')} className="text-xs font-bold text-[#a0aec0] hover:text-white transition-colors uppercase tracking-widest">Portal Ciudadano</button>
             <button
               onClick={() => onNavigate('c5')}

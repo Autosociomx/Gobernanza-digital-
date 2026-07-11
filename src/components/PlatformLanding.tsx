@@ -49,6 +49,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
            </div>
            
            <nav className="hidden lg:flex items-center gap-8">
+             <button onClick={() => onNavigate('autopista')} className="text-xs font-bold text-[#F5A623] hover:text-[#FFC96A] transition-colors uppercase tracking-widest">Autopista Digital</button>
              <button onClick={() => document.getElementById('despliegue-municipal')?.scrollIntoView({ behavior: 'smooth' })} className="text-xs font-bold text-[#a0aec0] hover:text-[#0FA3B1] transition-colors uppercase tracking-widest">Municipios</button>
              <button onClick={() => onNavigate('citizen')} className="text-xs font-bold text-[#a0aec0] hover:text-[#0FA3B1] transition-colors uppercase tracking-widest">Portal Ciudadano</button>
              <button onClick={() => onNavigate('c5')} className="text-xs font-bold text-[#a0aec0] hover:text-[#0FA3B1] transition-colors uppercase tracking-widest">C5 Dashboard</button>
