@@ -16,6 +16,9 @@ const DeveloperChecklist = lazy(() =>
 const ExecutiveFolder = lazy(() =>
   import('./components/ExecutiveFolder').then((m) => ({ default: m.ExecutiveFolder }))
 );
+const BahiaDigital = lazy(() =>
+  import('./components/BahiaDigital').then((m) => ({ default: m.BahiaDigital }))
+);
 
 function ViewFallback() {
   return (
@@ -26,7 +29,7 @@ function ViewFallback() {
 }
 
 function App() {
-  const [currentView, setCurrentView] = useState<'landing' | 'c5' | 'citizen' | 'dev' | 'executive'>('landing');
+  const [currentView, setCurrentView] = useState<'landing' | 'c5' | 'citizen' | 'dev' | 'executive' | 'bahia'>('landing');
   const [citizenTab, setCitizenTab] = useState<any>('home');
   const [citizenAction, setCitizenAction] = useState<any>(null);
 
@@ -50,6 +53,20 @@ function App() {
     return (
       <Suspense fallback={<ViewFallback />}>
         <DeveloperChecklist onLogout={() => setCurrentView('landing')} />
+      </Suspense>
+    );
+  }
+
+  if (currentView === 'bahia') {
+    return (
+      <Suspense fallback={<ViewFallback />}>
+        <BahiaDigital onNavigate={(view, subView, action) => {
+          if (view === 'citizen') {
+            setCitizenTab(subView || 'home');
+            setCitizenAction(action || null);
+          }
+          setCurrentView(view);
+        }} />
       </Suspense>
     );
   }
