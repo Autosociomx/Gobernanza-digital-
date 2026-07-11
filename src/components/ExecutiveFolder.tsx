@@ -113,13 +113,13 @@ export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
              initial={{ opacity: 0, y: 20 }}
              animate={{ opacity: 1, y: 0 }}
            >
-             <h1 className="text-[4rem] font-serif font-black leading-[0.95] tracking-tight mb-6">
-                Estrategia <br/><em className="text-[var(--magenta)] italic">Nayarit 2026</em>
-             </h1>
-             <p className="text-[1.1rem] text-[var(--gris)] max-w-xl leading-relaxed">
-                Propuesta de Gobernanza Digital Certificada para la administración de <strong>Geraldine Ponce</strong>. Un sistema escalable que transforma la relación gobierno-ciudadano mediante datos e inteligencia artificial.
-             </p>
-          </motion.div>
+              <h1 className="text-[4rem] font-serif font-black leading-[0.95] tracking-tight mb-6">
+                 Estrategia <br/><em className="text-[var(--magenta)] italic">Nayarit Digital</em>
+              </h1>
+              <p className="text-[1.1rem] text-[var(--gris)] max-w-xl leading-relaxed">
+                 Dossier institucional para la transformación y simplificación digital en <strong>Bahía de Banderas, Xalisco y Tepic</strong>. Un plan integral para dignificar la labor del servidor público sindicalizado y elevar la calidad de vida ciudadana mediante la transparencia.
+              </p>
+           </motion.div>
         </div>
 
         {/* Content Body */}
@@ -133,13 +133,13 @@ export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                  <div className="space-y-4">
-                    <p className="text-sm text-[var(--gris)] leading-relaxed">La digitalización no es solo "subir trámites", es crear un <strong>Nayarit ID</strong> que sea el centro de la vida ciudadana, validado casa por casa.</p>
+                    <p className="text-sm text-[var(--gris)] leading-relaxed">La digitalización no es solo "subir trámites", es crear un ecosistema unificado que sea el centro de la vida ciudadana, validado de forma transparente y ágil.</p>
                     <ul className="space-y-3">
                        {[
-                         'Validación física de identidad (Protocolo 20:80).',
-                         'Academia Digital ConnectX: Certificación Sindical.',
-                         'Certificación de Gobernanza por Google Cloud.',
-                         'Transparencia total en ejecución de obra pública.'
+                         'Validación ágil y transparente de identidad ciudadana.',
+                         'Academia Digital ConnectX: Certificación en Competencias Digitales.',
+                         'Gobernanza de Datos local bajo principios de soberanía tecnológica.',
+                         'Transparencia total en el seguimiento de trámites y obras municipales.'
                        ].map((t, i) => (
                          <li key={i} className="flex gap-3 text-xs font-medium text-[var(--tinta)]">
                             <span className="text-[var(--magenta)]">/</span> {t}
@@ -148,10 +148,10 @@ export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
                     </ul>
                  </div>
                  <div className="bg-[var(--crema)] p-6 rounded-xl border border-black/5">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Escalabilidad (Blue Oceans)</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4">Ejes de Modernización Colectiva</p>
                     <div className="space-y-2">
-                       <p className="text-sm font-black text-[var(--magenta)] italic">Agrotech Nayarit</p>
-                       <p className="text-[10px] text-[var(--gris)]">Eliminación de intermediarios: +15% utilidad para el productor local.</p>
+                       <p className="text-sm font-black text-[var(--magenta)] italic">Simplificación Administrativa</p>
+                       <p className="text-[10px] text-[var(--gris)]">Eliminación de la discrecionalidad y reducción drástica de tiempos de espera para el ciudadano.</p>
                     </div>
                  </div>
               </div>
@@ -161,17 +161,17 @@ export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
            <section>
               <div className="flex items-center gap-3 mb-6">
                  <FileText className="w-5 h-5 text-[var(--magenta)]" />
-                 <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--tinta)]">Marco Legal y Financiero</h2>
+                 <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--tinta)]">Marco Legal y de Gestión</h2>
               </div>
               <div className="space-y-6">
                  <div className="grid grid-cols-2 gap-4">
                     <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg">
                        <h4 className="text-[10px] font-black uppercase mb-1">Ley de Gobierno Digital</h4>
-                       <p className="text-[10px] text-slate-500">Habilita la Firma Electrónica como motor de pagos municipales digitales.</p>
+                       <p className="text-[10px] text-slate-500">Habilita el expediente único digital y la firma electrónica para la simplificación total.</p>
                     </div>
                     <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg">
-                       <h4 className="text-[10px] font-black uppercase mb-1">Optimizacion FORTAMUN</h4>
-                       <p className="text-[10px] text-slate-500">Reetiquetado de fondos federales hacia infraestructura de inteligencia (C5).</p>
+                       <h4 className="text-[10px] font-black uppercase mb-1">Capacitación Genuina</h4>
+                       <p className="text-[10px] text-slate-500">La Academia Digital ConnectX impulsa la formación del personal, garantizando una transición justa.</p>
                     </div>
                  </div>
               </div>
@@ -181,24 +181,24 @@ export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
            <section className="bg-slate-50 p-8 rounded-2xl border-2 border-dashed border-slate-200">
               <div className="flex items-center gap-3 mb-4">
                  <Share2 className="w-5 h-5 text-indigo-500" />
-                 <h2 className="text-xs font-bold uppercase tracking-widest text-slate-900">Email Ready: Propuesta Geraldine 2026</h2>
+                 <h2 className="text-xs font-bold uppercase tracking-widest text-slate-900">Email Ready: Propuesta de Coordinación Institucional</h2>
               </div>
               <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm font-mono text-[11px] text-slate-700 leading-relaxed max-h-[300px] overflow-y-auto">
-                 <p className="font-bold mb-4">Asunto: Propuesta Estratégica: Nayarit ID & Modelo de Gobernanza Digital 2026</p>
-                 <p>Estimada Presidenta Geraldine,</p>
+                 <p className="font-bold mb-4">Asunto: Propuesta Institucional: Implementación de la Estrategia Nayarit Digital y Simplificación Administrativa</p>
+                 <p>Estimados Coordinadores Municipales de Bahía de Banderas, Xalisco y Tepic,</p>
                  <br/>
-                 <p>Me permito presentarle la plataforma <strong>Nayarit Digital OS</strong>, un ecosistema diseñado para consolidar su legado como la administración más eficiente y transparente en la historia de Tepic.</p>
+                 <p>Me permito presentarles el dossier de la plataforma <strong>Nayarit Digital OS</strong>, un ecosistema integrado diseñado para consolidar administraciones eficientes, cercanas y totalmente transparentes para los ciudadanos de sus demarcaciones.</p>
                  <br/>
-                 <p><strong>Puntos clave de la propuesta:</strong></p>
-                 <p>1. <strong>Saturación de Valor (20/80)</strong>: Implementamos una validación casa por casa que vincula el Nayarit ID con la geolocalización real, permitiendo una recaudación inteligente y personalizada.</p>
-                 <p>2. <strong>Océano Azul: Agrotech & Health</strong>: Convertiremos a Tepic en el primer municipio del país en tokenizar cosechas y certificar salud preventiva rural mediante Gemini IA.</p>
-                 <p>3. <strong>Rentabilidad</strong>: El sistema utiliza el marco de la <em>Ley de Gobierno Digital</em> para reducir costos operativos en un 35% y aumentar la captación vía FORTAMUN.</p>
+                 <p><strong>Puntos clave de la propuesta de implementación:</strong></p>
+                 <p>1. <strong>Expediente Único Digital</strong>: Reducimos en más de un 80% los tiempos de espera del ciudadano mediante la unificación de validaciones.</p>
+                 <p>2. <strong>Empoderamiento de la Estructura</strong>: A través de la Academia Digital ConnectX, certificamos a los servidores públicos sindicalizados para convertirlos en gestores clave de la digitalización.</p>
+                 <p>3. <strong>Soberanía Tecnológica</strong>: Diseñamos flujos autogestionados que evitan licencias de software privativas y costosas a las arcas municipales.</p>
                  <br/>
-                 <p>Adjunto a este correo, puede visualizar el <strong>Mando Central Dashboard</strong>, donde ya se monitorean en tiempo real las obras y la adopción ciudadana.</p>
+                 <p>Adjunto a esta carpeta técnica, pueden revisar el <strong>Dashboard de Gestión C5</strong>, donde se simulan los módulos de atención municipal.</p>
                  <br/>
-                 <p>Quedo a su disposición para una presentación ejecutiva.</p>
+                 <p>Quedo a su entera disposición para coordinar una mesa técnica de trabajo institucional.</p>
                  <br/>
-                 <p>Atentamente,<br/>[Su Nombre]<br/>Estratega Nayarit Digital 2026</p>
+                 <p>Atentamente,<br/>Estrategia General<br/>Nayarit Digital OS / ConnectX</p>
               </div>
            </section>
 
@@ -206,15 +206,15 @@ export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
            <section className="bg-[var(--tinta)] text-white p-8 rounded-2xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--magenta)]/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
               <div className="relative z-10">
-                 <h2 className="text-xs font-bold uppercase tracking-[0.3em] mb-6 opacity-60 text-center">Inversión y Escalabilidad</h2>
+                 <h2 className="text-xs font-bold uppercase tracking-[0.3em] mb-6 opacity-60 text-center">Impacto Social y Eficiencia</h2>
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center md:text-left">
                     <div>
-                       <p className="text-xs font-medium opacity-50 mb-1">Mantenimiento Base</p>
-                       <p className="text-2xl font-serif italic">$50k - $80k <span className="text-[10px] font-mono uppercase tracking-normal">USD / Año</span></p>
+                       <p className="text-xs font-medium opacity-50 mb-1">Costo Tecnológico Adicional</p>
+                       <p className="text-2xl font-serif italic">$0 <span className="text-[10px] font-mono uppercase tracking-normal">en software propietario</span></p>
                     </div>
                     <div>
-                       <p className="text-xs font-medium opacity-50 mb-1">Eficiencia Recuperada</p>
-                       <p className="text-2xl font-black text-[var(--solar)]">+22% <span className="text-[10px] font-mono uppercase tracking-normal">Recaudación Est.</span></p>
+                       <p className="text-xs font-medium opacity-50 mb-1">Reducción de Tiempos</p>
+                       <p className="text-2xl font-black text-[var(--solar)]">90% <span className="text-[10px] font-mono uppercase tracking-normal">menos espera ciudadana</span></p>
                     </div>
                  </div>
               </div>
@@ -226,64 +226,64 @@ export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
                  <div className="flex items-center gap-3">
                     <Zap className="w-5 h-5 text-[var(--magenta)]" />
                     <h2 className="text-sm font-bold uppercase tracking-widest text-[var(--tinta)]">Estrategia Sectorial: BrigadaMX</h2>
-                 </div>
-                 <div className="flex flex-wrap items-center gap-3">
-                   <button 
-                     onClick={() => setActiveView('roadmap')}
-                     className="bg-emerald-600 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-500/20 flex items-center gap-2"
-                   >
-                     <Map className="w-4 h-4" />
-                     Roadmap Lanzamiento
-                   </button>
-                   <button 
-                     onClick={() => setActiveView('whitepaper')}
-                     className="bg-indigo-600 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-500/20 flex items-center gap-2"
-                   >
-                     <BookOpen className="w-4 h-4" />
-                     Leer Whitepaper Ley Digital
-                   </button>
-                   <button 
-                     onClick={() => setActiveView('defense')}
-                     className="bg-rose-500 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-rose-400 transition-colors shadow-lg shadow-rose-500/20 flex items-center gap-2"
-                   >
-                     <Swords className="w-4 h-4" />
-                     War Room (Objeciones)
-                   </button>
-                   <button 
-                     onClick={() => setActiveView('demo')}
-                     className="bg-slate-900 border border-slate-800 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-[var(--magenta)] transition-colors shadow-lg shadow-black/20 mt-2 sm:mt-0"
-                   >
-                     Abrir Simulador Móvil
-                   </button>
-                 </div>
-              </div>
-              
-              <BrigadaStrategy />
-           </section>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button 
+                      onClick={() => setActiveView('roadmap')}
+                      className="bg-emerald-600 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-500/20 flex items-center gap-2"
+                    >
+                      <Map className="w-4 h-4" />
+                      Roadmap Lanzamiento
+                    </button>
+                    <button 
+                      onClick={() => setActiveView('whitepaper')}
+                      className="bg-indigo-600 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-indigo-500 transition-colors shadow-lg shadow-indigo-500/20 flex items-center gap-2"
+                    >
+                      <BookOpen className="w-4 h-4" />
+                      Leer Whitepaper Ley Digital
+                    </button>
+                    <button 
+                      onClick={() => setActiveView('defense')}
+                      className="bg-rose-500 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-rose-400 transition-colors shadow-lg shadow-rose-500/20 flex items-center gap-2"
+                    >
+                      <Swords className="w-4 h-4" />
+                      War Room (Objeciones)
+                    </button>
+                    <button 
+                      onClick={() => setActiveView('demo')}
+                      className="bg-slate-900 border border-slate-800 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-[var(--magenta)] transition-colors shadow-lg shadow-black/20 mt-2 sm:mt-0"
+                    >
+                      Abrir Simulador Móvil
+                    </button>
+                  </div>
+               </div>
+               
+               <BrigadaStrategy />
+            </section>
 
-        </div>
+         </div>
 
-        {/* Page Footer */}
-        <div className="p-[4rem] pt-0 flex flex-col md:flex-row justify-between items-center gap-6 border-t border-black/5 bg-slate-50/50">
-           <div className="flex gap-4">
-              <button className="flex items-center gap-2 text-[10px] font-bold text-slate-500 hover:text-[var(--magenta)] transition-colors uppercase tracking-widest">
-                 <Printer className="w-4 h-4" /> Imprimir Documento
-              </button>
-              <button className="flex items-center gap-2 text-[10px] font-bold text-slate-500 hover:text-[var(--magenta)] transition-colors uppercase tracking-widest">
-                 <Share2 className="w-4 h-4" /> Compartir PDF
-              </button>
-           </div>
-           <button 
-             onClick={onBack}
-             className="px-8 py-3 bg-[var(--tinta)] text-white rounded-full text-xs font-bold uppercase tracking-widest hover:bg-[var(--magenta)] transition-all shadow-xl"
-           >
-              Finalizar Lectura
-           </button>
-        </div>
+         {/* Page Footer */}
+         <div className="p-[4rem] pt-0 flex flex-col md:flex-row justify-between items-center gap-6 border-t border-black/5 bg-slate-50/50">
+            <div className="flex gap-4">
+               <button className="flex items-center gap-2 text-[10px] font-bold text-slate-500 hover:text-[var(--magenta)] transition-colors uppercase tracking-widest">
+                  <Printer className="w-4 h-4" /> Imprimir Documento
+               </button>
+               <button className="flex items-center gap-2 text-[10px] font-bold text-slate-500 hover:text-[var(--magenta)] transition-colors uppercase tracking-widest">
+                  <Share2 className="w-4 h-4" /> Compartir PDF
+               </button>
+            </div>
+            <button 
+              onClick={onBack}
+              className="px-8 py-3 bg-[var(--tinta)] text-white rounded-full text-xs font-bold uppercase tracking-widest hover:bg-[var(--magenta)] transition-all shadow-xl"
+            >
+               Finalizar Lectura
+            </button>
+         </div>
       </div>
 
       <div className="mt-12 text-center">
-         <p className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Powered by Google Cloud Platform · Nayarit Digital 2026</p>
+         <p className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Powered by ConnectX · Nayarit Digital 2026</p>
       </div>
 
     </div>

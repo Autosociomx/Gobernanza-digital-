@@ -20,37 +20,37 @@ export function PitchDefense() {
       id: 0,
       category: "Presupuesto",
       icon: Coins,
-      question: "¿De dónde vamos a sacar presupuesto para esto si el municipio está quebrado?",
-      context: "Típica objeción del Secretario de Finanzas o Tesorero.",
-      answer: "No es un gasto nuevo, es una reasignación estratégica. Al digitalizar el 100% de la identidad, el sistema aumenta la recaudación de predial mediante inteligencia territorial (Saturación 20/80). Además, la inversión se justifica directamente con los fondos federales (FORTAMUN) etiquetados para modernización y seguridad. El ROI se alcanza en los primeros 8 meses solo por ahorro en papel, horas-hombre y multas evitadas por incumplimiento de transparencia.",
-      keywords: ["FORTAMUN", "ROI 8 meses", "Aumento Recaudatorio"]
+      question: "¿Cómo se financia este proyecto de digitalización si el presupuesto municipal es limitado?",
+      context: "Inquietud del Tesorero o Responsable de Presupuestos.",
+      answer: "No requiere licencias de software privativas ni dependencias de grandes consorcios de TI externos. Se basa en soberanía tecnológica y el marco de ConnectX. La inversión se amortiza de inmediato a través del ahorro masivo en consumibles de oficina (papel, toner, archivo físico) y la optimización de tiempos en los procesos de atención municipal de Bahía de Banderas, Xalisco y Tepic.",
+      keywords: ["Soberanía Tecnológica", "Ahorro Operativo", "Amortización Rápida"]
     },
     {
       id: 1,
-      category: "Legal & Privacidad",
+      category: "Seguridad y Privacidad",
       icon: Lock,
-      question: "¿Es legal pedir firmas y escanear el INE en la calle? Nos van a demandar.",
-      context: "Objeción del Director Jurídico o Síndico Municipal.",
-      answer: "El sistema está diseñado específicamente con Legal-by-Design. No almacenamos datos en texto plano. Todo se encripta de origen a fin (E2EE) y cumple con la Ley Federal de Protección de Datos Personales en Posesión de Sujetos Obligados (LFPDPPSO). La 'Firma Electrónica Simple' en pantalla está validada por la Ley de Gobierno Digital del Estado de Nayarit. Cada registro genera un Hash SHA-256 inmutable.",
-      keywords: ["LFPDPPSO", "Legal-by-Design", "Hash SHA-256"]
+      question: "¿Cómo garantizamos que los datos personales de la ciudadanía estén totalmente seguros?",
+      context: "Preocupación del Síndico o Responsable Jurídico.",
+      answer: "La plataforma cuenta con un diseño de Privacidad desde el Origen (Privacy-by-Design). Los datos sensibles no se almacenan en texto plano. Toda la transferencia de información cuenta con cifrado de extremo a extremo (E2EE) y cumple estrictamente con la Ley General de Protección de Datos Personales en Posesión de Sujetos Obligados.",
+      keywords: ["Privacy-by-Design", "Cifrado E2EE", "Cumplimiento de Ley"]
     },
     {
       id: 2,
-      category: "Tecnología vs Grandes Empresas",
+      category: "TI e Infraestructura",
       icon: Cpu,
-      question: "¿Por qué contratarlos a ustedes y no a Oracle, Microsoft o SAP?",
-      context: "Objeción del Director de TI gubernamental.",
-      answer: "Las grandes consultoras venden 'Sistemas de Planificación' (ERP) que tardan 18 meses en implementarse, cuestan millones en licencias y requieren que el ciudadano 'vaya a internet' a registrarse. Nosotros ofrecemos un 'Sistema Operativo de Campo' (SoC). Se despliega en 15 días, funciona sin internet (Offline-first) y es el gobierno quien va a la puerta del ciudadano. Agilidad táctica vs. burocracia de software.",
-      keywords: ["Offline-first", "Despliegue 15 días", "Sistema Operativo de Campo"]
+      question: "¿Por qué optar por la plataforma ConnectX y no por desarrollos de grandes proveedores como Oracle o SAP?",
+      context: "Objeción del Director de Informática o TI.",
+      answer: "Las soluciones corporativas conllevan costos recurrentes de licenciamiento asfixiantes y tiempos de despliegue sumamente lentos. ConnectX es una solución ligera, modular, y construida sobre estándares abiertos que permite autonomía completa para el municipio, capacitando al propio personal del ayuntamiento bajo principios de autogestión local.",
+      keywords: ["Estándares Abiertos", "Autonomía de TI", "Sin Costos de Licencia"]
     },
     {
       id: 3,
-      category: "Operación en Campo",
+      category: "Adopción Laboral",
       icon: Target,
-      question: "¿Qué pasa si los brigadistas se van a la sierra o colonias sin señal de internet?",
-      context: "Objeción del Coordinador de Campaña/Operadores Políticos.",
-      answer: "BrigadaMX fue construida con arquitectura 'Offline-First' usando IndexedDB y Service Workers. La app funciona exactamente igual en modo avión. El brigadista escanea el INE, captura la firma e integra la encuesta. Cuando el dispositivo detecta red (al volver al centro o conectarse a WiFi), sincroniza cientos de registros en background hacia el C5 de forma segura, sin perder un solo byte de información.",
-      keywords: ["Offline-First", "Background Sync", "Cero pérdida de datos"]
+      question: "¿Qué ocurre si el personal o los usuarios de mayor edad presentan resistencia a la adopción digital?",
+      context: "Inquietud de Recursos Humanos y del Enlace Sindical.",
+      answer: "El plan contempla la Academia Digital ConnectX con tres niveles de certificación (Bronce, Plata y Oro) diseñados específicamente para capacitar paso a paso. No se busca reemplazar al trabajador, sino elevar su rol para liberarlo de tareas mecánicas repetitivas. Para ciudadanos que lo requieran, el personal actúa como facilitador amigable utilizando Aura.",
+      keywords: ["Academia Digital", "Empoderamiento Sindical", "Inclusión Ciudadana"]
     }
   ];
 
@@ -65,8 +65,8 @@ export function PitchDefense() {
               <Swords className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-2xl font-black text-white uppercase tracking-tight">War Room: Defensa de Pitch</h2>
-              <p className="text-sm text-slate-400">Simulación de Objeciones (Comité de Transición)</p>
+              <h2 className="text-2xl font-black text-white uppercase tracking-tight">Mesa de Análisis Técnico</h2>
+              <p className="text-sm text-slate-400">Preguntas de Validación Institucional y Viabilidad</p>
             </div>
           </div>
 
@@ -119,7 +119,7 @@ export function PitchDefense() {
                     <div className="flex items-start gap-3 mb-6">
                       <ShieldAlert className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-2">La Objeción</p>
+                        <p className="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-2">La Pregunta / Objeción</p>
                         <h3 className="text-lg font-bold text-white leading-tight">"{obj.question}"</h3>
                         <p className="text-xs text-slate-500 mt-2 font-mono">{obj.context}</p>
                       </div>
@@ -128,7 +128,7 @@ export function PitchDefense() {
                     <div className="flex-1 bg-slate-900 rounded-xl p-5 border border-slate-800/50 mb-6">
                       <div className="flex items-center gap-2 mb-3">
                         <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                        <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Respuesta Blindada</p>
+                        <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Respuesta Técnica</p>
                       </div>
                       <p className="text-sm text-slate-300 leading-relaxed">
                         {obj.answer}

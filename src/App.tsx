@@ -1,90 +1,63 @@
-import React, { useState, useEffect, lazy, Suspense } from 'react';
+import React, { useState } from 'react';
 import { PlatformLanding } from './components/PlatformLanding';
-import { MUNICIPIOS, type AppView, type MunicipioId } from './data/municipios';
-
-// Las vistas pesadas se cargan bajo demanda: el visitante de la landing
-// no descarga el dashboard, la app ciudadana ni sus librerías (recharts,
-// tesseract, jspdf…) hasta que navega a ellas.
-const C5Dashboard = lazy(() =>
-  import('./components/C5Dashboard').then((m) => ({ default: m.C5Dashboard }))
-);
-const CitizenApp = lazy(() =>
-  import('./components/CitizenApp').then((m) => ({ default: m.CitizenApp }))
-);
-const DeveloperChecklist = lazy(() =>
-  import('./components/DeveloperChecklist').then((m) => ({ default: m.DeveloperChecklist }))
-);
-const ExecutiveFolder = lazy(() =>
-  import('./components/ExecutiveFolder').then((m) => ({ default: m.ExecutiveFolder }))
-);
-const MunicipioDigital = lazy(() =>
-  import('./components/MunicipioDigital').then((m) => ({ default: m.MunicipioDigital }))
-);
-
-function ViewFallback() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F8F6F1]" role="status" aria-live="polite">
-      <span className="text-[#5A6478] text-sm tracking-widest uppercase">Cargando módulo…</span>
-    </div>
-  );
-}
+import { C5Dashboard } from './components/C5Dashboard';
+import { CitizenApp } from './components/CitizenApp';
+import { DeveloperChecklist } from './components/DeveloperChecklist';
+import { ExecutiveFolder } from './components/ExecutiveFolder';
+import { motion, AnimatePresence } from 'motion/react';
+import { ChevronDown, LayoutDashboard, UserCircle2, FileText, Settings2 } from 'lucide-react';
 
 function App() {
-  const [currentView, setCurrentView] = useState<AppView>('landing');
+  const [currentView, setCurrentView] = useState<'landing' | 'c5' | 'citizen' | 'dev' | 'executive'>('landing');
   const [citizenTab, setCitizenTab] = useState<any>('home');
   const [citizenAction, setCitizenAction] = useState<any>(null);
 
-  // Cada vista es una pantalla completa: al cambiar de vista el scroll
-  // heredado de la anterior dejaría al usuario a media página.
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [currentView]);
-
   if (currentView === 'c5') {
-    return (
-      <Suspense fallback={<ViewFallback />}>
-        <C5Dashboard onLogout={() => setCurrentView('landing')} />
-      </Suspense>
-    );
+    return <C5Dashboard onLogout={() => setCurrentView('landing')} />;
   }
 
   if (currentView === 'citizen') {
-    return (
-      <Suspense fallback={<ViewFallback />}>
-        <CitizenApp onLogout={() => setCurrentView('landing')} initialTab={citizenTab} initialAction={citizenAction} />
-      </Suspense>
-    );
+    return <CitizenApp onLogout={() => setCurrentView('landing')} initialTab={citizenTab} initialAction={citizenAction} />;
   }
 
   if (currentView === 'dev') {
-    return (
-      <Suspense fallback={<ViewFallback />}>
-        <DeveloperChecklist onLogout={() => setCurrentView('landing')} />
-      </Suspense>
-    );
-  }
-
-  if (currentView in MUNICIPIOS) {
-    return (
-      <Suspense fallback={<ViewFallback />}>
-        <MunicipioDigital municipioId={currentView as MunicipioId} onNavigate={(view, subView, action) => {
-          if (view === 'citizen') {
-            setCitizenTab(subView || 'home');
-            setCitizenAction(action || null);
-          }
-          setCurrentView(view);
-        }} />
-      </Suspense>
-    );
+    return <DeveloperChecklist onLogout={() => setCurrentView('landing')} />;
   }
 
   if (currentView === 'executive') {
-    return (
-      <Suspense fallback={<ViewFallback />}>
-        <ExecutiveFolder onBack={() => setCurrentView('landing')} />
-      </Suspense>
-    );
+    return <ExecutiveFolder onBack={() => setCurrentView('landing')} />;
   }
+
+  const menuItems = [
+    { 
+      id: 'c5', 
+      label: 'C5 HUB GOBIERNO', 
+      sub: 'Centro de Inteligencia', 
+      color: 'bg-emerald-500', 
+      icon: LayoutDashboard 
+    },
+    { 
+      id: 'citizen', 
+      label: 'DEMO CIUDADANA', 
+      sub: 'Experiencia Ciudadana RUTA', 
+      color: 'bg-cyan-500', 
+      icon: UserCircle2 
+    },
+    { 
+      id: 'executive', 
+      label: 'CARPETA EJECUTIVA', 
+      sub: 'Estrategia de Gobernanza AI', 
+      color: 'bg-magenta-500', 
+      icon: FileText 
+    },
+    { 
+      id: 'dev', 
+      label: 'ROADMAP TÉCNICO', 
+      sub: 'Estado de Implementación', 
+      color: 'bg-purple-500', 
+      icon: Settings2 
+    },
+  ];
 
   return (
     <div className="min-h-screen relative overflow-x-hidden">
