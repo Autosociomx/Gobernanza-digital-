@@ -1,5 +1,6 @@
-import React, { useState, lazy, Suspense } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { PlatformLanding } from './components/PlatformLanding';
+import { MUNICIPIOS, type AppView, type MunicipioId } from './data/municipios';
 
 // Las vistas pesadas se cargan bajo demanda: el visitante de la landing
 // no descarga el dashboard, la app ciudadana ni sus librerías (recharts,
@@ -16,8 +17,8 @@ const DeveloperChecklist = lazy(() =>
 const ExecutiveFolder = lazy(() =>
   import('./components/ExecutiveFolder').then((m) => ({ default: m.ExecutiveFolder }))
 );
-const BahiaDigital = lazy(() =>
-  import('./components/BahiaDigital').then((m) => ({ default: m.BahiaDigital }))
+const MunicipioDigital = lazy(() =>
+  import('./components/MunicipioDigital').then((m) => ({ default: m.MunicipioDigital }))
 );
 
 function ViewFallback() {
@@ -29,9 +30,15 @@ function ViewFallback() {
 }
 
 function App() {
-  const [currentView, setCurrentView] = useState<'landing' | 'c5' | 'citizen' | 'dev' | 'executive' | 'bahia'>('landing');
+  const [currentView, setCurrentView] = useState<AppView>('landing');
   const [citizenTab, setCitizenTab] = useState<any>('home');
   const [citizenAction, setCitizenAction] = useState<any>(null);
+
+  // Cada vista es una pantalla completa: al cambiar de vista el scroll
+  // heredado de la anterior dejaría al usuario a media página.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentView]);
 
   if (currentView === 'c5') {
     return (
@@ -57,10 +64,10 @@ function App() {
     );
   }
 
-  if (currentView === 'bahia') {
+  if (currentView in MUNICIPIOS) {
     return (
       <Suspense fallback={<ViewFallback />}>
-        <BahiaDigital onNavigate={(view, subView, action) => {
+        <MunicipioDigital municipioId={currentView as MunicipioId} onNavigate={(view, subView, action) => {
           if (view === 'citizen') {
             setCitizenTab(subView || 'home');
             setCitizenAction(action || null);
