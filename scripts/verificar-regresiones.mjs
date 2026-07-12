@@ -10,7 +10,7 @@
  * Uso:  node scripts/verificar-regresiones.mjs [--con-bundle]
  *   --con-bundle  además compila y verifica que la llave no esté en dist/
  */
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 
 const errores = [];
@@ -64,6 +64,20 @@ if (/@import url\(['"]https:\/\/fonts\.googleapis/.test(css)) {
     'Las fuentes se cargan asíncronas desde index.html.'
   );
 }
+
+// R8 · public/ se sirve en el sitio web: sin documentos internos
+const permitidosPublic = new Set(['robots.txt', 'CONNECTX_SYSTEM_PROMPT.md']);
+try {
+  for (const archivo of readdirSync('public')) {
+    const esDoc = /\.(md|txt|docx?|pdf)$/i.test(archivo);
+    if (esDoc && !permitidosPublic.has(archivo)) {
+      errores.push(
+        `public/${archivo} se serviría en el sitio web público. Los documentos internos van en docs/interno/ ` +
+        '(en julio de 2026 la estrategia interna estuvo expuesta en producción por un archivo así).'
+      );
+    }
+  }
+} catch { /* sin carpeta public */ }
 
 // R7 (opcional) · La llave no aparece en el bundle compilado
 if (process.argv.includes('--con-bundle')) {
