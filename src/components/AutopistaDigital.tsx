@@ -265,7 +265,11 @@ export const AutopistaDigital = ({ onNavigate }: AutopistaDigitalProps) => {
                   </div>
                   <h3 className="font-bold text-[#1a2438] mb-2 text-lg">{carril.nombre}</h3>
                   <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">{carril.detalle}</p>
-                  <button onClick={() => onNavigate('citizen')} className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all" style={{ color: carril.color }}>
+                  <button
+                    onClick={() => onNavigate('citizen', undefined, carril.nombre === 'Pregunta' ? 'voice' : undefined)}
+                    className="text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all"
+                    style={{ color: carril.color }}
+                  >
                     Tomar este carril <ChevronRight className="w-3 h-3" />
                   </button>
                 </div>

@@ -65,20 +65,22 @@ import { BananaCommandCenter } from './BananaCommandCenter';
 import { StrategicAcademyView } from './StrategicAcademyView';
 import { MasterStrategicPlan } from './MasterStrategicPlan';
 import { MunicipalLettersView } from './MunicipalLettersView';
+import { ConnectXVoiceAssistant } from './ConnectXVoiceAssistant';
 
 import { AuraCertificationSeal } from './AuraCertificationSeal';
 
 type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria' | 'academy' | 'system_audit' | 'banana_command' | 'strategic_academy' | 'strategic_plan' | 'municipal_letters';
 type Language = 'es' | 'cora' | 'wixarika';
+type ChatMode = 'texto' | 'voz';
 
-export function CitizenApp({ 
-  onLogout, 
+export function CitizenApp({
+  onLogout,
   initialTab = 'home',
-  initialAction = null 
-}: { 
+  initialAction = null
+}: {
   onLogout: () => void,
   initialTab?: TabType,
-  initialAction?: 'chat' | 'triage' | 'map' | null
+  initialAction?: 'chat' | 'triage' | 'map' | 'voice' | null
 }) {
   const [activeTab, setActiveTab] = useState<TabType>(initialTab);
   const [user, setUser] = useState<FirebaseUser | null>(null);
@@ -202,7 +204,8 @@ export function CitizenApp({
   /> */}
 
 
-  const [showChat, setShowChat] = useState(initialAction === 'chat');
+  const [showChat, setShowChat] = useState(initialAction === 'chat' || initialAction === 'voice');
+  const [chatMode, setChatMode] = useState<ChatMode>(initialAction === 'voice' ? 'voz' : 'texto');
   const [showMap, setShowMap] = useState(initialAction === 'map');
   const [showTriage, setShowTriage] = useState(initialAction === 'triage');
   const [selectedWork, setSelectedWork] = useState<any>(null);
@@ -579,6 +582,27 @@ export function CitizenApp({
                       <X className="w-8 h-8" />
                     </button>
                   </div>
+                  <div className="flex gap-1 bg-white/5 border border-white/10 rounded-xl p-1 w-fit">
+                     <button
+                        onClick={() => setChatMode('texto')}
+                        className={cn(
+                          "px-4 py-2 rounded-lg text-[11px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5",
+                          chatMode === 'texto' ? "bg-white text-slate-900" : "text-white/60 hover:text-white"
+                        )}
+                     >
+                        Escribir
+                     </button>
+                     <button
+                        onClick={() => setChatMode('voz')}
+                        className={cn(
+                          "px-4 py-2 rounded-lg text-[11px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5",
+                          chatMode === 'voz' ? "bg-white text-slate-900" : "text-white/60 hover:text-white"
+                        )}
+                     >
+                        Hablar
+                     </button>
+                  </div>
+                  {chatMode === 'texto' && (
                   <div className="flex gap-2 border-t border-white/10 pt-4 flex-wrap">
                      <button
                         onClick={() => {
@@ -620,8 +644,16 @@ export function CitizenApp({
                         Search Grounding
                      </button>
                   </div>
+                  )}
                </div>
 
+               {chatMode === 'voz' ? (
+                 <ConnectXVoiceAssistant
+                   onSwitchToText={() => setChatMode('texto')}
+                   systemContext={`Idioma preferido del ciudadano: ${lang}.`}
+                 />
+               ) : (
+               <>
                {/* Messages Console */}
                <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#f0f2f5] custom-scrollbar">
                   {messages.map((msg, i) => (
@@ -682,6 +714,8 @@ export function CitizenApp({
                     </button>
                   </div>
                </div>
+               </>
+               )}
             </motion.div>
           )}
         </AnimatePresence>

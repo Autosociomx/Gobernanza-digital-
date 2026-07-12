@@ -200,7 +200,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                <div className="w-12 h-12 bg-[#F5A623]/10 text-[#8F5E06] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">4</div>
                <h3 className="font-bold text-[#1a2438] mb-2 text-lg">Asistente 24/7</h3>
                <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">Pregunta, reporta o paga conversando — con datos abiertos (datos.gob.mx, INEGI).</p>
-               <button onClick={() => onNavigate('citizen')} className="text-[#8F5E06] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Preguntar <ChevronRight className="w-3 h-3"/></button>
+               <button onClick={() => onNavigate('citizen', undefined, 'voice')} className="text-[#8F5E06] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Preguntar <ChevronRight className="w-3 h-3"/></button>
              </div>
              
              <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
