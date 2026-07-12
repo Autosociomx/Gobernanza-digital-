@@ -23,74 +23,74 @@ export function BrigadaStrategy() {
 
   const strategies = {
     manager: {
-      title: "Senior Political Manager",
-      focus: "Operación Tierra & Control de Daños",
+      title: "Coordinación de Participación Social",
+      focus: "Vinculación Comunitaria & Atención Ciudadana",
       color: "text-rose-500",
       bgColor: "bg-rose-500/10",
       icon: Target,
       points: [
         {
-          title: "Saturación Territorial 24/7",
-          desc: "No más 'visiteo' aleatorio. Uso de polígonos de calor para enviar brigadas a secciones electorales con mayor rentabilidad de voto (Swing Districts).",
-          metric: "+22% Eficiencia en campo"
+          title: "Validación y Cercanía Social",
+          desc: "Enviar gestores de servicio público capacitados para censar las necesidades de trámites prioritarios colonia por colonia, asegurando que nadie se quede atrás.",
+          metric: "+22% de cobertura de trámites"
         },
         {
-          title: "Gamificación del Activismo",
-          desc: "Leaderboards en tiempo real para brigadistas. Incentivos basados en registros únicos verificados (Nayarit ID) no solo en 'toques de puerta'.",
-          metric: "Retención de brigadas: 85%"
+          title: "Capacitación en Territorio",
+          desc: "Talleres interactivos (Academia Digital Nivel Bronce) impartidos por personal sindicalizado para familiarizar a la población con el portal autogestionable.",
+          metric: "Soporte comunitario activo"
         },
         {
-          title: "Inteligencia Forense de Sentimiento",
-          desc: "Cada encuesta alimenta un motor de IA que detecta el 'humor social' por colonia, permitiendo a la candidata ajustar el discurso en menos de 2 horas.",
-          metric: "Discurso dinámico ajustable"
+          title: "Monitoreo del Clima de Servicio",
+          desc: "Cada reporte de ventanilla alimenta un sistema ágil para corregir cuellos de botella operativos en un plazo menor a 24 horas.",
+          metric: "Atención ágil en ventanilla"
         }
       ]
     },
     dev: {
-      title: "Application Architect / Lead Dev",
-      focus: "Offline-First & Security Infrastructure",
+      title: "Líder de Desarrollo y Arquitectura",
+      focus: "Infraestructura Offline-First y Expediente Seguro",
       color: "text-blue-500",
       bgColor: "bg-blue-500/10",
       icon: Cpu,
       points: [
         {
-          title: "PWA Offline-First (Worker Sync)",
-          desc: "Uso de IndexedDB y Service Workers. Los datos se guardan localmente en zonas sin señal y se sincronizan vía WebSocket/Firestore al detectar red.",
-          metric: "0% pérdida de datos"
+          title: "PWA Offline-First (Sincronización Local)",
+          desc: "Uso de IndexedDB y Service Workers para que se puedan registrar solicitudes incluso en zonas rurales con conectividad limitada, sincronizando al detectar red.",
+          metric: "0% pérdida de solicitudes"
         },
         {
-          title: "OCR INE Verification",
-          desc: "Implementación de visión artificial para escanear el código MRZ de la credencial de elector. Automatización del 90% del registro del ciudadano.",
-          metric: "Registro en < 45 segundos"
-    },
+          title: "Validación Digital Ágil",
+          desc: "Optimización del cargado de documentos mediante procesamiento local y automatización del llenado de formularios, eliminando la duplicidad de copias.",
+          metric: "Trámites en < 5 minutos"
+        },
         {
-          title: "Cifrado Militar de Datos Electorales",
-          desc: "Encripción de extremo a extremo (E2EE). Los datos sensibles de votantes nunca tocan el frontend en texto plano. Cumplimiento estricto de GDPR/LFPDPPP.",
-          metric: "Certificación SOC2 ready"
+          title: "Seguridad de Datos de Nivel Bancario",
+          desc: "Cifrado de extremo a extremo (E2EE). Los datos personales sensibles están protegidos bajo estricto cumplimiento de la ley mexicana de protección de datos.",
+          metric: "Cumplimiento legal garantizado"
         }
       ]
     },
     consultant: {
-      title: "Strategy Consultant / ROI Expert",
-      focus: "Blue Ocean & Scalability",
+      title: "Gestión de Procesos y Simplificación",
+      focus: "Soberanía Tecnológica y Sustentabilidad",
       color: "text-emerald-500",
       bgColor: "bg-emerald-500/10",
       icon: TrendingUp,
       points: [
         {
-          title: "Estrategia del 20% (Pareto)",
-          desc: "Identificación de los 'Nodos de Influencia' (el tendero, el líder de barrio). Digitalizamos primero a los que mueven el 80% de la opinión.",
-          metric: "Efecto Multiplicador"
+          title: "Estrategia del 20% (Pareto Social)",
+          desc: "Identificación y simplificación inmediata de los 5 trámites que concentran el 80% de las colas de ventanilla física, descongestionando las oficinas públicas.",
+          metric: "Impacto inmediato de bienestar"
         },
         {
-          title: "Transformación de Costo a Activo",
-          desc: "La campaña deja de ser un gasto. El padrón verificado Nayarit ID es un activo de datos que sirve para la gobernanza post-electoral (C5).",
-          metric: "ROI Longitudinal 3.5x"
+          title: "Soberanía y Ahorro Colectivo",
+          desc: "Reducción drástica del gasto operativo en papel, fotocopias y consumibles, canalizando los ahorros directamente hacia programas de bienestar comunitario.",
+          metric: "Eficiencia presupuestaria social"
         },
         {
-          title: "Despacho de Servicios Predictivos",
-          desc: "Convertir la queja ciudadana en un ticket de servicio inmediato. El ciudadano no vota por el nombre, vota por la resolución de su entorno.",
-          metric: "Confianza Ciudadana: +40%"
+          title: "Resolución y Trazabilidad",
+          desc: "El ciudadano recibe notificaciones en tiempo real del estatus de su trámite, eliminando la incertidumbre y previniendo la discrecionalidad administrativa.",
+          metric: "Transparencia y certidumbre"
         }
       ]
     }
@@ -102,13 +102,13 @@ export function BrigadaStrategy() {
     <div className="pt-2 pb-12 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col items-center text-center space-y-4">
         <div className="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center shadow-xl mb-2">
-          <Zap className="w-8 h-8 text-magenta-400" />
+          <Zap className="w-8 h-8 text-rose-400" />
         </div>
-        <h2 className="text-3xl font-serif font-black text-slate-900 tracking-tight lowercase">
-           Brigada<em className="text-magenta-500 italic">MX</em> Strategy Bunker
+        <h2 className="text-3xl font-serif font-black text-slate-900 tracking-tight">
+           Estrategia de <em className="text-rose-500 italic">Transformación Digital</em>
         </h2>
         <p className="text-sm text-slate-500 max-w-lg leading-relaxed">
-           Hoja de ruta integral para la implementación de la red de gobernanza y movilización digital 2026.
+           Hoja de ruta técnica e institucional para la implementación del portal municipal unificado y la digitalización de trámites.
         </p>
       </div>
 
@@ -125,7 +125,7 @@ export function BrigadaStrategy() {
                 : "text-slate-500 hover:text-slate-700"
             )}
           >
-            {key === 'manager' ? 'Política' : key === 'dev' ? 'Tecnología' : 'Negocio / ROI'}
+            {key === 'manager' ? 'Atención Social' : key === 'dev' ? 'Tecnología' : 'Simplificación'}
           </button>
         ))}
       </div>
@@ -174,21 +174,21 @@ export function BrigadaStrategy() {
          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
          <div className="relative z-10">
             <div className="flex items-center gap-4 mb-10">
-               <div className="w-10 h-10 bg-magenta-500 rounded-xl flex items-center justify-center">
+               <div className="w-10 h-10 bg-rose-500 rounded-xl flex items-center justify-center">
                   <ClipboardCheck className="w-5 h-5" />
                </div>
                <div>
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-magenta-300">Hoja de Ruta Implementación</h4>
-                  <p className="text-lg font-serif">Q3 2025 - 2026 Full Deploy</p>
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-rose-300">Hoja de Ruta de Simplificación</h4>
+                  <p className="text-lg font-serif">Plan Piloto: Bahía de Banderas, Xalisco y Tepic</p>
                </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {[
-                { phase: "Fase 1", title: "Mapeo & Nayarit ID", date: "Jul-Sep", icon: Smartphone },
-                { phase: "Fase 2", title: "C5 Bunker Connect", date: "Oct-Nov", icon: Database },
-                { phase: "Fase 3", title: "Digital Democracy", date: "Dic-Ene", icon: Globe },
-                { phase: "Fase 4", title: "Soberanía de Datos", date: "Feb-Mar", icon: ShieldCheck }
+                { phase: "Fase 1", title: "Censo & Nayarit ID", date: "Jul-Sep", icon: Smartphone },
+                { phase: "Fase 2", title: "Mapeo Regulatorio", date: "Oct-Nov", icon: Database },
+                { phase: "Fase 3", title: "Ventanilla Abierta", date: "Dic-Ene", icon: Globe },
+                { phase: "Fase 4", title: "Soberanía Digital", date: "Feb-Mar", icon: ShieldCheck }
               ].map((step, i) => (
                 <div key={i} className="bg-white/5 border border-white/10 p-5 rounded-2xl flex flex-col items-center text-center group hover:bg-white/10 transition-colors">
                    <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
@@ -196,7 +196,7 @@ export function BrigadaStrategy() {
                    </div>
                    <p className="text-[8px] font-bold text-white/40 uppercase tracking-widest mb-1">{step.phase}</p>
                    <p className="text-[10px] font-black text-white uppercase mb-1">{step.title}</p>
-                   <p className="text-[9px] font-mono text-magenta-400">{step.date}</p>
+                   <p className="text-[9px] font-mono text-rose-400">{step.date}</p>
                 </div>
               ))}
             </div>
