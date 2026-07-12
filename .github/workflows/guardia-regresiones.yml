@@ -1,0 +1,38 @@
+name: Guardia de regresiones
+
+# Protege el repositorio de las regresiones que los pushes desde AI Studio
+# ya introdujeron cuatro veces: llave de API en el bundle del navegador,
+# metadatos genéricos, pérdida de code-splitting y borrado de archivos de
+# despliegue. Referencia: docs/marco/PROTOCOLO_SEGURIDAD.md
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  guardia:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Verificar regresiones (config y archivos)
+        run: node scripts/verificar-regresiones.mjs
+
+      - name: Compilar y verificar que la llave no esté en el bundle
+        run: |
+          npx vite build
+          if grep -rl "GEMINI" dist/assets/; then
+            echo "::error::La cadena GEMINI aparece en el bundle del navegador — la llave estaría expuesta."
+            exit 1
+          fi
+          echo "Bundle limpio: la llave no viaja al cliente."
