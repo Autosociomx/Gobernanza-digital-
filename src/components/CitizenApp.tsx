@@ -711,7 +711,12 @@ export function CitizenApp({
         {/* Trazabilida Map Overlay */}
         <AnimatePresence>
           {showTriage && (
-            <SaludNayaritID onClose={() => setShowTriage(false)} />
+            <SaludNayaritID
+              onClose={() => setShowTriage(false)}
+              uid={user?.uid}
+              curpSugerido={profile.documentId}
+              nombreSugerido={profile.name}
+            />
           )}
           {showMap && (
              <motion.div 

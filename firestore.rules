@@ -45,8 +45,8 @@ service cloud.firestore {
 
     function isAdmin() {
       return isAuthenticated() &&
-        ((exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin') ||
-          (request.auth.token.email == "autosociomx@gmail.com" && request.auth.token.email_verified == true));
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
     function isEditor() {
@@ -128,6 +128,60 @@ service cloud.firestore {
              data.createdAt == request.time;
     }
 
+    // ---------------------------------------------------------------
+    // Módulo de Salud: perfil ligado a CURP (no a uid), para personas
+    // sin cuenta en la app (adultos mayores, registro por un tercero).
+    // Ver docs/marco/PROTOCOLO_SEGURIDAD.md — modelo de acceso explicado.
+    // ---------------------------------------------------------------
+
+    function esCurpValido(curp) {
+      return curp is string && curp.matches('^[A-Z]{4}[0-9]{6}[A-Z]{6}[0-9A-Z][0-9]$');
+    }
+
+    // El código de personal nunca es legible directamente por el cliente
+    // (personal_salud tiene allow read, write: if false). Solo se valida
+    // aquí, dentro de la regla de escritura de otro documento.
+    function esCodigoPersonalValido(codigo) {
+      return codigo is string && codigo.size() > 0 &&
+        exists(/databases/$(database)/documents/personal_salud/$(codigo)) &&
+        get(/databases/$(database)/documents/personal_salud/$(codigo)).data.activo == true;
+    }
+
+    function puedeRegistrarPerfilSalud(data) {
+      return (data.registradoPorRol == 'paciente' && data.uidVinculado == request.auth.uid) ||
+             (data.registradoPorRol == 'familiar') ||
+             (data.registradoPorRol in ['practicante', 'trabajadora_social', 'promotor'] &&
+               'codigoPersonal' in data && esCodigoPersonalValido(data.codigoPersonal));
+    }
+
+    function isValidPerfilSalud(data) {
+      return hasRequiredFields(['curp', 'nombre', 'registradoPorRol', 'creadoEn']) &&
+             hasOnlyAllowedFields(['curp', 'nombre', 'fechaNacimiento', 'telefono', 'contactoFamiliar', 'registradoPorRol', 'codigoPersonal', 'creadoEn', 'actualizadoEn', 'uidVinculado']) &&
+             esCurpValido(data.curp) &&
+             data.nombre is string && data.nombre.size() > 0 && data.nombre.size() < 150 &&
+             data.registradoPorRol in ['paciente', 'familiar', 'practicante', 'trabajadora_social', 'promotor'];
+    }
+
+    function isValidDocumentoSalud(data, curp) {
+      return hasRequiredFields(['tipo', 'urlArchivo', 'subidoPorRol', 'fecha']) &&
+             hasOnlyAllowedFields(['tipo', 'urlArchivo', 'nombreArchivo', 'descripcion', 'subidoPorRol', 'codigoPersonal', 'fecha']) &&
+             data.tipo in ['rayos_x', 'laboratorio', 'receta', 'otro'] &&
+             data.urlArchivo is string && data.urlArchivo.size() > 0 &&
+             (
+               (data.subidoPorRol in ['practicante', 'trabajadora_social', 'promotor'] &&
+                 'codigoPersonal' in data && esCodigoPersonalValido(data.codigoPersonal)) ||
+               (data.subidoPorRol in ['paciente', 'familiar'] &&
+                 get(/databases/$(database)/documents/perfiles_salud/$(curp)).data.uidVinculado == request.auth.uid)
+             );
+    }
+
+    function isValidConsultaSalud(data) {
+      return hasRequiredFields(['resumen', 'atendidoPorRol', 'fecha']) &&
+             hasOnlyAllowedFields(['resumen', 'nivelTriage', 'atendidoPorRol', 'codigoPersonal', 'fecha']) &&
+             data.resumen is string && data.resumen.size() < 3000 &&
+             (!('nivelTriage' in data) || data.nivelTriage in ['ROJO', 'AMARILLO', 'VERDE', null]);
+    }
+
     // ===============================================================
     // Rules
     // ===============================================================
@@ -159,7 +213,7 @@ service cloud.firestore {
 
     match /forum_threads/{threadId} {
       allow read: if true;
-      allow create: if true;
+      allow create: if isAuthenticated() && isValidForumThread(request.resource.data);
       allow update: if isAuthenticated() && (
         (isOwner(resource.data.authorId) && isValidForumThread(request.resource.data)) ||
         isAdmin() ||
@@ -169,7 +223,7 @@ service cloud.firestore {
 
       match /comments/{commentId} {
         allow read: if true;
-        allow create: if true;
+        allow create: if isAuthenticated() && isValidForumComment(request.resource.data);
         allow delete: if isAdmin() || (isAuthenticated() && isOwner(resource.data.authorId));
       }
     }
@@ -200,6 +254,39 @@ service cloud.firestore {
     match /auditorias_ciudadanas/{auditId} {
       allow read, create: if isAuthenticated();
       allow update, delete: if isAdmin();
+    }
+
+    // personal_salud: nunca legible ni escribible directamente por el
+    // cliente. Solo se consulta desde adentro de otras reglas (get/exists)
+    // para validar un código; se administra manualmente desde la consola
+    // de Firebase (no hay UI de administración de personal todavía).
+    match /personal_salud/{codigo} {
+      allow read, write: if false;
+    }
+
+    match /perfiles_salud/{curp} {
+      // "list" no se permite: nadie puede enumerar todos los perfiles.
+      // "get" requiere sesión y conocer el CURP exacto (no navegable).
+      allow get: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidPerfilSalud(request.resource.data) &&
+        puedeRegistrarPerfilSalud(request.resource.data);
+      allow update: if isAuthenticated() && isValidPerfilSalud(request.resource.data) &&
+        (puedeRegistrarPerfilSalud(request.resource.data) || isAdmin());
+
+      match /documentos/{docId} {
+        // Solo el paciente vinculado o un admin pueden releer/listar
+        // documentos ya guardados; el personal que los sube no conserva
+        // acceso de lectura permanente (principio de necesidad de saber).
+        allow get, list: if isAdmin() ||
+          get(/databases/$(database)/documents/perfiles_salud/$(curp)).data.uidVinculado == request.auth.uid;
+        allow create: if isAuthenticated() && isValidDocumentoSalud(request.resource.data, curp);
+      }
+
+      match /consultas/{consultaId} {
+        allow get, list: if isAdmin() ||
+          get(/databases/$(database)/documents/perfiles_salud/$(curp)).data.uidVinculado == request.auth.uid;
+        allow create: if isAuthenticated() && isValidConsultaSalud(request.resource.data);
+      }
     }
 
     // Default deny

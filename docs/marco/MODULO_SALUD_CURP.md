@@ -1,0 +1,85 @@
+# Módulo: Perfil de Salud ligado a CURP
+
+**Nayarit Digital / ConnectX** · Documento técnico-operativo · v1.0
+
+## El problema que resuelve
+
+El Centro de Salud / Hospital del Bienestar es gratuito con solo el CURP,
+pero no existe ningún expediente que siga al paciente: los estudios (rayos
+X, laboratorios) se entregan por WhatsApp sin control, y cada trámite exige
+volver a presentar copia del CURP porque no hay un perfil que ya lo tenga
+registrado.
+
+## Diseño
+
+El perfil se liga al **CURP**, no a una cuenta de la app — existe aunque la
+persona nunca tenga smartphone. Lo puede crear:
+
+- **El propio paciente** (`paciente`), si tiene la app — su perfil queda
+  vinculado a su cuenta (`uidVinculado`).
+- **Un familiar** (`familiar`) — fricción mínima, sin código, para el caso
+  típico de un adulto mayor que no puede usar la app por sí mismo.
+- **Personal de salud** (`practicante`, `trabajadora_social`, `promotor`) —
+  requiere un **código de personal vigente**, para poder registrar y
+  archivar documentos a nombre de alguien más sin abrir la puerta a que
+  cualquiera cree perfiles falsos.
+
+Cada consulta de triage queda enlazada al perfil (`consultas`), y los
+documentos (`documentos`) reemplazan el envío por WhatsApp con un archivo
+real en Firebase Storage.
+
+## Modelo de seguridad (verificado, no solo diseñado)
+
+Las reglas de `firestore.rules` se probaron con el kit oficial
+`@firebase/rules-unit-testing` contra el emulador real de Firestore — 8/8
+casos pasan:
+
+1. Un usuario anónimo no puede crear un perfil.
+2. Un paciente autenticado sí puede crear su propio perfil.
+3. Personal sin código válido no puede crear un perfil de otra persona.
+4. Personal con código **inactivo** no puede crear un perfil.
+5. Personal con código **válido y activo** sí puede.
+6. Un familiar puede crear un perfil sin código (fricción mínima, por diseño).
+7. El personal que sube un documento **no conserva acceso de lectura**
+   después — principio de necesidad de saber.
+8. El paciente vinculado a su perfil sí puede leer su propio expediente.
+
+`storage.rules` exige que exista primero el documento correspondiente en
+Firestore (que ya pasó el control de código) antes de aceptar el archivo
+binario — nadie sube un archivo directamente sin ese paso.
+
+## Pasos manuales pendientes (fuera del alcance del código)
+
+Estos pasos requieren acceso a la consola de Firebase y **decisiones del
+propietario del proyecto** — no se pueden automatizar desde el repositorio:
+
+1. **Habilitar Cloud Storage** en el proyecto de Firebase (Build → Storage →
+   Comenzar). Dependiendo del plan actual, esto puede requerir cambiar al
+   plan Blaze (pago por uso) — verificar costos antes de activarlo en
+   producción.
+2. **Sembrar códigos de personal** en la colección `personal_salud` desde
+   la consola de Firebase (no hay UI de administración de personal todavía):
+   ```
+   personal_salud/{codigo}
+     nombre: string
+     rol: 'practicante' | 'trabajadora_social' | 'promotor'
+     centroSalud: string
+     activo: boolean
+   ```
+   Cada practicante/trabajadora social del Centro de Salud necesita su
+   propio código antes de poder usar el registro asistido.
+3. **Desplegar `firestore.rules` y `storage.rules`** actualizadas (vía
+   Firebase CLI o consola) — el código del repositorio es la fuente de
+   verdad, pero el despliegue a producción es un paso manual separado.
+
+## Limitación conocida (declarada, no oculta)
+
+La lectura de un perfil (`get` en `perfiles_salud/{curp}`) solo exige sesión
+iniciada y conocer el CURP exacto — no hay forma de validar un código de
+personal efímero en una lectura con las reglas de Firestore sin agregar
+autenticación por claims personalizados (fuera de alcance de este v1). Esto
+refleja el mismo riesgo que ya existe hoy con el CURP en México (se usa como
+identificador semi-público en muchos trámites) — no lo resuelve, pero
+tampoco lo empeora. Los **documentos** (la parte más sensible) sí están
+protegidos de forma más estricta: solo el paciente vinculado o un admin
+pueden releerlos.
