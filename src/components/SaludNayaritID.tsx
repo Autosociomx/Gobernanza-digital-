@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Heart, 
-  Mic, 
-  Send, 
-  X, 
-  ChevronLeft, 
+import {
+  Heart,
+  Mic,
+  Send,
+  X,
+  ChevronLeft,
   Info,
   Stethoscope,
   User,
@@ -14,10 +14,13 @@ import {
   Loader2,
   Phone,
   AlertTriangle,
-  CheckCircle2
+  CheckCircle2,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
+import { useAuraVoice } from '../hooks/useAuraVoice';
 
 type RolType = 'paciente' | 'familiar' | 'promotor';
 type TriageLevel = 'ROJO' | 'AMARILLO' | 'VERDE' | null;
@@ -35,6 +38,8 @@ export function SaludNayaritID({ onClose }: { onClose: () => void }) {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const auraVoice = useAuraVoice();
+  const [autoSpeak, setAutoSpeak] = useState(false);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -78,11 +83,30 @@ export function SaludNayaritID({ onClose }: { onClose: () => void }) {
       const cleanedContent = data.response.replace(/\[TRIAJE:(ROJO|AMARILLO|VERDE)\]/gi, '').trim();
 
       setMessages(prev => [...prev, { role: 'assistant', content: cleanedContent, triage }]);
+      if (autoSpeak) auraVoice.speak(cleanedContent);
     } catch (err: any) {
-      setMessages(prev => [...prev, { role: 'assistant', content: "Lo siento, hubo un problema de conexión. Si es una emergencia, llama al 911." }]);
+      const fallback = "Lo siento, hubo un problema de conexión. Si es una emergencia, llama al 911.";
+      setMessages(prev => [...prev, { role: 'assistant', content: fallback }]);
+      if (autoSpeak) auraVoice.speak(fallback);
     } finally {
       setIsTyping(false);
     }
+  };
+
+  const handleVoiceInput = () => {
+    if (auraVoice.isListening) {
+      auraVoice.stopListening();
+      return;
+    }
+    setAutoSpeak(true);
+    auraVoice.startListening((texto) => handleSendMessage(texto));
+  };
+
+  const initChatConVoz = () => {
+    setAutoSpeak(true);
+    initChat();
+    // Pequeño margen para que la pantalla de chat monte antes de abrir el micrófono
+    setTimeout(() => auraVoice.startListening((texto) => handleSendMessage(texto)), 400);
   };
 
   const initChat = () => {
@@ -131,7 +155,22 @@ export function SaludNayaritID({ onClose }: { onClose: () => void }) {
             <h1 className="font-serif font-black text-lg leading-none">Salud Nayarit ID</h1>
             <p className="text-[10px] uppercase font-bold tracking-widest text-white/60">Municipio de Tepic · Salud CIE-11</p>
           </div>
-          <button onClick={onClose} className="ml-auto flex items-center gap-1.5 bg-red-500/20 px-4 py-2 rounded-full border border-red-500/30 font-black text-[10px] uppercase tracking-widest">
+          {screen === 'chat' && auraVoice.isSupported && (
+            <button
+              onClick={() => {
+                if (autoSpeak) auraVoice.stopSpeaking();
+                setAutoSpeak(!autoSpeak);
+              }}
+              aria-label={autoSpeak ? 'Desactivar respuesta por voz' : 'Activar respuesta por voz'}
+              className={cn(
+                "ml-auto p-2.5 rounded-full border transition-colors",
+                autoSpeak ? "bg-white/20 border-white/40" : "bg-white/10 border-white/20"
+              )}
+            >
+              {autoSpeak ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+            </button>
+          )}
+          <button onClick={onClose} className={cn("flex items-center gap-1.5 bg-red-500/20 px-4 py-2 rounded-full border border-red-500/30 font-black text-[10px] uppercase tracking-widest", screen === 'chat' && auraVoice.isSupported ? "" : "ml-auto")}>
             <X className="w-4 h-4" /> Finalizar
           </button>
         </header>
@@ -240,14 +279,16 @@ export function SaludNayaritID({ onClose }: { onClose: () => void }) {
             </div>
 
             <div className="grid gap-4">
-              <button 
-                onClick={initChat}
+              <button
+                onClick={auraVoice.isSupported ? initChatConVoz : initChat}
                 className="w-full p-8 bg-white border-2 border-slate-100 rounded-[2.5rem] text-center flex flex-col items-center gap-4 hover:border-[#1a6b3c] transition-all shadow-sm group"
               >
                 <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center text-4xl shadow-inner group-hover:bg-amber-100 transition-colors">🎤</div>
                 <div>
                   <h3 className="font-black text-slate-800 text-xl uppercase tracking-tighter">Con tu voz</h3>
-                  <p className="text-slate-500 text-sm mt-1 max-w-[220px]">Habla libremente, la IA entiende términos regionales.</p>
+                  <p className="text-slate-500 text-sm mt-1 max-w-[220px]">
+                    {auraVoice.isSupported ? 'Habla libremente, la IA entiende términos regionales.' : 'No disponible en este navegador — usa el modo Escribiendo.'}
+                  </p>
                 </div>
               </button>
 
@@ -335,17 +376,25 @@ export function SaludNayaritID({ onClose }: { onClose: () => void }) {
 
             <div className="p-6 bg-white border-t border-slate-100 shrink-0">
               <div className="flex gap-3 items-center">
-                <button className="w-14 h-14 bg-emerald-50 text-[#1a6b3c] rounded-[1.2rem] flex items-center justify-center text-xl shadow-inner shrink-0 hover:bg-emerald-100">
+                <button
+                  onClick={handleVoiceInput}
+                  aria-label={auraVoice.isListening ? 'Detener grabación de voz' : 'Describir síntoma por voz'}
+                  className={cn(
+                    "w-14 h-14 rounded-[1.2rem] flex items-center justify-center text-xl shadow-inner shrink-0 transition-colors",
+                    auraVoice.isListening ? "bg-red-500 text-white animate-pulse" : "bg-emerald-50 text-[#1a6b3c] hover:bg-emerald-100"
+                  )}
+                >
                   <Mic className="w-6 h-6" />
                 </button>
                 <div className="flex-1 relative">
-                  <input 
+                  <input
                     type="text"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    placeholder="Describe el síntoma..."
-                    className="w-full bg-slate-50 border-2 border-slate-100 rounded-[1.5rem] px-6 py-4 text-slate-800 text-[1.1rem] focus:outline-none focus:border-[#1a6b3c] transition-colors pr-14 font-medium"
+                    placeholder={auraVoice.isListening ? 'Escuchando…' : 'Describe el síntoma...'}
+                    disabled={auraVoice.isListening}
+                    className="w-full bg-slate-50 border-2 border-slate-100 rounded-[1.5rem] px-6 py-4 text-slate-800 text-[1.1rem] focus:outline-none focus:border-[#1a6b3c] transition-colors pr-14 font-medium disabled:opacity-60"
                   />
                   <button 
                     onClick={() => handleSendMessage()}

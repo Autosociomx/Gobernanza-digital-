@@ -24,13 +24,18 @@ import {
   FileText,
   ShieldCheck,
   ChevronLeft,
-  Brain
+  Brain,
+  Mic,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { NayaritMap } from './NayaritMap';
 import { ParlamentoView } from './dashboard/ParlamentoView';
 import { AnalisisPoliticoView } from './dashboard/AnalisisPoliticoView';
+import { useAuraChat } from '../hooks/useAuraChat';
+import { useAuraVoice } from '../hooks/useAuraVoice';
 
 type Language = 'es' | 'cora' | 'wixarika';
 
@@ -559,21 +564,32 @@ function SaludView() {
 
 function IAView() {
   const [lang, setLang] = useState<Language>('es');
-  const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([
-    { role: 'assistant', content: 'Presidenta Geraldine Ponce, el Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?' }
-  ]);
+  const auraVoice = useAuraVoice();
+  const [autoSpeak, setAutoSpeak] = useState(false);
 
-  useEffect(() => {
-    const greets = {
-      es: 'Presidenta Geraldine Ponce, el Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?',
-      cora: "Presidenta Geraldine Ponce, ConnectX IA amu'u tyu'un. ¿Tyu'un ne'ij tyu'uti'in Tepic?",
-      wixarika: 'Geraldine Ponce keniu, ConnectX IA keniu. ¿Kewa pikanetsi\'iwau Tepic?'
-    };
-    setMessages([{ role: 'assistant', content: greets[lang] }]);
+  const greets = {
+    es: 'Presidenta Geraldine Ponce, el Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?',
+    cora: "Presidenta Geraldine Ponce, ConnectX IA amu'u tyu'un. ¿Tyu'un ne'ij tyu'uti'in Tepic?",
+    wixarika: 'Geraldine Ponce keniu, ConnectX IA keniu. ¿Kewa pikanetsi\'iwau Tepic?'
+  };
+
+  const getPageContext = React.useCallback(() => {
+    return `El usuario está en el módulo "Asistente IA" del C5 Governance Hub (panel administrativo de gobierno municipal). ` +
+      `Rol: funcionario de gobierno. Idioma de interfaz: ${lang}.`;
   }, [lang]);
 
+  const { messages, isTyping, sendMessage, resetGreeting } = useAuraChat({
+    initialGreeting: greets.es,
+    getPageContext,
+    onReply: (respuesta) => { if (autoSpeak) auraVoice.speak(respuesta); },
+  });
+
+  useEffect(() => {
+    resetGreeting(greets[lang]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang, resetGreeting]);
+
   const [inputValue, setInputValue] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
 
   const strategicShortcuts = [
     "Resumen Recaudación",
@@ -582,28 +598,20 @@ function IAView() {
     "Visión Tepic 2027"
   ];
 
-  const handleSendMessage = async (text?: string) => {
-    const userMsg = text || inputValue.trim();
+  const handleSendMessage = (text?: string) => {
+    const userMsg = text ?? inputValue.trim();
     if (!userMsg) return;
-    
-    setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
     if (!text) setInputValue('');
-    setIsTyping(true);
+    sendMessage(userMsg);
+  };
 
-    try {
-      const response = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: `${userMsg} (Context: Governance Admin, Language: ${lang})` })
-      });
-      const data = await response.json();
-      if (data.error) throw new Error(data.error);
-      setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
-    } catch (err: any) {
-      setMessages(prev => [...prev, { role: 'assistant', content: `Error: ${err.message}` }]);
-    } finally {
-      setIsTyping(false);
+  const handleVoiceInput = () => {
+    if (auraVoice.isListening) {
+      auraVoice.stopListening();
+      return;
     }
+    setAutoSpeak(true);
+    auraVoice.startListening((texto) => sendMessage(texto));
   };
 
   return (
@@ -622,8 +630,23 @@ function IAView() {
           </p>
         </div>
         <div className="flex gap-2">
+          {auraVoice.isSupported && (
+            <button
+              onClick={() => {
+                if (autoSpeak) auraVoice.stopSpeaking();
+                setAutoSpeak(!autoSpeak);
+              }}
+              aria-label={autoSpeak ? 'Desactivar respuesta por voz' : 'Activar respuesta por voz'}
+              className={cn(
+                "w-12 h-12 rounded-xl font-black shadow-lg transition-all flex items-center justify-center",
+                autoSpeak ? "bg-purple-600 text-white ring-2 ring-purple-500/40" : "bg-slate-800 text-slate-500 hover:bg-slate-700"
+              )}
+            >
+              {autoSpeak ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+            </button>
+          )}
           {['es', 'cora', 'wixarika'].map(l => (
-            <button 
+            <button
               key={l}
               onClick={() => setLang(l as Language)}
               className={cn(
@@ -681,23 +704,38 @@ function IAView() {
                  </button>
                ))}
             </div>
-            <div className="relative">
-              <input 
-                type="text"
-                aria-label="Introducir comando ejecutivo"
-                placeholder="Introducir comando ejecutivo..."
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                className="w-full bg-slate-900 border-2 border-slate-800 rounded-2xl px-6 py-4 text-white text-[1rem] pr-20 focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all font-bold placeholder:text-slate-800"
-              />
-              <button 
-                onClick={() => handleSendMessage()}
-                aria-label="Enviar"
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-purple-600 text-white rounded-xl shadow-xl hover:bg-purple-500 transition-all active:scale-90"
-              >
-                <Send className="w-5 h-5" />
-              </button>
+            <div className="relative flex items-center gap-3">
+              {auraVoice.isSupported && (
+                <button
+                  onClick={handleVoiceInput}
+                  aria-label={auraVoice.isListening ? 'Detener grabación de voz' : 'Hablar con el Asistente IA'}
+                  className={cn(
+                    "shrink-0 p-4 rounded-2xl shadow-xl transition-all active:scale-90",
+                    auraVoice.isListening ? "bg-red-500 text-white animate-pulse" : "bg-slate-800 text-slate-400 hover:bg-slate-700"
+                  )}
+                >
+                  <Mic className="w-5 h-5" />
+                </button>
+              )}
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  aria-label="Introducir comando ejecutivo"
+                  placeholder={auraVoice.isListening ? 'Escuchando…' : 'Introducir comando ejecutivo...'}
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  disabled={auraVoice.isListening}
+                  className="w-full bg-slate-900 border-2 border-slate-800 rounded-2xl px-6 py-4 text-white text-[1rem] pr-20 focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10 transition-all font-bold placeholder:text-slate-800 disabled:opacity-60"
+                />
+                <button
+                  onClick={() => handleSendMessage()}
+                  aria-label="Enviar"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-purple-600 text-white rounded-xl shadow-xl hover:bg-purple-500 transition-all active:scale-90"
+                >
+                  <Send className="w-5 h-5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
