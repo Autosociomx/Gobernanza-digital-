@@ -36,6 +36,7 @@ import { ParlamentoView } from './dashboard/ParlamentoView';
 import { AnalisisPoliticoView } from './dashboard/AnalisisPoliticoView';
 import { useAuraChat } from '../hooks/useAuraChat';
 import { useAuraVoice } from '../hooks/useAuraVoice';
+import { listarColaCitas, actualizarEstadoCita, type CitaSalud, type EstadoCita } from '../services/citasSaludService';
 
 type Language = 'es' | 'cora' | 'wixarika';
 
@@ -507,6 +508,30 @@ function ServiciosView() {
 }
 
 function SaludView() {
+  const [citas, setCitas] = useState<CitaSalud[]>([]);
+  const [cargandoCitas, setCargandoCitas] = useState(true);
+  const [errorCitas, setErrorCitas] = useState(false);
+
+  const cargarCitas = React.useCallback(() => {
+    setCargandoCitas(true);
+    setErrorCitas(false);
+    listarColaCitas()
+      .then(setCitas)
+      .catch(() => setErrorCitas(true))
+      .finally(() => setCargandoCitas(false));
+  }, []);
+
+  useEffect(() => { cargarCitas(); }, [cargarCitas]);
+
+  const cambiarEstado = async (cita: CitaSalud, nuevoEstado: EstadoCita) => {
+    try {
+      await actualizarEstadoCita(cita, nuevoEstado);
+      cargarCitas();
+    } catch {
+      alert('No se pudo actualizar la cita. Verifica que tu cuenta tenga rol de editor/admin.');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-start">
@@ -517,6 +542,54 @@ function SaludView() {
         <div className="px-3 py-1 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-full text-xs font-mono flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></div>
           SISTEMA OFFLINE ACTIVO EN LA SIERRA
+        </div>
+      </div>
+
+      {/* Portal de Citas — cola real ligada a Firestore (citas_salud), a
+          diferencia del resto del panel que sigue siendo una maqueta visual. */}
+      <div className="bg-[#161920] border border-slate-800 rounded-xl p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h4 className="text-sm font-semibold text-slate-300">Portal de Citas — Cola de Solicitudes</h4>
+          <span className="text-[10px] font-mono text-slate-500">{citas.length} solicitud{citas.length === 1 ? '' : 'es'}</span>
+        </div>
+
+        {cargandoCitas && <p className="text-slate-500 text-sm">Cargando…</p>}
+        {errorCitas && (
+          <p className="text-amber-400 text-sm">
+            No se pudo cargar la cola. Necesitas una cuenta con rol "editor" o "admin" en la colección users.
+          </p>
+        )}
+        {!cargandoCitas && !errorCitas && citas.length === 0 && (
+          <p className="text-slate-500 text-sm">No hay citas solicitadas todavía.</p>
+        )}
+
+        <div className="space-y-3">
+          {citas.map((c) => (
+            <div key={c.id} className="flex items-center gap-4 p-4 bg-slate-900 border border-slate-800 rounded-xl">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-white truncate">{c.nombrePaciente} · {c.especialidad}</p>
+                <p className="text-[10px] font-mono text-slate-500">{c.curp} · {c.fechaSolicitada}{c.motivo ? ` · ${c.motivo}` : ''}</p>
+              </div>
+              <span className={cn(
+                "text-[9px] font-black uppercase px-2.5 py-1 rounded-full tracking-widest shrink-0",
+                c.estado === 'confirmada' ? "bg-emerald-500/20 text-emerald-400" :
+                c.estado === 'cancelada' ? "bg-red-500/20 text-red-400" :
+                c.estado === 'atendida' ? "bg-slate-700 text-slate-300" :
+                "bg-amber-500/20 text-amber-400"
+              )}>
+                {c.estado}
+              </span>
+              {c.estado === 'solicitada' && (
+                <div className="flex gap-2 shrink-0">
+                  <button onClick={() => cambiarEstado(c, 'confirmada')} className="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-lg text-[10px] font-bold uppercase">Confirmar</button>
+                  <button onClick={() => cambiarEstado(c, 'cancelada')} className="px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/30 rounded-lg text-[10px] font-bold uppercase">Cancelar</button>
+                </div>
+              )}
+              {c.estado === 'confirmada' && (
+                <button onClick={() => cambiarEstado(c, 'atendida')} className="px-3 py-1.5 bg-slate-700 text-slate-300 border border-slate-600 rounded-lg text-[10px] font-bold uppercase shrink-0">Marcar atendida</button>
+              )}
+            </div>
+          ))}
         </div>
       </div>
 

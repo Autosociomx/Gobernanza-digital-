@@ -182,6 +182,38 @@ service cloud.firestore {
              (!('nivelTriage' in data) || data.nivelTriage in ['ROJO', 'AMARILLO', 'VERDE', null]);
     }
 
+    // ---------------------------------------------------------------
+    // Portal de Citas: agenda ligada al mismo perfil por CURP. La cola
+    // de citas la administra el personal que YA tiene cuenta en la app
+    // (isEditor()/isAdmin(), el mismo rol que ya usan departments/
+    // infrastructure) — es un caso distinto al registro asistido de
+    // alguien sin cuenta, que sigue usando el código de personal.
+    // ---------------------------------------------------------------
+
+    function puedeCrearCita(data) {
+      return (data.creadoPorRol == 'paciente' &&
+                exists(/databases/$(database)/documents/perfiles_salud/$(data.curp)) &&
+                get(/databases/$(database)/documents/perfiles_salud/$(data.curp)).data.uidVinculado == request.auth.uid) ||
+             (data.creadoPorRol == 'familiar') ||
+             (data.creadoPorRol in ['practicante', 'trabajadora_social', 'promotor'] &&
+               'codigoPersonal' in data && esCodigoPersonalValido(data.codigoPersonal));
+    }
+
+    function esPacienteVinculadoDeCita(data) {
+      return exists(/databases/$(database)/documents/perfiles_salud/$(data.curp)) &&
+        get(/databases/$(database)/documents/perfiles_salud/$(data.curp)).data.uidVinculado == request.auth.uid;
+    }
+
+    function isValidCitaSalud(data) {
+      return hasRequiredFields(['curp', 'nombrePaciente', 'especialidad', 'fechaSolicitada', 'estado', 'creadoPorRol', 'creadoEn']) &&
+             hasOnlyAllowedFields(['curp', 'nombrePaciente', 'centroSalud', 'especialidad', 'fechaSolicitada', 'horaPreferida', 'motivo', 'estado', 'creadoPorRol', 'codigoPersonal', 'creadoEn', 'actualizadoEn']) &&
+             esCurpValido(data.curp) &&
+             data.nombrePaciente is string && data.nombrePaciente.size() > 0 && data.nombrePaciente.size() < 150 &&
+             data.especialidad is string && data.especialidad.size() > 0 && data.especialidad.size() < 150 &&
+             data.estado in ['solicitada', 'confirmada', 'cancelada', 'atendida'] &&
+             data.creadoPorRol in ['paciente', 'familiar', 'practicante', 'trabajadora_social', 'promotor'];
+    }
+
     // ===============================================================
     // Rules
     // ===============================================================
@@ -287,6 +319,15 @@ service cloud.firestore {
           get(/databases/$(database)/documents/perfiles_salud/$(curp)).data.uidVinculado == request.auth.uid;
         allow create: if isAuthenticated() && isValidConsultaSalud(request.resource.data);
       }
+    }
+
+    match /citas_salud/{citaId} {
+      allow create: if isAuthenticated() && isValidCitaSalud(request.resource.data) &&
+        request.resource.data.estado == 'solicitada' && puedeCrearCita(request.resource.data);
+      // El personal con cuenta (editor/admin) ve toda la cola para gestionarla;
+      // el paciente vinculado solo ve sus propias citas.
+      allow get, list: if isEditor() || (isAuthenticated() && esPacienteVinculadoDeCita(resource.data));
+      allow update: if isEditor() && isValidCitaSalud(request.resource.data);
     }
 
     // Default deny

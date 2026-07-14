@@ -19,7 +19,8 @@ import {
   VolumeX,
   FolderHeart,
   Upload,
-  FileText
+  FileText,
+  CalendarPlus
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
@@ -35,6 +36,12 @@ import {
   type DocumentoSalud,
   type RolRegistro,
 } from '../services/saludPerfilService';
+import {
+  solicitarCita,
+  listarMisCitas,
+  ESPECIALIDADES_COMUNES,
+  type CitaSalud,
+} from '../services/citasSaludService';
 
 type RolType = 'paciente' | 'familiar' | 'promotor';
 type SubRolPersonal = 'practicante' | 'trabajadora_social' | 'promotor';
@@ -79,6 +86,14 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
   const [cargandoDocumentos, setCargandoDocumentos] = useState(false);
   const [subiendoArchivo, setSubiendoArchivo] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Portal de citas — mismo expediente, agenda ligada al CURP
+  const [misCitas, setMisCitas] = useState<CitaSalud[]>([]);
+  const [mostrarFormCita, setMostrarFormCita] = useState(false);
+  const [especialidadCita, setEspecialidadCita] = useState<string>(ESPECIALIDADES_COMUNES[0]);
+  const [fechaCita, setFechaCita] = useState('');
+  const [motivoCita, setMotivoCita] = useState('');
+  const [enviandoCita, setEnviandoCita] = useState(false);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -143,6 +158,36 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
       setDocumentos([]);
     } finally {
       setCargandoDocumentos(false);
+    }
+    try {
+      setMisCitas(await listarMisCitas(perfil.curp));
+    } catch {
+      // Solo el paciente vinculado ve sus citas; para otros roles queda vacío.
+      setMisCitas([]);
+    }
+  };
+
+  const handleSolicitarCita = async () => {
+    if (!perfil || !fechaCita) return;
+    setEnviandoCita(true);
+    try {
+      await solicitarCita({
+        curp: perfil.curp,
+        nombrePaciente: perfil.nombre,
+        especialidad: especialidadCita,
+        fechaSolicitada: fechaCita,
+        motivo: motivoCita.trim() || undefined,
+        creadoPorRol: registradoPorRolActual(),
+        codigoPersonal: rol === 'promotor' ? codigoPersonal.trim() : undefined,
+      });
+      setMostrarFormCita(false);
+      setFechaCita('');
+      setMotivoCita('');
+      try { setMisCitas(await listarMisCitas(perfil.curp)); } catch { /* ver nota arriba */ }
+    } catch {
+      alert('No se pudo solicitar la cita. Intenta de nuevo en unos segundos.');
+    } finally {
+      setEnviandoCita(false);
     }
   };
 
@@ -721,6 +766,89 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
                   <ChevronRight className="w-4 h-4 text-slate-300 shrink-0" />
                 </a>
               ))}
+
+              {/* PORTAL DE CITAS */}
+              <div className="pt-4 mt-4 border-t border-slate-100">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-black text-slate-800 text-sm uppercase tracking-widest">Mis Citas</h3>
+                  <button
+                    onClick={() => setMostrarFormCita(!mostrarFormCita)}
+                    className="flex items-center gap-1.5 text-[#1a6b3c] font-black text-[11px] uppercase tracking-widest"
+                  >
+                    <CalendarPlus className="w-4 h-4" /> {mostrarFormCita ? 'Cancelar' : 'Agendar cita'}
+                  </button>
+                </div>
+
+                {mostrarFormCita && (
+                  <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl space-y-3 mb-4">
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1 block">Especialidad</label>
+                      <select
+                        value={especialidadCita}
+                        onChange={(e) => setEspecialidadCita(e.target.value)}
+                        className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 focus:outline-none focus:border-[#1a6b3c]"
+                      >
+                        {ESPECIALIDADES_COMUNES.map((esp) => <option key={esp} value={esp}>{esp}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1 block">Fecha que te acomoda</label>
+                      <input
+                        type="date"
+                        value={fechaCita}
+                        onChange={(e) => setFechaCita(e.target.value)}
+                        className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 focus:outline-none focus:border-[#1a6b3c]"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1 block">Motivo (opcional)</label>
+                      <input
+                        type="text"
+                        value={motivoCita}
+                        onChange={(e) => setMotivoCita(e.target.value)}
+                        placeholder="Breve descripción"
+                        className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 focus:outline-none focus:border-[#1a6b3c]"
+                      />
+                    </div>
+                    <button
+                      onClick={handleSolicitarCita}
+                      disabled={!fechaCita || enviandoCita}
+                      className="w-full py-3.5 bg-[#1a6b3c] text-white rounded-xl font-black text-sm uppercase tracking-widest disabled:opacity-40 flex items-center justify-center gap-2"
+                    >
+                      {enviandoCita ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                      {enviandoCita ? 'Enviando…' : 'Solicitar cita'}
+                    </button>
+                    <p className="text-[10px] text-slate-400 text-center">
+                      El Centro de Salud confirma la fecha real de atención — esto es una solicitud.
+                    </p>
+                  </div>
+                )}
+
+                {misCitas.length === 0 && !mostrarFormCita && (
+                  <p className="text-center text-slate-400 text-sm py-4 font-medium">Aún no tienes citas solicitadas.</p>
+                )}
+
+                {misCitas.map((c) => (
+                  <div key={c.id} className="flex items-center gap-4 p-4 bg-slate-50 border border-slate-100 rounded-2xl mb-2">
+                    <div className="w-11 h-11 bg-white rounded-xl border border-slate-200 flex items-center justify-center shrink-0">
+                      <CalendarPlus className="w-5 h-5 text-[#1a6b3c]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-slate-800 text-sm truncate">{c.especialidad}</p>
+                      <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest">{c.fechaSolicitada}</p>
+                    </div>
+                    <span className={cn(
+                      "text-[9px] font-black uppercase px-2.5 py-1 rounded-full tracking-widest shrink-0",
+                      c.estado === 'confirmada' ? "bg-emerald-100 text-emerald-700" :
+                      c.estado === 'cancelada' ? "bg-red-100 text-red-600" :
+                      c.estado === 'atendida' ? "bg-slate-200 text-slate-600" :
+                      "bg-amber-100 text-amber-700"
+                    )}>
+                      {c.estado}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </motion.div>
         )}

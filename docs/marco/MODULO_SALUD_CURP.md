@@ -1,6 +1,6 @@
-# Módulo: Perfil de Salud ligado a CURP
+# Módulo: Perfil de Salud ligado a CURP + Portal de Citas
 
-**Nayarit Digital / ConnectX** · Documento técnico-operativo · v1.0
+**Nayarit Digital / ConnectX** · Documento técnico-operativo · v1.1
 
 ## El problema que resuelve
 
@@ -83,3 +83,35 @@ identificador semi-público en muchos trámites) — no lo resuelve, pero
 tampoco lo empeora. Los **documentos** (la parte más sensible) sí están
 protegidos de forma más estricta: solo el paciente vinculado o un admin
 pueden releerlos.
+
+## Portal de Citas (v1.1)
+
+Agenda ligada al mismo perfil por CURP — `citas_salud/{citaId}`. A
+diferencia del registro asistido (que usa el código de personal para
+alguien sin cuenta), la **cola de citas la administra el personal que ya
+tiene cuenta en la app**, reutilizando el rol `editor`/`admin` que ya existe
+en la colección `users` (el mismo que usan `departments` e
+`infrastructure`) — no se inventó un tercer sistema de permisos paralelo.
+
+- `src/services/citasSaludService.ts`: solicitar cita, listar mis citas
+  (paciente), listar la cola completa (personal editor/admin), cambiar
+  estado (confirmar/cancelar/marcar atendida)
+- UI ciudadana: dentro de "Mi Expediente" en `SaludNayaritID.tsx`
+- UI de personal: nueva sección "Portal de Citas — Cola de Solicitudes"
+  en el módulo Salud del C5, **claramente separada** del resto del panel
+  — el resto de `SaludView` (mapa de calor, incidencias) sigue siendo una
+  maqueta visual con datos fijos, sin cambios en este commit; se deja
+  señalado aquí para que se sepa cuál parte es real y cuál no.
+
+**Verificado con el mismo rigor** (`@firebase/rules-unit-testing` contra el
+emulador real, 7 casos nuevos, 15/15 en total con los del perfil):
+paciente vinculado crea su cita, un ciudadano ajeno no puede suplantarlo,
+familiar sin fricción, personal editor lista y gestiona toda la cola,
+un ciudadano ajeno no puede ni leer ni modificar la cola.
+
+**Nota de honestidad**: `ESPECIALIDADES_COMUNES` en el servicio es una
+lista de categorías genéricas de cualquier centro de salud (Medicina
+General, Odontología, etc.) — **no** es el catálogo real de especialidades
+del Centro de Salud o el Hospital del Bienestar de Tepic. Poblar el
+catálogo real, y confirmar horarios/disponibilidad reales, es un paso
+posterior con datos que el Centro de Salud tendría que proporcionar.
