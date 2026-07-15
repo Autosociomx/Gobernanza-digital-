@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { Camera, MapPin, User, Loader2, Check } from 'lucide-react';
 import { cn } from '../lib/utils';
 
-export function CompleteProfileView({ profile, onUpdate }: { profile: any, onUpdate: (data: any) => void }) {
+export function CompleteProfileView({ profile, onUpdate, onSkip }: { profile: any, onUpdate: (data: any) => void, onSkip?: () => void }) {
   const [data, setData] = useState({ 
     name: profile.name || '', 
     address: profile.address || '',
@@ -100,12 +100,21 @@ export function CompleteProfileView({ profile, onUpdate }: { profile: any, onUpd
               </button>
             </div>
             
-            <button 
+            <button
                 onClick={() => onUpdate(data)}
                 className="w-full py-4 bg-slate-900 text-white rounded-full font-black shadow-xl hover:scale-[1.02] transition-transform"
             >
                 Guardar y continuar
             </button>
+
+            {onSkip && (
+              <button
+                onClick={onSkip}
+                className="w-full py-2 text-slate-400 font-bold text-sm hover:text-slate-600 transition-colors"
+              >
+                Completar más tarde
+              </button>
+            )}
         </div>
       </motion.div>
     </div>

@@ -50,7 +50,6 @@ import { SaludNayaritID } from './SaludNayaritID';
 import { ParlamentoView } from './dashboard/ParlamentoView';
 import { NotificationView } from './NotificationView';
 import { LegalComplianceDisclaimer } from './LegalComplianceDisclaimer';
-import { LoginView } from './LoginView';
 import { CompleteProfileView } from './CompleteProfileView';
 import { CredentialScannerView } from './CredentialScannerView';
 import { MysteryShopperView } from './MysteryShopperView';
@@ -60,7 +59,7 @@ import JsBarcode from 'jsbarcode';
 
 import { db, auth, handleFirestoreError, OperationType } from '../firebase';
 import { doc, setDoc, getDoc, onSnapshot, collection, addDoc, getDocs, query, where, deleteDoc } from 'firebase/firestore';
-import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
+import { onAuthStateChanged, signInAnonymously, User as FirebaseUser } from 'firebase/auth';
 import { getMasterRegistry, InfrastructureAsset } from '../services/infrastructureService';
 import { CanjesView } from './CanjesView';
 import { ConnectXAcademy } from './ConnectXAcademy';
@@ -103,7 +102,7 @@ export function CitizenApp({
   const [loadingMapData, setLoadingMapData] = useState(true);
   const isProfileComplete = profile.name && profile.address && profile.documentId;
 
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [perfilOmitido, setPerfilOmitido] = useState(false);
   const [isOnline, setIsOnline] = useState(typeof window !== 'undefined' ? navigator.onLine : true);
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -148,6 +147,18 @@ export function CitizenApp({
 
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
+      if (!u) {
+        // Sin cuenta de Google no hay muro de "inicia sesión para continuar":
+        // se abre una sesión anónima invisible para que la app sea usable
+        // de inmediato (mismo patrón que el módulo de Salud). Quien quiera
+        // conservar su perfil entre dispositivos puede vincular Google
+        // después desde su perfil.
+        signInAnonymously(auth).catch((err) => {
+          console.error('No se pudo iniciar sesión anónima:', err);
+          setLoadingProfile(false);
+        });
+        return;
+      }
       if (u) {
         // Fetch real profile
         const userDoc = doc(db, 'users', u.uid);
@@ -171,16 +182,11 @@ export function CitizenApp({
             setDoc(userDoc, initial).catch(err => handleFirestoreError(err, OperationType.UPDATE, `users/${u.uid}`));
           }
           setLoadingProfile(false);
-          setIsLoggingIn(false);
         }, (err) => {
           console.error("Firestore snapshot error:", err);
           setLoadingProfile(false);
-          setIsLoggingIn(false);
         });
         return () => unsubDoc();
-      } else {
-        setLoadingProfile(false);
-        setIsLoggingIn(false);
       }
     });
 
@@ -189,7 +195,6 @@ export function CitizenApp({
         if (loadingProfile) {
             console.warn("Profile loading timed out.");
             setLoadingProfile(false);
-            setIsLoggingIn(false);
         }
     }, 8000);
 
@@ -438,15 +443,8 @@ export function CitizenApp({
           <Loader2 className="w-8 h-8 animate-spin text-magenta-500" />
           <p className="mt-4 font-bold text-slate-400">Verificando sesión...</p>
         </div>
-      ) : !user ? (
-        <LoginView onLogin={() => setIsLoggingIn(true)} />
-      ) : !isProfileComplete ? (
-        <CompleteProfileView profile={profile} onUpdate={updateProfile} />
-      ) : isLoggingIn ? (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
-          <Loader2 className="w-8 h-8 animate-spin text-magenta-500" />
-          <p className="mt-4 font-bold text-slate-400">Autenticando...</p>
-        </div>
+      ) : !isProfileComplete && !perfilOmitido ? (
+        <CompleteProfileView profile={profile} onUpdate={updateProfile} onSkip={() => setPerfilOmitido(true)} />
       ) : (
         <div className="flex justify-center bg-slate-100 min-h-screen">
           {/* Mobile Frame Simulation */}
