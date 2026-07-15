@@ -37,6 +37,7 @@ import {
   actualizarConsentimiento,
   listarAccesos,
   CodigoPersonalInvalidoError,
+  SesionSaludError,
   type PerfilSalud,
   type DocumentoSalud,
   type AccesoSalud,
@@ -149,7 +150,10 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
     } catch (err) {
       if (err instanceof CodigoPersonalInvalidoError) {
         setErrorIdentificacion('Ese código de personal no es válido o no está activo. Verifícalo con tu coordinador del Centro de Salud.');
+      } else if (err instanceof SesionSaludError) {
+        setErrorIdentificacion('No se pudo preparar tu sesión de salud. Si esto persiste, hay que revisar la configuración de Firebase Authentication (proveedor Anónimo).');
       } else {
+        console.error('[SaludNayaritID] No se pudo verificar el perfil:', err);
         setErrorIdentificacion('No se pudo verificar el perfil. Intenta de nuevo en unos segundos.');
       }
     } finally {

@@ -11,7 +11,8 @@ import {
   serverTimestamp,
 } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../firebase';
+import { signInAnonymously } from 'firebase/auth';
+import { db, storage, auth } from '../firebase';
 
 /**
  * Perfil de Salud ligado al CURP — no a una cuenta de la app.
@@ -85,6 +86,35 @@ export class CodigoPersonalInvalidoError extends Error {
   }
 }
 
+export class SesionSaludError extends Error {
+  constructor() {
+    super('No se pudo iniciar una sesión para verificar tu perfil de salud.');
+    this.name = 'SesionSaludError';
+  }
+}
+
+/**
+ * El módulo de Salud no exige iniciar sesión con Google (familiares y
+ * pacientes sin cuenta deben poder usarlo con fricción mínima), pero
+ * firestore.rules exige `isAuthenticated()` incluso para la lectura que
+ * verifica si un perfil ya existe. Se resuelve con una sesión anónima
+ * invisible para quien no tenga ya una sesión — no reemplaza el login
+ * con Google si ya existe uno.
+ *
+ * Requiere que el proveedor "Anónimo" esté habilitado en Firebase
+ * Authentication → Sign-in method. Si no lo está, esta llamada falla
+ * con `auth/admin-restricted-operation` y se traduce en SesionSaludError.
+ */
+async function asegurarSesion(): Promise<void> {
+  if (auth.currentUser) return;
+  try {
+    await signInAnonymously(auth);
+  } catch (err) {
+    console.error('[saludPerfilService] No se pudo iniciar sesión anónima:', err);
+    throw new SesionSaludError();
+  }
+}
+
 export async function obtenerPerfil(curp: string): Promise<PerfilSalud | null> {
   const snap = await getDoc(doc(db, 'perfiles_salud', curp.toUpperCase().trim()));
   return snap.exists() ? (snap.data() as PerfilSalud) : null;
@@ -105,8 +135,24 @@ export async function crearPerfilSiNoExiste(
     throw new Error('El CURP no tiene un formato válido.');
   }
 
-  const existente = await obtenerPerfil(curpNorm);
+  await asegurarSesion();
+
+  let existente: PerfilSalud | null;
+  try {
+    existente = await obtenerPerfil(curpNorm);
+  } catch (err) {
+    console.error('[saludPerfilService] No se pudo leer el perfil existente:', err);
+    throw err;
+  }
   if (existente) return existente;
+
+  // Para el rol "paciente" el perfil debe quedar ligado a ALGUNA sesión
+  // (Google si ya existía, o la anónima que acabamos de asegurar arriba)
+  // para que las reglas de Firestore ("uidVinculado == request.auth.uid")
+  // lo acepten — no basta con que el componente haya pasado un uid externo
+  // si en ese momento no había ninguna sesión iniciada.
+  const uidVinculado = datos.uidVinculado
+    || (datos.registradoPorRol === 'paciente' ? auth.currentUser?.uid : undefined);
 
   const perfil: PerfilSalud & { creadoEn: unknown } = {
     curp: curpNorm,
@@ -117,14 +163,19 @@ export async function crearPerfilSiNoExiste(
     ...(datos.fechaNacimiento ? { fechaNacimiento: datos.fechaNacimiento } : {}),
     ...(datos.telefono ? { telefono: datos.telefono } : {}),
     ...(datos.contactoFamiliar ? { contactoFamiliar: datos.contactoFamiliar } : {}),
-    ...(datos.uidVinculado ? { uidVinculado: datos.uidVinculado } : {}),
+    ...(uidVinculado ? { uidVinculado } : {}),
     ...(datos.codigoPersonal ? { codigoPersonal: datos.codigoPersonal } : {}),
   };
 
   try {
     await setDoc(doc(db, 'perfiles_salud', curpNorm), perfil);
   } catch (err: any) {
-    if (err?.code === 'permission-denied') throw new CodigoPersonalInvalidoError();
+    console.error('[saludPerfilService] No se pudo crear el perfil:', err);
+    // El código de personal inválido es la única causa de permission-denied
+    // que tiene un mensaje específico; para paciente/familiar (sin código)
+    // un permission-denied aquí es otra cosa (p. ej. reglas no desplegadas)
+    // y debe verse el error real, no uno que culpa a un código que no existe.
+    if (err?.code === 'permission-denied' && datos.codigoPersonal) throw new CodigoPersonalInvalidoError();
     throw err;
   }
   return perfil;
