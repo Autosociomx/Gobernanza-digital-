@@ -697,8 +697,22 @@ function SaludView() {
               )}
             </div>
 
+            <div className="flex flex-wrap gap-2">
+              {perfilEncontrado.tipoSangre && (
+                <span className="bg-rose-500/20 text-rose-300 font-black px-2.5 py-1 rounded-lg text-xs">{perfilEncontrado.tipoSangre}</span>
+              )}
+              {perfilEncontrado.derechohabiencia && (
+                <span className="bg-slate-800 text-slate-300 font-bold px-2.5 py-1 rounded-lg text-xs">{perfilEncontrado.derechohabiencia}</span>
+              )}
+            </div>
             {perfilEncontrado.telefono && <p className="text-xs text-slate-400">Teléfono: {perfilEncontrado.telefono}</p>}
             {perfilEncontrado.contactoFamiliar && <p className="text-xs text-slate-400">Contacto de emergencia: {perfilEncontrado.contactoFamiliar}</p>}
+            {perfilEncontrado.alergias && (
+              <p className="text-xs"><span className="text-amber-400 font-bold">Alergias:</span> <span className="text-slate-300">{perfilEncontrado.alergias}</span></p>
+            )}
+            {perfilEncontrado.padecimientosCronicos && (
+              <p className="text-xs"><span className="text-slate-400 font-bold">Crónicas/medicamentos:</span> <span className="text-slate-300">{perfilEncontrado.padecimientosCronicos}</span></p>
+            )}
 
             {(perfilEncontrado.consentimientoActivo ?? true) ? (
               accesoRegistrado && (

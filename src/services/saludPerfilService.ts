@@ -29,6 +29,11 @@ import { db, storage, auth } from '../firebase';
 export type RolRegistro = 'paciente' | 'familiar' | 'practicante' | 'trabajadora_social' | 'promotor';
 export type TipoDocumento = 'rayos_x' | 'laboratorio' | 'receta' | 'otro';
 export type NivelTriage = 'ROJO' | 'AMARILLO' | 'VERDE' | null;
+export type TipoSangre = 'O+' | 'O-' | 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-';
+export type Derechohabiencia = 'IMSS' | 'ISSSTE' | 'INSABI / Bienestar' | 'Seguro privado' | 'Ninguna';
+
+export const TIPOS_SANGRE: TipoSangre[] = ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'];
+export const DERECHOHABIENCIAS: Derechohabiencia[] = ['IMSS', 'ISSSTE', 'INSABI / Bienestar', 'Seguro privado', 'Ninguna'];
 
 export interface PerfilSalud {
   curp: string;
@@ -42,6 +47,12 @@ export interface PerfilSalud {
   codigoPersonal?: string;
   /** Si el paciente autoriza que personal de otro centro vea su expediente sin ser urgencia. Default true al crear. */
   consentimientoActivo?: boolean;
+  /** Dato crítico para urgencias — lo llena el paciente o quien lo registró, no se valida contra ningún laboratorio. */
+  tipoSangre?: TipoSangre;
+  derechohabiencia?: Derechohabiencia;
+  /** Texto libre separado por comas, como lo captura la persona (no hay catálogo clínico normalizado en este v1). */
+  alergias?: string;
+  padecimientosCronicos?: string;
 }
 
 export interface AccesoSalud {
@@ -246,6 +257,31 @@ export async function registrarConsulta(
 export async function actualizarConsentimiento(curp: string, activo: boolean): Promise<void> {
   const curpNorm = curp.toUpperCase().trim();
   await updateDoc(doc(db, 'perfiles_salud', curpNorm), { consentimientoActivo: activo });
+}
+
+/**
+ * Datos clínicos clave que reemplazan el "vuelve a traer copia de tu CURP y
+ * cuéntanos todo otra vez" — mismo camino de edición que el resto del
+ * perfil (paciente vinculado, familiar sin código, o personal con código).
+ * Nunca toca consentimientoActivo, que tiene su propia función y regla.
+ */
+export async function actualizarDatosClinicos(curp: string, datos: {
+  tipoSangre?: TipoSangre;
+  derechohabiencia?: Derechohabiencia;
+  alergias?: string;
+  padecimientosCronicos?: string;
+  contactoFamiliar?: string;
+  telefono?: string;
+}): Promise<void> {
+  const curpNorm = curp.toUpperCase().trim();
+  const cambios: Record<string, string> = {};
+  if (datos.tipoSangre) cambios.tipoSangre = datos.tipoSangre;
+  if (datos.derechohabiencia) cambios.derechohabiencia = datos.derechohabiencia;
+  if (datos.alergias !== undefined) cambios.alergias = datos.alergias.slice(0, 500);
+  if (datos.padecimientosCronicos !== undefined) cambios.padecimientosCronicos = datos.padecimientosCronicos.slice(0, 1000);
+  if (datos.contactoFamiliar !== undefined) cambios.contactoFamiliar = datos.contactoFamiliar;
+  if (datos.telefono !== undefined) cambios.telefono = datos.telefono;
+  await updateDoc(doc(db, 'perfiles_salud', curpNorm), cambios);
 }
 
 /**

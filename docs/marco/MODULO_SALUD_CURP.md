@@ -1,6 +1,6 @@
 # Módulo: Perfil de Salud ligado a CURP + Portal de Citas
 
-**Nayarit Digital / ConnectX** · Documento técnico-operativo · v1.2
+**Nayarit Digital / ConnectX** · Documento técnico-operativo · v1.3
 
 ## El problema que resuelve
 
@@ -163,3 +163,32 @@ perfil (nombre, teléfono, contacto de emergencia) antes incluso de que el
 flujo de consentimiento decida si puede ver más. El consentimiento y la
 bitácora protegen el **acceso deliberado y registrado** al expediente, no
 esa lectura básica — igual que antes, no se oculta esta limitación.
+
+## Datos clínicos clave + rediseño visual (v1.3)
+
+Se agregaron al mismo `PerfilSalud` los campos que un hospital necesita ver
+primero en una urgencia: `tipoSangre`, `derechohabiencia`, `alergias` y
+`padecimientosCronicos` (además de `contactoFamiliar`, que ya existía).
+Se editan por el mismo camino que el resto del perfil — paciente vinculado,
+familiar sin código, o personal con código — y aparecen tanto en "Mi
+Expediente" (ciudadano) como en la tarjeta de resultado de "Buscar Paciente
+por CURP" (personal del C5), con la misma limitación de lectura básica ya
+documentada arriba.
+
+También se rediseñó `SaludNayaritID.tsx` adoptando la paleta e identidad
+wixárika (magenta `#b3255a`, dorado `#c9952a`, turquesa `#1b8f9e`, verde
+`#1a6b3c`, tinta `#0b1a12`) en vez del verde único que tenía antes: banda
+cromática de marca en cada pantalla, encabezados en tinta oscura, tarjetas
+de rol con acento magenta al seleccionar, y un interruptor deslizante real
+para el consentimiento (antes era un botón). Se agregó también "Mostrar
+código en el hospital": una pantalla con un patrón visual tipo QR y el CURP
+en texto grande — **no es un código escaneable real**, es un identificador
+visual para que el paciente lo muestre en admisión; lo que de verdad
+conecta con el sistema es el CURP en texto, que el personal captura a mano
+en "Buscar Paciente por CURP".
+
+Verificado: `npx tsc --noEmit` sin errores, Guardia de regresiones limpio,
+build de producción limpio, y recorrido visual real con Playwright contra
+el build servido (splash → selección de rol → identificación) sin errores
+de consola ni de React — el único error observado fue una desconexión de
+red hacia Firebase propia del entorno de pruebas aislado, no del código.

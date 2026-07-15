@@ -156,11 +156,15 @@ service cloud.firestore {
 
     function isValidPerfilSalud(data) {
       return hasRequiredFields(['curp', 'nombre', 'registradoPorRol', 'creadoEn']) &&
-             hasOnlyAllowedFields(['curp', 'nombre', 'fechaNacimiento', 'telefono', 'contactoFamiliar', 'registradoPorRol', 'codigoPersonal', 'creadoEn', 'actualizadoEn', 'uidVinculado', 'consentimientoActivo']) &&
+             hasOnlyAllowedFields(['curp', 'nombre', 'fechaNacimiento', 'telefono', 'contactoFamiliar', 'registradoPorRol', 'codigoPersonal', 'creadoEn', 'actualizadoEn', 'uidVinculado', 'consentimientoActivo', 'tipoSangre', 'derechohabiencia', 'alergias', 'padecimientosCronicos']) &&
              esCurpValido(data.curp) &&
              data.nombre is string && data.nombre.size() > 0 && data.nombre.size() < 150 &&
              data.registradoPorRol in ['paciente', 'familiar', 'practicante', 'trabajadora_social', 'promotor'] &&
-             (!('consentimientoActivo' in data) || data.consentimientoActivo is bool);
+             (!('consentimientoActivo' in data) || data.consentimientoActivo is bool) &&
+             (!('tipoSangre' in data) || data.tipoSangre in ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-']) &&
+             (!('derechohabiencia' in data) || data.derechohabiencia in ['IMSS', 'ISSSTE', 'INSABI / Bienestar', 'Seguro privado', 'Ninguna']) &&
+             (!('alergias' in data) || (data.alergias is string && data.alergias.size() < 500)) &&
+             (!('padecimientosCronicos' in data) || (data.padecimientosCronicos is string && data.padecimientosCronicos.size() < 1000));
     }
 
     // El consentimiento es el campo más sensible del perfil: decide si

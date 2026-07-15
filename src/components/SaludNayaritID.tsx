@@ -23,7 +23,10 @@ import {
   CalendarPlus,
   ShieldCheck,
   ShieldAlert,
-  Eye
+  Eye,
+  Droplet,
+  QrCode,
+  Pencil
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
@@ -35,13 +38,18 @@ import {
   subirDocumento,
   listarDocumentos,
   actualizarConsentimiento,
+  actualizarDatosClinicos,
   listarAccesos,
   CodigoPersonalInvalidoError,
   SesionSaludError,
+  TIPOS_SANGRE,
+  DERECHOHABIENCIAS,
   type PerfilSalud,
   type DocumentoSalud,
   type AccesoSalud,
   type RolRegistro,
+  type TipoSangre,
+  type Derechohabiencia,
 } from '../services/saludPerfilService';
 import {
   solicitarCita,
@@ -99,6 +107,21 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
   const [bitacora, setBitacora] = useState<AccesoSalud[]>([]);
   const [cargandoBitacora, setCargandoBitacora] = useState(false);
   const [mostrarBitacora, setMostrarBitacora] = useState(false);
+
+  // Datos clínicos clave (tipo de sangre, alergias, crónicas...) — reemplazan
+  // "vuelve a traer copia de tu CURP y cuéntanos todo otra vez".
+  const [mostrarEdicionClinica, setMostrarEdicionClinica] = useState(false);
+  const [editSangre, setEditSangre] = useState<TipoSangre>('O+');
+  const [editDerecho, setEditDerecho] = useState<Derechohabiencia>('Ninguna');
+  const [editAlergias, setEditAlergias] = useState('');
+  const [editCronicas, setEditCronicas] = useState('');
+  const [editContacto, setEditContacto] = useState('');
+  const [guardandoClinico, setGuardandoClinico] = useState(false);
+
+  // Código para mostrar en el hospital — identificador visual, no un
+  // escáner real: lo que importa es el CURP en texto para que el personal
+  // lo escriba en "Buscar Paciente por CURP" del panel del C5.
+  const [mostrarCodigoHospital, setMostrarCodigoHospital] = useState(false);
 
   // Portal de citas — mismo expediente, agenda ligada al CURP
   const [misCitas, setMisCitas] = useState<CitaSalud[]>([]);
@@ -203,6 +226,43 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
       alert('No se pudo actualizar tu consentimiento. Solo tú, desde tu propia cuenta, puedes cambiarlo.');
     } finally {
       setGuardandoConsentimiento(false);
+    }
+  };
+
+  const abrirEdicionClinica = () => {
+    if (!perfil) return;
+    setEditSangre(perfil.tipoSangre || 'O+');
+    setEditDerecho(perfil.derechohabiencia || 'Ninguna');
+    setEditAlergias(perfil.alergias || '');
+    setEditCronicas(perfil.padecimientosCronicos || '');
+    setEditContacto(perfil.contactoFamiliar || '');
+    setMostrarEdicionClinica(true);
+  };
+
+  const guardarDatosClinicos = async () => {
+    if (!perfil) return;
+    setGuardandoClinico(true);
+    try {
+      await actualizarDatosClinicos(perfil.curp, {
+        tipoSangre: editSangre,
+        derechohabiencia: editDerecho,
+        alergias: editAlergias.trim(),
+        padecimientosCronicos: editCronicas.trim(),
+        contactoFamiliar: editContacto.trim(),
+      });
+      setPerfil({
+        ...perfil,
+        tipoSangre: editSangre,
+        derechohabiencia: editDerecho,
+        alergias: editAlergias.trim(),
+        padecimientosCronicos: editCronicas.trim(),
+        contactoFamiliar: editContacto.trim(),
+      });
+      setMostrarEdicionClinica(false);
+    } catch {
+      alert('No se pudieron guardar tus datos clínicos. Intenta de nuevo en unos segundos.');
+    } finally {
+      setGuardandoClinico(false);
     }
   };
 
@@ -331,6 +391,12 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
     setScreen('chat');
   };
 
+  // Banda cromática wixárika — firma visual de Nayarit Digital, presente en
+  // todas las pantallas de este módulo (splash, headers y panel de expediente).
+  const BandaWix = () => (
+    <div className="h-[5px] w-full shrink-0 bg-[linear-gradient(90deg,#b3255a_0%,#c9952a_33%,#1b8f9e_66%,#1a6b3c_100%)]" />
+  );
+
   // Dr. Salvador SVG Identidad
   const MedicalAvatar = () => (
     <svg className="w-12 h-12" viewBox="0 0 120 120" fill="none">
@@ -351,52 +417,55 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
       
       {/* HEADER DINÁMICO */}
       {screen !== 'splash' ? (
-        <header className="bg-[#1a6b3c] px-6 py-6 flex items-center gap-4 text-white shadow-lg shrink-0 z-[110]">
-          <button onClick={() => {
-            if (screen === 'chat') setScreen('input');
-            else if (screen === 'input') setScreen('identificacion');
-            else if (screen === 'identificacion') setScreen('rol');
-            else if (screen === 'rol') setScreen('splash');
-          }} className="p-2 bg-white/10 rounded-full">
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-          <div className="w-10 h-10 shrink-0">
-            <MedicalAvatar />
-          </div>
-          <div>
-            <h1 className="font-serif font-black text-lg leading-none">Salud Nayarit ID</h1>
-            <p className="text-[10px] uppercase font-bold tracking-widest text-white/60">Municipio de Tepic · Salud CIE-11</p>
-          </div>
-          <div className="ml-auto flex items-center gap-2">
-            {screen === 'chat' && perfil && (
-              <button
-                onClick={abrirExpediente}
-                aria-label="Ver mi expediente y documentos"
-                className="p-2.5 rounded-full border bg-white/10 border-white/20 hover:bg-white/20 transition-colors"
-              >
-                <FolderHeart className="w-4 h-4" />
-              </button>
-            )}
-            {screen === 'chat' && auraVoice.isSupported && (
-              <button
-                onClick={() => {
-                  if (autoSpeak) auraVoice.stopSpeaking();
-                  setAutoSpeak(!autoSpeak);
-                }}
-                aria-label={autoSpeak ? 'Desactivar respuesta por voz' : 'Activar respuesta por voz'}
-                className={cn(
-                  "p-2.5 rounded-full border transition-colors",
-                  autoSpeak ? "bg-white/20 border-white/40" : "bg-white/10 border-white/20"
-                )}
-              >
-                {autoSpeak ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-              </button>
-            )}
-            <button onClick={onClose} className="flex items-center gap-1.5 bg-red-500/20 px-4 py-2 rounded-full border border-red-500/30 font-black text-[10px] uppercase tracking-widest">
-              <X className="w-4 h-4" /> Finalizar
+        <div className="shrink-0 z-[110]">
+          <header className="bg-[#0b1a12] px-6 py-6 flex items-center gap-4 text-white shadow-lg">
+            <button onClick={() => {
+              if (screen === 'chat') setScreen('input');
+              else if (screen === 'input') setScreen('identificacion');
+              else if (screen === 'identificacion') setScreen('rol');
+              else if (screen === 'rol') setScreen('splash');
+            }} className="p-2 bg-white/10 rounded-full">
+              <ChevronLeft className="w-6 h-6" />
             </button>
-          </div>
-        </header>
+            <div className="w-10 h-10 shrink-0">
+              <MedicalAvatar />
+            </div>
+            <div>
+              <h1 className="font-serif font-black text-lg leading-none">Salud Nayarit ID</h1>
+              <p className="text-[10px] uppercase font-bold tracking-widest text-white/50">Municipio de Tepic · Salud CIE-11</p>
+            </div>
+            <div className="ml-auto flex items-center gap-2">
+              {screen === 'chat' && perfil && (
+                <button
+                  onClick={abrirExpediente}
+                  aria-label="Ver mi expediente y documentos"
+                  className="p-2.5 rounded-full border bg-white/10 border-white/20 hover:bg-white/20 transition-colors"
+                >
+                  <FolderHeart className="w-4 h-4" />
+                </button>
+              )}
+              {screen === 'chat' && auraVoice.isSupported && (
+                <button
+                  onClick={() => {
+                    if (autoSpeak) auraVoice.stopSpeaking();
+                    setAutoSpeak(!autoSpeak);
+                  }}
+                  aria-label={autoSpeak ? 'Desactivar respuesta por voz' : 'Activar respuesta por voz'}
+                  className={cn(
+                    "p-2.5 rounded-full border transition-colors",
+                    autoSpeak ? "bg-white/20 border-white/40" : "bg-white/10 border-white/20"
+                  )}
+                >
+                  {autoSpeak ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+                </button>
+              )}
+              <button onClick={onClose} className="flex items-center gap-1.5 bg-[#b3261e]/20 px-4 py-2 rounded-full border border-[#b3261e]/40 font-black text-[10px] uppercase tracking-widest">
+                <X className="w-4 h-4" /> Finalizar
+              </button>
+            </div>
+          </header>
+          <BandaWix />
+        </div>
       ) : (
         <div className="fixed top-8 left-8 z-[110]">
           <button 
@@ -412,38 +481,50 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
         
         {/* PANTALLA SPLASH */}
         {screen === 'splash' && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className="flex-1 w-full bg-gradient-to-br from-[#0f4d2b] via-[#1a6b3c] to-[#2d9e5f] flex flex-col items-center justify-center p-8 text-center"
+            className="flex-1 w-full flex flex-col"
           >
-            <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="mb-8">
-              <div className="w-32 h-32 mx-auto filter drop-shadow-2xl">
-                <MedicalAvatar />
+            <BandaWix />
+            <div className="flex-1 bg-[linear-gradient(160deg,#0b1a12_0%,#163021_60%,#0b1a12_100%)] flex flex-col items-center justify-center p-8 text-center">
+              <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="mb-8 relative">
+                <div
+                  className="w-28 h-28 mx-auto absolute inset-0 m-auto opacity-70"
+                  style={{
+                    background: 'conic-gradient(from 0deg, #b3255a, #c9952a, #1b8f9e, #1a6b3c, #b3255a)',
+                    clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
+                    filter: 'blur(2px)',
+                  }}
+                />
+                <div className="w-32 h-32 mx-auto relative filter drop-shadow-2xl">
+                  <MedicalAvatar />
+                </div>
+              </motion.div>
+
+              <span className="text-[#c9952a] font-black text-[10px] uppercase tracking-[0.25em] mb-3">Nayarit Digital</span>
+              <h1 className="font-serif font-black text-[2.5rem] text-white mb-2 leading-tight">Salud Inteligente Nayarit ID</h1>
+              <p className="text-[#1b8f9e] font-black uppercase tracking-[0.2em] text-xs mb-4">Salud Inteligente CIE-11</p>
+
+              <div className="bg-[#c9952a]/10 border border-[#c9952a]/30 rounded-full px-4 py-2 flex items-center gap-2 text-[#c9952a] text-xs font-bold mb-8">
+                <span className="w-2 h-2 rounded-full bg-[#c9952a] animate-pulse"></span>
+                Infraestructura Salud Digital 2027
               </div>
-            </motion.div>
-            
-            <h1 className="font-serif font-black text-[2.5rem] text-white mb-2 leading-tight">Salud Inteligente Nayarit ID</h1>
-            <p className="text-[#c9952a] font-black uppercase tracking-[0.2em] text-xs mb-4">Salud Inteligente CIE-11</p>
-            
-            <div className="bg-[#c9952a]/10 border border-[#c9952a]/30 rounded-full px-4 py-2 flex items-center gap-2 text-[#c9952a] text-xs font-bold mb-8">
-              <span className="w-2 h-2 rounded-full bg-[#c9952a] animate-pulse"></span>
-              Infraestructura Salud Digital 2027
+
+              <p className="text-white/70 text-lg leading-relaxed max-w-sm mb-12">
+                Triaje médico con IA bajo estándar internacional CIE-11. Tu expediente ligado a tu CURP, para que no tengas que repetir tus datos cada vez.
+              </p>
+
+              <button
+                onClick={startTriage}
+                className="w-full max-w-sm py-5 bg-[#1a6b3c] text-white rounded-[2rem] font-black text-lg shadow-[0_10px_30px_rgba(26,107,60,0.35)] hover:scale-105 transition-transform"
+              >
+                Comenzar Evaluación →
+              </button>
+
+              <p className="mt-8 text-white/40 text-[10px] uppercase font-bold tracking-widest max-w-[250px]">
+                Este servicio orienta pero no reemplaza la consulta médica · Emergencias: 911
+              </p>
             </div>
-
-            <p className="text-white/80 text-lg leading-relaxed max-w-sm mb-12">
-              Triaje médico con IA bajo estándar internacional CIE-11. Orientación inmediata, incluso sin internet.
-            </p>
-
-            <button 
-              onClick={startTriage}
-              className="w-full max-w-sm py-5 bg-[#c9952a] text-[#1a1a1a] rounded-[2rem] font-black text-lg shadow-[0_10px_30px_rgba(201,149,42,0.3)] hover:scale-105 transition-transform"
-            >
-              Comenzar Evaluación →
-            </button>
-
-            <p className="mt-8 text-white/40 text-[10px] uppercase font-bold tracking-widest max-w-[250px]">
-              Este servicio orienta pero no reemplaza la consulta médica · Emergencias: 911
-            </p>
           </motion.div>
         )}
 
@@ -461,17 +542,17 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
                 { id: 'familiar', icon: '👨‍👩‍👧', title: 'Familiar o acompañante', sub: 'Describes los síntomas de otra persona.' },
                 { id: 'promotor', icon: '👷', title: 'Promotor de Bienestar', sub: 'Evaluación técnica en campo o módulo.' }
               ].map((item) => (
-                <button 
+                <button
                   key={item.id}
                   onClick={() => selectRol(item.id as RolType)}
                   className={cn(
                     "w-full p-6 bg-white border-2 rounded-[2rem] text-left flex items-center gap-5 transition-all shadow-sm",
-                    rol === item.id ? "border-[#1a6b3c] bg-[#e8f5ed] scale-[1.02]" : "border-slate-100 hover:border-[#2d9e5f]"
+                    rol === item.id ? "border-[#b3255a] bg-[#fbe8ee] scale-[1.02]" : "border-slate-100 hover:border-[#1b8f9e]"
                   )}
                 >
                   <div className={cn(
                     "w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-sm shrink-0",
-                    rol === item.id ? "bg-[#1a6b3c]" : "bg-[#f4f6f3]"
+                    rol === item.id ? "bg-[#b3255a]" : "bg-[#f4f6f3]"
                   )}>
                     {item.icon}
                   </div>
@@ -514,7 +595,7 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
                   onChange={(e) => setCurp(e.target.value.toUpperCase())}
                   maxLength={18}
                   placeholder="ABCD123456HNTXYZ01"
-                  className="w-full bg-white border-2 border-slate-200 rounded-2xl px-5 py-4 text-slate-800 font-mono tracking-wider focus:outline-none focus:border-[#1a6b3c] transition-colors"
+                  className="w-full bg-white border-2 border-slate-200 rounded-2xl px-5 py-4 text-slate-800 font-mono tracking-wider focus:outline-none focus:border-[#1b8f9e] transition-colors"
                 />
               </div>
               <div>
@@ -524,7 +605,7 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
                   placeholder="Nombre del paciente"
-                  className="w-full bg-white border-2 border-slate-200 rounded-2xl px-5 py-4 text-slate-800 font-medium focus:outline-none focus:border-[#1a6b3c] transition-colors"
+                  className="w-full bg-white border-2 border-slate-200 rounded-2xl px-5 py-4 text-slate-800 font-medium focus:outline-none focus:border-[#1b8f9e] transition-colors"
                 />
               </div>
 
@@ -558,7 +639,7 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
                       value={codigoPersonal}
                       onChange={(e) => setCodigoPersonal(e.target.value)}
                       placeholder="Código asignado por tu Centro de Salud"
-                      className="w-full bg-white border-2 border-slate-200 rounded-2xl px-5 py-4 text-slate-800 font-mono focus:outline-none focus:border-[#1a6b3c] transition-colors"
+                      className="w-full bg-white border-2 border-slate-200 rounded-2xl px-5 py-4 text-slate-800 font-mono focus:outline-none focus:border-[#1b8f9e] transition-colors"
                     />
                   </div>
                 </>
@@ -594,7 +675,7 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
             <div className="grid gap-4">
               <button
                 onClick={auraVoice.isSupported ? initChatConVoz : initChat}
-                className="w-full p-8 bg-white border-2 border-slate-100 rounded-[2.5rem] text-center flex flex-col items-center gap-4 hover:border-[#1a6b3c] transition-all shadow-sm group"
+                className="w-full p-8 bg-white border-2 border-slate-100 rounded-[2.5rem] text-center flex flex-col items-center gap-4 hover:border-[#1b8f9e] transition-all shadow-sm group"
               >
                 <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center text-4xl shadow-inner group-hover:bg-amber-100 transition-colors">🎤</div>
                 <div>
@@ -607,7 +688,7 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
 
               <button 
                 onClick={initChat}
-                className="w-full p-8 bg-white border-2 border-slate-100 rounded-[2.5rem] text-center flex flex-col items-center gap-4 hover:border-[#1a6b3c] transition-all shadow-sm group"
+                className="w-full p-8 bg-white border-2 border-slate-100 rounded-[2.5rem] text-center flex flex-col items-center gap-4 hover:border-[#1b8f9e] transition-all shadow-sm group"
               >
                 <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center text-4xl shadow-inner group-hover:bg-blue-100 transition-colors">⌨️</div>
                 <div>
@@ -707,7 +788,7 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                     placeholder={auraVoice.isListening ? 'Escuchando…' : 'Describe el síntoma...'}
                     disabled={auraVoice.isListening}
-                    className="w-full bg-slate-50 border-2 border-slate-100 rounded-[1.5rem] px-6 py-4 text-slate-800 text-[1.1rem] focus:outline-none focus:border-[#1a6b3c] transition-colors pr-14 font-medium disabled:opacity-60"
+                    className="w-full bg-slate-50 border-2 border-slate-100 rounded-[1.5rem] px-6 py-4 text-slate-800 text-[1.1rem] focus:outline-none focus:border-[#1b8f9e] transition-colors pr-14 font-medium disabled:opacity-60"
                   />
                   <button 
                     onClick={() => handleSendMessage()}
@@ -745,30 +826,160 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
             transition={{ type: 'spring', damping: 26, stiffness: 220 }}
             className="fixed inset-0 z-[130] bg-white flex flex-col"
           >
-            <div className="bg-[#1a6b3c] px-6 py-6 flex items-center gap-4 text-white shadow-lg shrink-0">
-              <div className="p-2.5 bg-white/10 rounded-full">
-                <FolderHeart className="w-5 h-5" />
+            <div className="shrink-0">
+              <div className="bg-[#0b1a12] px-6 py-6 flex items-center gap-4 text-white shadow-lg">
+                <div className="p-2.5 bg-white/10 rounded-full">
+                  <FolderHeart className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="font-serif font-black text-lg leading-none">Mi Expediente</h2>
+                  <p className="text-[10px] uppercase font-bold tracking-widest text-white/50">{perfil.nombre} · {perfil.curp}</p>
+                </div>
+                <button onClick={() => setMostrarExpediente(false)} className="ml-auto p-2.5 bg-white/10 rounded-full">
+                  <X className="w-5 h-5" />
+                </button>
               </div>
-              <div>
-                <h2 className="font-serif font-black text-lg leading-none">Mi Expediente</h2>
-                <p className="text-[10px] uppercase font-bold tracking-widest text-white/60">{perfil.nombre} · {perfil.curp}</p>
-              </div>
-              <button onClick={() => setMostrarExpediente(false)} className="ml-auto p-2.5 bg-white/10 rounded-full">
-                <X className="w-5 h-5" />
-              </button>
+              <BandaWix />
             </div>
 
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
+
+              {/* DATOS CLÍNICOS CLAVE — lo que un hospital necesita ver primero en una urgencia */}
+              <div className="p-5 bg-white border border-slate-100 rounded-2xl shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Datos clínicos clave</span>
+                  {perfil.uidVinculado && perfil.uidVinculado === uid && (
+                    <button
+                      onClick={abrirEdicionClinica}
+                      className="flex items-center gap-1 text-[#1b8f9e] font-black text-[10px] uppercase tracking-widest"
+                    >
+                      <Pencil className="w-3 h-3" /> Editar
+                    </button>
+                  )}
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-slate-100">
+                  <span className="text-sm text-slate-500 flex items-center gap-1.5"><Droplet className="w-3.5 h-3.5 text-[#b3261e]" /> Tipo de sangre</span>
+                  <span className="bg-[#fbe9e7] text-[#b3261e] font-black px-2.5 py-1 rounded-lg text-sm">
+                    {perfil.tipoSangre || 'Sin registrar'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-slate-100">
+                  <span className="text-sm text-slate-500">Derechohabiencia</span>
+                  <span className="font-bold text-slate-800 text-sm">{perfil.derechohabiencia || 'Sin registrar'}</span>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <span className="text-sm text-slate-500">Contacto de emergencia</span>
+                  <span className="font-bold text-slate-800 text-sm text-right">{perfil.contactoFamiliar || 'Sin registrar'}</span>
+                </div>
+                <div className="mt-3 pt-3 border-t border-slate-100">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-2">Alergias</span>
+                  {perfil.alergias ? (
+                    <div className="flex flex-wrap gap-1.5">
+                      {perfil.alergias.split(',').map((a, i) => a.trim() && (
+                        <span key={i} className="bg-[#fdf1e0] text-[#b3781e] text-xs font-bold px-2.5 py-1 rounded-full">{a.trim()}</span>
+                      ))}
+                    </div>
+                  ) : (
+                    <span className="text-slate-400 text-sm">Sin alergias registradas</span>
+                  )}
+                </div>
+                <div className="mt-3 pt-3 border-t border-slate-100">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-1">Condiciones crónicas y medicamentos</span>
+                  <p className="text-sm text-slate-700">{perfil.padecimientosCronicos || 'Sin condiciones registradas'}</p>
+                </div>
+              </div>
+
+              {/* EDICIÓN DE DATOS CLÍNICOS */}
+              {mostrarEdicionClinica && (
+                <div className="p-5 bg-[#e5f5f7] border-2 border-[#1b8f9e]/30 rounded-2xl space-y-3">
+                  <div>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 block">Tipo de sangre</label>
+                    <select
+                      value={editSangre}
+                      onChange={(e) => setEditSangre(e.target.value as TipoSangre)}
+                      className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 focus:outline-none focus:border-[#1b8f9e]"
+                    >
+                      {TIPOS_SANGRE.map((s) => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 block">Derechohabiencia</label>
+                    <select
+                      value={editDerecho}
+                      onChange={(e) => setEditDerecho(e.target.value as Derechohabiencia)}
+                      className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 focus:outline-none focus:border-[#1b8f9e]"
+                    >
+                      {DERECHOHABIENCIAS.map((d) => <option key={d} value={d}>{d}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 block">Alergias (separa con comas)</label>
+                    <textarea
+                      value={editAlergias}
+                      onChange={(e) => setEditAlergias(e.target.value)}
+                      rows={2}
+                      placeholder="Penicilina, mariscos…"
+                      className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-[#1b8f9e]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 block">Condiciones crónicas y medicamentos actuales</label>
+                    <textarea
+                      value={editCronicas}
+                      onChange={(e) => setEditCronicas(e.target.value)}
+                      rows={3}
+                      placeholder="Diabetes tipo 2 — metformina 850mg cada 12h…"
+                      className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-[#1b8f9e]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 block">Contacto de emergencia (nombre y teléfono)</label>
+                    <input
+                      type="text"
+                      value={editContacto}
+                      onChange={(e) => setEditContacto(e.target.value)}
+                      placeholder="María López · 311 123 4567"
+                      className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-[#1b8f9e]"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setMostrarEdicionClinica(false)}
+                      className="flex-1 py-3 bg-white border-2 border-slate-200 text-slate-600 rounded-xl font-black text-xs uppercase tracking-widest"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={guardarDatosClinicos}
+                      disabled={guardandoClinico}
+                      className="flex-1 py-3 bg-[#1b8f9e] text-white rounded-xl font-black text-xs uppercase tracking-widest disabled:opacity-50 flex items-center justify-center gap-2"
+                    >
+                      {guardandoClinico ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                      {guardandoClinico ? 'Guardando…' : 'Guardar cambios'}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* MOSTRAR CÓDIGO EN EL HOSPITAL */}
+              {perfil.uidVinculado && perfil.uidVinculado === uid && (
+                <button
+                  onClick={() => setMostrarCodigoHospital(true)}
+                  className="w-full py-4 bg-[#0b1a12] text-white rounded-2xl flex items-center justify-center gap-3 font-black text-sm uppercase tracking-widest"
+                >
+                  <QrCode className="w-5 h-5" /> Mostrar código en el hospital
+                </button>
+              )}
 
               {/* CONSENTIMIENTO — solo el paciente vinculado puede tocarlo (ver firestore.rules) */}
               {perfil.uidVinculado && perfil.uidVinculado === uid && (
                 <div className={cn(
                   "p-4 rounded-2xl border-2 flex items-start gap-3",
-                  (perfil.consentimientoActivo ?? true) ? "bg-[#e8f5ed] border-[#1a6b3c]/30" : "bg-amber-50 border-amber-300"
+                  (perfil.consentimientoActivo ?? true) ? "bg-[#e5f5f7] border-[#1b8f9e]/30" : "bg-[#fdf1e0] border-[#c9952a]/50"
                 )}>
                   {(perfil.consentimientoActivo ?? true)
-                    ? <ShieldCheck className="w-5 h-5 text-[#1a6b3c] shrink-0 mt-0.5" />
-                    : <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />}
+                    ? <ShieldCheck className="w-5 h-5 text-[#1b8f9e] shrink-0 mt-0.5" />
+                    : <ShieldAlert className="w-5 h-5 text-[#b3781e] shrink-0 mt-0.5" />}
                   <div className="flex-1">
                     <p className="font-black text-sm text-slate-800">
                       {(perfil.consentimientoActivo ?? true) ? 'Autorizas ver tu expediente' : 'Consentimiento desactivado'}
@@ -782,12 +993,20 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
                   <button
                     onClick={toggleConsentimiento}
                     disabled={guardandoConsentimiento}
+                    role="switch"
+                    aria-checked={perfil.consentimientoActivo ?? true}
+                    aria-label="Autorizar que personal de salud consulte mi expediente"
                     className={cn(
-                      "shrink-0 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest disabled:opacity-50",
-                      (perfil.consentimientoActivo ?? true) ? "bg-[#1a6b3c] text-white" : "bg-amber-500 text-white"
+                      "shrink-0 relative w-[46px] h-[26px] rounded-full transition-colors disabled:opacity-50",
+                      (perfil.consentimientoActivo ?? true) ? "bg-[#1a6b3c]" : "bg-slate-300"
                     )}
                   >
-                    {guardandoConsentimiento ? '…' : (perfil.consentimientoActivo ?? true) ? 'Desactivar' : 'Activar'}
+                    <span
+                      className={cn(
+                        "absolute top-[3px] w-5 h-5 bg-white rounded-full shadow transition-transform",
+                        (perfil.consentimientoActivo ?? true) ? "translate-x-[23px]" : "translate-x-[3px]"
+                      )}
+                    />
                   </button>
                 </div>
               )}
@@ -824,7 +1043,7 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
                   href={d.urlArchivo}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center gap-4 p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:border-[#1a6b3c]/40 transition-colors"
+                  className="flex items-center gap-4 p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:border-[#1b8f9e]/40 transition-colors"
                 >
                   <div className="w-11 h-11 bg-white rounded-xl border border-slate-200 flex items-center justify-center shrink-0">
                     <FileText className="w-5 h-5 text-[#1a6b3c]" />
@@ -858,7 +1077,7 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
                       <select
                         value={especialidadCita}
                         onChange={(e) => setEspecialidadCita(e.target.value)}
-                        className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 focus:outline-none focus:border-[#1a6b3c]"
+                        className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 focus:outline-none focus:border-[#1b8f9e]"
                       >
                         {ESPECIALIDADES_COMUNES.map((esp) => <option key={esp} value={esp}>{esp}</option>)}
                       </select>
@@ -869,7 +1088,7 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
                         type="date"
                         value={fechaCita}
                         onChange={(e) => setFechaCita(e.target.value)}
-                        className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 focus:outline-none focus:border-[#1a6b3c]"
+                        className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 focus:outline-none focus:border-[#1b8f9e]"
                       />
                     </div>
                     <div>
@@ -879,7 +1098,7 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
                         value={motivoCita}
                         onChange={(e) => setMotivoCita(e.target.value)}
                         placeholder="Breve descripción"
-                        className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 focus:outline-none focus:border-[#1a6b3c]"
+                        className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 focus:outline-none focus:border-[#1b8f9e]"
                       />
                     </div>
                     <button
@@ -962,6 +1181,43 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
                 </div>
               )}
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* MOSTRAR CÓDIGO EN EL HOSPITAL — identificador visual del CURP para
+          que el personal lo escriba en "Buscar Paciente por CURP" del C5.
+          No es un QR escaneable real; el dato que importa es el CURP en
+          texto debajo, que sí está ligado al perfil real en Firestore. */}
+      <AnimatePresence>
+        {mostrarCodigoHospital && perfil && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[140] bg-[#0b1a12]/95 backdrop-blur-sm flex flex-col items-center justify-center p-8"
+          >
+            <div className="w-full max-w-xs bg-white rounded-[2rem] p-6 flex flex-col items-center border-4 border-[#0b1a12]">
+              <div
+                className="w-48 h-48 border-[6px] border-[#0b1a12] mb-4"
+                style={{
+                  backgroundImage:
+                    'repeating-linear-gradient(0deg, #0b1a12 0 8px, #fff 8px 16px), repeating-linear-gradient(90deg, #0b1a12 0 8px, transparent 8px 16px)',
+                  backgroundBlendMode: 'multiply',
+                }}
+              />
+              <p className="font-mono font-black tracking-wider text-slate-800">{perfil.curp}</p>
+              <p className="text-[#b3261e] text-xs font-bold mt-1">Válido mientras tu consentimiento esté activo</p>
+            </div>
+            <p className="text-white/60 text-xs text-center max-w-xs mt-6 leading-relaxed">
+              Muestra este CURP en admisión o urgencias — el personal lo captura en su panel para abrir tu expediente.
+            </p>
+            <button
+              onClick={() => setMostrarCodigoHospital(false)}
+              className="mt-6 px-6 py-3 bg-white/10 border border-white/20 text-white rounded-full font-black text-xs uppercase tracking-widest"
+            >
+              Cerrar
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
