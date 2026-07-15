@@ -40,7 +40,8 @@ import {
   WifiOff,
   Mic,
   Volume2,
-  VolumeX
+  VolumeX,
+  Settings2
 } from 'lucide-react';
   import { motion, AnimatePresence } from 'motion/react';
   import { cn } from '../lib/utils';
@@ -72,6 +73,7 @@ import { MunicipalLettersView } from './MunicipalLettersView';
 import { AuraCertificationSeal } from './AuraCertificationSeal';
 import { useAuraChat } from '../hooks/useAuraChat';
 import { useAuraVoice } from '../hooks/useAuraVoice';
+import { crearReporte, type TipoIncidencia } from '../services/reportesCiudadanosService';
 
 type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria' | 'academy' | 'system_audit' | 'banana_command' | 'strategic_academy' | 'strategic_plan' | 'municipal_letters';
 type Language = 'es' | 'cora' | 'wixarika';
@@ -269,6 +271,20 @@ export function CitizenApp({
     initialGreeting: translations[lang].ai_greet,
     getPageContext,
     onReply: (respuesta) => { if (autoSpeak) auraVoice.speak(respuesta); },
+    onAccion: async (accion) => {
+      if (accion.tipo !== 'reportar_incidencia' || !user) return;
+      try {
+        await crearReporte(
+          user.uid,
+          accion.args.tipo as TipoIncidencia,
+          accion.args.descripcion || 'Reportado desde el chat con Aura.',
+          accion.args.ubicacion,
+          'chat_aura'
+        );
+      } catch {
+        return 'No pude guardar tu reporte en este momento. Intenta de nuevo, o repórtalo desde el módulo de Reportar Incidencias.';
+      }
+    },
   });
 
   useEffect(() => {
@@ -289,6 +305,7 @@ export function CitizenApp({
   const [useThinking, setUseThinking] = useState(false);
   const [useMaps, setUseMaps] = useState(false);
   const [useSearch, setUseSearch] = useState(false);
+  const [showAdvancedModes, setShowAdvancedModes] = useState(false);
 
   const handleShowMap = React.useCallback(() => setShowMap(true), []);
   const handleShowTriage = React.useCallback(() => setShowTriage(true), []);
@@ -317,7 +334,7 @@ export function CitizenApp({
     const userMsg = text ?? inputValue.trim();
     if (!userMsg) return;
     if (!text) setInputValue('');
-    sendMessage(userMsg, { useThinking, useMaps, useSearch });
+    sendMessage(userMsg, { useThinking, useMaps, useSearch, enableReportTool: true });
   };
 
   const handleVoiceInput = () => {
@@ -327,7 +344,7 @@ export function CitizenApp({
     }
     setAutoSpeak(true);
     auraVoice.startListening((texto) => {
-      sendMessage(texto, { useThinking, useMaps, useSearch });
+      sendMessage(texto, { useThinking, useMaps, useSearch, enableReportTool: true });
     });
   };
 
@@ -556,78 +573,104 @@ export function CitizenApp({
                className="absolute inset-0 z-50 bg-white flex flex-col"
             >
                {/* Chat Header */}
-               <div className="px-6 py-6 border-b border-slate-100 flex flex-col gap-4 bg-slate-900 text-white">
+               <div className="px-6 py-5 border-b border-slate-100 flex flex-col gap-3 bg-slate-900 text-white relative">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-full bg-magenta-500 flex items-center justify-center text-white shadow-lg ring-2 ring-white/20"><Bot className="w-6 h-6" /></div>
                       <div>
-                        <p className="text-[1.1rem] font-black uppercase tracking-tight leading-none mb-1">{isAiMode ? 'Aura IA (ConnectX)' : 'Modo Offline'}</p>
+                        <p className="text-[1.1rem] font-black uppercase tracking-tight leading-none mb-1">{isAiMode ? 'Aura' : 'Modo Offline'}</p>
                         <p className={cn("text-[10px] font-bold uppercase flex items-center gap-1", isAiMode ? "text-emerald-400" : "text-amber-400")}>
                           <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse", isAiMode ? "bg-emerald-400" : "bg-amber-400")}></span>
                           {isAiMode ? translations[lang].assistant_online : 'Fallback Mode'}
                         </p>
                       </div>
                     </div>
-                    <button onClick={() => setShowChat(false)} className="p-3 hover:bg-white/10 rounded-full transition-colors">
-                      <X className="w-8 h-8" />
-                    </button>
-                  </div>
-                  <div className="flex gap-2 border-t border-white/10 pt-4 flex-wrap">
-                     <button
-                        onClick={() => {
-                          setUseThinking(!useThinking);
-                          if (!useThinking) { setUseMaps(false); setUseSearch(false); }
-                        }}
-                        className={cn(
-                          "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5 border",
-                          useThinking ? "bg-purple-500/20 text-purple-300 border-purple-500/50" : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10"
-                        )}
-                     >
-                        <div className={cn("w-1.5 h-1.5 rounded-full", useThinking ? "bg-purple-400 animate-pulse" : "bg-white/30")}></div>
-                        Thinking Mode
-                     </button>
-                     <button
-                        onClick={() => {
-                          setUseMaps(!useMaps);
-                          if (!useMaps) { setUseThinking(false); setUseSearch(false); }
-                        }}
-                        className={cn(
-                          "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5 border",
-                          useMaps ? "bg-blue-500/20 text-blue-300 border-blue-500/50" : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10"
-                        )}
-                     >
-                        <div className={cn("w-1.5 h-1.5 rounded-full", useMaps ? "bg-blue-400 animate-pulse" : "bg-white/30")}></div>
-                        Maps Grounding
-                     </button>
-                     <button
-                        onClick={() => {
-                          setUseSearch(!useSearch);
-                          if (!useSearch) { setUseThinking(false); setUseMaps(false); }
-                        }}
-                        className={cn(
-                          "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5 border",
-                          useSearch ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/50" : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10"
-                        )}
-                     >
-                        <div className={cn("w-1.5 h-1.5 rounded-full", useSearch ? "bg-emerald-400 animate-pulse" : "bg-white/30")}></div>
-                        Search Grounding
-                     </button>
-                     {auraVoice.isSupported && (
-                       <button
+                    <div className="flex items-center gap-1">
+                      {auraVoice.isSupported && (
+                        <button
                           onClick={() => {
                             if (autoSpeak) auraVoice.stopSpeaking();
                             setAutoSpeak(!autoSpeak);
                           }}
+                          aria-pressed={autoSpeak}
+                          aria-label={autoSpeak ? 'Desactivar respuesta por voz' : 'Activar respuesta por voz'}
+                          title={autoSpeak ? 'Respuesta por voz activada' : 'Respuesta por voz desactivada'}
                           className={cn(
-                            "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5 border ml-auto",
-                            autoSpeak ? "bg-magenta-500/20 text-magenta-200 border-magenta-500/50" : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10"
+                            "w-11 h-11 rounded-full flex items-center justify-center transition-colors",
+                            autoSpeak ? "bg-magenta-500/20 text-magenta-200" : "bg-white/5 text-white/50 hover:bg-white/10"
                           )}
-                          style={autoSpeak ? { color: '#ff8ab8', borderColor: 'rgba(216,30,91,0.5)' } : {}}
-                       >
-                          {autoSpeak ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
-                          {autoSpeak ? 'Voz activada' : 'Voz desactivada'}
-                       </button>
-                     )}
+                        >
+                          {autoSpeak ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+                        </button>
+                      )}
+                      <div className="relative">
+                        <button
+                          onClick={() => setShowAdvancedModes(!showAdvancedModes)}
+                          aria-expanded={showAdvancedModes}
+                          aria-haspopup="true"
+                          aria-label="Más opciones del asistente"
+                          title="Más opciones"
+                          className={cn(
+                            "w-11 h-11 rounded-full flex items-center justify-center transition-colors",
+                            (useThinking || useMaps || useSearch) ? "bg-white/15 text-white" : "bg-white/5 text-white/50 hover:bg-white/10"
+                          )}
+                        >
+                          <Settings2 className="w-5 h-5" />
+                        </button>
+                        <AnimatePresence>
+                          {showAdvancedModes && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                              transition={{ duration: 0.15 }}
+                              role="menu"
+                              aria-label="Modos avanzados del asistente"
+                              className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-slate-100 p-2 z-50 text-slate-800"
+                            >
+                              {[
+                                { key: 'thinking', label: 'Pensar a fondo', desc: 'Razonamiento más profundo para preguntas complejas', active: useThinking, set: setUseThinking, others: [setUseMaps, setUseSearch] },
+                                { key: 'maps', label: 'Buscar en mapas', desc: 'Ubicaciones y direcciones reales en Tepic', active: useMaps, set: setUseMaps, others: [setUseThinking, setUseSearch] },
+                                { key: 'search', label: 'Buscar en internet', desc: 'Información actualizada fuera de la plataforma', active: useSearch, set: setUseSearch, others: [setUseThinking, setUseMaps] },
+                              ].map((opt) => (
+                                <button
+                                  key={opt.key}
+                                  role="menuitemradio"
+                                  aria-checked={opt.active}
+                                  onClick={() => {
+                                    const next = !opt.active;
+                                    opt.set(next);
+                                    if (next) opt.others.forEach((setOther) => setOther(false));
+                                  }}
+                                  className={cn(
+                                    "w-full text-left px-3 py-2.5 rounded-xl flex items-start gap-3 transition-colors",
+                                    opt.active ? "bg-magenta-50" : "hover:bg-slate-50"
+                                  )}
+                                >
+                                  <span className={cn(
+                                    "w-4 h-4 rounded-full border-2 mt-0.5 shrink-0 flex items-center justify-center",
+                                    opt.active ? "border-magenta-500" : "border-slate-300"
+                                  )}>
+                                    {opt.active && <span className="w-2 h-2 rounded-full bg-magenta-500" style={{ backgroundColor: 'var(--magenta)' }} />}
+                                  </span>
+                                  <span>
+                                    <span className="block text-xs font-bold text-slate-800">{opt.label}</span>
+                                    <span className="block text-[11px] text-slate-500 mt-0.5">{opt.desc}</span>
+                                  </span>
+                                </button>
+                              ))}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                      <button
+                        onClick={() => setShowChat(false)}
+                        aria-label="Cerrar asistente"
+                        className="w-11 h-11 flex items-center justify-center hover:bg-white/10 rounded-full transition-colors"
+                      >
+                        <X className="w-6 h-6" />
+                      </button>
+                    </div>
                   </div>
                </div>
 

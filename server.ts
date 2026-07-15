@@ -6,6 +6,45 @@ import Database from "better-sqlite3";
 import { GoogleGenAI, ThinkingLevel, Type } from "@google/genai";
 import Stripe from "stripe";
 
+// Herramienta real de Aura: registrar un reporte ciudadano (bache, luminaria,
+// falla hídrica). El servidor no escribe a Firestore directamente (no hay
+// credenciales de Firebase Admin aquí) — cuando Gemini decide invocar esta
+// función, el servidor arma una confirmación y regresa la acción al cliente,
+// que ya tiene sesión de Firebase y hace la escritura real bajo las mismas
+// reglas de seguridad que el formulario de reportes. Ver
+// src/services/reportesCiudadanosService.ts y firestore.rules.
+const REPORTAR_INCIDENCIA_DECL = {
+  name: "reportar_incidencia",
+  description:
+    "Registra un reporte ciudadano real de una incidencia urbana (bache, luminaria fundida, falla de agua) para que el municipio le dé seguimiento. Úsala solo cuando el ciudadano describa un problema concreto y quiera reportarlo — no la uses para preguntas generales ni para explicar cómo funciona el reporte.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      tipo: {
+        type: Type.STRING,
+        enum: ["bache", "luminaria", "falla_hidrica", "otro"],
+        description: "Categoría de la incidencia.",
+      },
+      descripcion: {
+        type: Type.STRING,
+        description: "Descripción breve de lo que reportó el ciudadano, en sus propias palabras.",
+      },
+      ubicacion: {
+        type: Type.STRING,
+        description: "Calle, colonia o referencia de ubicación que haya dado el ciudadano, si la dio.",
+      },
+    },
+    required: ["tipo", "descripcion"],
+  },
+};
+
+const TIPO_INCIDENCIA_LABEL: Record<string, string> = {
+  bache: "un bache",
+  luminaria: "una luminaria fundida",
+  falla_hidrica: "una falla de agua",
+  otro: "tu reporte",
+};
+
 let aiClient: GoogleGenAI | null = null;
 function getAI() {
   if (!aiClient) {
@@ -94,38 +133,62 @@ async function startServer() {
 
   // AI Assistant Endpoint
   app.post("/api/ai/chat", async (req, res) => {
-    const { message, context, useThinking, useMaps, useSearch } = req.body;
-    
+    const { message, context, useThinking, useMaps, useSearch, enableReportTool } = req.body;
+
     if (!process.env.GEMINI_API_KEY) {
-      return res.status(500).json({ 
-        error: "GEMINI_API_KEY no configurada. Por favor, añádela en Settings > Secrets." 
+      return res.status(500).json({
+        error: "GEMINI_API_KEY no configurada. Por favor, añádela en Settings > Secrets."
       });
     }
 
     try {
       const finalPrompt = context ? `${context}\n\nPregunta del usuario: ${message}` : message;
       const ai = getAI();
-      
+
       let model = "gemini-3.5-flash";
       let config: any = {
         systemInstruction: systemPrompt,
       };
 
+      // La función de reportar incidencias solo se ofrece en modo normal:
+      // no se puede combinar con grounding de Maps/Search en la misma
+      // llamada, y Thinking Mode es para razonamiento largo, no para actuar.
       if (useThinking) {
         model = "gemini-3.1-pro-preview";
-        config.thinkingConfig = { thinkingLevel: ThinkingLevel.HIGH }; 
+        config.thinkingConfig = { thinkingLevel: ThinkingLevel.HIGH };
       } else if (useMaps) {
         config.tools = [{ googleMaps: {} }];
       } else if (useSearch) {
         config.tools = [{ googleSearch: {} }];
+      } else if (enableReportTool) {
+        config.tools = [{ functionDeclarations: [REPORTAR_INCIDENCIA_DECL] }];
       }
-      
+
       const response = await ai.models.generateContent({
         model: model,
         contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
         config: config,
       });
-      
+
+      const llamada = response.functionCalls?.find((c) => c.name === "reportar_incidencia");
+      if (llamada) {
+        const args = (llamada.args ?? {}) as { tipo?: string; descripcion?: string; ubicacion?: string };
+        const tipo = args.tipo && args.tipo in TIPO_INCIDENCIA_LABEL ? args.tipo : "otro";
+        const etiqueta = TIPO_INCIDENCIA_LABEL[tipo];
+        const confirmacion =
+          `Listo, dejé registrado tu reporte sobre ${etiqueta}` +
+          (args.ubicacion ? ` en ${args.ubicacion}` : "") +
+          `. Puedes ver su estado desde el módulo de Reportar Incidencias.`;
+
+        return res.json({
+          response: confirmacion,
+          accion: {
+            tipo: "reportar_incidencia",
+            args: { tipo, descripcion: args.descripcion || message, ubicacion: args.ubicacion },
+          },
+        });
+      }
+
       res.json({ response: response.text });
     } catch (error: any) {
       console.error("AI Assistant Error:", error);

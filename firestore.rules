@@ -302,6 +302,30 @@ service cloud.firestore {
       allow create, update: if isAuthenticated() && request.auth.uid == request.resource.data.uid;
     }
 
+    // ---------------------------------------------------------------
+    // Reportes ciudadanos: bache, luminaria, falla hídrica. Los crea el
+    // propio ciudadano (desde el formulario o desde Aura vía function
+    // calling — ver server.ts) y solo el autor o personal editor/admin
+    // los puede ver o cambiar de estado. "origen" distingue si vino del
+    // chat o del formulario, solo para trazabilidad, no cambia permisos.
+    // ---------------------------------------------------------------
+    function isValidReporteCiudadano(data) {
+      return hasRequiredFields(['tipo', 'descripcion', 'uid', 'estado', 'origen', 'creadoEn']) &&
+             hasOnlyAllowedFields(['tipo', 'descripcion', 'ubicacion', 'uid', 'estado', 'origen', 'creadoEn', 'actualizadoEn']) &&
+             data.tipo in ['bache', 'luminaria', 'falla_hidrica', 'otro'] &&
+             data.descripcion is string && data.descripcion.size() > 0 && data.descripcion.size() < 1000 &&
+             (!('ubicacion' in data) || (data.ubicacion is string && data.ubicacion.size() < 300)) &&
+             data.origen in ['chat_aura', 'formulario'];
+    }
+
+    match /reportes_ciudadanos/{reporteId} {
+      allow create: if isAuthenticated() && isValidReporteCiudadano(request.resource.data) &&
+        request.resource.data.uid == request.auth.uid && request.resource.data.estado == 'nuevo';
+      allow get, list: if isAuthenticated() && (resource.data.uid == request.auth.uid || isEditor());
+      allow update: if isEditor() && isValidReporteCiudadano(request.resource.data) &&
+        request.resource.data.uid == resource.data.uid;
+    }
+
     match /expediente_unico/{userId} {
       allow read, write: if isOwner(userId) || isAdmin();
     }

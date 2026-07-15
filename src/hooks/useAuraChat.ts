@@ -16,12 +16,27 @@ export interface AuraMessage {
   content: string;
 }
 
+export interface AuraAccion {
+  tipo: string;
+  args: Record<string, any>;
+}
+
 export interface UseAuraChatOptions {
   initialGreeting?: string;
   /** Describe en una frase qué está viendo el usuario ahora mismo. */
   getPageContext?: () => string;
   /** Se dispara con cada respuesta de Aura — útil para leerla en voz alta. */
   onReply?: (respuesta: string) => void;
+  /**
+   * Cuando el modelo decide ejecutar una función real (p. ej. registrar un
+   * reporte), el servidor regresa la acción en vez de solo texto. Este
+   * callback hace la escritura real (con la sesión de Firebase ya
+   * autenticada del lado del cliente) y, si falla, puede regresar un
+   * mensaje que reemplaza la confirmación optimista del servidor — nunca
+   * se le dice al ciudadano que algo quedó registrado si en realidad no
+   * se pudo guardar.
+   */
+  onAccion?: (accion: AuraAccion) => Promise<string | void> | string | void;
 }
 
 export interface SendMessageOptions {
@@ -30,9 +45,11 @@ export interface SendMessageOptions {
   useThinking?: boolean;
   useMaps?: boolean;
   useSearch?: boolean;
+  /** Ofrece a Aura la función real de registrar un reporte ciudadano — ver server.ts. */
+  enableReportTool?: boolean;
 }
 
-export function useAuraChat({ initialGreeting, getPageContext, onReply }: UseAuraChatOptions = {}) {
+export function useAuraChat({ initialGreeting, getPageContext, onReply, onAccion }: UseAuraChatOptions = {}) {
   const [messages, setMessages] = useState<AuraMessage[]>(
     initialGreeting ? [{ role: 'assistant', content: initialGreeting }] : []
   );
@@ -64,15 +81,23 @@ export function useAuraChat({ initialGreeting, getPageContext, onReply }: UseAur
             useThinking: opts.useThinking,
             useMaps: opts.useMaps,
             useSearch: opts.useSearch,
+            enableReportTool: opts.enableReportTool,
           }),
         });
         const data = await response.json();
         if (data.error) throw new Error(data.error);
 
         setIsOnlineMode(true);
-        setMessages((prev) => [...prev, { role: 'assistant', content: data.response }]);
-        onReply?.(data.response);
-        return data.response as string;
+
+        let contenidoFinal: string = data.response;
+        if (data.accion && onAccion) {
+          const resultado = await onAccion(data.accion);
+          if (typeof resultado === 'string' && resultado) contenidoFinal = resultado;
+        }
+
+        setMessages((prev) => [...prev, { role: 'assistant', content: contenidoFinal }]);
+        onReply?.(contenidoFinal);
+        return contenidoFinal;
       } catch (err) {
         setIsOnlineMode(false);
         const fallback =
@@ -84,7 +109,7 @@ export function useAuraChat({ initialGreeting, getPageContext, onReply }: UseAur
         setIsTyping(false);
       }
     },
-    [getPageContext, onReply]
+    [getPageContext, onReply, onAccion]
   );
 
   return { messages, isTyping, isOnlineMode, sendMessage, resetGreeting, setMessages };
