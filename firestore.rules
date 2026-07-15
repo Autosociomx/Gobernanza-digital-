@@ -156,10 +156,37 @@ service cloud.firestore {
 
     function isValidPerfilSalud(data) {
       return hasRequiredFields(['curp', 'nombre', 'registradoPorRol', 'creadoEn']) &&
-             hasOnlyAllowedFields(['curp', 'nombre', 'fechaNacimiento', 'telefono', 'contactoFamiliar', 'registradoPorRol', 'codigoPersonal', 'creadoEn', 'actualizadoEn', 'uidVinculado']) &&
+             hasOnlyAllowedFields(['curp', 'nombre', 'fechaNacimiento', 'telefono', 'contactoFamiliar', 'registradoPorRol', 'codigoPersonal', 'creadoEn', 'actualizadoEn', 'uidVinculado', 'consentimientoActivo']) &&
              esCurpValido(data.curp) &&
              data.nombre is string && data.nombre.size() > 0 && data.nombre.size() < 150 &&
-             data.registradoPorRol in ['paciente', 'familiar', 'practicante', 'trabajadora_social', 'promotor'];
+             data.registradoPorRol in ['paciente', 'familiar', 'practicante', 'trabajadora_social', 'promotor'] &&
+             (!('consentimientoActivo' in data) || data.consentimientoActivo is bool);
+    }
+
+    // El consentimiento es el campo más sensible del perfil: decide si
+    // personal de otro centro de salud puede ver el expediente sin que
+    // sea una urgencia. Se protege aparte del resto de la edición del
+    // perfil (que sí admite el camino de "familiar" con fricción mínima):
+    // solo el propio paciente vinculado o un admin pueden tocarlo, y una
+    // escritura que lo cambie no puede tocar ningún otro campo a la vez.
+    function afectaConsentimiento() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasAny(['consentimientoActivo']);
+    }
+
+    function soloCambiaConsentimiento() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(['consentimientoActivo', 'actualizadoEn']);
+    }
+
+    function puedeCambiarConsentimiento() {
+      return isAdmin() || resource.data.uidVinculado == request.auth.uid;
+    }
+
+    function isValidAccesoSalud(data) {
+      return hasRequiredFields(['quien', 'autorizado', 'fecha']) &&
+             hasOnlyAllowedFields(['quien', 'motivo', 'autorizado', 'fecha']) &&
+             data.quien is string && data.quien.size() > 0 && data.quien.size() < 200 &&
+             data.autorizado is bool &&
+             (data.autorizado == true || (('motivo' in data) && data.motivo is string && data.motivo.size() > 0 && data.motivo.size() < 500));
     }
 
     function isValidDocumentoSalud(data, curp) {
@@ -303,7 +330,9 @@ service cloud.firestore {
       allow create: if isAuthenticated() && isValidPerfilSalud(request.resource.data) &&
         puedeRegistrarPerfilSalud(request.resource.data);
       allow update: if isAuthenticated() && isValidPerfilSalud(request.resource.data) &&
-        (puedeRegistrarPerfilSalud(request.resource.data) || isAdmin());
+        (afectaConsentimiento()
+          ? (soloCambiaConsentimiento() && puedeCambiarConsentimiento())
+          : (puedeRegistrarPerfilSalud(request.resource.data) || isAdmin()));
 
       match /documentos/{docId} {
         // Solo el paciente vinculado o un admin pueden releer/listar
@@ -318,6 +347,17 @@ service cloud.firestore {
         allow get, list: if isAdmin() ||
           get(/databases/$(database)/documents/perfiles_salud/$(curp)).data.uidVinculado == request.auth.uid;
         allow create: if isAuthenticated() && isValidConsultaSalud(request.resource.data);
+      }
+
+      match /accesos/{accesoId} {
+        // Bitácora de acceso: quién consultó el expediente y por qué —
+        // transparencia total para el paciente (NOM-024-SSA3). Inmutable:
+        // solo create, nunca update/delete. La crea el personal con cuenta
+        // en la app (mismo rol editor/admin que ya gestiona citas_salud);
+        // solo el paciente vinculado o un admin pueden leerla.
+        allow get, list: if isAdmin() ||
+          get(/databases/$(database)/documents/perfiles_salud/$(curp)).data.uidVinculado == request.auth.uid;
+        allow create: if isEditor() && isValidAccesoSalud(request.resource.data);
       }
     }
 

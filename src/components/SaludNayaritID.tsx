@@ -20,7 +20,10 @@ import {
   FolderHeart,
   Upload,
   FileText,
-  CalendarPlus
+  CalendarPlus,
+  ShieldCheck,
+  ShieldAlert,
+  Eye
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
@@ -31,9 +34,12 @@ import {
   registrarConsulta,
   subirDocumento,
   listarDocumentos,
+  actualizarConsentimiento,
+  listarAccesos,
   CodigoPersonalInvalidoError,
   type PerfilSalud,
   type DocumentoSalud,
+  type AccesoSalud,
   type RolRegistro,
 } from '../services/saludPerfilService';
 import {
@@ -86,6 +92,12 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
   const [cargandoDocumentos, setCargandoDocumentos] = useState(false);
   const [subiendoArchivo, setSubiendoArchivo] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Consentimiento + bitácora de acceso — "quién ha visto mi expediente"
+  const [guardandoConsentimiento, setGuardandoConsentimiento] = useState(false);
+  const [bitacora, setBitacora] = useState<AccesoSalud[]>([]);
+  const [cargandoBitacora, setCargandoBitacora] = useState(false);
+  const [mostrarBitacora, setMostrarBitacora] = useState(false);
 
   // Portal de citas — mismo expediente, agenda ligada al CURP
   const [misCitas, setMisCitas] = useState<CitaSalud[]>([]);
@@ -164,6 +176,29 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
     } catch {
       // Solo el paciente vinculado ve sus citas; para otros roles queda vacío.
       setMisCitas([]);
+    }
+    setCargandoBitacora(true);
+    try {
+      setBitacora(await listarAccesos(perfil.curp));
+    } catch {
+      // Solo el paciente vinculado (o un admin) puede leer la bitácora.
+      setBitacora([]);
+    } finally {
+      setCargandoBitacora(false);
+    }
+  };
+
+  const toggleConsentimiento = async () => {
+    if (!perfil) return;
+    const nuevoValor = !(perfil.consentimientoActivo ?? true);
+    setGuardandoConsentimiento(true);
+    try {
+      await actualizarConsentimiento(perfil.curp, nuevoValor);
+      setPerfil({ ...perfil, consentimientoActivo: nuevoValor });
+    } catch {
+      alert('No se pudo actualizar tu consentimiento. Solo tú, desde tu propia cuenta, puedes cambiarlo.');
+    } finally {
+      setGuardandoConsentimiento(false);
     }
   };
 
@@ -720,6 +755,39 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
             </div>
 
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
+
+              {/* CONSENTIMIENTO — solo el paciente vinculado puede tocarlo (ver firestore.rules) */}
+              {perfil.uidVinculado && perfil.uidVinculado === uid && (
+                <div className={cn(
+                  "p-4 rounded-2xl border-2 flex items-start gap-3",
+                  (perfil.consentimientoActivo ?? true) ? "bg-[#e8f5ed] border-[#1a6b3c]/30" : "bg-amber-50 border-amber-300"
+                )}>
+                  {(perfil.consentimientoActivo ?? true)
+                    ? <ShieldCheck className="w-5 h-5 text-[#1a6b3c] shrink-0 mt-0.5" />
+                    : <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />}
+                  <div className="flex-1">
+                    <p className="font-black text-sm text-slate-800">
+                      {(perfil.consentimientoActivo ?? true) ? 'Autorizas ver tu expediente' : 'Consentimiento desactivado'}
+                    </p>
+                    <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                      {(perfil.consentimientoActivo ?? true)
+                        ? 'Personal de salud autorizado puede consultarlo. Tú decides — puedes desactivarlo cuando quieras.'
+                        : 'Solo se podrá consultar como acceso de emergencia, y quedará registrado en tu bitácora.'}
+                    </p>
+                  </div>
+                  <button
+                    onClick={toggleConsentimiento}
+                    disabled={guardandoConsentimiento}
+                    className={cn(
+                      "shrink-0 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest disabled:opacity-50",
+                      (perfil.consentimientoActivo ?? true) ? "bg-[#1a6b3c] text-white" : "bg-amber-500 text-white"
+                    )}
+                  >
+                    {guardandoConsentimiento ? '…' : (perfil.consentimientoActivo ?? true) ? 'Desactivar' : 'Activar'}
+                  </button>
+                </div>
+              )}
+
               <input
                 ref={fileInputRef}
                 type="file"
@@ -849,6 +917,46 @@ export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: S
                   </div>
                 ))}
               </div>
+
+              {/* BITÁCORA DE ACCESO — transparencia total, solo visible para el paciente vinculado */}
+              {perfil.uidVinculado && perfil.uidVinculado === uid && (
+                <div className="pt-4 mt-4 border-t border-slate-100">
+                  <button
+                    onClick={() => setMostrarBitacora(!mostrarBitacora)}
+                    className="flex items-center gap-1.5 text-slate-500 font-black text-[11px] uppercase tracking-widest mb-3"
+                  >
+                    <Eye className="w-4 h-4" /> Quién ha visto tu expediente {mostrarBitacora ? '▲' : '▼'}
+                  </button>
+
+                  {mostrarBitacora && (
+                    <>
+                      {cargandoBitacora && (
+                        <div className="flex justify-center py-6"><Loader2 className="w-5 h-5 animate-spin text-slate-400" /></div>
+                      )}
+                      {!cargandoBitacora && bitacora.length === 0 && (
+                        <p className="text-center text-slate-400 text-sm py-4 font-medium">Todavía no hay consultas registradas.</p>
+                      )}
+                      {bitacora.map((a) => (
+                        <div key={a.id} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl mb-2">
+                          <div className="flex items-center justify-between">
+                            <p className="font-bold text-slate-800 text-sm">{a.quien}</p>
+                            <span className={cn(
+                              "text-[9px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest shrink-0",
+                              a.autorizado ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                            )}>
+                              {a.autorizado ? 'Autorizado' : 'Emergencia'}
+                            </span>
+                          </div>
+                          {a.motivo && <p className="text-xs text-slate-500 mt-1">{a.motivo}</p>}
+                          <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest mt-1">
+                            {a.fecha.toLocaleString('es-MX')}
+                          </p>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </motion.div>
         )}

@@ -2,6 +2,7 @@ import {
   doc,
   getDoc,
   setDoc,
+  updateDoc,
   collection,
   addDoc,
   getDocs,
@@ -38,6 +39,19 @@ export interface PerfilSalud {
   uidVinculado?: string;
   /** Requerido si registradoPorRol es practicante/trabajadora_social/promotor. */
   codigoPersonal?: string;
+  /** Si el paciente autoriza que personal de otro centro vea su expediente sin ser urgencia. Default true al crear. */
+  consentimientoActivo?: boolean;
+}
+
+export interface AccesoSalud {
+  id: string;
+  /** Nombre de quien consultó (personal con cuenta en la app). */
+  quien: string;
+  /** Obligatorio cuando autorizado es false — motivo del acceso de emergencia. */
+  motivo?: string;
+  /** false cuando se consultó sin que el paciente tuviera el consentimiento activo. */
+  autorizado: boolean;
+  fecha: Date;
 }
 
 export interface DocumentoSalud {
@@ -98,6 +112,7 @@ export async function crearPerfilSiNoExiste(
     curp: curpNorm,
     nombre: datos.nombre,
     registradoPorRol: datos.registradoPorRol,
+    consentimientoActivo: true,
     creadoEn: serverTimestamp(),
     ...(datos.fechaNacimiento ? { fechaNacimiento: datos.fechaNacimiento } : {}),
     ...(datos.telefono ? { telefono: datos.telefono } : {}),
@@ -170,4 +185,44 @@ export async function registrarConsulta(
     ...(codigoPersonal ? { codigoPersonal } : {}),
     fecha: serverTimestamp(),
   });
+}
+
+/**
+ * Solo el paciente vinculado a su propio perfil (o un admin) puede cambiar
+ * esto — ver firestore.rules: es el único campo que un familiar o el
+ * personal que registró el perfil NO puede tocar después.
+ */
+export async function actualizarConsentimiento(curp: string, activo: boolean): Promise<void> {
+  const curpNorm = curp.toUpperCase().trim();
+  await updateDoc(doc(db, 'perfiles_salud', curpNorm), { consentimientoActivo: activo });
+}
+
+/**
+ * Bitácora de acceso — "quién ha visto mi expediente". La crea el personal
+ * con cuenta en la app (editor/admin) al consultar un perfil; el paciente
+ * vinculado (o un admin) es quien puede leerla, nunca el personal que la
+ * generó. Ver docs/marco/MODULO_SALUD_CURP.md.
+ */
+export async function registrarAcceso(
+  curp: string,
+  quien: string,
+  autorizado: boolean,
+  motivo?: string
+): Promise<void> {
+  const curpNorm = curp.toUpperCase().trim();
+  await addDoc(collection(db, 'perfiles_salud', curpNorm, 'accesos'), {
+    quien,
+    autorizado,
+    ...(motivo ? { motivo: motivo.slice(0, 500) } : {}),
+    fecha: serverTimestamp(),
+  });
+}
+
+/** Solo visible para el paciente vinculado a su propio perfil, o un admin — ver firestore.rules. */
+export async function listarAccesos(curp: string): Promise<AccesoSalud[]> {
+  const curpNorm = curp.toUpperCase().trim();
+  const snap = await getDocs(
+    query(collection(db, 'perfiles_salud', curpNorm, 'accesos'), orderBy('fecha', 'desc'))
+  );
+  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as any), fecha: d.data().fecha?.toDate?.() ?? new Date() }));
 }

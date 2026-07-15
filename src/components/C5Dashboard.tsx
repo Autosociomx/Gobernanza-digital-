@@ -23,6 +23,8 @@ import {
   Coins,
   FileText,
   ShieldCheck,
+  ShieldAlert,
+  Search,
   ChevronLeft,
   Brain,
   Mic,
@@ -37,6 +39,8 @@ import { AnalisisPoliticoView } from './dashboard/AnalisisPoliticoView';
 import { useAuraChat } from '../hooks/useAuraChat';
 import { useAuraVoice } from '../hooks/useAuraVoice';
 import { listarColaCitas, actualizarEstadoCita, type CitaSalud, type EstadoCita } from '../services/citasSaludService';
+import { obtenerPerfil, registrarAcceso, esCurpValido, type PerfilSalud } from '../services/saludPerfilService';
+import { useAuth } from './FirebaseProvider';
 
 type Language = 'es' | 'cora' | 'wixarika';
 
@@ -508,6 +512,7 @@ function ServiciosView() {
 }
 
 function SaludView() {
+  const { user } = useAuth();
   const [citas, setCitas] = useState<CitaSalud[]>([]);
   const [cargandoCitas, setCargandoCitas] = useState(true);
   const [errorCitas, setErrorCitas] = useState(false);
@@ -529,6 +534,60 @@ function SaludView() {
       cargarCitas();
     } catch {
       alert('No se pudo actualizar la cita. Verifica que tu cuenta tenga rol de editor/admin.');
+    }
+  };
+
+  // Expediente de Urgencias — búsqueda por CURP con consentimiento y
+  // bitácora de acceso obligatoria (ver docs/marco/MODULO_SALUD_CURP.md).
+  const [curpBusqueda, setCurpBusqueda] = useState('');
+  const [buscandoPaciente, setBuscandoPaciente] = useState(false);
+  const [errorBusqueda, setErrorBusqueda] = useState('');
+  const [perfilEncontrado, setPerfilEncontrado] = useState<PerfilSalud | null>(null);
+  const [accesoRegistrado, setAccesoRegistrado] = useState(false);
+  const [motivoEmergencia, setMotivoEmergencia] = useState('');
+  const [registrandoEmergencia, setRegistrandoEmergencia] = useState(false);
+
+  const nombrePersonal = user?.displayName || user?.email || 'Personal sin nombre registrado';
+
+  const buscarPaciente = async () => {
+    const curp = curpBusqueda.toUpperCase().trim();
+    setErrorBusqueda('');
+    setPerfilEncontrado(null);
+    setAccesoRegistrado(false);
+    setMotivoEmergencia('');
+    if (!esCurpValido(curp)) {
+      setErrorBusqueda('El CURP no tiene un formato válido.');
+      return;
+    }
+    setBuscandoPaciente(true);
+    try {
+      const perfil = await obtenerPerfil(curp);
+      if (!perfil) {
+        setErrorBusqueda('No existe un perfil de salud con ese CURP todavía.');
+        return;
+      }
+      setPerfilEncontrado(perfil);
+      if (perfil.consentimientoActivo ?? true) {
+        await registrarAcceso(curp, nombrePersonal, true).catch(() => {});
+        setAccesoRegistrado(true);
+      }
+    } catch {
+      setErrorBusqueda('No se pudo consultar. Verifica que tu cuenta tenga rol de editor/admin.');
+    } finally {
+      setBuscandoPaciente(false);
+    }
+  };
+
+  const solicitarAccesoEmergencia = async () => {
+    if (!perfilEncontrado || !motivoEmergencia.trim()) return;
+    setRegistrandoEmergencia(true);
+    try {
+      await registrarAcceso(perfilEncontrado.curp, nombrePersonal, false, motivoEmergencia.trim());
+      setAccesoRegistrado(true);
+    } catch {
+      alert('No se pudo registrar el acceso de emergencia. Verifica que tu cuenta tenga rol de editor/admin.');
+    } finally {
+      setRegistrandoEmergencia(false);
     }
   };
 
@@ -591,6 +650,83 @@ function SaludView() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Expediente de Urgencias — búsqueda real por CURP, ligada al mismo
+          perfiles_salud que usa el ciudadano. El consentimiento del paciente
+          decide si el acceso es directo o requiere motivo de emergencia;
+          cualquiera de los dos caminos queda en la bitácora del paciente. */}
+      <div className="bg-[#161920] border border-slate-800 rounded-xl p-6">
+        <h4 className="text-sm font-semibold text-slate-300 mb-4">Expediente de Urgencias — Buscar Paciente por CURP</h4>
+        <div className="flex gap-3">
+          <input
+            value={curpBusqueda}
+            onChange={(e) => setCurpBusqueda(e.target.value.toUpperCase())}
+            onKeyDown={(e) => e.key === 'Enter' && buscarPaciente()}
+            maxLength={18}
+            placeholder="AAAA000000HNTXXX00"
+            className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm font-mono text-white placeholder:text-slate-600 focus:outline-none focus:border-rose-500"
+          />
+          <button
+            onClick={buscarPaciente}
+            disabled={buscandoPaciente || !curpBusqueda}
+            className="px-4 py-2.5 bg-rose-500/10 text-rose-400 border border-rose-500/30 rounded-lg text-xs font-bold uppercase flex items-center gap-2 disabled:opacity-40"
+          >
+            {buscandoPaciente ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+            Consultar
+          </button>
+        </div>
+
+        {errorBusqueda && <p className="text-amber-400 text-xs mt-3">{errorBusqueda}</p>}
+
+        {perfilEncontrado && (
+          <div className="mt-4 p-4 bg-slate-900 border border-slate-800 rounded-xl space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-bold text-white">{perfilEncontrado.nombre}</p>
+                <p className="text-[10px] font-mono text-slate-500">{perfilEncontrado.curp}</p>
+              </div>
+              {(perfilEncontrado.consentimientoActivo ?? true) ? (
+                <span className="flex items-center gap-1.5 text-[10px] font-black uppercase px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400">
+                  <ShieldCheck className="w-3 h-3" /> Consentimiento activo
+                </span>
+              ) : (
+                <span className="flex items-center gap-1.5 text-[10px] font-black uppercase px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400">
+                  <ShieldAlert className="w-3 h-3" /> Sin consentimiento
+                </span>
+              )}
+            </div>
+
+            {perfilEncontrado.telefono && <p className="text-xs text-slate-400">Teléfono: {perfilEncontrado.telefono}</p>}
+            {perfilEncontrado.contactoFamiliar && <p className="text-xs text-slate-400">Contacto de emergencia: {perfilEncontrado.contactoFamiliar}</p>}
+
+            {(perfilEncontrado.consentimientoActivo ?? true) ? (
+              accesoRegistrado && (
+                <p className="text-[11px] text-emerald-400">Acceso autorizado registrado en la bitácora del paciente.</p>
+              )
+            ) : accesoRegistrado ? (
+              <p className="text-[11px] text-amber-400">Acceso de emergencia registrado en la bitácora del paciente.</p>
+            ) : (
+              <div className="space-y-2 pt-2 border-t border-slate-800">
+                <p className="text-[11px] text-amber-400">El paciente no ha autorizado consultas fuera de una urgencia.</p>
+                <textarea
+                  value={motivoEmergencia}
+                  onChange={(e) => setMotivoEmergencia(e.target.value)}
+                  rows={2}
+                  placeholder="Motivo del acceso de emergencia (obligatorio, queda en la bitácora)…"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder:text-slate-600 focus:outline-none focus:border-amber-500"
+                />
+                <button
+                  onClick={solicitarAccesoEmergencia}
+                  disabled={!motivoEmergencia.trim() || registrandoEmergencia}
+                  className="px-3 py-2 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-lg text-[10px] font-bold uppercase disabled:opacity-40"
+                >
+                  {registrandoEmergencia ? 'Registrando…' : 'Solicitar acceso de emergencia'}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6">

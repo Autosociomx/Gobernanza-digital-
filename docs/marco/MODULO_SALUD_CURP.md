@@ -1,6 +1,6 @@
 # Módulo: Perfil de Salud ligado a CURP + Portal de Citas
 
-**Nayarit Digital / ConnectX** · Documento técnico-operativo · v1.1
+**Nayarit Digital / ConnectX** · Documento técnico-operativo · v1.2
 
 ## El problema que resuelve
 
@@ -115,3 +115,51 @@ General, Odontología, etc.) — **no** es el catálogo real de especialidades
 del Centro de Salud o el Hospital del Bienestar de Tepic. Poblar el
 catálogo real, y confirmar horarios/disponibilidad reales, es un paso
 posterior con datos que el Centro de Salud tendría que proporcionar.
+
+## Consentimiento + Bitácora de Acceso (v1.2)
+
+Resuelve un vacío del propio diseño v1: antes, cualquier personal con
+cuenta editor/admin podía leer el perfil básico de cualquier CURP sin que
+quedara registro ni el paciente tuviera forma de controlarlo. Ahora:
+
+- **`consentimientoActivo`** (booleano, default `true` al crear el perfil):
+  decide si personal de otro centro puede consultar el expediente sin que
+  sea una urgencia. Es el único campo del perfil que **solo el paciente
+  vinculado o un admin pueden tocar** — ni el registro asistido por
+  familiar/practicante (que sigue teniendo fricción mínima para el resto
+  de los campos) puede cambiarlo. Una escritura que lo modifique no puede
+  tocar ningún otro campo a la vez (evita colar cambios junto al toggle).
+- **`perfiles_salud/{curp}/accesos`**: bitácora inmutable (solo `create`).
+  El personal con cuenta en la app (mismo rol `editor`/`admin` reutilizado
+  del resto del módulo) la escribe al consultar un perfil — con
+  `autorizado: true` si el consentimiento estaba activo, o `autorizado:
+  false` + `motivo` obligatorio si fue un acceso de emergencia sin
+  consentimiento. Solo el paciente vinculado (o un admin) puede leerla —
+  **ni siquiera el personal que generó la entrada puede releerla después**,
+  mismo principio de necesidad de saber que ya aplicaba a `documentos`.
+- UI ciudadana: toggle de consentimiento + sección "Quién ha visto tu
+  expediente" dentro de "Mi Expediente" en `SaludNayaritID.tsx`.
+- UI de personal: nueva sección "Expediente de Urgencias — Buscar
+  Paciente por CURP" en el módulo Salud del C5 — búsqueda real, con el
+  flujo de acceso de emergencia cuando el paciente no ha dado consentimiento.
+
+**Verificado con el mismo rigor** (`@firebase/rules-unit-testing` contra el
+emulador real, 12 casos nuevos, 27/27 en total con los de perfil y citas):
+el paciente vinculado sí puede desactivar su propio consentimiento; un
+ciudadano ajeno no puede cambiarlo haciéndose pasar por "familiar"; el
+personal editor tampoco puede cambiarlo; no se puede colar un cambio de
+consentimiento junto con otro campo; un perfil creado por familiar (sin
+`uidVinculado`) queda protegido porque nadie más que un admin puede tocar
+su consentimiento; el personal editor sí puede registrar accesos
+autorizados y de emergencia (con motivo), pero no sin motivo; un
+ciudadano cualquiera no puede escribir en la bitácora de otro; el
+paciente vinculado sí puede leer su propia bitácora, pero el personal que
+la generó no puede releerla, y un ciudadano ajeno tampoco.
+
+**Limitación conocida heredada**: como ya se documentaba arriba, `get` en
+`perfiles_salud/{curp}` solo exige sesión iniciada y conocer el CURP
+exacto — cualquier personal con cuenta puede ver los datos básicos del
+perfil (nombre, teléfono, contacto de emergencia) antes incluso de que el
+flujo de consentimiento decida si puede ver más. El consentimiento y la
+bitácora protegen el **acceso deliberado y registrado** al expediente, no
+esa lectura básica — igual que antes, no se oculta esta limitación.
