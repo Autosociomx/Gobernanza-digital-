@@ -1,0 +1,42 @@
+rules_version = '2';
+
+// Documentos de salud (rayos X, laboratorios, recetas) del módulo de
+// Perfil de Salud ligado a CURP. El control de acceso real vive en
+// Firestore (perfiles_salud/{curp}/documentos) — estas reglas de Storage
+// solo permiten subir/leer el ARCHIVO cuando el documento correspondiente
+// en Firestore ya fue aceptado, evitando que alguien suba un archivo aquí
+// sin pasar por el control de código de personal.
+// Ver docs/marco/PROTOCOLO_SEGURIDAD.md.
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    match /salud/{curp}/{fileName} {
+      function perfilExiste() {
+        return firestore.exists(/databases/(default)/documents/perfiles_salud/$(curp));
+      }
+
+      function esPropietarioVinculado() {
+        return request.auth != null &&
+          firestore.get(/databases/(default)/documents/perfiles_salud/$(curp)).data.uidVinculado == request.auth.uid;
+      }
+
+      // Nadie navega/enumera archivos ajenos; solo el paciente vinculado
+      // puede releerlos después de subidos (mismo principio que Firestore:
+      // el personal que sube un documento no conserva acceso de lectura).
+      allow read: if request.auth != null && esPropietarioVinculado();
+
+      // Subir un archivo requiere que exista un registro previo válido:
+      // el cliente primero crea el documento en Firestore (que sí exige
+      // código de personal activo o ser el paciente/familiar vinculado)
+      // y solo entonces puede subir el archivo binario correspondiente.
+      allow write: if request.auth != null && perfilExiste() &&
+        request.resource.size < 15 * 1024 * 1024 &&
+        request.resource.contentType.matches('image/.*|application/pdf');
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

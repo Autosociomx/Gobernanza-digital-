@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { getFirestore, doc, getDocFromServer } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 import firebaseConfig from '../firebase-applet-config.json';
 
 // Initialize Firebase SDK
@@ -8,6 +9,10 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+// Requiere que Cloud Storage esté habilitado en la consola de Firebase
+// (Build → Storage → Comenzar). Usado por el módulo de Perfil de Salud
+// para archivar documentos (rayos X, laboratorios) — ver saludPerfilService.ts.
+export const storage = getStorage(app);
 
 export enum OperationType {
   CREATE = 'create',

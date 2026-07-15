@@ -37,7 +37,10 @@ import {
   Zap,
   Network,
   ArrowRight,
-  WifiOff
+  WifiOff,
+  Mic,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
   import { motion, AnimatePresence } from 'motion/react';
   import { cn } from '../lib/utils';
@@ -67,6 +70,8 @@ import { MasterStrategicPlan } from './MasterStrategicPlan';
 import { MunicipalLettersView } from './MunicipalLettersView';
 
 import { AuraCertificationSeal } from './AuraCertificationSeal';
+import { useAuraChat } from '../hooks/useAuraChat';
+import { useAuraVoice } from '../hooks/useAuraVoice';
 
 type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria' | 'academy' | 'system_audit' | 'banana_command' | 'strategic_academy' | 'strategic_plan' | 'municipal_letters';
 type Language = 'es' | 'cora' | 'wixarika';
@@ -248,15 +253,27 @@ export function CitizenApp({
     }
   };
 
-  // AI Chat State
-  const [isAiMode, setIsAiMode] = useState(true);
-  const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant', content: string }>>([
-    { role: 'assistant', content: translations[lang].ai_greet }
-  ]);
+  // AI Chat State — motor compartido useAuraChat: arma el contexto real de
+  // la página (pestaña activa + datos del perfil) en vez del truco anterior
+  // de pegar "(Language selected: es)" al final del mensaje.
+  const auraVoice = useAuraVoice();
+  const [autoSpeak, setAutoSpeak] = useState(false);
+
+  const getPageContext = React.useCallback(() => {
+    return `El ciudadano está en la App Ciudadana de Nayarit Digital, en la pestaña "${activeTab}". ` +
+      `Nombre: ${profile.name || 'no registrado'}. Idioma de interfaz: ${lang}. ` +
+      `Conexión: ${isOnline ? 'en línea' : 'sin conexión'}.`;
+  }, [activeTab, profile.name, lang, isOnline]);
+
+  const { messages, isTyping, isOnlineMode: isAiMode, sendMessage, resetGreeting } = useAuraChat({
+    initialGreeting: translations[lang].ai_greet,
+    getPageContext,
+    onReply: (respuesta) => { if (autoSpeak) auraVoice.speak(respuesta); },
+  });
 
   useEffect(() => {
-    setMessages([{ role: 'assistant', content: translations[lang].ai_greet }]);
-  }, [lang]);
+    resetGreeting(translations[lang].ai_greet);
+  }, [lang, resetGreeting]);
 
   const updateProfile = async (updatedData: any) => {
     if (!user) return;
@@ -269,7 +286,6 @@ export function CitizenApp({
   };
 
   const [inputValue, setInputValue] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
   const [useThinking, setUseThinking] = useState(false);
   const [useMaps, setUseMaps] = useState(false);
   const [useSearch, setUseSearch] = useState(false);
@@ -297,45 +313,22 @@ export function CitizenApp({
     wixarika: ["Paka", "Reportar", "Mapa", "Ayuda"]
   };
 
-  const localFallback = (msg: string) => {
-    const lmsg = msg.toLowerCase();
-    if (lmsg.includes('predial') || lmsg.includes('pago')) return "Para pagar tu predial, dirígete a la sección 'Tesorería'.";
-    if (lmsg.includes('bache') || lmsg.includes('luminaria') || lmsg.includes('reporte')) return "Puedes generar un reporte geolocalizado en la sección 'Gobierno'.";
-    return "Soy Naya (Modo Local). No tengo conexión al servidor IA en este momento, pero puedo ayudarte con navegación básica en la plataforma.";
+  const handleSendMessage = (text?: string) => {
+    const userMsg = text ?? inputValue.trim();
+    if (!userMsg) return;
+    if (!text) setInputValue('');
+    sendMessage(userMsg, { useThinking, useMaps, useSearch });
   };
 
-  const handleSendMessage = async (text?: string) => {
-    const userMsg = text || inputValue.trim();
-    if (!userMsg) return;
-    
-    setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
-    if (!text) setInputValue('');
-    setIsTyping(true);
-
-    try {
-      const response = await fetch('/api/ai/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          message: `${userMsg} (Language selected: ${lang})`,
-          useThinking,
-          useMaps,
-          useSearch
-        })
-      });
-      const data = await response.json();
-      
-      if (data.error) throw new Error(data.error);
-      
-      setIsAiMode(true);
-      setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
-    } catch (err: any) {
-      console.warn("AI endpoint failed, using local fallback", err);
-      setIsAiMode(false);
-      setMessages(prev => [...prev, { role: 'assistant', content: localFallback(userMsg) }]);
-    } finally {
-      setIsTyping(false);
+  const handleVoiceInput = () => {
+    if (auraVoice.isListening) {
+      auraVoice.stopListening();
+      return;
     }
+    setAutoSpeak(true);
+    auraVoice.startListening((texto) => {
+      sendMessage(texto, { useThinking, useMaps, useSearch });
+    });
   };
 
   const generatePaymentRef = async () => {
@@ -619,6 +612,22 @@ export function CitizenApp({
                         <div className={cn("w-1.5 h-1.5 rounded-full", useSearch ? "bg-emerald-400 animate-pulse" : "bg-white/30")}></div>
                         Search Grounding
                      </button>
+                     {auraVoice.isSupported && (
+                       <button
+                          onClick={() => {
+                            if (autoSpeak) auraVoice.stopSpeaking();
+                            setAutoSpeak(!autoSpeak);
+                          }}
+                          className={cn(
+                            "px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center gap-1.5 border ml-auto",
+                            autoSpeak ? "bg-magenta-500/20 text-magenta-200 border-magenta-500/50" : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10"
+                          )}
+                          style={autoSpeak ? { color: '#ff8ab8', borderColor: 'rgba(216,30,91,0.5)' } : {}}
+                       >
+                          {autoSpeak ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+                          {autoSpeak ? 'Voz activada' : 'Voz desactivada'}
+                       </button>
+                     )}
                   </div>
                </div>
 
@@ -664,16 +673,29 @@ export function CitizenApp({
 
                {/* Input Area */}
                <div className="p-6 pb-12 bg-white border-t border-slate-100 flex items-center gap-3">
+                  {auraVoice.isSupported && (
+                    <button
+                      onClick={handleVoiceInput}
+                      aria-label={auraVoice.isListening ? 'Detener grabación de voz' : 'Hablar con Aura'}
+                      className={cn(
+                        "shrink-0 p-4 rounded-2xl shadow-lg transition-all active:scale-90",
+                        auraVoice.isListening ? "bg-red-500 text-white animate-pulse" : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                      )}
+                    >
+                      <Mic className="w-6 h-6" />
+                    </button>
+                  )}
                   <div className="flex-1 relative">
-                    <input 
+                    <input
                       type="text"
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                      placeholder="Escribe tu mensaje..."
-                      className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-5 text-[1.1rem] focus:outline-none focus:border-magenta-500 transition-colors pr-14 font-medium"
+                      placeholder={auraVoice.isListening ? 'Escuchando…' : 'Escribe o toca el micrófono para hablar...'}
+                      disabled={auraVoice.isListening}
+                      className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-6 py-5 text-[1.1rem] focus:outline-none focus:border-magenta-500 transition-colors pr-14 font-medium disabled:opacity-60"
                     />
-                    <button 
+                    <button
                       onClick={() => handleSendMessage()}
                       className="absolute right-3 top-1/2 -translate-y-1/2 p-3 bg-magenta-500 text-white rounded-xl shadow-lg hover:shadow-magenta-500/40 transition-all active:scale-90"
                       style={{backgroundColor:'var(--magenta)'}}
@@ -689,7 +711,12 @@ export function CitizenApp({
         {/* Trazabilida Map Overlay */}
         <AnimatePresence>
           {showTriage && (
-            <SaludNayaritID onClose={() => setShowTriage(false)} />
+            <SaludNayaritID
+              onClose={() => setShowTriage(false)}
+              uid={user?.uid}
+              curpSugerido={profile.documentId}
+              nombreSugerido={profile.name}
+            />
           )}
           {showMap && (
              <motion.div 

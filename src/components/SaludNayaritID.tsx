@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Heart, 
-  Mic, 
-  Send, 
-  X, 
-  ChevronLeft, 
+import {
+  Heart,
+  Mic,
+  Send,
+  X,
+  ChevronLeft,
   Info,
   Stethoscope,
   User,
@@ -14,12 +14,43 @@ import {
   Loader2,
   Phone,
   AlertTriangle,
-  CheckCircle2
+  CheckCircle2,
+  Volume2,
+  VolumeX,
+  FolderHeart,
+  Upload,
+  FileText,
+  CalendarPlus,
+  ShieldCheck,
+  ShieldAlert,
+  Eye
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
+import { useAuraVoice } from '../hooks/useAuraVoice';
+import {
+  crearPerfilSiNoExiste,
+  esCurpValido,
+  registrarConsulta,
+  subirDocumento,
+  listarDocumentos,
+  actualizarConsentimiento,
+  listarAccesos,
+  CodigoPersonalInvalidoError,
+  type PerfilSalud,
+  type DocumentoSalud,
+  type AccesoSalud,
+  type RolRegistro,
+} from '../services/saludPerfilService';
+import {
+  solicitarCita,
+  listarMisCitas,
+  ESPECIALIDADES_COMUNES,
+  type CitaSalud,
+} from '../services/citasSaludService';
 
 type RolType = 'paciente' | 'familiar' | 'promotor';
+type SubRolPersonal = 'practicante' | 'trabajadora_social' | 'promotor';
 type TriageLevel = 'ROJO' | 'AMARILLO' | 'VERDE' | null;
 
 interface Message {
@@ -28,13 +59,53 @@ interface Message {
   triage?: TriageLevel;
 }
 
-export function SaludNayaritID({ onClose }: { onClose: () => void }) {
-  const [screen, setScreen] = useState<'splash' | 'rol' | 'input' | 'chat'>('splash');
+interface SaludNayaritIDProps {
+  onClose: () => void;
+  /** uid de Firebase Auth del ciudadano logueado, si existe — liga el perfil a su cuenta. */
+  uid?: string;
+  curpSugerido?: string;
+  nombreSugerido?: string;
+}
+
+export function SaludNayaritID({ onClose, uid, curpSugerido, nombreSugerido }: SaludNayaritIDProps) {
+  const [screen, setScreen] = useState<'splash' | 'rol' | 'identificacion' | 'input' | 'chat'>('splash');
   const [rol, setRol] = useState<RolType | null>(null);
+  const [subRolPersonal, setSubRolPersonal] = useState<SubRolPersonal>('practicante');
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const auraVoice = useAuraVoice();
+  const [autoSpeak, setAutoSpeak] = useState(false);
+
+  // Identidad del perfil de salud (ligado a CURP, no a la cuenta de la app)
+  const [curp, setCurp] = useState(curpSugerido || '');
+  const [nombre, setNombre] = useState(nombreSugerido || '');
+  const [codigoPersonal, setCodigoPersonal] = useState('');
+  const [perfil, setPerfil] = useState<PerfilSalud | null>(null);
+  const [errorIdentificacion, setErrorIdentificacion] = useState('');
+  const [cargandoPerfil, setCargandoPerfil] = useState(false);
+
+  // Expediente (documentos archivados en vez de mandarse por WhatsApp)
+  const [mostrarExpediente, setMostrarExpediente] = useState(false);
+  const [documentos, setDocumentos] = useState<DocumentoSalud[]>([]);
+  const [cargandoDocumentos, setCargandoDocumentos] = useState(false);
+  const [subiendoArchivo, setSubiendoArchivo] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Consentimiento + bitácora de acceso — "quién ha visto mi expediente"
+  const [guardandoConsentimiento, setGuardandoConsentimiento] = useState(false);
+  const [bitacora, setBitacora] = useState<AccesoSalud[]>([]);
+  const [cargandoBitacora, setCargandoBitacora] = useState(false);
+  const [mostrarBitacora, setMostrarBitacora] = useState(false);
+
+  // Portal de citas — mismo expediente, agenda ligada al CURP
+  const [misCitas, setMisCitas] = useState<CitaSalud[]>([]);
+  const [mostrarFormCita, setMostrarFormCita] = useState(false);
+  const [especialidadCita, setEspecialidadCita] = useState<string>(ESPECIALIDADES_COMUNES[0]);
+  const [fechaCita, setFechaCita] = useState('');
+  const [motivoCita, setMotivoCita] = useState('');
+  const [enviandoCita, setEnviandoCita] = useState(false);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -46,6 +117,137 @@ export function SaludNayaritID({ onClose }: { onClose: () => void }) {
 
   const selectRol = (selectedRol: RolType) => {
     setRol(selectedRol);
+  };
+
+  const registradoPorRolActual = (): RolRegistro => (rol === 'promotor' ? subRolPersonal : (rol || 'paciente'));
+
+  const confirmarIdentificacion = async () => {
+    setErrorIdentificacion('');
+    if (!esCurpValido(curp)) {
+      setErrorIdentificacion('El CURP no tiene un formato válido (18 caracteres).');
+      return;
+    }
+    if (!nombre.trim()) {
+      setErrorIdentificacion('Falta el nombre del paciente.');
+      return;
+    }
+    if (rol === 'promotor' && !codigoPersonal.trim()) {
+      setErrorIdentificacion('Como personal de salud, necesitas tu código de personal para registrar a alguien más.');
+      return;
+    }
+
+    setCargandoPerfil(true);
+    try {
+      const nuevoPerfil = await crearPerfilSiNoExiste(curp, {
+        nombre: nombre.trim(),
+        registradoPorRol: registradoPorRolActual(),
+        ...(rol === 'paciente' && uid ? { uidVinculado: uid } : {}),
+        ...(rol === 'promotor' ? { codigoPersonal: codigoPersonal.trim() } : {}),
+      });
+      setPerfil(nuevoPerfil);
+      setScreen('input');
+    } catch (err) {
+      if (err instanceof CodigoPersonalInvalidoError) {
+        setErrorIdentificacion('Ese código de personal no es válido o no está activo. Verifícalo con tu coordinador del Centro de Salud.');
+      } else {
+        setErrorIdentificacion('No se pudo verificar el perfil. Intenta de nuevo en unos segundos.');
+      }
+    } finally {
+      setCargandoPerfil(false);
+    }
+  };
+
+  const abrirExpediente = async () => {
+    setMostrarExpediente(true);
+    if (!perfil) return;
+    setCargandoDocumentos(true);
+    try {
+      const docs = await listarDocumentos(perfil.curp);
+      setDocumentos(docs);
+    } catch {
+      // Si el rol no tiene acceso de lectura (p. ej. personal que ya subió
+      // documentos pero no es el paciente vinculado), se muestra vacío.
+      setDocumentos([]);
+    } finally {
+      setCargandoDocumentos(false);
+    }
+    try {
+      setMisCitas(await listarMisCitas(perfil.curp));
+    } catch {
+      // Solo el paciente vinculado ve sus citas; para otros roles queda vacío.
+      setMisCitas([]);
+    }
+    setCargandoBitacora(true);
+    try {
+      setBitacora(await listarAccesos(perfil.curp));
+    } catch {
+      // Solo el paciente vinculado (o un admin) puede leer la bitácora.
+      setBitacora([]);
+    } finally {
+      setCargandoBitacora(false);
+    }
+  };
+
+  const toggleConsentimiento = async () => {
+    if (!perfil) return;
+    const nuevoValor = !(perfil.consentimientoActivo ?? true);
+    setGuardandoConsentimiento(true);
+    try {
+      await actualizarConsentimiento(perfil.curp, nuevoValor);
+      setPerfil({ ...perfil, consentimientoActivo: nuevoValor });
+    } catch {
+      alert('No se pudo actualizar tu consentimiento. Solo tú, desde tu propia cuenta, puedes cambiarlo.');
+    } finally {
+      setGuardandoConsentimiento(false);
+    }
+  };
+
+  const handleSolicitarCita = async () => {
+    if (!perfil || !fechaCita) return;
+    setEnviandoCita(true);
+    try {
+      await solicitarCita({
+        curp: perfil.curp,
+        nombrePaciente: perfil.nombre,
+        especialidad: especialidadCita,
+        fechaSolicitada: fechaCita,
+        motivo: motivoCita.trim() || undefined,
+        creadoPorRol: registradoPorRolActual(),
+        codigoPersonal: rol === 'promotor' ? codigoPersonal.trim() : undefined,
+      });
+      setMostrarFormCita(false);
+      setFechaCita('');
+      setMotivoCita('');
+      try { setMisCitas(await listarMisCitas(perfil.curp)); } catch { /* ver nota arriba */ }
+    } catch {
+      alert('No se pudo solicitar la cita. Intenta de nuevo en unos segundos.');
+    } finally {
+      setEnviandoCita(false);
+    }
+  };
+
+  const handleSubirArchivo = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const archivo = e.target.files?.[0];
+    if (!archivo || !perfil) return;
+    setSubiendoArchivo(true);
+    try {
+      await subirDocumento(
+        perfil.curp,
+        archivo,
+        'otro',
+        registradoPorRolActual(),
+        rol === 'promotor' ? codigoPersonal.trim() : undefined
+      );
+      const docs = await listarDocumentos(perfil.curp).catch(() => []);
+      setDocumentos(docs);
+    } catch (err) {
+      alert(err instanceof CodigoPersonalInvalidoError
+        ? 'Tu código de personal no autoriza subir documentos a este perfil.'
+        : 'No se pudo subir el archivo. Intenta de nuevo.');
+    } finally {
+      setSubiendoArchivo(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   const handleSendMessage = async (text?: string) => {
@@ -78,11 +280,40 @@ export function SaludNayaritID({ onClose }: { onClose: () => void }) {
       const cleanedContent = data.response.replace(/\[TRIAJE:(ROJO|AMARILLO|VERDE)\]/gi, '').trim();
 
       setMessages(prev => [...prev, { role: 'assistant', content: cleanedContent, triage }]);
+      if (autoSpeak) auraVoice.speak(cleanedContent);
+
+      if (perfil) {
+        registrarConsulta(
+          perfil.curp,
+          `${userMsg}\n→ ${cleanedContent}`,
+          triage,
+          registradoPorRolActual(),
+          rol === 'promotor' ? codigoPersonal.trim() : undefined
+        ).catch(() => { /* el historial es un plus; no bloquea la conversación si falla */ });
+      }
     } catch (err: any) {
-      setMessages(prev => [...prev, { role: 'assistant', content: "Lo siento, hubo un problema de conexión. Si es una emergencia, llama al 911." }]);
+      const fallback = "Lo siento, hubo un problema de conexión. Si es una emergencia, llama al 911.";
+      setMessages(prev => [...prev, { role: 'assistant', content: fallback }]);
+      if (autoSpeak) auraVoice.speak(fallback);
     } finally {
       setIsTyping(false);
     }
+  };
+
+  const handleVoiceInput = () => {
+    if (auraVoice.isListening) {
+      auraVoice.stopListening();
+      return;
+    }
+    setAutoSpeak(true);
+    auraVoice.startListening((texto) => handleSendMessage(texto));
+  };
+
+  const initChatConVoz = () => {
+    setAutoSpeak(true);
+    initChat();
+    // Pequeño margen para que la pantalla de chat monte antes de abrir el micrófono
+    setTimeout(() => auraVoice.startListening((texto) => handleSendMessage(texto)), 400);
   };
 
   const initChat = () => {
@@ -119,7 +350,8 @@ export function SaludNayaritID({ onClose }: { onClose: () => void }) {
         <header className="bg-[#1a6b3c] px-6 py-6 flex items-center gap-4 text-white shadow-lg shrink-0 z-[110]">
           <button onClick={() => {
             if (screen === 'chat') setScreen('input');
-            else if (screen === 'input') setScreen('rol');
+            else if (screen === 'input') setScreen('identificacion');
+            else if (screen === 'identificacion') setScreen('rol');
             else if (screen === 'rol') setScreen('splash');
           }} className="p-2 bg-white/10 rounded-full">
             <ChevronLeft className="w-6 h-6" />
@@ -131,9 +363,35 @@ export function SaludNayaritID({ onClose }: { onClose: () => void }) {
             <h1 className="font-serif font-black text-lg leading-none">Salud Nayarit ID</h1>
             <p className="text-[10px] uppercase font-bold tracking-widest text-white/60">Municipio de Tepic · Salud CIE-11</p>
           </div>
-          <button onClick={onClose} className="ml-auto flex items-center gap-1.5 bg-red-500/20 px-4 py-2 rounded-full border border-red-500/30 font-black text-[10px] uppercase tracking-widest">
-            <X className="w-4 h-4" /> Finalizar
-          </button>
+          <div className="ml-auto flex items-center gap-2">
+            {screen === 'chat' && perfil && (
+              <button
+                onClick={abrirExpediente}
+                aria-label="Ver mi expediente y documentos"
+                className="p-2.5 rounded-full border bg-white/10 border-white/20 hover:bg-white/20 transition-colors"
+              >
+                <FolderHeart className="w-4 h-4" />
+              </button>
+            )}
+            {screen === 'chat' && auraVoice.isSupported && (
+              <button
+                onClick={() => {
+                  if (autoSpeak) auraVoice.stopSpeaking();
+                  setAutoSpeak(!autoSpeak);
+                }}
+                aria-label={autoSpeak ? 'Desactivar respuesta por voz' : 'Activar respuesta por voz'}
+                className={cn(
+                  "p-2.5 rounded-full border transition-colors",
+                  autoSpeak ? "bg-white/20 border-white/40" : "bg-white/10 border-white/20"
+                )}
+              >
+                {autoSpeak ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+              </button>
+            )}
+            <button onClick={onClose} className="flex items-center gap-1.5 bg-red-500/20 px-4 py-2 rounded-full border border-red-500/30 font-black text-[10px] uppercase tracking-widest">
+              <X className="w-4 h-4" /> Finalizar
+            </button>
+          </div>
         </header>
       ) : (
         <div className="fixed top-8 left-8 z-[110]">
@@ -221,12 +479,102 @@ export function SaludNayaritID({ onClose }: { onClose: () => void }) {
               ))}
             </div>
 
-            <button 
+            <button
               disabled={!rol}
-              onClick={() => setScreen('input')}
+              onClick={() => setScreen('identificacion')}
               className="mt-8 py-5 bg-[#1a6b3c] text-white rounded-[2rem] font-black text-lg disabled:opacity-30 shadow-xl"
             >
               Continuar →
+            </button>
+          </motion.div>
+        )}
+
+        {/* PANTALLA IDENTIFICACIÓN — perfil ligado al CURP, no a la app */}
+        {screen === 'identificacion' && (
+          <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="w-full max-w-md p-8 flex flex-col gap-5">
+            <div>
+              <h2 className="font-serif font-black text-3xl text-[#1a6b3c] mb-2 leading-tight">¿A nombre de quién?</h2>
+              <p className="text-slate-500 font-medium">
+                {rol === 'paciente'
+                  ? 'Con tu CURP guardamos tu expediente para que no tengas que repetir tus datos cada vez.'
+                  : 'Con el CURP de la persona creamos o abrimos su expediente de salud.'}
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5 block">CURP</label>
+                <input
+                  type="text"
+                  value={curp}
+                  onChange={(e) => setCurp(e.target.value.toUpperCase())}
+                  maxLength={18}
+                  placeholder="ABCD123456HNTXYZ01"
+                  className="w-full bg-white border-2 border-slate-200 rounded-2xl px-5 py-4 text-slate-800 font-mono tracking-wider focus:outline-none focus:border-[#1a6b3c] transition-colors"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5 block">Nombre completo</label>
+                <input
+                  type="text"
+                  value={nombre}
+                  onChange={(e) => setNombre(e.target.value)}
+                  placeholder="Nombre del paciente"
+                  className="w-full bg-white border-2 border-slate-200 rounded-2xl px-5 py-4 text-slate-800 font-medium focus:outline-none focus:border-[#1a6b3c] transition-colors"
+                />
+              </div>
+
+              {rol === 'promotor' && (
+                <>
+                  <div>
+                    <label className="text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5 block">Tu función</label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {([
+                        { id: 'practicante', label: 'Practicante' },
+                        { id: 'trabajadora_social', label: 'Trab. Social' },
+                        { id: 'promotor', label: 'Promotor' },
+                      ] as const).map((o) => (
+                        <button
+                          key={o.id}
+                          onClick={() => setSubRolPersonal(o.id)}
+                          className={cn(
+                            "py-3 rounded-xl text-[11px] font-black uppercase tracking-wide border-2 transition-all",
+                            subRolPersonal === o.id ? "bg-[#1a6b3c] text-white border-[#1a6b3c]" : "bg-white text-slate-500 border-slate-200"
+                          )}
+                        >
+                          {o.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5 block">Código de personal</label>
+                    <input
+                      type="text"
+                      value={codigoPersonal}
+                      onChange={(e) => setCodigoPersonal(e.target.value)}
+                      placeholder="Código asignado por tu Centro de Salud"
+                      className="w-full bg-white border-2 border-slate-200 rounded-2xl px-5 py-4 text-slate-800 font-mono focus:outline-none focus:border-[#1a6b3c] transition-colors"
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+
+            {errorIdentificacion && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-red-700 text-sm font-medium flex gap-3 items-start">
+                <AlertTriangle className="w-5 h-5 shrink-0 mt-0.5" />
+                {errorIdentificacion}
+              </div>
+            )}
+
+            <button
+              disabled={cargandoPerfil}
+              onClick={confirmarIdentificacion}
+              className="mt-2 py-5 bg-[#1a6b3c] text-white rounded-[2rem] font-black text-lg disabled:opacity-50 shadow-xl flex items-center justify-center gap-3"
+            >
+              {cargandoPerfil ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
+              {cargandoPerfil ? 'Verificando…' : 'Continuar →'}
             </button>
           </motion.div>
         )}
@@ -240,14 +588,16 @@ export function SaludNayaritID({ onClose }: { onClose: () => void }) {
             </div>
 
             <div className="grid gap-4">
-              <button 
-                onClick={initChat}
+              <button
+                onClick={auraVoice.isSupported ? initChatConVoz : initChat}
                 className="w-full p-8 bg-white border-2 border-slate-100 rounded-[2.5rem] text-center flex flex-col items-center gap-4 hover:border-[#1a6b3c] transition-all shadow-sm group"
               >
                 <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center text-4xl shadow-inner group-hover:bg-amber-100 transition-colors">🎤</div>
                 <div>
                   <h3 className="font-black text-slate-800 text-xl uppercase tracking-tighter">Con tu voz</h3>
-                  <p className="text-slate-500 text-sm mt-1 max-w-[220px]">Habla libremente, la IA entiende términos regionales.</p>
+                  <p className="text-slate-500 text-sm mt-1 max-w-[220px]">
+                    {auraVoice.isSupported ? 'Habla libremente, la IA entiende términos regionales.' : 'No disponible en este navegador — usa el modo Escribiendo.'}
+                  </p>
                 </div>
               </button>
 
@@ -335,17 +685,25 @@ export function SaludNayaritID({ onClose }: { onClose: () => void }) {
 
             <div className="p-6 bg-white border-t border-slate-100 shrink-0">
               <div className="flex gap-3 items-center">
-                <button className="w-14 h-14 bg-emerald-50 text-[#1a6b3c] rounded-[1.2rem] flex items-center justify-center text-xl shadow-inner shrink-0 hover:bg-emerald-100">
+                <button
+                  onClick={handleVoiceInput}
+                  aria-label={auraVoice.isListening ? 'Detener grabación de voz' : 'Describir síntoma por voz'}
+                  className={cn(
+                    "w-14 h-14 rounded-[1.2rem] flex items-center justify-center text-xl shadow-inner shrink-0 transition-colors",
+                    auraVoice.isListening ? "bg-red-500 text-white animate-pulse" : "bg-emerald-50 text-[#1a6b3c] hover:bg-emerald-100"
+                  )}
+                >
                   <Mic className="w-6 h-6" />
                 </button>
                 <div className="flex-1 relative">
-                  <input 
+                  <input
                     type="text"
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                    placeholder="Describe el síntoma..."
-                    className="w-full bg-slate-50 border-2 border-slate-100 rounded-[1.5rem] px-6 py-4 text-slate-800 text-[1.1rem] focus:outline-none focus:border-[#1a6b3c] transition-colors pr-14 font-medium"
+                    placeholder={auraVoice.isListening ? 'Escuchando…' : 'Describe el síntoma...'}
+                    disabled={auraVoice.isListening}
+                    className="w-full bg-slate-50 border-2 border-slate-100 rounded-[1.5rem] px-6 py-4 text-slate-800 text-[1.1rem] focus:outline-none focus:border-[#1a6b3c] transition-colors pr-14 font-medium disabled:opacity-60"
                   />
                   <button 
                     onClick={() => handleSendMessage()}
@@ -372,6 +730,237 @@ export function SaludNayaritID({ onClose }: { onClose: () => void }) {
           </button>
         </div>
       )}
+
+      {/* PANEL EXPEDIENTE — documentos archivados en vez de mandarse por WhatsApp */}
+      <AnimatePresence>
+        {mostrarExpediente && perfil && (
+          <motion.div
+            initial={{ y: '100%' }}
+            animate={{ y: 0 }}
+            exit={{ y: '100%' }}
+            transition={{ type: 'spring', damping: 26, stiffness: 220 }}
+            className="fixed inset-0 z-[130] bg-white flex flex-col"
+          >
+            <div className="bg-[#1a6b3c] px-6 py-6 flex items-center gap-4 text-white shadow-lg shrink-0">
+              <div className="p-2.5 bg-white/10 rounded-full">
+                <FolderHeart className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="font-serif font-black text-lg leading-none">Mi Expediente</h2>
+                <p className="text-[10px] uppercase font-bold tracking-widest text-white/60">{perfil.nombre} · {perfil.curp}</p>
+              </div>
+              <button onClick={() => setMostrarExpediente(false)} className="ml-auto p-2.5 bg-white/10 rounded-full">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+
+              {/* CONSENTIMIENTO — solo el paciente vinculado puede tocarlo (ver firestore.rules) */}
+              {perfil.uidVinculado && perfil.uidVinculado === uid && (
+                <div className={cn(
+                  "p-4 rounded-2xl border-2 flex items-start gap-3",
+                  (perfil.consentimientoActivo ?? true) ? "bg-[#e8f5ed] border-[#1a6b3c]/30" : "bg-amber-50 border-amber-300"
+                )}>
+                  {(perfil.consentimientoActivo ?? true)
+                    ? <ShieldCheck className="w-5 h-5 text-[#1a6b3c] shrink-0 mt-0.5" />
+                    : <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />}
+                  <div className="flex-1">
+                    <p className="font-black text-sm text-slate-800">
+                      {(perfil.consentimientoActivo ?? true) ? 'Autorizas ver tu expediente' : 'Consentimiento desactivado'}
+                    </p>
+                    <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                      {(perfil.consentimientoActivo ?? true)
+                        ? 'Personal de salud autorizado puede consultarlo. Tú decides — puedes desactivarlo cuando quieras.'
+                        : 'Solo se podrá consultar como acceso de emergencia, y quedará registrado en tu bitácora.'}
+                    </p>
+                  </div>
+                  <button
+                    onClick={toggleConsentimiento}
+                    disabled={guardandoConsentimiento}
+                    className={cn(
+                      "shrink-0 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest disabled:opacity-50",
+                      (perfil.consentimientoActivo ?? true) ? "bg-[#1a6b3c] text-white" : "bg-amber-500 text-white"
+                    )}
+                  >
+                    {guardandoConsentimiento ? '…' : (perfil.consentimientoActivo ?? true) ? 'Desactivar' : 'Activar'}
+                  </button>
+                </div>
+              )}
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,application/pdf"
+                className="hidden"
+                onChange={handleSubirArchivo}
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={subiendoArchivo}
+                className="w-full py-5 bg-[#e8f5ed] border-2 border-dashed border-[#1a6b3c]/30 rounded-2xl flex items-center justify-center gap-3 text-[#1a6b3c] font-black uppercase tracking-widest text-sm disabled:opacity-50"
+              >
+                {subiendoArchivo ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
+                {subiendoArchivo ? 'Subiendo…' : 'Subir estudio o documento'}
+              </button>
+
+              {cargandoDocumentos && (
+                <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-[#1a6b3c]" /></div>
+              )}
+
+              {!cargandoDocumentos && documentos.length === 0 && (
+                <p className="text-center text-slate-400 text-sm py-8 font-medium">
+                  Todavía no hay documentos archivados aquí.
+                </p>
+              )}
+
+              {documentos.map((d) => (
+                <a
+                  key={d.id}
+                  href={d.urlArchivo}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-4 p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:border-[#1a6b3c]/40 transition-colors"
+                >
+                  <div className="w-11 h-11 bg-white rounded-xl border border-slate-200 flex items-center justify-center shrink-0">
+                    <FileText className="w-5 h-5 text-[#1a6b3c]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-slate-800 text-sm truncate">{d.nombreArchivo || d.tipo}</p>
+                    <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest">
+                      {d.fecha.toLocaleDateString('es-MX')}
+                    </p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-300 shrink-0" />
+                </a>
+              ))}
+
+              {/* PORTAL DE CITAS */}
+              <div className="pt-4 mt-4 border-t border-slate-100">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-black text-slate-800 text-sm uppercase tracking-widest">Mis Citas</h3>
+                  <button
+                    onClick={() => setMostrarFormCita(!mostrarFormCita)}
+                    className="flex items-center gap-1.5 text-[#1a6b3c] font-black text-[11px] uppercase tracking-widest"
+                  >
+                    <CalendarPlus className="w-4 h-4" /> {mostrarFormCita ? 'Cancelar' : 'Agendar cita'}
+                  </button>
+                </div>
+
+                {mostrarFormCita && (
+                  <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl space-y-3 mb-4">
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1 block">Especialidad</label>
+                      <select
+                        value={especialidadCita}
+                        onChange={(e) => setEspecialidadCita(e.target.value)}
+                        className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 focus:outline-none focus:border-[#1a6b3c]"
+                      >
+                        {ESPECIALIDADES_COMUNES.map((esp) => <option key={esp} value={esp}>{esp}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1 block">Fecha que te acomoda</label>
+                      <input
+                        type="date"
+                        value={fechaCita}
+                        onChange={(e) => setFechaCita(e.target.value)}
+                        className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 focus:outline-none focus:border-[#1a6b3c]"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1 block">Motivo (opcional)</label>
+                      <input
+                        type="text"
+                        value={motivoCita}
+                        onChange={(e) => setMotivoCita(e.target.value)}
+                        placeholder="Breve descripción"
+                        className="w-full bg-white border-2 border-slate-200 rounded-xl px-4 py-3 text-sm font-medium text-slate-800 focus:outline-none focus:border-[#1a6b3c]"
+                      />
+                    </div>
+                    <button
+                      onClick={handleSolicitarCita}
+                      disabled={!fechaCita || enviandoCita}
+                      className="w-full py-3.5 bg-[#1a6b3c] text-white rounded-xl font-black text-sm uppercase tracking-widest disabled:opacity-40 flex items-center justify-center gap-2"
+                    >
+                      {enviandoCita ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                      {enviandoCita ? 'Enviando…' : 'Solicitar cita'}
+                    </button>
+                    <p className="text-[10px] text-slate-400 text-center">
+                      El Centro de Salud confirma la fecha real de atención — esto es una solicitud.
+                    </p>
+                  </div>
+                )}
+
+                {misCitas.length === 0 && !mostrarFormCita && (
+                  <p className="text-center text-slate-400 text-sm py-4 font-medium">Aún no tienes citas solicitadas.</p>
+                )}
+
+                {misCitas.map((c) => (
+                  <div key={c.id} className="flex items-center gap-4 p-4 bg-slate-50 border border-slate-100 rounded-2xl mb-2">
+                    <div className="w-11 h-11 bg-white rounded-xl border border-slate-200 flex items-center justify-center shrink-0">
+                      <CalendarPlus className="w-5 h-5 text-[#1a6b3c]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-slate-800 text-sm truncate">{c.especialidad}</p>
+                      <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest">{c.fechaSolicitada}</p>
+                    </div>
+                    <span className={cn(
+                      "text-[9px] font-black uppercase px-2.5 py-1 rounded-full tracking-widest shrink-0",
+                      c.estado === 'confirmada' ? "bg-emerald-100 text-emerald-700" :
+                      c.estado === 'cancelada' ? "bg-red-100 text-red-600" :
+                      c.estado === 'atendida' ? "bg-slate-200 text-slate-600" :
+                      "bg-amber-100 text-amber-700"
+                    )}>
+                      {c.estado}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* BITÁCORA DE ACCESO — transparencia total, solo visible para el paciente vinculado */}
+              {perfil.uidVinculado && perfil.uidVinculado === uid && (
+                <div className="pt-4 mt-4 border-t border-slate-100">
+                  <button
+                    onClick={() => setMostrarBitacora(!mostrarBitacora)}
+                    className="flex items-center gap-1.5 text-slate-500 font-black text-[11px] uppercase tracking-widest mb-3"
+                  >
+                    <Eye className="w-4 h-4" /> Quién ha visto tu expediente {mostrarBitacora ? '▲' : '▼'}
+                  </button>
+
+                  {mostrarBitacora && (
+                    <>
+                      {cargandoBitacora && (
+                        <div className="flex justify-center py-6"><Loader2 className="w-5 h-5 animate-spin text-slate-400" /></div>
+                      )}
+                      {!cargandoBitacora && bitacora.length === 0 && (
+                        <p className="text-center text-slate-400 text-sm py-4 font-medium">Todavía no hay consultas registradas.</p>
+                      )}
+                      {bitacora.map((a) => (
+                        <div key={a.id} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl mb-2">
+                          <div className="flex items-center justify-between">
+                            <p className="font-bold text-slate-800 text-sm">{a.quien}</p>
+                            <span className={cn(
+                              "text-[9px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest shrink-0",
+                              a.autorizado ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                            )}>
+                              {a.autorizado ? 'Autorizado' : 'Emergencia'}
+                            </span>
+                          </div>
+                          {a.motivo && <p className="text-xs text-slate-500 mt-1">{a.motivo}</p>}
+                          <p className="text-[10px] uppercase font-bold text-slate-400 tracking-widest mt-1">
+                            {a.fecha.toLocaleString('es-MX')}
+                          </p>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
