@@ -1,64 +1,71 @@
-# Open Ledger — Modelo de Datos
+# Open Ledger — Modelo de Datos (Postgres / Supabase)
 
-Especificación de las colecciones de Firestore del módulo Pulso Nayarit. Estado: **especificado, no implementado** (ver [README → Estado del Proyecto](../README.md#-estado-del-proyecto)).
+Especificación de las tablas del módulo Pulso Nayarit. Estado: **implementado** — el SQL fuente de verdad está en [`../supabase/migrations/`](../supabase/migrations/) y este documento lo explica.
 
-Todas las colecciones viven bajo el prefijo `pulso/` para aislarlas del resto del monorepo Gobernanza Digital.
+Todas las tablas y funciones llevan el prefijo `pulso_` para aislarlas de cualquier otra cosa en el proyecto que las hospeda.
 
 ---
 
-## `pulso/polls/{pollId}`
+## `pulso_polls`
 
-Define cada consulta (la *pregunta*). Separar la pregunta de los votos permite reutilizar la infraestructura para cualquier ejercicio de opinión.
-
-| Campo | Tipo | Descripción |
-|---|---|---|
-| `title` | string | P. ej. "Preferencia a Gubernatura 2027" |
-| `options` | array<string> | Opciones neutras ("Candidato / Perfil A", …) |
-| `region` | string | Ámbito geográfico (`NAY`, `NAY-TEPIC`, …) |
-| `opensAt` / `closesAt` | timestamp | Ventana de participación |
-| `status` | string | `draft` \| `open` \| `closed` |
-
-## `pulso/votes/{deviceHash}`
-
-Un documento por dispositivo verificado. **El ID del documento es el hash SHA-256 de la huella del dispositivo** — la unicidad la impone la base de datos, no la aplicación. Reglas: `create`-only, lectura pública, sin `update`/`delete` para nadie.
+Define cada consulta (la *pregunta*). Separar la pregunta de los votos permite reutilizar la infraestructura para cualquier ejercicio de opinión (presupuestos participativos, consultas municipales, etc.).
 
 | Campo | Tipo | Descripción |
 |---|---|---|
-| `pollId` | string | Referencia a la consulta |
-| `choice` | string | Opción elegida |
-| `cp` | string | Código postal (única señal geográfica que sube el cliente) |
-| `ts` | timestamp | Momento de emisión (redondeado a 15 min en el ledger público para dificultar correlación) |
-| `challenge` | map | Prueba del reto SMS/biométrico resuelto (verificada por reglas + Cloud Function) |
+| `id` | uuid PK | Identificador de la consulta |
+| `title` | text | P. ej. "Preferencia a Gubernatura 2027 (Demo)" |
+| `options` | jsonb | Opciones neutras `["Candidato / Perfil A", …]` |
+| `region` | text | Ámbito geográfico (`NAY`, `NAY-TEPIC`, …) |
+| `opens_at` / `closes_at` | timestamptz | Ventana de participación |
+| `status` | text | `draft` \| `open` \| `closed` (con `CHECK`) |
 
-## `pulso/ledger/{seq}`
+RLS: lectura pública; sin políticas de escritura para `anon` — las consultas solo se administran por migraciones o rol de servicio.
 
-Log *append-only* encadenado, escrito únicamente por la Cloud Function de registro. Es el artefacto que descargan los auditores.
+## `pulso_votes`
 
-| Campo | Tipo | Descripción |
-|---|---|---|
-| `seq` | number | Posición en la cadena (ID del documento, monotónico) |
-| `voteHash` | string | SHA-256 del contenido canónico del voto |
-| `prevHash` | string | `voteHash` encadenado del registro anterior (génesis: `0x0`) |
-| `pollId`, `choice`, `cp`, `tsBucket` | — | Copia anonimizada del voto (timestamp en cubetas de 15 min) |
-
-**Verificación externa:** recomputar `voteHash` de cada registro y comprobar que `prevHash[n] == voteHash[n-1]` para todo `n`. Un solo registro alterado rompe la cadena hacia adelante.
-
-## `pulso/aggregates/{pollId}_{cp}`
-
-Totales precalculados por código postal — lo único que consume el dashboard público. Se actualizan por trigger al escribirse cada voto.
+Un registro por dispositivo verificado por consulta. **La clave primaria es `(poll_id, device_hash)`** — la unicidad "un dispositivo = un voto" la impone la base de datos, no la aplicación: la segunda inserción viola la PK y falla.
 
 | Campo | Tipo | Descripción |
 |---|---|---|
-| `counts` | map<string, number> | Votos por opción |
-| `total` | number | Suma de votos del CP |
-| `kAnonSafe` | boolean | `false` mientras `total < k` (el frontend agrupa CPs vecinos antes de pintar) |
-| `updatedAt` | timestamp | Última agregación |
+| `poll_id` | uuid FK | Referencia a la consulta |
+| `device_hash` | text | SHA-256 de la huella del dispositivo (`CHECK` de formato hex-64) |
+| `choice` | text | Opción elegida (validada contra `options` por la RPC) |
+| `cp` | text | Código postal — única señal geográfica que sube el cliente (`CHECK` de 5 dígitos) |
+| `ts_bucket` | timestamptz | Momento de emisión **redondeado a la hora** para dificultar correlación |
+
+Privacidad: la tabla **no tiene política de SELECT** — los votos individuales no son consultables por el público. Lo público es el ledger anonimizado y los agregados. La única vía de escritura es la RPC `pulso_cast_vote` (`SECURITY DEFINER`), que valida consulta abierta, opción válida y formato de huella.
+
+## `pulso_ledger`
+
+Log *append-only* encadenado, escrito únicamente por el trigger `pulso_chain` **en la misma transacción que el voto** — la propiedad "todo voto está en el ledger" es un invariante transaccional, no una promesa. Es el artefacto que descargan los auditores (lectura pública vía REST o el botón "Ver Datos Crudos").
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `seq` | bigint identity PK | Posición en la cadena (monotónica) |
+| `poll_id`, `choice`, `cp`, `ts_bucket` | — | Copia anonimizada del voto (sin `device_hash`) |
+| `prev_hash` | text | `vote_hash` del registro anterior (génesis: 64 ceros) |
+| `vote_hash` | text | `sha256(poll_id \| choice \| cp \| ts_bucket_utc \| prev_hash)` |
+
+**El preimage no incluye `device_hash`:** el ledger público no puede vincularse a dispositivos. Los appends se serializan con `pg_advisory_xact_lock` para que `prev_hash` nunca sufra condiciones de carrera.
+
+**Verificación externa:** recomputar `vote_hash` de cada registro y comprobar `prev_hash[n] == vote_hash[n-1]`. Un solo registro alterado rompe la cadena hacia adelante. Consulta lista para usar en [`../supabase/README.md`](../supabase/README.md).
+
+## Vistas públicas (lo único que consume el dashboard)
+
+| Vista | Contenido |
+|---|---|
+| `pulso_results` | Votos y porcentaje por opción y consulta — incluye opciones con 0 votos |
+| `pulso_heatmap` | Votos por código postal **con k-anonimato (k = 5)**: un CP con menos de 5 votos totales no se publica |
 
 ---
 
 ## Invariantes del sistema
 
-1. **Append-only:** ningún actor — incluido el administrador del proyecto — tiene permiso de `update`/`delete` sobre `votes` ni `ledger`.
-2. **Unicidad estructural:** un `deviceHash` = un documento = un voto. La segunda escritura falla en la capa de reglas.
-3. **Privacidad por diseño:** el cliente nunca transmite coordenadas, nombre, teléfono ni CURP; el ledger público solo contiene `choice`, `cp` y cubetas de tiempo.
-4. **Todo lo público es recomputable:** cualquier total mostrado en el dashboard debe poder derivarse del ledger descargable. Si no se puede recomputar, no se publica.
+1. **Append-only real:** triggers `pulso_*_immutable` rechazan `UPDATE`/`DELETE` sobre `votes` y `ledger` para **todos** los roles, incluido `service_role`. Verificado en despliegue: el intento administrativo falla con `registro append-only — UPDATE no permitido`.
+2. **Unicidad estructural:** un `(poll_id, device_hash)` = una fila = un voto. La segunda escritura falla en la capa de PK, antes de cualquier lógica.
+3. **Privacidad por diseño:** el cliente nunca transmite coordenadas, nombre, teléfono ni CURP; el ledger público solo contiene `choice`, `cp` y cubetas de tiempo por hora.
+4. **Todo lo público es recomputable:** cualquier total del dashboard se deriva del ledger descargable. Si no se puede recomputar, no se publica.
+
+## Límite conocido del prototipo
+
+La huella de dispositivo actual es SHA-256 de un identificador persistido en `localStorage` — suficiente para el prototipo, trivial de evadir borrando el almacenamiento local. El diseño lo contempla: la huella es un módulo intercambiable y el roadmap añade el reto OTP por SMS (Supabase Auth) como atestación fuerte, sin cambiar ni el esquema ni el ledger.
