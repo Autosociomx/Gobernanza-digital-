@@ -19,12 +19,19 @@ adelante desarrollados con Claude Code.
 8. [Soberanía Digital Municipal: Definición, Alcance y Límites](./CAPITULO_VIII_soberania_digital_municipal.md)
 9. [Gobierno Predictivo y Equidad Algorítmica](./CAPITULO_IX_gobierno_predictivo_equidad_algoritmica.md) *(cierra el Tomo I)*
 
-## Siguiente
+## Tomo II — Marco Jurídico
 
-Tomo II — Marco Jurídico (artículo por artículo: Constitución Art. 115, LNETB completa, leyes
-relacionadas). Estándar de rigor a partir de aquí: toda afirmación jurídica debe citarse contra
-la fuente oficial (DOF) antes de incorporarse — no se admite el nivel de hipótesis de trabajo
-que se usó en el Tomo I.
+10. [El Fundamento Constitucional: Artículo 115](./CAPITULO_X_fundamento_constitucional_articulo_115.md)
+11. [La LNETB: Obligaciones Municipales Verificadas](./CAPITULO_XI_lnetb_articulo_por_articulo.md)
+
+⚠️ **Hallazgo del Cap. XI (2026-07-17)**: la verificación preliminar indica que la numeración
+de artículos citada en el `Requerimiento_LNETB_Tepic_v3_FINAL` ya entregado al Ayuntamiento
+(Art. 74 = Llave MX, Art. 91 = código fuente, transitorios 14º–16º) **no corresponde** al texto
+real de la ley — las obligaciones existen, pero en otros artículos. Cotejo contra el PDF íntegro
+del DOF pendiente y obligatorio antes de cualquier documento jurídico nuevo (ver §11.4).
+
+Siguiente: Ley de Gobierno Digital de Nayarit + Ley Municipal del Estado. Estándar: toda
+afirmación jurídica citada contra fuente oficial, clasificada en niveles (a)/(b)/(c).
 
 Ver [`PLAN_TOMOS_II_A_IX.md`](./PLAN_TOMOS_II_A_IX.md) para el resumen operativo completo de
 qué cubre cada uno de los Tomos II–IX.
