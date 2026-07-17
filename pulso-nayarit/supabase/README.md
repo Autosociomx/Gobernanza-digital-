@@ -18,6 +18,10 @@ Todo el backend del módulo vive en estas migraciones SQL. No hay lógica de neg
 |---|---|
 | `0001_pulso_ledger.sql` | Tablas (`polls`, `votes`, `ledger`), RLS, triggers de encadenado y de inmutabilidad, RPC `pulso_cast_vote`, vistas públicas (`results`, `heatmap` con k-anonimato), Realtime |
 | `0002_seed_demo.sql` | Consulta de demostración + votos de prueba emitidos vía la RPC real. **No usar en producción.** |
+| `0003_hardening.sql` | Funciones internas sin `EXECUTE` público, `search_path` fijo (hallazgos de los security advisors) |
+| `0004_review_fixes.sql` | Ventana `opens_at`/`closes_at` aplicada en la RPC, guardias `TRUNCATE`, revocación de escritura directa a `service_role`, k-anonimato por celda, `seq` reportado por el trigger, duplicado con SQLSTATE 23505 |
+
+> Nota: el historial aplicado en el proyecto vivo tiene una migración adicional (`pulso_nayarit_fix_search_path`) que aquí está consolidada dentro de `0001`. Aplicar estos archivos en orden sobre una base limpia produce el mismo esquema final.
 
 ## Verificación de la cadena (auditoría externa)
 
@@ -45,10 +49,13 @@ Sin acceso SQL, el ledger completo se descarga como JSON desde el botón "Ver Da
 
 ## Pruebas negativas ejecutadas en el despliegue
 
-Ambas fallaron como se diseñó:
+Todas fallaron como se diseñó:
 
-- **Voto duplicado** (mismo `device_hash`, misma consulta) → `este dispositivo ya emitió su voto en esta consulta`
+- **Voto duplicado** (mismo `device_hash`, misma consulta) → `este dispositivo ya emitió su voto en esta consulta` (SQLSTATE 23505)
 - **`UPDATE` sobre el ledger** con conexión administrativa → `pulso: registro append-only — UPDATE no permitido`
+- **`TRUNCATE` sobre el ledger** con conexión administrativa → `pulso: registro append-only — TRUNCATE no permitido`
+- **Voto fuera de ventana** (consulta con `closes_at` en el pasado y `status='open'`) → `la consulta ya cerró`
+- **Escritura directa** de `service_role` en `votes`/`ledger` → sin privilegio (`has_table_privilege = false`)
 
 ## Roadmap del backend
 

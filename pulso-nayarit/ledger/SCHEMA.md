@@ -16,7 +16,7 @@ Define cada consulta (la *pregunta*). Separar la pregunta de los votos permite r
 | `title` | text | P. ej. "Preferencia a Gubernatura 2027 (Demo)" |
 | `options` | jsonb | Opciones neutras `["Candidato / Perfil A", …]` |
 | `region` | text | Ámbito geográfico (`NAY`, `NAY-TEPIC`, …) |
-| `opens_at` / `closes_at` | timestamptz | Ventana de participación |
+| `opens_at` / `closes_at` | timestamptz | Ventana de participación — **aplicada por la RPC**: fuera de la ventana el voto se rechaza aunque `status` siga en `open` |
 | `status` | text | `draft` \| `open` \| `closed` (con `CHECK`) |
 
 RLS: lectura pública; sin políticas de escritura para `anon` — las consultas solo se administran por migraciones o rol de servicio.
@@ -46,23 +46,27 @@ Log *append-only* encadenado, escrito únicamente por el trigger `pulso_chain` *
 | `prev_hash` | text | `vote_hash` del registro anterior (génesis: 64 ceros) |
 | `vote_hash` | text | `sha256(poll_id \| choice \| cp \| ts_bucket_utc \| prev_hash)` |
 
-**El preimage no incluye `device_hash`:** el ledger público no puede vincularse a dispositivos. Los appends se serializan con `pg_advisory_xact_lock` para que `prev_hash` nunca sufra condiciones de carrera.
+**El preimage no incluye `device_hash`:** el ledger público no puede vincularse a dispositivos. Los appends se serializan con `pg_advisory_xact_lock` para que `prev_hash` nunca sufra condiciones de carrera; el trigger reporta el `seq` insertado vía una variable transaccional (`pulso.last_seq`) que la RPC devuelve como recibo al votante.
+
+**La definición canónica del preimage es el trigger `pulso_append_ledger` en las migraciones** — la consulta de auditoría y este documento lo copian; ante cualquier discrepancia, el SQL manda. `prev_hash` se almacena de forma deliberadamente redundante (es derivable del registro anterior) para que cada fila sea verificable de forma autocontenida; la consulta de auditoría comprueba ambas cosas.
 
 **Verificación externa:** recomputar `vote_hash` de cada registro y comprobar `prev_hash[n] == vote_hash[n-1]`. Un solo registro alterado rompe la cadena hacia adelante. Consulta lista para usar en [`../supabase/README.md`](../supabase/README.md).
 
-## Vistas públicas (lo único que consume el dashboard)
+## Superficie pública de lectura
+
+El dashboard lee `pulso_polls` (consulta activa), la vista `pulso_results` (ranking) y `pulso_ledger` (descarga de datos crudos). La vista `pulso_heatmap` existe para el mapa de calor (hoy decorativo en el frontend).
 
 | Vista | Contenido |
 |---|---|
 | `pulso_results` | Votos y porcentaje por opción y consulta — incluye opciones con 0 votos |
-| `pulso_heatmap` | Votos por código postal **con k-anonimato (k = 5)**: un CP con menos de 5 votos totales no se publica |
+| `pulso_heatmap` | Votos por código postal con **supresión k-anónima doble (k = 5)**: no se publica un CP con menos de 5 votos totales, ni ninguna celda (CP, opción) con menos de 5 votos |
 
 ---
 
 ## Invariantes del sistema
 
-1. **Append-only real:** triggers `pulso_*_immutable` rechazan `UPDATE`/`DELETE` sobre `votes` y `ledger` para **todos** los roles, incluido `service_role`. Verificado en despliegue: el intento administrativo falla con `registro append-only — UPDATE no permitido`.
-2. **Unicidad estructural:** un `(poll_id, device_hash)` = una fila = un voto. La segunda escritura falla en la capa de PK, antes de cualquier lógica.
+1. **Append-only real:** triggers `pulso_*_immutable` rechazan `UPDATE`/`DELETE` sobre `votes` y `ledger`, y guardias `pulso_*_no_truncate` bloquean `TRUNCATE` (que no dispara triggers de fila). Verificado en despliegue incluso con conexión administrativa. Los roles de la API (`anon`, `authenticated`, `service_role`) tienen revocada toda escritura directa — la única vía es la RPC. El límite residual es el propietario/superusuario de la base, que podría eliminar los triggers; no podría, sin embargo, reescribir la historia sin romper la cadena ya descargada por auditores externos.
+2. **Unicidad estructural:** un `(poll_id, device_hash)` = una fila = un voto. La segunda escritura falla en la capa de PK, antes de cualquier lógica, y llega al cliente con SQLSTATE estable `23505`.
 3. **Privacidad por diseño:** el cliente nunca transmite coordenadas, nombre, teléfono ni CURP; el ledger público solo contiene `choice`, `cp` y cubetas de tiempo por hora.
 4. **Todo lo público es recomputable:** cualquier total del dashboard se deriva del ledger descargable. Si no se puede recomputar, no se publica.
 

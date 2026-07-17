@@ -22,7 +22,9 @@ pulso-nayarit/
     ├── README.md                    # Estado del despliegue + consulta de auditoría de la cadena
     └── migrations/
         ├── 0001_pulso_ledger.sql    # Esquema completo: tablas, RLS, triggers, RPC, vistas
-        └── 0002_seed_demo.sql       # Consulta demo + votos de prueba (no usar en producción)
+        ├── 0002_seed_demo.sql       # Consulta demo + votos de prueba (no usar en producción)
+        ├── 0003_hardening.sql       # Endurecimiento tras los security advisors
+        └── 0004_review_fixes.sql    # Ventana de votación, guardias TRUNCATE, k-anon por celda
 ```
 
 El módulo vive dentro del monorepo [Gobernanza Digital](../README.md) pero su backend es **Supabase/Postgres**, elegido deliberadamente sobre el Firebase del monorepo — el análisis completo está en [`ARCHITECTURE.md`](./ARCHITECTURE.md#2-decisión-de-stack-por-qué-supabasepostgres-y-no-firebase).
@@ -35,11 +37,11 @@ El módulo vive dentro del monorepo [Gobernanza Digital](../README.md) pero su b
 |---|---|
 | 🔒 **Un dispositivo = Un voto** | `PRIMARY KEY (poll_id, device_hash)` en Postgres: la segunda inserción del mismo dispositivo falla en la capa de almacenamiento — no hay código de aplicación que saltarse. |
 | 📖 **Open Ledger auditable** | Trigger en la **misma transacción** del voto anexa un registro con hash SHA-256 encadenado (`prev_hash`). Alterar la historia rompe la cadena y es públicamente detectable. |
-| 🛡️ **Append-only real** | Triggers de inmutabilidad rechazan `UPDATE`/`DELETE` para **todos** los roles, incluido el administrativo (verificado en despliegue). |
-| 🗺️ **Geolocalización con privacidad** | Solo código postal, timestamps redondeados a la hora, y k-anonimato (k=5) en la vista pública del mapa de calor. Los votos individuales no son consultables. |
+| 🛡️ **Append-only real** | Triggers de inmutabilidad rechazan `UPDATE`/`DELETE`/`TRUNCATE`, y los roles de la API (incluido `service_role`) tienen revocada la escritura directa — la única vía es la RPC (verificado en despliegue). |
+| 🗺️ **Geolocalización con privacidad** | Solo código postal, timestamps redondeados a la hora, y supresión k-anónima doble (k=5, por CP y por celda) en la vista del mapa de calor. Los votos individuales no son consultables. |
 | 📊 **Resultados en tiempo real** | Supabase Realtime: cada inserción en el ledger refresca el ranking del dashboard sin recargar. |
 | 🧾 **Datos crudos con un clic** | El botón "Ver Datos Crudos" descarga el ledger completo en JSON; también está expuesto como API REST pública de solo lectura (PostgREST). |
-| 📱 **Móvil-first, cero fricción** | PWA estática servida desde CDN con la clave publicable: sin servidor de aplicación, sin registro con datos personales. |
+| 📱 **Móvil-first, cero fricción** | Página estática servida desde CDN con la clave publicable: sin servidor de aplicación, sin registro con datos personales. |
 
 ---
 
@@ -47,7 +49,7 @@ El módulo vive dentro del monorepo [Gobernanza Digital](../README.md) pero su b
 
 ```mermaid
 flowchart TD
-    A[📱 Ciudadano<br>PWA móvil] -->|1. Huella de dispositivo<br>SHA-256| B[🔐 RPC pulso_cast_vote<br>SECURITY DEFINER]
+    A[📱 Ciudadano<br>app web móvil] -->|1. Huella de dispositivo<br>SHA-256| B[🔐 RPC pulso_cast_vote<br>SECURITY DEFINER]
     B -->|2. Valida: consulta abierta,<br>opción válida, PK única| C[(🗳️ pulso_votes<br>PK: poll_id + device_hash)]
     C -->|trigger en la MISMA<br>transacción| D[(📖 pulso_ledger<br>hash encadenado, append-only)]
     C -->|vistas SQL| E[(📊 pulso_results /<br>pulso_heatmap k-anon)]

@@ -84,8 +84,8 @@
         <div>
             <div class="flex justify-between items-end mb-2">
                 <h2 class="font-bold text-gray-200">Mapa de Tendencias (Tepic)</h2>
-                <span class="text-[10px] bg-brand-800 px-2 py-1 rounded text-gray-400 font-mono flex items-center">
-                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5 animate-pulse"></span> LIVE
+                <span id="live-badge" class="text-[10px] bg-brand-800 px-2 py-1 rounded text-gray-400 font-mono flex items-center">
+                    <span class="w-1.5 h-1.5 rounded-full bg-gray-500 mr-1.5"></span> CONECTANDO…
                 </span>
             </div>
             <div class="heat-map border border-brand-700 shadow-inner">
@@ -118,7 +118,7 @@
 
         <!-- Botón de Acción Principal (Emitir Voto) -->
         <div id="vote-section">
-            <button onclick="startVerification()" class="w-full bg-white text-brand-900 font-bold py-4 rounded-xl shadow-[0_0_15px_rgba(255,255,255,0.2)] hover:bg-gray-100 transition flex justify-center items-center">
+            <button id="vote-btn" onclick="startVerification()" disabled class="w-full bg-white text-brand-900 font-bold py-4 rounded-xl shadow-[0_0_15px_rgba(255,255,255,0.2)] hover:bg-gray-100 transition flex justify-center items-center disabled:opacity-50 disabled:cursor-not-allowed">
                 <i class="fa-solid fa-fingerprint text-xl mr-2"></i> Emitir mi Voto Auditable
             </button>
             <p class="text-center text-[10px] text-gray-500 mt-2">La unicidad se valida con la huella criptográfica de tu dispositivo.</p>
@@ -145,7 +145,39 @@
         const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const BAR_COLORS = ['bg-blue-500', 'bg-red-500', 'bg-gray-500'];
+        const LEDGER_PAGE = 1000;   // tope por respuesta de PostgREST
         let poll = null;
+
+        const $id = id => document.getElementById(id);
+        // Todo dato de la base que se interpola en innerHTML pasa por aquí
+        const esc = s => String(s).replace(/[&<>"']/g,
+            c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+        function statusCard(tone, icon, title, bodyHtml) {
+            const tones = {
+                ok:    { ring: 'bg-green-900/30 border-green-500',  icon: 'text-green-500' },
+                warn:  { ring: 'bg-amber-900/30 border-amber-500',  icon: 'text-amber-500' },
+                error: { ring: 'bg-red-900/30 border-red-500',      icon: 'text-red-500' },
+                info:  { ring: 'bg-brand-900 border-dashed border-accent-500', icon: 'text-accent-500' }
+            };
+            const t = tones[tone];
+            return `
+                <div class="w-16 h-16 ${t.ring} rounded-full flex items-center justify-center mx-auto mb-3 border-2">
+                    <i class="fa-solid ${icon} text-2xl ${t.icon}"></i>
+                </div>
+                <h3 class="font-bold text-gray-200 mb-1">${esc(title)}</h3>
+                ${bodyHtml}`;
+        }
+
+        const RETRY_BTN = `
+            <button onclick="resetVoteFlow()" class="mt-3 w-full bg-brand-900 border border-brand-700 text-gray-300 font-semibold py-2 rounded-lg hover:border-accent-500 transition text-sm">
+                <i class="fa-solid fa-rotate-left mr-1"></i> Volver a intentar
+            </button>`;
+
+        window.resetVoteFlow = function () {
+            $id('verification-process').classList.add('hidden');
+            $id('vote-section').classList.remove('hidden');
+        };
 
         // ------------------------------------------------------------
         // Huella de dispositivo (prototipo): SHA-256 de un identificador
@@ -163,50 +195,90 @@
         }
 
         // ------------------------------------------------------------
-        // Carga de la consulta abierta y sus resultados agregados
+        // Carga: la consulta abierta (una vez) y sus resultados. Los
+        // errores de red se distinguen del estado "sin consultas".
         // ------------------------------------------------------------
-        async function loadResults() {
-            const { data: polls, error: pollErr } = await supabase
+        async function loadPoll() {
+            const { data: polls, error } = await supabase
                 .from('pulso_polls').select('*').eq('status', 'open')
                 .order('created_at', { ascending: false }).limit(1);
-            if (pollErr || !polls?.length) {
-                document.getElementById('poll-title').textContent = 'Sin consultas abiertas';
-                document.getElementById('results-list').innerHTML =
-                    '<p class="text-xs text-gray-500 text-center py-4">No hay resultados disponibles.</p>';
-                return;
+            if (error) {
+                $id('poll-title').textContent = 'Error de conexión';
+                $id('results-list').innerHTML = `
+                    <p class="text-xs text-gray-500 text-center py-4">No se pudo consultar el Open Ledger.
+                    <button onclick="refreshAll()" class="text-accent-500 font-semibold ml-1">Reintentar</button></p>`;
+                return false;
+            }
+            if (!polls.length) {
+                poll = null;
+                $id('vote-btn').disabled = true;
+                $id('poll-title').textContent = 'Sin consultas abiertas';
+                $id('results-list').innerHTML =
+                    '<p class="text-xs text-gray-500 text-center py-4">No hay consultas ciudadanas activas en este momento.</p>';
+                return false;
             }
             poll = polls[0];
-            document.getElementById('poll-title').textContent = poll.title;
+            $id('poll-title').textContent = poll.title;
+            $id('vote-btn').disabled = false;
+            return true;
+        }
 
+        async function loadResults() {
+            if (!poll) return;
             const { data: results, error } = await supabase
                 .from('pulso_results').select('*').eq('poll_id', poll.id)
                 .order('votes', { ascending: false });
-            if (error) return;
+            if (error) {
+                $id('results-list').innerHTML = `
+                    <p class="text-xs text-gray-500 text-center py-4">No se pudieron cargar los resultados.
+                    <button onclick="refreshAll()" class="text-accent-500 font-semibold ml-1">Reintentar</button></p>`;
+                return;
+            }
 
             const total = results.reduce((s, r) => s + r.votes, 0);
-            document.getElementById('total-votes').textContent = total.toLocaleString('es-MX');
+            $id('total-votes').textContent = total.toLocaleString('es-MX');
 
-            document.getElementById('results-list').innerHTML = results.map((r, i) => `
+            // El color se asigna por identidad de la opción (su índice en la
+            // boleta), no por posición en el ranking, para que no cambie de
+            // barra cuando el orden se mueva.
+            $id('results-list').innerHTML = results.map((r, i) => {
+                const colorIdx = poll.options.indexOf(r.choice);
+                const color = BAR_COLORS[(colorIdx >= 0 ? colorIdx : i) % BAR_COLORS.length];
+                return `
                 <div>
                     <div class="flex justify-between text-sm mb-1">
-                        <span class="font-semibold text-gray-200">${r.choice}</span>
-                        <span class="font-mono text-gray-300">${r.pct}%</span>
+                        <span class="font-semibold text-gray-200">${esc(r.choice)}</span>
+                        <span class="font-mono text-gray-300">${esc(r.pct)}%</span>
                     </div>
                     <div class="w-full bg-brand-900 rounded-full h-2.5">
-                        <div class="${BAR_COLORS[i % BAR_COLORS.length]} h-2.5 rounded-full transition-all duration-700" style="width: ${r.pct}%"></div>
+                        <div class="${color} h-2.5 rounded-full transition-all duration-700" style="width: ${Number(r.pct) || 0}%"></div>
                     </div>
                     <p class="text-[10px] text-gray-500 mt-1 font-mono">${r.votes.toLocaleString('es-MX')} votos</p>
-                </div>`).join('');
+                </div>`;
+            }).join('');
         }
 
+        window.refreshAll = async function () {
+            if (await loadPoll()) await loadResults();
+        };
+
         // ------------------------------------------------------------
-        // Datos crudos: descarga del Open Ledger completo (JSON)
+        // Datos crudos: descarga PAGINADA del Open Ledger completo.
+        // Sin paginar, PostgREST trunca en 1000 filas y un auditor
+        // recibiría un ledger incompleto sin aviso.
         // ------------------------------------------------------------
         window.downloadLedger = async function () {
-            const { data, error } = await supabase
-                .from('pulso_ledger').select('*').order('seq');
-            if (error || !data) return alert('No se pudo descargar el ledger.');
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            let all = [], from = 0;
+            while (true) {
+                const { data, error } = await supabase
+                    .from('pulso_ledger').select('*').order('seq')
+                    .range(from, from + LEDGER_PAGE - 1);
+                if (error) return alert('No se pudo descargar el ledger: ' + error.message);
+                all = all.concat(data);
+                if (data.length < LEDGER_PAGE) break;
+                from += LEDGER_PAGE;
+            }
+            const blob = new Blob([JSON.stringify(all, null, 2)], { type: 'application/json' });
             const a = Object.assign(document.createElement('a'), {
                 href: URL.createObjectURL(blob),
                 download: 'pulso-nayarit-ledger.json'
@@ -219,58 +291,71 @@
         // Flujo de voto: verificación -> boleta -> RPC pulso_cast_vote
         // ------------------------------------------------------------
         window.startVerification = async function () {
-            document.getElementById('vote-section').classList.add('hidden');
-            const box = document.getElementById('verification-process');
+            const box = $id('verification-process');
+            $id('vote-section').classList.add('hidden');
             box.classList.remove('hidden');
-            box.innerHTML = `
-                <div class="w-16 h-16 bg-brand-900 rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-dashed border-accent-500">
-                    <i class="fa-solid fa-mobile-screen text-2xl text-accent-500"></i>
-                </div>
-                <h3 class="font-bold text-gray-200 mb-1">Verificación de Dispositivo Único</h3>
+
+            if (!poll) {
+                box.innerHTML = statusCard('warn', 'fa-hourglass-half', 'La consulta aún no está lista',
+                    '<p class="text-xs text-gray-400">Espera a que cargue la consulta abierta e inténtalo de nuevo.</p>' + RETRY_BTN);
+                return;
+            }
+            if (!window.crypto?.subtle || !crypto.randomUUID) {
+                box.innerHTML = statusCard('error', 'fa-lock-open', 'Contexto no seguro',
+                    '<p class="text-xs text-gray-400">La huella criptográfica requiere HTTPS. Abre la página desde una dirección segura.</p>' + RETRY_BTN);
+                return;
+            }
+
+            box.innerHTML = statusCard('info', 'fa-mobile-screen', 'Verificación de Dispositivo Único', `
                 <p class="text-xs text-gray-400 mb-4">Generando la huella criptográfica de tu equipo…</p>
                 <div class="flex items-center justify-center space-x-2 text-xs font-mono text-accent-400">
                     <i class="fa-solid fa-circle-notch fa-spin"></i>
                     <span>Generando Hash Criptográfico…</span>
-                </div>`;
+                </div>`);
 
-            const hash = await deviceHash();
-            setTimeout(() => showBallot(hash), 1200);
+            try {
+                showBallot(await deviceHash());
+            } catch (e) {
+                box.innerHTML = statusCard('error', 'fa-triangle-exclamation', 'No se pudo verificar el dispositivo',
+                    `<p class="text-xs text-gray-400 font-mono">${esc(e.message)}</p>` + RETRY_BTN);
+            }
         };
 
         function showBallot(hash) {
-            if (!poll) return;
-            const box = document.getElementById('verification-process');
-            const options = poll.options.map((opt, i) => `
-                <button data-choice="${opt}" class="ballot-option w-full bg-brand-900 border border-brand-700 text-gray-200 font-semibold py-3 rounded-lg hover:border-accent-500 transition text-sm">
-                    ${opt}
+            const box = $id('verification-process');
+            // Las opciones se referencian por índice (data-idx), nunca
+            // interpolando su texto en atributos HTML.
+            const options = poll.options.map((opt, idx) => `
+                <button data-idx="${idx}" class="ballot-option w-full bg-brand-900 border border-brand-700 text-gray-200 font-semibold py-3 rounded-lg hover:border-accent-500 transition text-sm disabled:opacity-50">
+                    ${esc(opt)}
                 </button>`).join('');
-            box.innerHTML = `
-                <div class="w-16 h-16 bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-green-500">
-                    <i class="fa-solid fa-check text-2xl text-green-500"></i>
-                </div>
-                <h3 class="font-bold text-gray-200 mb-1">Dispositivo Validado</h3>
+            box.innerHTML = statusCard('ok', 'fa-check', 'Dispositivo Validado', `
                 <p class="text-xs text-gray-400 mb-1 font-mono">Hash: 0x${hash.slice(0, 3).toUpperCase()}…${hash.slice(-4).toUpperCase()}</p>
-                <p class="text-xs text-gray-400 mb-3">Boleta: <strong>${poll.title}</strong></p>
+                <p class="text-xs text-gray-400 mb-3">Boleta: <strong>${esc(poll.title)}</strong></p>
                 <div class="mb-3 text-left">
                     <label class="text-[10px] text-gray-500 uppercase font-mono">Código postal (agregación geográfica)</label>
                     <input id="ballot-cp" type="text" inputmode="numeric" maxlength="5" value="63000"
                         class="w-full mt-1 bg-brand-900 border border-brand-700 rounded-lg px-3 py-2 text-sm font-mono text-gray-200 focus:border-accent-500 outline-none">
                 </div>
                 <div class="space-y-2">${options}</div>
-                <p id="ballot-status" class="text-[10px] text-gray-500 mt-3 font-mono"></p>`;
+                <p id="ballot-status" class="text-[10px] text-gray-500 mt-3 font-mono"></p>`);
 
-            box.querySelectorAll('.ballot-option').forEach(btn =>
-                btn.addEventListener('click', () => castVote(hash, btn.dataset.choice)));
+            const btns = [...box.querySelectorAll('.ballot-option')];
+            btns.forEach(btn => btn.addEventListener('click',
+                () => castVote(hash, poll.options[Number(btn.dataset.idx)], btns)));
         }
 
-        async function castVote(hash, choice) {
-            const cp = document.getElementById('ballot-cp').value.trim();
-            const status = document.getElementById('ballot-status');
+        async function castVote(hash, choice, btns) {
+            const cp = $id('ballot-cp').value.trim();
+            const status = $id('ballot-status');
             if (!/^[0-9]{5}$/.test(cp)) {
                 status.textContent = 'Código postal inválido (5 dígitos).';
                 status.className = 'text-[10px] text-red-400 mt-3 font-mono';
                 return;
             }
+            // Evita el doble-tap: dos RPCs en carrera pueden dejar al votante
+            // viendo el error del segundo intento sobre su voto ya registrado.
+            btns.forEach(b => b.disabled = true);
             status.textContent = 'Registrando en el Open Ledger…';
             status.className = 'text-[10px] text-accent-400 mt-3 font-mono';
 
@@ -281,35 +366,47 @@
                 p_cp: cp
             });
 
-            const box = document.getElementById('verification-process');
+            const box = $id('verification-process');
             if (error) {
-                const already = error.message.includes('ya emitió');
-                box.innerHTML = `
-                    <div class="w-16 h-16 ${already ? 'bg-amber-900/30 border-amber-500' : 'bg-red-900/30 border-red-500'} rounded-full flex items-center justify-center mx-auto mb-3 border-2">
-                        <i class="fa-solid ${already ? 'fa-hand' : 'fa-triangle-exclamation'} text-2xl ${already ? 'text-amber-500' : 'text-red-500'}"></i>
-                    </div>
-                    <h3 class="font-bold text-gray-200 mb-1">${already ? 'Voto ya registrado' : 'No se pudo registrar'}</h3>
-                    <p class="text-xs text-gray-400 font-mono">${error.message}</p>`;
+                // SQLSTATE estable (23505 = duplicado), con el texto como respaldo
+                const already = error.code === '23505' || error.message.includes('ya emitió');
+                box.innerHTML = already
+                    ? statusCard('warn', 'fa-hand', 'Voto ya registrado',
+                        '<p class="text-xs text-gray-400">Este dispositivo ya emitió su voto en esta consulta.</p>')
+                    : statusCard('error', 'fa-triangle-exclamation', 'No se pudo registrar',
+                        `<p class="text-xs text-gray-400 font-mono">${esc(error.message)}</p>` + RETRY_BTN);
                 return;
             }
-            box.innerHTML = `
-                <div class="w-16 h-16 bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-green-500">
-                    <i class="fa-solid fa-check-double text-2xl text-green-500"></i>
-                </div>
-                <h3 class="font-bold text-gray-200 mb-1">Voto registrado en el Ledger</h3>
-                <p class="text-xs text-gray-400 mb-3 font-mono">Registro #${seq} — verifícalo en "Ver Datos Crudos"</p>
-                <p class="text-[10px] text-gray-500">Tu voto quedó encadenado criptográficamente. Cualquier alteración posterior del ledger rompería la cadena y sería detectable públicamente.</p>`;
+            box.innerHTML = statusCard('ok', 'fa-check-double', 'Voto registrado en el Ledger', `
+                <p class="text-xs text-gray-400 mb-3 font-mono">Registro #${esc(seq)} — verifícalo en "Ver Datos Crudos"</p>
+                <p class="text-[10px] text-gray-500">Tu voto quedó encadenado criptográficamente. Cualquier alteración posterior del ledger rompería la cadena y sería detectable públicamente.</p>`);
             loadResults();
         }
 
         // ------------------------------------------------------------
-        // Tiempo real: cada inserción en el ledger refresca el ranking
+        // Tiempo real, con honestidad: el badge refleja el estado real
+        // del canal, los eventos se agrupan (debounce) y un refresco
+        // periódico cubre la caída silenciosa del websocket.
         // ------------------------------------------------------------
-        supabase.channel('pulso-ledger')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pulso_ledger' }, loadResults)
-            .subscribe();
+        function setLiveBadge(live) {
+            $id('live-badge').innerHTML = live
+                ? '<span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5 animate-pulse"></span> LIVE'
+                : '<span class="w-1.5 h-1.5 rounded-full bg-gray-500 mr-1.5"></span> SIN CONEXIÓN EN VIVO';
+        }
 
-        loadResults();
+        let refreshTimer = null;
+        const scheduleRefresh = () => {
+            clearTimeout(refreshTimer);
+            refreshTimer = setTimeout(loadResults, 400);
+        };
+
+        supabase.channel('pulso-ledger')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'pulso_ledger' }, scheduleRefresh)
+            .subscribe(status => setLiveBadge(status === 'SUBSCRIBED'));
+
+        setInterval(() => { if (poll) loadResults(); }, 60000);
+
+        refreshAll();
     </script>
 </body>
 </html>
