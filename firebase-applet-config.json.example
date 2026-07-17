@@ -1,0 +1,10 @@
+{
+  "projectId": "tu-proyecto-firebase",
+  "appId": "1:000000000000:web:0000000000000000000000",
+  "apiKey": "TU_API_KEY_PUBLICA_DE_FIREBASE",
+  "authDomain": "tu-proyecto-firebase.firebaseapp.com",
+  "firestoreDatabaseId": "(default)",
+  "storageBucket": "tu-proyecto-firebase.firebasestorage.app",
+  "messagingSenderId": "000000000000",
+  "measurementId": ""
+}
