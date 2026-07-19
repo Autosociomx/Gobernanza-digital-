@@ -23,6 +23,7 @@ adelante desarrollados con Claude Code.
 
 10. [El Fundamento Constitucional: Artículo 115](./CAPITULO_X_fundamento_constitucional_articulo_115.md)
 11. [La LNETB: Obligaciones Municipales Verificadas](./CAPITULO_XI_lnetb_articulo_por_articulo.md)
+12. [El Marco Estatal (I): Ley de Gobierno Digital de Nayarit](./CAPITULO_XII_ley_gobierno_digital_nayarit.md)
 
 ✅ **Cotejo definitivo (2026-07-18)**: el texto íntegro oficial de la LNETB (PDF Cámara de
 Diputados, 114 artículos, subido por el autor) **confirmó todas las citas** del
@@ -32,8 +33,16 @@ preliminar del 17-jul era un error de fuentes secundarias — retractado y docum
 como lección metodológica. Todo el Cap. XI quedó en nivel (a) con citas textuales. Texto de
 trabajo de la ley: `fuentes/LNETB_texto_extraido_camara_diputados.txt`.
 
-Siguiente: Ley de Gobierno Digital de Nayarit + Ley Municipal del Estado. Método: texto
-primario primero; fuentes secundarias solo como guía de lectura.
+✅ **Cap. XII (2026-07-18)**: Ley de Gobierno Digital de Nayarit (55 arts., 13-jun-2022) cotejada
+íntegra con el PDF oficial del Congreso subido por el autor. Hallazgos clave: Art. 24 (función
+municipal expresa de política digital), **Art. 48 fracc. IV (la captura única ya es un derecho
+vigente en Nayarit desde 2022)**, Art. 41 (la Ventanilla Única estatal solo cubre trámites
+estatales — el instrumento municipal es un vacío legal que la plataforma ocupa sin invadir
+competencias). Texto de trabajo: `fuentes/LGD_NAYARIT_texto_extraido_congreso.txt`.
+
+Siguiente: Cap. XIII — Ley Municipal para el Estado de Nayarit (falta subir el PDF oficial:
+https://congresonayarit.gob.mx/wp-content/uploads/QUE_HACEMOS/LEGISLACION_ESTATAL/marco_juridico_municipal/municipal_para_el_estado_de_nayarit_ley.pdf).
+Método: texto primario primero; fuentes secundarias solo como guía de lectura.
 
 Ver [`PLAN_TOMOS_II_A_IX.md`](./PLAN_TOMOS_II_A_IX.md) para el resumen operativo completo de
 qué cubre cada uno de los Tomos II–IX.
