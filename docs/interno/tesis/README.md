@@ -24,14 +24,16 @@ adelante desarrollados con Claude Code.
 10. [El Fundamento Constitucional: Artículo 115](./CAPITULO_X_fundamento_constitucional_articulo_115.md)
 11. [La LNETB: Obligaciones Municipales Verificadas](./CAPITULO_XI_lnetb_articulo_por_articulo.md)
 
-⚠️ **Hallazgo del Cap. XI (2026-07-17)**: la verificación preliminar indica que la numeración
-de artículos citada en el `Requerimiento_LNETB_Tepic_v3_FINAL` ya entregado al Ayuntamiento
-(Art. 74 = Llave MX, Art. 91 = código fuente, transitorios 14º–16º) **no corresponde** al texto
-real de la ley — las obligaciones existen, pero en otros artículos. Cotejo contra el PDF íntegro
-del DOF pendiente y obligatorio antes de cualquier documento jurídico nuevo (ver §11.4).
+✅ **Cotejo definitivo (2026-07-18)**: el texto íntegro oficial de la LNETB (PDF Cámara de
+Diputados, 114 artículos, subido por el autor) **confirmó todas las citas** del
+`Requerimiento_LNETB_Tepic_v3_FINAL`: Art. 3 fracc. XXXIV, Arts. 12-15, 51-54, 64, 74 (Llave
+MX), 91 (código fuente) y Transitorios 14º-16º (plazos vencidos ene-feb 2026). El "hallazgo"
+preliminar del 17-jul era un error de fuentes secundarias — retractado y documentado en §11.4
+como lección metodológica. Todo el Cap. XI quedó en nivel (a) con citas textuales. Texto de
+trabajo de la ley: `fuentes/LNETB_texto_extraido_camara_diputados.txt`.
 
-Siguiente: Ley de Gobierno Digital de Nayarit + Ley Municipal del Estado. Estándar: toda
-afirmación jurídica citada contra fuente oficial, clasificada en niveles (a)/(b)/(c).
+Siguiente: Ley de Gobierno Digital de Nayarit + Ley Municipal del Estado. Método: texto
+primario primero; fuentes secundarias solo como guía de lectura.
 
 Ver [`PLAN_TOMOS_II_A_IX.md`](./PLAN_TOMOS_II_A_IX.md) para el resumen operativo completo de
 qué cubre cada uno de los Tomos II–IX.
