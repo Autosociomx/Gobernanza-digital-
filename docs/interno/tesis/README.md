@@ -24,6 +24,7 @@ adelante desarrollados con Claude Code.
 10. [El Fundamento Constitucional: Artículo 115](./CAPITULO_X_fundamento_constitucional_articulo_115.md)
 11. [La LNETB: Obligaciones Municipales Verificadas](./CAPITULO_XI_lnetb_articulo_por_articulo.md)
 12. [El Marco Estatal (I): Ley de Gobierno Digital de Nayarit](./CAPITULO_XII_ley_gobierno_digital_nayarit.md)
+13. [El Marco Estatal (II): Ley Municipal y mecánica del cabildo](./CAPITULO_XIII_ley_municipal_nayarit.md) — **nivel (b)**, pendiente cotejo primario
 
 ✅ **Cotejo definitivo (2026-07-18)**: el texto íntegro oficial de la LNETB (PDF Cámara de
 Diputados, 114 artículos, subido por el autor) **confirmó todas las citas** del
