@@ -1,6 +1,13 @@
 # Marco de Cumplimiento — Ley Nacional de Simplificación y Digitalización
 
-**Nayarit Digital / ConnectX** · Documento normativo del repositorio · v1.0
+**Nayarit Digital / ConnectX** · Documento normativo del repositorio · v1.1
+
+> **Nota (18-jul-2026):** la matriz canónica de cumplimiento vive ahora en
+> [`/COMPLIANCE.md`](../../COMPLIANCE.md) (raíz del repositorio), con los
+> artículos de la LNETB y de la Ley de Gobierno Digital de Nayarit cotejados
+> contra los textos oficiales íntegros. Este documento conserva la regla de
+> honestidad de estados y el proceso de revisión; su tabla queda subordinada
+> a la de `COMPLIANCE.md`.
 
 Este documento mapea cada requisito del marco legal aplicable contra el lugar
 del repositorio donde se cumple. Es el documento que se entrega cuando un

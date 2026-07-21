@@ -1,12 +1,19 @@
-# Nayarit Digital
+# SOATM — Sistema Operativo para la Autonomía Tecnológica Municipal
+
+**Primera implementación: Nayarit Digital (Tepic, Nayarit)**
 
 Plataforma de gobernanza digital municipal: portal ciudadano, expediente de
 salud ligado a CURP, y panel operativo para el municipio — construida para
 cumplir la Ley Nacional para Eliminar Trámites Burocráticos (LNETB, DOF
 16-VII-2025) sin dejar el código en manos de un proveedor externo.
 
-Nace de un piloto real en Tepic, Nayarit, y está pensada desde el diseño
-para que cualquier municipio pueda desplegar su propia instancia.
+SOATM es el estándar reutilizable; Nayarit Digital es su primera
+implementación, nacida de un piloto real en Tepic. Un municipio que adopte
+el sistema no copia a Tepic: implementa un estándar documentado, alineado
+con el esquema de reutilización del Repositorio Nacional de Tecnología
+Pública que la LNETB establece (Art. 91). El mapa completo de qué artículo
+de qué ley se cumple con qué componente — y cómo se prueba — vive en
+[`COMPLIANCE.md`](./COMPLIANCE.md).
 
 ## Por qué existe
 
