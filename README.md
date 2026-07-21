@@ -15,6 +15,10 @@ Pública que la LNETB establece (Art. 91). El mapa completo de qué artículo
 de qué ley se cumple con qué componente — y cómo se prueba — vive en
 [`COMPLIANCE.md`](./COMPLIANCE.md).
 
+Proyecto desarrollado por **ConnectX** (Tepic, Nayarit, México). La
+organización de repositorios del ecosistema está documentada en
+[`docs/marco/ARQUITECTURA_REPOSITORIOS.md`](./docs/marco/ARQUITECTURA_REPOSITORIOS.md).
+
 ## Por qué existe
 
 El trámite gratuito en un Centro de Salud mexicano hoy no deja rastro: los
