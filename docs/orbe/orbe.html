@@ -1,0 +1,431 @@
+<title>Orbe Central — Nayarit Digital</title>
+<style>
+  :root{
+    --bg0:#081517; --bg1:#0C2023; --bg2:#10282C;
+    --glass:rgba(18,42,46,.78); --glass2:rgba(14,32,36,.92);
+    --line:rgba(94,214,190,.16); --line2:rgba(94,214,190,.32);
+    --ink:#E9F5F2; --mut:#8FB3AC; --dim:#5E7F79;
+    --acc:#3BD6B8; --acc-ink:#062420;
+    --st-disenado:#7FA8B8; --st-propuesta:#D8B45C; --st-constr:#E0985A;
+    --st-piloto:#6EC6E8; --st-desplegado:#5FD68A;
+    --sheet-w:min(480px,100vw);
+    --sans:"Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif;
+    --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0}
+  html,body{height:100%}
+  body{
+    font-family:var(--sans); color:var(--ink); background:var(--bg0);
+    background:radial-gradient(120% 90% at 50% 8%, var(--bg2) 0%, var(--bg1) 42%, var(--bg0) 100%);
+    overflow:hidden;
+  }
+  canvas#sky{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:30;
+    display:flex;align-items:baseline;justify-content:space-between;gap:1rem;
+    padding:1.1rem 1.4rem;pointer-events:none;
+  }
+  header h1{
+    font-size:.82rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--ink);
+  }
+  header h1 span{color:var(--acc)}
+  header p{font-size:.72rem;color:var(--dim);letter-spacing:.06em}
+
+  /* ---------- escena orbital ---------- */
+  #scene{position:fixed;inset:0;display:grid;place-items:center}
+  #orbit{position:relative;width:min(88vmin,760px);height:min(88vmin,760px)}
+  .ring{position:absolute;inset:0;border:1px solid var(--line);border-radius:50%;pointer-events:none}
+  .ring.r2{inset:18%}.ring.r3{inset:36%}
+
+  .bubble{
+    position:absolute;transform:translate(-50%,-50%);
+    width:15.5%;aspect-ratio:1;min-width:86px;
+    border-radius:50%;border:1px solid var(--line2);
+    background:radial-gradient(120% 120% at 30% 25%, rgba(59,214,184,.14), rgba(18,42,46,.85) 60%);
+    color:var(--ink);cursor:pointer;font-family:var(--sans);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3rem;
+    padding:.5rem;text-align:center;
+    box-shadow:0 0 0 4px rgba(59,214,184,.04), 0 10px 30px rgba(0,0,0,.45);
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .bubble:hover,.bubble:focus-visible{
+    transform:translate(-50%,-50%) scale(1.07);
+    border-color:var(--acc);
+    box-shadow:0 0 0 6px rgba(59,214,184,.10), 0 14px 38px rgba(0,0,0,.55);
+    outline:none;z-index:5;
+  }
+  .bubble .ico{font-size:1.25rem;line-height:1}
+  .bubble .nm{font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;line-height:1.3}
+  .bubble .st{width:.42rem;height:.42rem;border-radius:50%}
+
+  #aura{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:31%;aspect-ratio:1;min-width:150px;border-radius:50%;cursor:pointer;border:1px solid var(--line2);
+    background:radial-gradient(130% 130% at 32% 22%, rgba(59,214,184,.30), rgba(12,32,36,.94) 62%);
+    color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;
+    box-shadow:0 0 60px rgba(59,214,184,.18), inset 0 0 40px rgba(59,214,184,.08);
+    transition:box-shadow .25s ease, transform .18s ease;
+  }
+  #aura:hover,#aura:focus-visible{transform:translate(-50%,-50%) scale(1.03);box-shadow:0 0 90px rgba(59,214,184,.30), inset 0 0 46px rgba(59,214,184,.12);outline:none}
+  #aura .halo{font-size:2rem}
+  #aura .t1{font-size:.78rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase}
+  #aura .t2{font-size:.62rem;color:var(--mut);letter-spacing:.08em}
+
+  /* ---------- hoja de módulo ---------- */
+  #sheet{
+    position:fixed;top:0;right:0;bottom:0;width:var(--sheet-w);z-index:40;
+    background:var(--glass2);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border-left:1px solid var(--line2);
+    transform:translateX(102%);transition:transform .28s cubic-bezier(.3,.8,.3,1);
+    display:flex;flex-direction:column;
+  }
+  #sheet.open{transform:translateX(0)}
+  #sheet .top{padding:1.1rem 1.2rem .9rem;border-bottom:1px solid var(--line)}
+  #sheet .eyebrow{display:flex;align-items:center;gap:.55rem;margin-bottom:.45rem}
+  .pill{
+    font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;
+    padding:.18rem .55rem;border-radius:99px;border:1px solid currentColor;
+  }
+  #sheet h2{font-size:1.02rem;font-weight:700;letter-spacing:.02em;text-wrap:balance}
+  #sheet .desc{font-size:.78rem;color:var(--mut);line-height:1.55;margin-top:.45rem;max-width:60ch}
+  #xbtn{
+    position:absolute;top:.85rem;right:.9rem;width:2rem;height:2rem;border-radius:50%;
+    border:1px solid var(--line2);background:transparent;color:var(--mut);cursor:pointer;font-size:.9rem;
+  }
+  #xbtn:hover,#xbtn:focus-visible{color:var(--ink);border-color:var(--acc);outline:none}
+
+  #chat{flex:1;overflow-y:auto;padding:1rem 1.2rem;display:flex;flex-direction:column;gap:.7rem}
+  .msg{max-width:92%;font-size:.8rem;line-height:1.55;border-radius:.9rem;padding:.6rem .8rem}
+  .msg.user{align-self:flex-end;background:rgba(59,214,184,.14);border:1px solid var(--line2);border-bottom-right-radius:.25rem}
+  .msg.bot{align-self:flex-start;background:var(--glass);border:1px solid var(--line);border-bottom-left-radius:.25rem}
+  .msg.bot b{color:var(--acc);font-weight:600}
+  .msg.bot ul{margin:.35rem 0 .1rem 1rem;display:flex;flex-direction:column;gap:.25rem}
+  .msg.bot a{color:var(--acc);text-decoration:none;border-bottom:1px dotted var(--line2)}
+  .msg.bot a:hover{border-bottom-style:solid}
+  .msg.bot code{font-family:var(--mono);font-size:.72rem;color:var(--st-piloto);word-break:break-all}
+  .msg .go{
+    display:inline-block;margin-top:.5rem;padding:.42rem .8rem;border-radius:.55rem;cursor:pointer;
+    background:var(--acc);color:var(--acc-ink);border:none;font-weight:700;font-size:.74rem;letter-spacing:.04em;
+  }
+  .msg .go:hover{filter:brightness(1.08)}
+  .prompt-box{
+    margin-top:.55rem;background:var(--bg0);border:1px solid var(--line);border-radius:.6rem;
+    padding:.55rem .65rem;font-family:var(--mono);font-size:.68rem;line-height:1.5;color:var(--mut);
+    white-space:pre-wrap;word-break:break-word;max-height:9rem;overflow-y:auto;
+  }
+  .copy{
+    margin-top:.4rem;padding:.35rem .7rem;border-radius:.5rem;cursor:pointer;font-size:.7rem;
+    background:transparent;color:var(--acc);border:1px solid var(--line2);
+  }
+  .copy:hover{border-color:var(--acc)}
+
+  #chips{display:flex;gap:.45rem;flex-wrap:wrap;padding:.35rem 1.2rem .6rem}
+  .chip{
+    font-size:.68rem;letter-spacing:.05em;padding:.32rem .7rem;border-radius:99px;cursor:pointer;
+    background:transparent;color:var(--mut);border:1px solid var(--line);
+  }
+  .chip:hover,.chip:focus-visible{color:var(--acc);border-color:var(--line2);outline:none}
+
+  #inbar{display:flex;gap:.5rem;padding:.7rem 1.2rem 1rem;border-top:1px solid var(--line)}
+  #inp{
+    flex:1;background:var(--bg0);border:1px solid var(--line2);border-radius:.7rem;color:var(--ink);
+    font-family:var(--sans);font-size:.82rem;padding:.6rem .8rem;outline:none;
+  }
+  #inp:focus{border-color:var(--acc)}
+  #inp::placeholder{color:var(--dim)}
+  #send{
+    background:var(--acc);color:var(--acc-ink);border:none;border-radius:.7rem;
+    padding:0 1rem;font-weight:700;font-size:.8rem;cursor:pointer;
+  }
+  #send:hover{filter:brightness(1.08)}
+
+  #scrim{position:fixed;inset:0;background:rgba(4,12,13,.45);z-index:35;opacity:0;pointer-events:none;transition:opacity .25s}
+  #scrim.on{opacity:1;pointer-events:auto}
+
+  /* móvil: la órbita colapsa a cuadrícula */
+  @media (max-width:700px){
+    body{overflow:auto}
+    #scene{position:static;display:block;padding:5.2rem 1rem 2rem}
+    #orbit{width:auto;height:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.8rem}
+    .ring{display:none}
+    #aura,.bubble{position:static;transform:none;width:100%;min-width:0;aspect-ratio:auto;border-radius:1rem;padding:1rem .6rem}
+    #aura{grid-column:1/-1}
+    #aura:hover,.bubble:hover{transform:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;animation:none !important}
+  }
+</style>
+
+<canvas id="sky" aria-hidden="true"></canvas>
+
+<header>
+  <h1>Orbe Central <span>·</span> Nayarit Digital</h1>
+  <p>Aura, al centro, es el primer contacto con el ciudadano — conoce todas las burbujas y te canaliza</p>
+</header>
+
+<main id="scene">
+  <div id="orbit" role="navigation" aria-label="Módulos del ecosistema">
+    <div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div>
+    <button id="aura" aria-label="Abrir chat con Aura, el núcleo del Orbe">
+      <span class="halo">🧠</span>
+      <span class="t1">Aura</span>
+      <span class="t2">atención ciudadana</span>
+    </button>
+  </div>
+</main>
+
+<div id="scrim"></div>
+
+<aside id="sheet" aria-hidden="true">
+  <div class="top">
+    <div class="eyebrow"><span class="pill" id="sh-st"></span></div>
+    <h2 id="sh-nm"></h2>
+    <p class="desc" id="sh-desc"></p>
+    <button id="xbtn" aria-label="Cerrar módulo">✕</button>
+  </div>
+  <div id="chat" aria-live="polite"></div>
+  <div id="chips"></div>
+  <div id="inbar">
+    <input id="inp" type="text" placeholder="Escribe qué quieres ver o editar…" aria-label="Mensaje al chat del módulo">
+    <button id="send">Enviar</button>
+  </div>
+</aside>
+
+<script>
+"use strict";
+const GH = "https://github.com/Autosociomx/Gobernanza-digital-/blob/claude/soberania-digital-infantil-sbyj67/";
+const REPO = "Autosociomx/Gobernanza-digital-";
+
+const ESTADOS = {
+  disenado:{t:"Diseñado",c:"var(--st-disenado)"},
+  propuesta:{t:"Propuesta",c:"var(--st-propuesta)"},
+  en_construccion:{t:"En construcción",c:"var(--st-constr)"},
+  piloto:{t:"Piloto",c:"var(--st-piloto)"},
+  desplegado:{t:"Desplegado",c:"var(--st-desplegado)"}
+};
+
+const MODS = [
+  {id:"llave-identidad", ico:"🔑", nm:"Nayarit ID · Llave", full:"Llave e Identidad — Llave MX + Llave Infantil", st:"propuesta",
+   desc:"El círculo de identidad: el tutor se autentica con Llave MX (CURP) y de ella cuelga la Llave Infantil (SINISI) con doble anonimato frente a plataformas.",
+   kw:["llave","identidad","nayarit id","id nayarit","id ciudadana","curp","soberania","infantil","sinisi","consentimiento","verificacion","edad","tutor","doble anonimato"],
+   files:[["docs/orbe/modulos/LLAVE_IDENTIDAD.md","ficha del módulo"],["docs/marco/soberania-digital-infantil/README.md","propuesta completa"],["docs/marco/soberania-digital-infantil/FICHA_LEGISLATIVA.md","articulado legal"],["docs/marco/soberania-digital-infantil/DIAGRAMA_VERIFICACION.md","flujos"],["src/components/LoginView.tsx","login puente actual"]],
+   pend:["Protocolo técnico del token (firma, rotación, no correlación)","Integración real con Llave MX (sandbox ATDT)","Prototipo de la app del tutor"],
+   con:["Expediente Familiar — la llave del tutor abre el expediente del menor","Protección Digital — revocación dispara suspensión en 24 h","Aura — sesión única del tutor en todos los círculos"]},
+  {id:"expediente-familiar", ico:"📋", nm:"Expediente Familiar", full:"Expediente Digital Familiar — padres y niños, CURP", st:"piloto",
+   desc:"Expediente de salud ligado al CURP: perfil, consultas, documentos y citas del hospital central. En modo pediátrico, solo se abre con la llave del tutor.",
+   kw:["expediente","hospital","citas","cita","medico","paciente","cartilla","vacun","pediatr","documentos","salud curp","rayos","estudios","laboratorio"],
+   files:[["docs/orbe/modulos/EXPEDIENTE_FAMILIAR.md","ficha del módulo"],["docs/marco/MODULO_SALUD_CURP.md","documento técnico"],["firestore.rules","reglas de acceso (8/8 tests)"],["src/components/SaludNayaritID.tsx","componente principal"]],
+   pend:["Modo pediátrico: expediente de menor exige llave del tutor","Habilitar Cloud Storage (consola Firebase)","Sembrar códigos de personal","Cartilla de vacunación digital"],
+   con:["Nayarit ID · Llave — consentimiento del tutor","TEPICTU Salud — el triaje deriva a cita","Bienestar — casos vulnerables al DIF"]},
+  {id:"tepictu-salud", ico:"🩺", nm:"TEPICTU Salud", full:"TEPICTU Salud — triaje con IA sin internet", st:"disenado",
+   desc:"Chat de orientación médica offline para colonias y sierra: síntomas → urgencia → recomendación (casa, centro de salud u hospital). Para DIF y escuelas.",
+   kw:["tepictu","triage","triaje","sintoma","urgencia","offline","orientacion","medica","fiebre","enfermo","enferma","dolor","doctor","me siento mal"],
+   files:[["docs/orbe/modulos/TEPICTU_SALUD.md","ficha del módulo"],["docs/interno/NAYARIT_DIGITAL_V2.md","visión §4"]],
+   pend:["Elegir modelo de IA offline (Edge AI)","Protocolo triaje → cita en hospital central","Versión para menores: notifica al tutor vía su llave"],
+   con:["Expediente Familiar — consulta queda en el perfil CURP","Bienestar — alertas de brotes y desnutrición","Aura — el triaje es conversación offline"]},
+  {id:"tesoreria", ico:"💰", nm:"Tesorería", full:"Tesorería Digital", st:"disenado",
+   desc:"Predial, agua, multas y licencias 100% en línea, con recordatorios, líneas de captura y recibos fiscales.",
+   kw:["tesoreria","predial","pago","agua","multa","licencia","recibo","impuesto"],
+   files:[["docs/orbe/modulos/TESORERIA.md","ficha del módulo"],["docs/interno/NAYARIT_DIGITAL_V2.md","visión §1"]],
+   pend:["Definir pasarela de pagos y conciliación"],
+   con:["Servicios Públicos — reportes con costo generan pago","Obras — pagado vs. avance real","Bienestar — validación de beneficiarios"]},
+  {id:"obras", ico:"🏗️", nm:"Obras", full:"Trazabilidad de Obras", st:"disenado",
+   desc:"Cada obra con su ficha (contrato, empresa, monto), avance semanal con fotos y alertas por retraso o sobrecosto.",
+   kw:["obra","contrato","avance","sobrecosto","puente","construccion"],
+   files:[["docs/orbe/modulos/OBRAS.md","ficha del módulo"],["docs/interno/NAYARIT_DIGITAL_V2.md","visión §2"],["src/components/NayaritMap.tsx","mapa"]],
+   pend:["Esquema de datos de la ficha de obra"],
+   con:["Servicios Públicos — obra mayor entra como solicitud","Tesorería — control cruzado de pagos"]},
+  {id:"servicios-publicos", ico:"🔧", nm:"Servicios Públicos", full:"Servicios Públicos Inteligente", st:"disenado",
+   desc:"Reporte ciudadano por WhatsApp, chat o app; la IA clasifica (bache, luminaria, fuga…) y da seguimiento en tiempo real con notificaciones.",
+   kw:["bache","luminaria","basura","fuga","poda","reporte","servicios","whatsapp","bot tepic"],
+   files:[["docs/orbe/modulos/SERVICIOS_PUBLICOS.md","ficha del módulo"],["docs/interno/NAYARIT_DIGITAL_V2.md","visión §3"],["src/components/UrbanReportMapView.tsx","mapa de reportes"]],
+   pend:["Canal WhatsApp (Bot Tepic) y clasificador IA"],
+   con:["Obras — reporte mayor se eleva","Tesorería — reporte con costo","TEPICTU — síntomas se derivan a triaje"]},
+  {id:"bienestar", ico:"🤝", nm:"Bienestar", full:"Bienestar Social", st:"disenado",
+   desc:"Panel para trabajadores sociales y DIF: programas (despensas, becas, apoyos) y seguimiento de casos vulnerables detectados por otros círculos.",
+   kw:["bienestar","dif","despensa","apoyo","vulnerable","social","beca"],
+   files:[["docs/orbe/modulos/BIENESTAR.md","ficha del módulo"],["docs/interno/NAYARIT_DIGITAL_V2.md","visión §6"]],
+   pend:["Definir el panel DIF y su modelo de casos"],
+   con:["TEPICTU — alertas de salud pública","Nayarit ID · Llave — vínculo tutor-menor de Becas","Tesorería — validación indirecta"]},
+  {id:"pulso-nayarit", ico:"📊", nm:"Pulso Nayarit", full:"Pulso Nayarit — auditoría cívica", st:"desplegado",
+   desc:"Preferencia electoral ciudadana en tiempo real con libro mayor encadenado y auditable. Backend Supabase/Postgres desplegado, demo activa.",
+   kw:["pulso","auditoria","electoral","encuesta","ledger","preferencia","votos"],
+   files:[["docs/orbe/modulos/PULSO_NAYARIT.md","ficha del módulo"],["pulso-nayarit/README.md","módulo completo"]],
+   pend:["Documentar enlace público del dashboard demo"],
+   con:["Aura — consulta conversacional de agregados","Aislamiento deliberado: participación anónima por diseño"]},
+  {id:"proteccion-digital", ico:"🛡️", nm:"Protección Digital", full:"Protección Digital — denuncia 24/7", st:"propuesta",
+   desc:"Denuncia 24/7 (grooming, ciberacoso, extorsión), retiro de contenido en 24 h y enlace con fiscalías — modelo eSafety Australia.",
+   kw:["proteccion","proteger","denuncia","denunciar","grooming","ciberacoso","extorsion","fiscalia","retiro","acoso","molestando","amenaza","hijos en linea","en linea","internet","redes sociales"],
+   files:[["docs/orbe/modulos/PROTECCION_DIGITAL.md","ficha del módulo"],["docs/marco/soberania-digital-infantil/FICHA_LEGISLATIVA.md","art. 4"],["docs/marco/soberania-digital-infantil/DIAGRAMA_VERIFICACION.md","flujo de denuncia §4"]],
+   pend:["Protocolo de recepción de denuncias","Convenios tipo con fiscalías estatales"],
+   con:["Nayarit ID · Llave — revocación del tutor","Bienestar — acompañamiento social del menor"]}
+];
+
+const AURA = {id:"aura", ico:"🧠", nm:"Aura", full:"Orbe Central — Aura, atención ciudadana", st:"en_construccion",
+  desc:"El primer contacto con cualquier ciudadano: Aura conoce todos los círculos del Orbe y canaliza cada necesidad — un pago, una cita, un reporte, una denuncia — al módulo que la atiende.",
+  files:[["docs/orbe/README.md","mapa del Orbe"],["docs/orbe/modulos.json","registro de módulos"],["docs/orbe/modulos/ORBE_NUCLEO.md","ficha del núcleo"],["src/components/ModularBrain.tsx","cerebro modular"],["src/components/CitizenOS.tsx","OS ciudadano"]],
+  pend:["Bus de eventos formal entre círculos","Documentar intents de Aura por módulo"],
+  con:["Todos los círculos — el núcleo orquesta, no almacena"]};
+
+/* ---------- escena ---------- */
+const orbit = document.getElementById("orbit");
+const isMobile = () => matchMedia("(max-width:700px)").matches;
+
+MODS.forEach((m,i)=>{
+  const b=document.createElement("button");
+  b.className="bubble"; b.dataset.id=m.id;
+  b.setAttribute("aria-label","Abrir módulo "+m.full);
+  b.innerHTML=`<span class="ico">${m.ico}</span><span class="nm">${m.nm}</span><span class="st" style="background:${ESTADOS[m.st].c}"></span>`;
+  b.addEventListener("click",()=>openModule(m));
+  orbit.appendChild(b);
+});
+function layout(){
+  if(isMobile()) { document.querySelectorAll(".bubble").forEach(b=>{b.style.left=b.style.top="";}); return; }
+  const n=MODS.length;
+  document.querySelectorAll(".bubble").forEach((b,i)=>{
+    const a=-Math.PI/2 + i*(2*Math.PI/n);
+    const r=41.5;
+    b.style.left=(50+r*Math.cos(a))+"%";
+    b.style.top =(50+r*Math.sin(a))+"%";
+  });
+}
+layout(); addEventListener("resize",layout);
+document.getElementById("aura").addEventListener("click",()=>openModule(AURA));
+
+/* ---------- hoja + chat ---------- */
+const sheet=document.getElementById("sheet"), scrim=document.getElementById("scrim"),
+      chat=document.getElementById("chat"), chips=document.getElementById("chips"),
+      inp=document.getElementById("inp");
+let cur=null;
+
+function openModule(m){
+  cur=m;
+  document.getElementById("sh-nm").textContent=m.full;
+  document.getElementById("sh-desc").textContent=m.desc;
+  const st=document.getElementById("sh-st");
+  st.textContent=ESTADOS[m.st].t; st.style.color=ESTADOS[m.st].c;
+  chat.innerHTML=""; chips.innerHTML="";
+  const opts = m.id==="aura"
+    ? ["Pagar mi predial","Cita médica","Reportar un bache","Proteger a mis hijos en línea","Ver el mapa"]
+    : ["Archivos para editar","Pendientes","Conexiones","Quiero mejorar esto"];
+  opts.forEach(t=>{
+    const c=document.createElement("button"); c.className="chip"; c.textContent=t;
+    c.addEventListener("click",()=>{ userSay(t); respond(t); });
+    chips.appendChild(c);
+  });
+  botSay(m.id==="aura"
+    ? "Hola, soy <b>Aura</b> 👋 — tu primer contacto con Nayarit Digital. Cuéntame qué necesitas: <i>«quiero pagar mi predial»</i>, <i>«mi hija tiene fiebre»</i>, <i>«hay una fuga en mi calle»</i>, <i>«quiero denunciar acoso en línea»</i>… y te llevo con el círculo que te atiende. Si vienes a <b>editar</b> un módulo, también: dime cuál."
+    : `Estás en <b>${m.nm}</b>. Pregúntame por sus <b>archivos</b>, <b>pendientes</b> o <b>conexiones</b> — o dime qué quieres cambiar y te preparo el prompt de edición para Claude Code.`);
+  sheet.classList.add("open"); sheet.setAttribute("aria-hidden","false");
+  scrim.classList.add("on");
+  inp.focus();
+}
+function closeSheet(){ sheet.classList.remove("open"); sheet.setAttribute("aria-hidden","true"); scrim.classList.remove("on"); }
+document.getElementById("xbtn").addEventListener("click",closeSheet);
+scrim.addEventListener("click",closeSheet);
+addEventListener("keydown",e=>{ if(e.key==="Escape") closeSheet(); });
+
+function el(html){ const d=document.createElement("div"); d.innerHTML=html; return d; }
+function userSay(t){ const m=el(""); m.className="msg user"; m.textContent=t; chat.appendChild(m); chat.scrollTop=chat.scrollHeight; }
+function botSay(html){ const m=el(html); m.className="msg bot"; chat.appendChild(m); chat.scrollTop=chat.scrollHeight; return m; }
+
+const norm=s=>s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+function findModule(t){
+  const q=norm(t);
+  let best=null,score=0;
+  for(const m of MODS){
+    let s=0;
+    for(const k of m.kw) if(q.includes(norm(k))) s+=k.length;
+    if(norm(m.nm).split(" ").some(w=>w.length>3&&q.includes(w))) s+=4;
+    if(s>score){score=s;best=m;}
+  }
+  return score>=4?best:null;
+}
+function fileList(m){
+  return "<ul>"+m.files.map(([p,d])=>`<li><a href="${GH+p}" target="_blank" rel="noopener">${p.split("/").pop()}</a> — ${d}<br><code>${p}</code></li>`).join("")+"</ul>";
+}
+function editPrompt(m,txt){
+  const files=m.files.map(f=>f[0]).join(", ");
+  return `En el repo ${REPO} (rama claude/soberania-digital-infantil-sbyj67), quiero editar el módulo "${m.full}".\n\nPetición: ${txt}\n\nArchivos del módulo: ${files}\n\nSigue la convención del Orbe (docs/orbe/README.md): un círculo = un módulo = un archivo; si cambian nombre, estado o conexiones, actualiza también docs/orbe/modulos.json y el diagrama del README.`;
+}
+function offerPrompt(m,txt){
+  const p=editPrompt(m,txt);
+  const box=botSay(`Listo — este es el <b>prompt de edición</b> para pegar en Claude Code:<div class="prompt-box"></div>`);
+  box.querySelector(".prompt-box").textContent=p;
+  const btn=el(`<button class="copy">📋 Copiar prompt</button>`).firstChild;
+  btn.addEventListener("click",()=>{ navigator.clipboard.writeText(p).then(()=>{btn.textContent="✓ Copiado";}); });
+  box.appendChild(btn);
+}
+
+function respond(t){
+  const q=norm(t), m=cur;
+  if(m.id==="aura"){
+    const hit=findModule(t);
+    if(hit){
+      const b=botSay(`Te atiende <b>${hit.full}</b> <span style="color:${ESTADOS[hit.st].c}">(${ESTADOS[hit.st].t})</span>.<br>${hit.desc}`);
+      const go=el(`<button class="go">${hit.ico} Entrar a ${hit.nm}</button>`).firstChild;
+      go.addEventListener("click",()=>openModule(hit));
+      b.appendChild(go);
+      return;
+    }
+    if(/mapa|modulo|circulo|edito|cual|ayuda|gobernanza|arquitectura/.test(q)){
+      botSay("El Orbe tiene <b>9 círculos</b>: "+MODS.map(x=>`${x.ico} ${x.nm}`).join(" · ")+".<br>Nómbrame uno — o cuéntame tu necesidad (“una cita”, “un pago”, “un reporte”, “una denuncia”…) y te canalizo.");
+      return;
+    }
+    if(/archivo|nucleo|codigo/.test(q)){ botSay("Archivos del núcleo:"+fileList(AURA)); return; }
+    botSay("No identifiqué a qué círculo llevarte. Cuéntame con tus palabras qué necesitas — salud, pagos, un reporte en tu calle, protección de tus hijos, identidad — o nombra un módulo (<i>TEPICTU, Nayarit ID, Obras…</i>).");
+    return;
+  }
+  if(/archivo|donde|codigo|fuente|github/.test(q)){ botSay(`<b>${m.nm}</b> vive en:`+fileList(m)+`Cada enlace abre el archivo en GitHub (rama del PR #29).`); return; }
+  if(/pendiente|falta|todo|siguiente/.test(q)){ botSay("<b>Pendientes:</b><ul>"+m.pend.map(p=>`<li>${p}</li>`).join("")+"</ul>"); return; }
+  if(/conexion|integra|habla|flujo/.test(q)){ botSay("<b>Conexiones</b> (siempre a través del núcleo, nunca directo entre bases):<ul>"+m.con.map(c=>`<li>${c}</li>`).join("")+"</ul>"); return; }
+  if(/mejorar|cambiar|editar|agregar|quitar|quiero|modificar|arquitectura|redisen/.test(q)){
+    offerPrompt(m, t==="Quiero mejorar esto" ? "mejorar el módulo (describe aquí el cambio concreto)" : t);
+    return;
+  }
+  const other=findModule(t);
+  if(other && other.id!==m.id){
+    const b=botSay(`Eso suena a <b>${other.full}</b>, otro círculo del Orbe.`);
+    const go=el(`<button class="go">${other.ico} Ir a ${other.nm}</button>`).firstChild;
+    go.addEventListener("click",()=>openModule(other));
+    b.appendChild(go);
+    return;
+  }
+  botSay(`Puedo mostrarte los <b>archivos</b> del módulo, sus <b>pendientes</b> o <b>conexiones</b> — o describe el cambio que buscas y te genero el prompt de edición.`);
+}
+
+function submit(){
+  const t=inp.value.trim(); if(!t) return;
+  inp.value=""; userSay(t); respond(t);
+}
+document.getElementById("send").addEventListener("click",submit);
+inp.addEventListener("keydown",e=>{ if(e.key==="Enter") submit(); });
+
+/* ---------- cielo orbital ---------- */
+const cv=document.getElementById("sky"), cx=cv.getContext("2d");
+const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+let stars=[];
+function sky(){
+  cv.width=innerWidth*devicePixelRatio; cv.height=innerHeight*devicePixelRatio;
+  cx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  stars=Array.from({length:70},()=>({
+    x:Math.random()*innerWidth,y:Math.random()*innerHeight,
+    r:Math.random()*1.4+.3,v:Math.random()*.12+.03,a:Math.random()*Math.PI*2
+  }));
+}
+sky(); addEventListener("resize",sky);
+function tick(){
+  cx.clearRect(0,0,innerWidth,innerHeight);
+  for(const s of stars){
+    s.a+=s.v/40;
+    const tw=reduced?0.5:(0.35+0.3*Math.sin(s.a*6));
+    cx.beginPath(); cx.arc(s.x,s.y,s.r,0,7);
+    cx.fillStyle=`rgba(94,214,190,${tw*.5})`; cx.fill();
+    if(!reduced){ s.y-=s.v; if(s.y<-4){s.y=innerHeight+4;s.x=Math.random()*innerWidth;} }
+  }
+  if(!reduced) requestAnimationFrame(tick);
+}
+tick();
+</script>

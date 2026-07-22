@@ -1,0 +1,76 @@
+{
+  "$schema_nota": "Registro de módulos del Orbe Central. Un círculo = un módulo = un archivo en docs/orbe/modulos/. Este JSON es el índice que la app y los agentes consumen; el archivo .md de cada módulo es la fuente de verdad humana.",
+  "version": "1.0",
+  "nucleo": {
+    "id": "orbe-nucleo",
+    "nombre": "Orbe Central (Aura)",
+    "archivo": "modulos/ORBE_NUCLEO.md",
+    "estado": "en_construccion"
+  },
+  "modulos": [
+    {
+      "id": "llave-identidad",
+      "nombre": "Llave e Identidad (Llave MX + Llave Infantil)",
+      "archivo": "modulos/LLAVE_IDENTIDAD.md",
+      "estado": "propuesta",
+      "conexiones": ["expediente-familiar", "proteccion-digital", "orbe-nucleo"]
+    },
+    {
+      "id": "expediente-familiar",
+      "nombre": "Expediente Digital Familiar (padres y niños, CURP)",
+      "archivo": "modulos/EXPEDIENTE_FAMILIAR.md",
+      "estado": "piloto",
+      "conexiones": ["llave-identidad", "tepictu-salud", "bienestar", "orbe-nucleo"]
+    },
+    {
+      "id": "tepictu-salud",
+      "nombre": "TEPICTU Salud (triaje IA offline)",
+      "archivo": "modulos/TEPICTU_SALUD.md",
+      "estado": "disenado",
+      "conexiones": ["expediente-familiar", "bienestar", "orbe-nucleo"]
+    },
+    {
+      "id": "tesoreria",
+      "nombre": "Tesorería Digital",
+      "archivo": "modulos/TESORERIA.md",
+      "estado": "disenado",
+      "conexiones": ["servicios-publicos", "obras", "bienestar", "orbe-nucleo"]
+    },
+    {
+      "id": "obras",
+      "nombre": "Trazabilidad de Obras",
+      "archivo": "modulos/OBRAS.md",
+      "estado": "disenado",
+      "conexiones": ["servicios-publicos", "tesoreria", "orbe-nucleo"]
+    },
+    {
+      "id": "servicios-publicos",
+      "nombre": "Servicios Públicos Inteligente",
+      "archivo": "modulos/SERVICIOS_PUBLICOS.md",
+      "estado": "disenado",
+      "conexiones": ["obras", "tesoreria", "tepictu-salud", "orbe-nucleo"]
+    },
+    {
+      "id": "bienestar",
+      "nombre": "Bienestar Social",
+      "archivo": "modulos/BIENESTAR.md",
+      "estado": "disenado",
+      "conexiones": ["tepictu-salud", "servicios-publicos", "llave-identidad", "tesoreria", "orbe-nucleo"]
+    },
+    {
+      "id": "pulso-nayarit",
+      "nombre": "Pulso Nayarit (auditoría cívica)",
+      "archivo": "modulos/PULSO_NAYARIT.md",
+      "estado": "desplegado",
+      "conexiones": ["orbe-nucleo"]
+    },
+    {
+      "id": "proteccion-digital",
+      "nombre": "Protección Digital (denuncia 24/7)",
+      "archivo": "modulos/PROTECCION_DIGITAL.md",
+      "estado": "propuesta",
+      "conexiones": ["llave-identidad", "bienestar", "orbe-nucleo"]
+    }
+  ],
+  "estados_validos": ["disenado", "propuesta", "en_construccion", "piloto", "desplegado", "produccion"]
+}
