@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Obras Nayarit — Auditoría ciudadana de obra pública</title>
+<style>
+  :root {
+    --bg: #f7f7f5; --card: #ffffff; --ink: #1a1a1a; --muted: #5f6368;
+    --line: #e2e2de; --accent: #7a1f3d; --accent-ink: #ffffff;
+    --federal: #1d4ed8; --estatal: #047857; --municipal: #b45309;
+    --debate: #6b7280; --por-iniciar: #b45309; --ejecucion: #1d4ed8; --concluida: #047857;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #16171a; --card: #1f2126; --ink: #e8e8e6; --muted: #9aa0a6; --line: #33363c; --accent: #d16a8a; --accent-ink: #16171a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.5; }
+  header { padding: 2rem 1.25rem 1rem; max-width: 68rem; margin: 0 auto; }
+  h1 { margin: 0 0 .25rem; font-size: 1.6rem; }
+  .sub { color: var(--muted); margin: 0; }
+  main { max-width: 68rem; margin: 0 auto; padding: 0 1.25rem 3rem; }
+  .filters { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.25rem 0; }
+  .chip { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px; padding: .35rem .9rem; cursor: pointer; font-size: .9rem; }
+  .chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .resumen { color: var(--muted); font-size: .95rem; margin: .5rem 0 1rem; }
+  .ficha { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1.1rem 1.25rem; margin-bottom: 1rem; }
+  .ficha h2 { margin: 0 0 .5rem; font-size: 1.1rem; }
+  .tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .75rem; }
+  .tag { font-size: .75rem; font-weight: 600; padding: .15rem .6rem; border-radius: 999px; color: #fff; }
+  .tag.federal { background: var(--federal); } .tag.estatal { background: var(--estatal); } .tag.municipal { background: var(--municipal); }
+  .tag.en_debate { background: var(--debate); } .tag.aprobada_por_iniciar { background: var(--por-iniciar); }
+  .tag.en_ejecucion { background: var(--ejecucion); } .tag.concluida { background: var(--concluida); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: .4rem 1.5rem; margin: .5rem 0; }
+  .dato dt { font-size: .75rem; text-transform: uppercase; letter-spacing: .03em; color: var(--muted); margin: 0; }
+  .dato dd { margin: 0 0 .5rem; font-size: .95rem; }
+  details { margin-top: .5rem; }
+  summary { cursor: pointer; color: var(--accent); font-size: .9rem; }
+  .hitos li, .fuentes li { font-size: .9rem; margin-bottom: .25rem; overflow-wrap: anywhere; }
+  a { color: var(--accent); }
+  .pend { background: color-mix(in srgb, var(--accent) 8%, var(--card)); border-radius: 8px; padding: .5rem .75rem; font-size: .85rem; margin-top: .5rem; }
+  footer { max-width: 68rem; margin: 0 auto; padding: 0 1.25rem 2rem; color: var(--muted); font-size: .85rem; }
+  .error { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1.25rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Obras Nayarit</h1>
+  <p class="sub">Auditoría ciudadana de la obra pública en Nayarit — datos de fuentes oficiales y prensa verificable, actualizados por consulta periódica. Cada ficha indica quién propuso, quién autorizó, cuánto se invierte y cuándo se espera la entrega.</p>
+</header>
+<main>
+  <div class="filters" id="filtros-ambito" role="group" aria-label="Filtrar por ámbito"></div>
+  <div class="filters" id="filtros-etapa" role="group" aria-label="Filtrar por etapa"></div>
+  <p class="resumen" id="resumen"></p>
+  <div id="lista"></div>
+</main>
+<footer>
+  <p>Módulo <strong>Obras Nayarit</strong> del Protocolo de Gobernanza Digital AI. Código y bitácora de evidencia abiertos en el repositorio: cada actualización queda registrada con fecha y fuentes. Los montos se expresan en millones de pesos (mdp) según la fuente citada.</p>
+</footer>
+<script>
+const ETAPAS = {
+  en_debate: "En debate / anunciada",
+  aprobada_por_iniciar: "Aprobada, por iniciar",
+  en_ejecucion: "En ejecución",
+  concluida: "Concluida"
+};
+const AMBITOS = { federal: "Federal", estatal: "Estatal", municipal: "Municipal" };
+const fmtMdp = v => v == null ? "No publicado" : v.toLocaleString("es-MX") + " mdp";
+const estado = { ambito: null, etapa: null };
+let OBRAS = [];
+
+function chip(cont, valor, texto, clave) {
+  const b = document.createElement("button");
+  b.className = "chip"; b.textContent = texto; b.setAttribute("aria-pressed", "false");
+  b.onclick = () => {
+    estado[clave] = estado[clave] === valor ? null : valor;
+    cont.querySelectorAll(".chip").forEach(c => c.setAttribute("aria-pressed", "false"));
+    if (estado[clave] === valor) b.setAttribute("aria-pressed", "true");
+    render();
+  };
+  cont.appendChild(b);
+}
+
+function dato(dl, titulo, valor) {
+  if (valor == null || valor === "") return;
+  const d = document.createElement("div"); d.className = "dato";
+  d.innerHTML = "<dt></dt><dd></dd>";
+  d.querySelector("dt").textContent = titulo;
+  d.querySelector("dd").textContent = valor;
+  dl.appendChild(d);
+}
+
+function render() {
+  const lista = document.getElementById("lista");
+  lista.innerHTML = "";
+  const visibles = OBRAS.filter(o =>
+    (!estado.ambito || o.ambito === estado.ambito) &&
+    (!estado.etapa || o.etapa === estado.etapa));
+  const inv = visibles.reduce((s, o) => s + (o.inversion_mdp || 0), 0);
+  document.getElementById("resumen").textContent =
+    visibles.length + " obra(s) · inversión documentada: " + inv.toLocaleString("es-MX") + " mdp";
+  for (const o of visibles) {
+    const f = document.createElement("article"); f.className = "ficha";
+    const tags = `<div class="tags"><span class="tag ${o.ambito}">${AMBITOS[o.ambito] || o.ambito}</span>` +
+      `<span class="tag ${o.etapa}">${ETAPAS[o.etapa] || o.etapa}</span></div>`;
+    f.innerHTML = `<h2></h2>${tags}<p class="desc"></p><dl class="grid"></dl>`;
+    f.querySelector("h2").textContent = o.nombre;
+    f.querySelector(".desc").textContent = o.descripcion || "";
+    const dl = f.querySelector("dl");
+    dato(dl, "¿Quién la propuso?", o.quien_propuso);
+    dato(dl, "¿Quién la autorizó?", o.quien_autorizo);
+    dato(dl, "Ejecuta", o.dependencia_ejecutora);
+    dato(dl, "Inversión", fmtMdp(o.inversion_mdp));
+    dato(dl, "Financiamiento", o.fuente_financiamiento);
+    dato(dl, "Contratación", o.contratacion && o.contratacion.esquema);
+    dato(dl, "Inicio", o.fecha_inicio);
+    dato(dl, "Entrega estimada", o.fecha_entrega_estimada);
+    dato(dl, "Municipios", (o.municipios || []).join(", ") || null);
+    dato(dl, "Último estatus", o.estatus);
+    const det = document.createElement("details");
+    const nHitos = (o.hitos || []).length, nFuentes = (o.fuentes || []).length;
+    det.innerHTML = `<summary>Cronología (${nHitos}) y fuentes (${nFuentes})</summary>` +
+      `<ul class="hitos">` + (o.hitos || []).map(h =>
+        `<li><strong>${h.fecha}</strong> — ${h.hecho}</li>`).join("") + `</ul>` +
+      `<ul class="fuentes">` + (o.fuentes || []).map(u =>
+        `<li><a href="${u}" target="_blank" rel="noopener">${u}</a></li>`).join("") + `</ul>`;
+    f.appendChild(det);
+    if (o.pendientes_de_verificar && o.pendientes_de_verificar.length) {
+      const p = document.createElement("div"); p.className = "pend";
+      p.textContent = "Pendiente de verificar: " + o.pendientes_de_verificar.join(" · ");
+      f.appendChild(p);
+    }
+    lista.appendChild(f);
+  }
+}
+
+fetch("./datos/obras.json")
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(data => {
+    OBRAS = data.obras || [];
+    document.querySelector(".sub").textContent += " Última actualización: " + data.actualizado + ".";
+    const fa = document.getElementById("filtros-ambito");
+    for (const [k, v] of Object.entries(AMBITOS)) chip(fa, k, v, "ambito");
+    const fe = document.getElementById("filtros-etapa");
+    for (const [k, v] of Object.entries(ETAPAS)) chip(fe, k, v, "etapa");
+    render();
+  })
+  .catch(() => {
+    document.getElementById("lista").innerHTML =
+      '<div class="error">No se pudo cargar <code>datos/obras.json</code>. Esta página necesita servirse desde un servidor web (por ejemplo el despliegue del portal); el archivo de datos está junto a esta página en el repositorio.</div>';
+  });
+</script>
+</body>
+</html>

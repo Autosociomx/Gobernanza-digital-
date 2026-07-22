@@ -18,6 +18,22 @@ cada consulta como evidencia verificable dentro del portal.
 |---|---|
 | `datos/obras.json` | Registro estructurado de las obras monitoreadas y su último estado conocido |
 | `evidencia/` | Bitácora: un reporte fechado (`AAAA-MM-DD-reporte.md`) por cada consulta periódica |
+| `index.html` | Página de auditoría ciudadana: fichas con filtros por ámbito y etapa (lee `datos/obras.json`) |
+
+## Clasificación y ficha ciudadana
+
+Cada obra se clasifica por **ámbito** (`federal`, `estatal`, `municipal`) y por
+**etapa** (`en_debate`, `aprobada_por_iniciar`, `en_ejecucion`, `concluida`), y su
+ficha responde las preguntas de auditoría básicas:
+
+- ¿Quién la propuso? (`quien_propuso`)
+- ¿Quién la autorizó? (`quien_autorizo`)
+- ¿Quién la ejecuta? (`dependencia_ejecutora`)
+- ¿Cuánto se invierte y de dónde sale? (`inversion_mdp`, `fuente_financiamiento`)
+- ¿Cómo se contrató? (`contratacion.esquema` y `contratacion.referencia`)
+- ¿Cuándo inicia y cuándo se entrega? (`fecha_inicio`, `fecha_entrega_estimada`)
+- ¿Qué ha pasado y con qué pruebas? (`hitos`, `fuentes`)
+- ¿Qué falta por verificar? (`pendientes_de_verificar`)
 
 ## Fuentes consultadas
 

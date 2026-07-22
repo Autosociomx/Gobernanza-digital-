@@ -1,107 +1,366 @@
 {
-  "actualizado": "2026-07-22 (2a consulta)",
+  "version": 2,
+  "actualizado": "2026-07-22 (3a consulta)",
   "estado": "Nayarit",
+  "clasificacion": {
+    "ambitos": {
+      "federal": "Obra financiada y ejecutada por el Gobierno Federal (SICT, Banobras, etc.)",
+      "estatal": "Obra del Gobierno del Estado de Nayarit (Secretaría de Infraestructura y otras)",
+      "municipal": "Obra de un ayuntamiento (Tepic u otros municipios)"
+    },
+    "etapas": {
+      "en_debate": "Anunciada o propuesta; sin contrato ni fecha firme",
+      "aprobada_por_iniciar": "Autorizada y con esquema de contratación; trabajos en campo por arrancar",
+      "en_ejecucion": "Trabajos en curso",
+      "concluida": "Obra terminada o entregada"
+    }
+  },
   "obras": [
     {
-      "id": "autopista-las-varas-san-blas",
-      "nombre": "Autopista Las Varas – San Blas (etapa 1: Las Varas – Platanitos)",
-      "dependencia": "SICT (federal)",
+      "id": "autopista-las-varas-platanitos",
+      "nombre": "Autopista Las Varas – Platanitos (etapa 1 de la costera Las Varas – San Blas)",
+      "ambito": "federal",
+      "etapa": "aprobada_por_iniciar",
+      "dependencia_ejecutora": "SICT / Banobras",
+      "quien_propuso": "Gobierno del Estado de Nayarit (gobernador Miguel Ángel Navarro Quintero) ante el Gobierno Federal",
+      "quien_autorizo": "Presidencia de la República (anuncio oficial sep. 2025) dentro del Programa de Infraestructura Carretera 2026",
       "municipios": ["Compostela", "San Blas"],
-      "descripcion": "Carretera costera de Nayarit. Etapa 1: construcción, conservación, rehabilitación y operación de 26 km de Las Varas a Platanitos. Etapa 2: Platanitos – San Blas.",
+      "descripcion": "Construcción, conservación, rehabilitación y operación de 26 km de Las Varas a Platanitos; primera etapa del corredor costero hacia San Blas.",
       "inversion_mdp": 2516,
-      "plazo_ejecucion": "4 años",
+      "fuente_financiamiento": "Inversión público-privada (contrato C-MRO vía Banobras; pagos sujetos a estándares de desempeño)",
+      "contratacion": {
+        "esquema": "C-MRO (asociación público-privada)",
+        "referencia": "Uno de los 11 proyectos C-MRO del programa carretero 2026; contrato específico por identificar en Fonadin/DOF (no aparece como licitación ordinaria en ComprasMX)"
+      },
+      "fecha_inicio": "2026 (arranque anunciado en junio; inicio en campo por confirmar)",
+      "fecha_entrega_estimada": "2030 (plazo de ejecución de 4 años)",
       "empleos_estimados": 711,
-      "estatus": "Confirmado como uno de los 11 proyectos tipo CMRO (construcción, mantenimiento, rehabilitación y operación) del programa carretero federal con inversión público-privada vía Banobras; en marzo de 2026 se anunció el inicio de trabajos 'en las próximas semanas'. El INAH adelanta el salvamento arqueológico en paralelo, sin frenar la obra.",
-      "esquema_contratacion": "Contrato C-MRO (asociación público-privada, Banobras/SICT), con pagos sujetos a estándares de desempeño; por ese esquema no aparece como licitación ordinaria de obra pública en ComprasMX.",
+      "estatus": "Anunciado el arranque en junio de 2026; el INAH adelanta el salvamento arqueológico en paralelo sin frenar la obra.",
       "hitos": [
         { "fecha": "2025-05-27", "hecho": "El gobernador confirma la primera etapa hasta Platanitos." },
         { "fecha": "2025-09-27", "hecho": "La presidenta Sheinbaum anuncia oficialmente inicio en 2026." },
         { "fecha": "2026-02-17", "hecho": "Brigadas del INAH inician prospección arqueológica del trazo." },
-        { "fecha": "2026-03-04", "hecho": "Se presenta el Programa de Infraestructura Carretera (397,046 mdp); Las Varas–Platanitos figura entre los 11 proyectos CMRO y entre los 18 proyectos con inversión público-privada SICT/Banobras; inicio previsto 'en las próximas semanas'." },
-        { "fecha": "2026-04-07", "hecho": "INAH adelanta el salvamento arqueológico del trazo; declara que obra y salvamento avanzan en paralelo." },
-        { "fecha": "2026-06", "hecho": "Al inaugurar Tepic–Compostela, Presidencia anuncia el arranque de los tramos Las Varas–Platanitos y Platanitos–San Blas." }
+        { "fecha": "2026-03-04", "hecho": "Incluida entre los 11 proyectos C-MRO y los 18 proyectos público-privados SICT/Banobras del programa carretero (397,046 mdp)." },
+        { "fecha": "2026-04-07", "hecho": "INAH adelanta el salvamento arqueológico; obra y salvamento avanzan en paralelo." },
+        { "fecha": "2026-06", "hecho": "Presidencia anuncia el arranque al inaugurar Tepic–Compostela." }
       ],
-      "ficha_oficial": "https://www.proyectosmexico.gob.mx/proyecto_inversion/1000-carretera-las-varas-platanitos/",
-      "licitacion_comprasmx": null,
+      "fuentes": [
+        "https://www.proyectosmexico.gob.mx/proyecto_inversion/1000-carretera-las-varas-platanitos/",
+        "https://newsreportmx.com/2026/03/04/programa-de-infraestructura-carretera-es-historico-con-inversion-publica-y-mixta-de-397-mil-46-mdp/",
+        "https://www.eldemocrata.com/sheinbaum-sict-y-banobras-anuncian-18-proyectos-carreteros-con-inversion-publico-privada/",
+        "https://vallartaindependiente.com/2025/09/09/se-construira-la-carretera-las-varas-san-blas-en-su-primera-etapa-llegara-a-platanitos/",
+        "https://meridiano.mx/2026/04/07/adelanta-inah-salvamento-arqueologico-en-trazo-de-autopista/"
+      ],
       "pendientes_de_verificar": [
-        "Identificar el contrato C-MRO específico (adjudicatario y fecha) en Fonadin/Banobras o DOF.",
-        "Fecha exacta de inicio de trabajos en campo por tramo."
+        "Contrato C-MRO específico (adjudicatario y fecha) en Fonadin/Banobras o DOF.",
+        "Fecha exacta de inicio de trabajos en campo."
+      ]
+    },
+    {
+      "id": "autopista-platanitos-san-blas",
+      "nombre": "Autopista Platanitos – San Blas (etapa 2 de la costera)",
+      "ambito": "federal",
+      "etapa": "en_debate",
+      "dependencia_ejecutora": "SICT (previsto)",
+      "quien_propuso": "Gobierno del Estado de Nayarit",
+      "quien_autorizo": "Anunciada por Presidencia (jun. 2026); sin contrato ni presupuesto público identificado",
+      "municipios": ["San Blas"],
+      "descripcion": "Segunda etapa del corredor costero, de Platanitos al puerto de San Blas.",
+      "inversion_mdp": null,
+      "fuente_financiamiento": "Por definir",
+      "contratacion": { "esquema": "Por definir", "referencia": null },
+      "fecha_inicio": null,
+      "fecha_entrega_estimada": null,
+      "empleos_estimados": null,
+      "estatus": "Anunciada junto con la etapa 1; sin ficha de inversión ni esquema de contratación público a la fecha.",
+      "hitos": [
+        { "fecha": "2026-06", "hecho": "Presidencia anuncia el arranque de los tramos Las Varas–Platanitos y Platanitos–San Blas." }
+      ],
+      "fuentes": [
+        "https://www.gob.mx/presidencia/prensa/presidenta-claudia-sheinbaum-inaugura-autopista-tepic-compostela-en-beneficio-de-490-mil-habitantes-y-anuncia-ampliacion-hasta-san-blas"
+      ],
+      "pendientes_de_verificar": [
+        "Ficha de inversión, esquema de contratación y calendario de la etapa 2."
       ]
     },
     {
       "id": "puente-amado-nervo",
       "nombre": "Puente Amado Nervo (Bahía de Banderas, Nayarit – Puerto Vallarta, Jalisco)",
-      "dependencia": "SICT (federal)",
+      "ambito": "federal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "SICT",
+      "quien_propuso": "SICT con los gobiernos de Nayarit y Jalisco",
+      "quien_autorizo": "Gobierno Federal (SICT); inicio de obras anunciado oficialmente por la SICT",
       "municipios": ["Bahía de Banderas"],
-      "descripcion": "Puente vehicular de 800 m de estructura principal más 1.22 km de vialidades de acceso; tres carriles por sentido y ciclovía. Conecta Bahía de Banderas con Puerto Vallarta.",
+      "descripcion": "Puente de 800 m más 1.22 km de accesos sobre el río Ameca; tres carriles por sentido y ciclovía. Conecta Bahía de Banderas con Puerto Vallarta (~500 mil beneficiarios).",
       "inversion_mdp": 930,
-      "plazo_ejecucion": null,
-      "empleos_estimados": null,
-      "estatus": "Retrasado: la conclusión estaba prevista para julio de 2026, pero a inicios de julio no hay fecha oficial de apertura. La estructura principal está terminada (ya es posible cruzar el viaducto) y el avance supera el 80%; la entrega se estima ahora entre noviembre y diciembre de 2026, con inauguración presidencial a fin de año.",
+      "fuente_financiamiento": "Inversión federal directa (930 mdp según SICT; 206.5 mdp en 2025 y 693.5 mdp en 2026)",
+      "contratacion": { "esquema": "Obra pública federal", "referencia": "Contrato por identificar en ComprasMX" },
+      "fecha_inicio": "2025",
+      "fecha_entrega_estimada": "Noviembre–diciembre de 2026 (retrasada; el plan original era julio de 2026)",
+      "empleos_estimados": 2700,
+      "estatus": "Estructura principal terminada y avance superior al 80%; sin fecha oficial de apertura. Entrega estimada nov-dic 2026 con inauguración presidencial.",
       "hitos": [
-        { "fecha": "2026-06-23", "hecho": "SICT reporta 80% de avance físico y prevé conclusión en julio de 2026." },
-        { "fecha": "2026-07-01", "hecho": "Prensa local reporta que sigue sin fecha de apertura pese al avance; estructura principal concluida." },
-        { "fecha": "2026-07-06", "hecho": "El alcalde de Puerto Vallarta informa que la entrega se estima entre noviembre y diciembre de 2026, con inauguración presidencial a finales de año." }
+        { "fecha": "2026-06-23", "hecho": "SICT reporta 80% de avance y prevé conclusión en julio." },
+        { "fecha": "2026-07-01", "hecho": "Prensa local reporta que sigue sin fecha de apertura; estructura principal concluida." },
+        { "fecha": "2026-07-06", "hecho": "Entrega estimada entre noviembre y diciembre de 2026, según el alcalde de Puerto Vallarta." }
       ],
-      "ficha_oficial": "https://www.gob.mx/sict/galerias/avances-del-puente-amado-nervo-en-nayarit",
-      "licitacion_comprasmx": null,
+      "fuentes": [
+        "https://www.gob.mx/sict/galerias/avances-del-puente-amado-nervo-en-nayarit",
+        "https://www.nayarit.gob.mx/arranca-la-construccion-del-puente-vehicular-amado-nervo-entre-nayarit-y-jalisco/",
+        "https://mvsnoticias.com/nacional/2026/6/23/reporta-sict-avance-de-80-en-puente-amado-nervo-nayarit-jalisco-743785.html",
+        "https://vallartaindependiente.com/2026/07/01/puente-amado-nervo-sigue-sin-fecha-de-apertura-pese-a-avance-significativo/",
+        "https://contralinea.net/a-finales-del-ano-se-entregaria-el-puente-amado-nervo-estaba-previsto-concluirlo-este-mes/"
+      ],
       "pendientes_de_verificar": [
-        "Fecha oficial de apertura al tránsito (estimada nov-dic 2026; verificar anuncio de la SICT)."
+        "Fecha oficial de apertura al tránsito (anuncio de la SICT).",
+        "Contrato y adjudicatario en ComprasMX."
       ]
     },
     {
       "id": "autopista-tepic-compostela",
-      "nombre": "Autopista Tepic – Compostela (concluida) y ampliación hacia la costa",
-      "dependencia": "SICT (federal) / Banobras-Fonadin",
+      "nombre": "Autopista Tepic – Compostela",
+      "ambito": "federal",
+      "etapa": "concluida",
+      "dependencia_ejecutora": "SICT / Banobras-Fonadin",
+      "quien_propuso": "Gobierno Federal (corredor de conectividad a la costa de Nayarit)",
+      "quien_autorizo": "Gobierno Federal; inaugurada por la presidenta Sheinbaum",
       "municipios": ["Tepic", "Xalisco", "Compostela"],
-      "descripcion": "Tramo de 26 km con 10 puentes, dos entronques y un túnel, inaugurado en junio de 2026 por la Presidencia; generó más de 2,900 empleos directos e indirectos. En el mismo acto se anunció la ampliación del corredor hacia Las Varas, Platanitos y San Blas.",
+      "descripcion": "Tramo de 26 km con 10 puentes, dos entronques y un túnel; beneficia a ~490 mil habitantes y generó más de 2,900 empleos.",
       "inversion_mdp": 4212,
-      "plazo_ejecucion": null,
-      "empleos_estimados": null,
-      "estatus": "Inaugurada; beneficia a ~490 mil habitantes. Sirve de base al corredor costero hacia San Blas.",
+      "fuente_financiamiento": "Inversión federal (esquema con Banobras/Fonadin)",
+      "contratacion": { "esquema": "Obra pública federal / C-MRO en tramos previos del corredor", "referencia": "Ficha 0908 de Proyectos México (C-MRO Compostela–Las Varas)" },
+      "fecha_inicio": null,
+      "fecha_entrega_estimada": "Entregada en junio de 2026",
+      "empleos_estimados": 2900,
+      "estatus": "Inaugurada en junio de 2026; base del corredor costero hacia San Blas.",
       "hitos": [
-        { "fecha": "2026-06", "hecho": "Inauguración por la presidenta Sheinbaum y anuncio de la ampliación hasta San Blas." }
+        { "fecha": "2026-06", "hecho": "Inauguración presidencial y anuncio de la ampliación hasta San Blas." }
       ],
-      "ficha_oficial": "https://www.gob.mx/presidencia/prensa/presidenta-claudia-sheinbaum-inaugura-autopista-tepic-compostela-en-beneficio-de-490-mil-habitantes-y-anuncia-ampliacion-hasta-san-blas",
-      "licitacion_comprasmx": null,
+      "fuentes": [
+        "https://www.gob.mx/presidencia/prensa/presidenta-claudia-sheinbaum-inaugura-autopista-tepic-compostela-en-beneficio-de-490-mil-habitantes-y-anuncia-ampliacion-hasta-san-blas",
+        "https://www.excelsior.com.mx/nacional/sheinbaum-inaugura-autopista-tepic-compostela-ampliacion/1750539",
+        "https://www.proyectosmexico.gob.mx/proyecto_inversion/0908-autopista-tepic-compostela-y-autopista-jala-compostela-las-varas-y-ramal-a-compostela-tramo-compostela-las-varas/"
+      ],
       "pendientes_de_verificar": []
     },
     {
       "id": "conservacion-carreteras-federales-2026",
       "nombre": "Programa 2026 de conservación de carreteras y reconstrucción de puentes en Nayarit",
-      "dependencia": "SICT / Capufe (federal)",
+      "ambito": "federal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "SICT / Capufe",
+      "quien_propuso": "SICT (programa nacional anual)",
+      "quien_autorizo": "Presupuesto de Egresos de la Federación 2026; fallos de licitación ene. 2026",
       "municipios": [],
-      "descripcion": "Nayarit está incluido en el paquete nacional 2026 de conservación carretera y reconstrucción de puentes; la SICT y Capufe licitaron 31 obras carreteras con fallos entre el 15 y 27 de enero de 2026.",
+      "descripcion": "Nayarit dentro del paquete nacional 2026 de conservación carretera y reconstrucción de puentes (31 licitaciones SICT/Capufe con fallos del 15 al 27 de enero).",
       "inversion_mdp": null,
-      "plazo_ejecucion": null,
+      "fuente_financiamiento": "Presupuesto federal",
+      "contratacion": { "esquema": "Licitación pública (LOPSRM)", "referencia": "Expedientes en ComprasMX por desglosar para Nayarit" },
+      "fecha_inicio": "2026-01",
+      "fecha_entrega_estimada": "2026",
       "empleos_estimados": null,
-      "estatus": "En ejecución dentro del programa nacional 2026.",
+      "estatus": "En ejecución dentro del programa nacional.",
       "hitos": [
         { "fecha": "2026-01", "hecho": "Fallos del paquete de 31 licitaciones carreteras SICT/Capufe." }
       ],
-      "ficha_oficial": "https://www.gob.mx/sct/prensa/sict-llevara-a-cabo-obras-carreteras-en-oaxaca-bcs-morelos-y-nayarit",
-      "licitacion_comprasmx": null,
+      "fuentes": [
+        "https://obras.expansion.mx/infraestructura/2026/01/07/planes-sict-y-capufe-carreteras-pais-2026",
+        "https://www.gob.mx/sct/prensa/sict-llevara-a-cabo-obras-carreteras-en-oaxaca-bcs-morelos-y-nayarit"
+      ],
       "pendientes_de_verificar": [
-        "Desglose de contratos 2026 específicos de Nayarit en ComprasMX (requiere consulta manual del portal)."
+        "Contratos 2026 específicos de Nayarit en ComprasMX."
       ]
     },
     {
       "id": "reencarpetamiento-carretera-200",
-      "nombre": "Reencarpetamiento de la Carretera Federal 200 Tepic–Puerto Vallarta (tramo Compostela–Las Varas)",
-      "dependencia": "SICT (federal)",
+      "nombre": "Reencarpetamiento de la Carretera Federal 200 (tramo Compostela – Las Varas)",
+      "ambito": "federal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "SICT",
+      "quien_propuso": "SICT (conservación de la red federal)",
+      "quien_autorizo": "SICT (programa de conservación)",
       "municipios": ["Compostela"],
-      "descripcion": "Trabajos de reencarpetamiento y conservación de la Carretera 200 en el tramo Compostela–Las Varas, vía principal actual hacia la costa sur mientras avanza el corredor de autopista.",
+      "descripcion": "Reencarpetamiento y conservación de la Carretera 200 Tepic–Puerto Vallarta en el tramo Compostela–Las Varas, vía principal actual a la costa sur.",
       "inversion_mdp": null,
-      "plazo_ejecucion": null,
+      "fuente_financiamiento": "Presupuesto federal (conservación)",
+      "contratacion": { "esquema": "Obra pública federal", "referencia": "Contrato por identificar" },
+      "fecha_inicio": "2026",
+      "fecha_entrega_estimada": null,
       "empleos_estimados": null,
       "estatus": "En ejecución; la SICT aceleró los trabajos en julio de 2026.",
       "hitos": [
-        { "fecha": "2026-07", "hecho": "Prensa local reporta que la SICT acelera el reencarpetamiento del tramo Compostela–Las Varas." }
+        { "fecha": "2026-07", "hecho": "SICT acelera el reencarpetamiento del tramo Compostela–Las Varas." }
       ],
-      "ficha_oficial": null,
-      "licitacion_comprasmx": null,
+      "fuentes": [
+        "https://tribunadelabahia.com.mx/sict-acelera-reencarpetamiento-carretera-200-compostela-las-varas/"
+      ],
       "pendientes_de_verificar": [
         "Monto y contrato del programa de conservación correspondiente."
+      ]
+    },
+    {
+      "id": "paquete-estatal-tepic-101mdp",
+      "nombre": "Paquete estatal en Tepic: obras educativas, infraestructura urbana y espacios públicos (101 mdp)",
+      "ambito": "estatal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "Gobierno del Estado de Nayarit / DIF estatal",
+      "quien_propuso": "Gobierno del Estado (gira de trabajo del gobernador)",
+      "quien_autorizo": "Gobierno del Estado de Nayarit",
+      "municipios": ["Tepic"],
+      "descripcion": "Arranque de obras educativas (escuelas), calles, infraestructura urbana, espacios públicos y medios públicos en Tepic, con inversión superior a 101 mdp.",
+      "inversion_mdp": 101,
+      "fuente_financiamiento": "Recursos estatales",
+      "contratacion": { "esquema": "Obra pública estatal", "referencia": "Convocatorias en sop.nayarit.gob.mx / bases federales vía ComprasMX" },
+      "fecha_inicio": "2026-07",
+      "fecha_entrega_estimada": null,
+      "empleos_estimados": null,
+      "estatus": "Anunciado y arrancado el 21 de julio de 2026.",
+      "hitos": [
+        { "fecha": "2026-07-21", "hecho": "Gira del gobernador y la presidenta del DIF estatal para arrancar el paquete de obras en Tepic." }
+      ],
+      "fuentes": [
+        "https://heraldodemexico.com.mx/nacional/2026/7/21/nayarit-se-transforma-megainversion-de-101-mdp-para-escuelas-calles-medios-publicos-854036.html"
+      ],
+      "pendientes_de_verificar": [
+        "Desglose de obras y contratos del paquete en el portal estatal."
+      ]
+    },
+    {
+      "id": "paquete-estatal-tepic-52mdp",
+      "nombre": "Obras estatales supervisadas y entregadas en Tepic (52.9 mdp)",
+      "ambito": "estatal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "Gobierno del Estado de Nayarit",
+      "quien_propuso": "Gobierno del Estado",
+      "quien_autorizo": "Gobierno del Estado de Nayarit",
+      "municipios": ["Tepic"],
+      "descripcion": "Supervisión y entrega de obras de infraestructura en Tepic por más de 52.9 mdp (julio 2026).",
+      "inversion_mdp": 52.9,
+      "fuente_financiamiento": "Recursos estatales",
+      "contratacion": { "esquema": "Obra pública estatal", "referencia": null },
+      "fecha_inicio": null,
+      "fecha_entrega_estimada": null,
+      "empleos_estimados": null,
+      "estatus": "Parte entregada y parte en ejecución (supervisión del 13 de julio de 2026).",
+      "hitos": [
+        { "fecha": "2026-07-13", "hecho": "El gobernador supervisa y entrega obras por más de 52.9 mdp en Tepic." }
+      ],
+      "fuentes": [
+        "https://heraldodemexico.com.mx/nacional/2026/7/13/miguel-angel-navarro-supervisa-entrega-obras-por-mas-de-529-millones-de-pesos-en-tepic-848870.html",
+        "https://meridiano.mx/2026/07/13/fortalecen-infraestructura-en-tepic-con-inversion-de-52-millones/"
+      ],
+      "pendientes_de_verificar": [
+        "Desglose por obra y contrato."
+      ]
+    },
+    {
+      "id": "paquete-estatal-norte-24mdp",
+      "nombre": "Obras estatales en el norte de Nayarit: calles, almacenes, puente y pozo (24 mdp)",
+      "ambito": "estatal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "Gobierno del Estado de Nayarit",
+      "quien_propuso": "Gobierno del Estado (gira por la zona norte)",
+      "quien_autorizo": "Gobierno del Estado de Nayarit",
+      "municipios": ["Acaponeta", "Tecuala", "Rosamorada"],
+      "descripcion": "Calles, almacenes, un puente y un pozo de agua en municipios del norte, con inversión estatal combinada de 24 mdp.",
+      "inversion_mdp": 24,
+      "fuente_financiamiento": "Recursos estatales",
+      "contratacion": { "esquema": "Obra pública estatal", "referencia": null },
+      "fecha_inicio": "2026-07",
+      "fecha_entrega_estimada": null,
+      "empleos_estimados": null,
+      "estatus": "Anunciadas y en arranque (11 de julio de 2026); incluye supervisión de obras concluidas.",
+      "hitos": [
+        { "fecha": "2026-07-11", "hecho": "Gira del gobernador por Acaponeta, Tecuala y Rosamorada; anuncio de las nuevas acciones." }
+      ],
+      "fuentes": [
+        "https://ntv.com.mx/2026/07/11/navarro-destina-24-millones-a-calles-almacenes-puente-y-pozo-del-norte-nayarita/"
+      ],
+      "pendientes_de_verificar": [
+        "Desglose por municipio y contrato."
+      ]
+    },
+    {
+      "id": "hospital-tepic-120-camas",
+      "nombre": "Hospital de 120 camas en Nayarit (IMSS-Bienestar)",
+      "ambito": "federal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "IMSS-Bienestar / Gobierno del Estado",
+      "quien_propuso": "Gobierno del Estado con respaldo de la Presidencia",
+      "quien_autorizo": "Gobierno Federal (compromiso presidencial)",
+      "municipios": ["Tepic"],
+      "descripcion": "Hospital de 120 camas para ampliar la atención médica en el estado, con respaldo de la presidenta Sheinbaum.",
+      "inversion_mdp": null,
+      "fuente_financiamiento": "Recursos federales (IMSS-Bienestar)",
+      "contratacion": { "esquema": "Por verificar", "referencia": null },
+      "fecha_inicio": null,
+      "fecha_entrega_estimada": "Conclusión programada en marzo de 2026 (por verificar si ya operó la entrega)",
+      "empleos_estimados": null,
+      "estatus": "Reportado en marzo de 2026 con conclusión programada ese mes; entrega efectiva por confirmar.",
+      "hitos": [
+        { "fecha": "2026-03-25", "hecho": "Informe del gobernador sobre avances en salud e infraestructura; hospital con conclusión programada en marzo." }
+      ],
+      "fuentes": [
+        "https://nayaritnoticias.com/2026/03/25/informa-navarro-quintero-avances-en-salud-infraestructura-y-desarrollo-para-nayarit/"
+      ],
+      "pendientes_de_verificar": [
+        "Confirmar entrega y operación del hospital, ubicación exacta e inversión."
+      ]
+    },
+    {
+      "id": "tepic-alcantarillado-oriental",
+      "nombre": "Rehabilitación de alcantarillado y pavimentación en la colonia Oriental, Tepic (calles Fuji y Shangay)",
+      "ambito": "municipal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "H. XLIII Ayuntamiento de Tepic",
+      "quien_propuso": "Ayuntamiento de Tepic (presidencia municipal)",
+      "quien_autorizo": "Cabildo de Tepic (Presupuesto de Egresos 2026 del municipio)",
+      "municipios": ["Tepic"],
+      "descripcion": "Rehabilitación del sistema de alcantarillado y pavimentación de calles de la colonia Oriental; parte de un paquete municipal de más de 23 mdp.",
+      "inversion_mdp": 23,
+      "fuente_financiamiento": "Recursos municipales (Presupuesto de Egresos 2026 de Tepic)",
+      "contratacion": { "esquema": "Obra pública municipal", "referencia": null },
+      "fecha_inicio": "2026",
+      "fecha_entrega_estimada": null,
+      "empleos_estimados": null,
+      "estatus": "En ejecución (supervisiones de julio de 2026).",
+      "hitos": [
+        { "fecha": "2026-07", "hecho": "Supervisión municipal de las obras de alcantarillado y pavimentación." }
+      ],
+      "fuentes": [
+        "https://oem.com.mx/eloccidental/mexico/gobierno-de-tepic-realiza-obras-en-colonias-y-comunidades-28949678",
+        "http://www.tepic.gob.mx/assets/img/galerias/cnormativas/CNN_PRESUPUESTO%20DE%20EGRESOS%202026%20PARA%20EL%20MUNICIPIO%20DE%20TEPIC.pdf"
+      ],
+      "pendientes_de_verificar": [
+        "Contratos y montos por calle en el portal de transparencia municipal."
+      ]
+    },
+    {
+      "id": "tepic-alcantarillado-gobernadores",
+      "nombre": "Rehabilitación de alcantarillado sanitario, colonia Gobernadores, Tepic (2a etapa, calle José Limón Guzmán)",
+      "ambito": "municipal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "H. XLIII Ayuntamiento de Tepic",
+      "quien_propuso": "Ayuntamiento de Tepic",
+      "quien_autorizo": "Cabildo de Tepic (Presupuesto de Egresos 2026)",
+      "municipios": ["Tepic"],
+      "descripcion": "Segunda etapa de rehabilitación de la red de alcantarillado sanitario de la calle José Limón Guzmán, colonia Gobernadores.",
+      "inversion_mdp": 2.9,
+      "fuente_financiamiento": "Recursos municipales",
+      "contratacion": { "esquema": "Obra pública municipal", "referencia": null },
+      "fecha_inicio": "2026",
+      "fecha_entrega_estimada": null,
+      "empleos_estimados": null,
+      "estatus": "En ejecución (verificación de avance en julio de 2026).",
+      "hitos": [
+        { "fecha": "2026-07", "hecho": "Verificación municipal del avance de la segunda etapa." }
+      ],
+      "fuentes": [
+        "https://oem.com.mx/eloccidental/mexico/gobierno-de-tepic-realiza-obras-en-colonias-y-comunidades-28949678"
+      ],
+      "pendientes_de_verificar": [
+        "Contrato y calendario de conclusión."
       ]
     }
   ]
