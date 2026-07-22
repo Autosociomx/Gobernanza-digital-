@@ -1,0 +1,84 @@
+{
+  "actualizado": "2026-07-22",
+  "estado": "Nayarit",
+  "obras": [
+    {
+      "id": "autopista-las-varas-san-blas",
+      "nombre": "Autopista Las Varas – San Blas (etapa 1: Las Varas – Platanitos)",
+      "dependencia": "SICT (federal)",
+      "municipios": ["Compostela", "San Blas"],
+      "descripcion": "Carretera costera de Nayarit. Etapa 1: construcción, conservación, rehabilitación y operación de 26 km de Las Varas a Platanitos. Etapa 2: Platanitos – San Blas.",
+      "inversion_mdp": 2516,
+      "plazo_ejecucion": "4 años",
+      "empleos_estimados": 711,
+      "estatus": "Inicio de obras anunciado en junio de 2026; salvamento arqueológico del INAH en curso como condición previa al ingreso de maquinaria.",
+      "hitos": [
+        { "fecha": "2025-05-27", "hecho": "El gobernador confirma la primera etapa hasta Platanitos." },
+        { "fecha": "2025-09-27", "hecho": "La presidenta Sheinbaum anuncia oficialmente inicio en 2026." },
+        { "fecha": "2026-02-17", "hecho": "Brigadas del INAH inician prospección arqueológica del trazo." },
+        { "fecha": "2026-06", "hecho": "Al inaugurar Tepic–Compostela, Presidencia anuncia el arranque de los tramos Las Varas–Platanitos y Platanitos–San Blas." }
+      ],
+      "ficha_oficial": "https://www.proyectosmexico.gob.mx/proyecto_inversion/1000-carretera-las-varas-platanitos/",
+      "licitacion_comprasmx": null,
+      "pendientes_de_verificar": [
+        "Número de expediente o procedimiento en ComprasMX (no indexado públicamente a la fecha; el esquema construcción+operación sugiere posible concesión/APP publicada en DOF).",
+        "Fecha exacta de inicio de trabajos en campo por tramo."
+      ]
+    },
+    {
+      "id": "puente-amado-nervo",
+      "nombre": "Puente Amado Nervo (Bahía de Banderas, Nayarit – Puerto Vallarta, Jalisco)",
+      "dependencia": "SICT (federal)",
+      "municipios": ["Bahía de Banderas"],
+      "descripcion": "Puente vehicular de 800 m de estructura principal más 1.22 km de vialidades de acceso; tres carriles por sentido y ciclovía. Conecta Bahía de Banderas con Puerto Vallarta.",
+      "inversion_mdp": 930,
+      "plazo_ejecucion": null,
+      "empleos_estimados": null,
+      "estatus": "Avance físico del 80% reportado por la SICT en junio de 2026; conclusión prevista en julio de 2026. Trabajos actuales: guarniciones, parapetos y pavimentación de accesos.",
+      "hitos": [
+        { "fecha": "2026-06-23", "hecho": "SICT reporta 80% de avance físico y prevé conclusión en julio de 2026." }
+      ],
+      "ficha_oficial": "https://www.gob.mx/sict/galerias/avances-del-puente-amado-nervo-en-nayarit",
+      "licitacion_comprasmx": null,
+      "pendientes_de_verificar": [
+        "Confirmación de la inauguración (prevista julio 2026)."
+      ]
+    },
+    {
+      "id": "autopista-tepic-compostela",
+      "nombre": "Autopista Tepic – Compostela (concluida) y ampliación hacia la costa",
+      "dependencia": "SICT (federal) / Banobras-Fonadin",
+      "municipios": ["Tepic", "Xalisco", "Compostela"],
+      "descripcion": "Tramo inaugurado en junio de 2026 por la Presidencia; en el mismo acto se anunció la ampliación del corredor hacia Las Varas, Platanitos y San Blas.",
+      "inversion_mdp": null,
+      "plazo_ejecucion": null,
+      "empleos_estimados": null,
+      "estatus": "Inaugurada; beneficia a ~490 mil habitantes. Sirve de base al corredor costero hacia San Blas.",
+      "hitos": [
+        { "fecha": "2026-06", "hecho": "Inauguración por la presidenta Sheinbaum y anuncio de la ampliación hasta San Blas." }
+      ],
+      "ficha_oficial": "https://www.gob.mx/presidencia/prensa/presidenta-claudia-sheinbaum-inaugura-autopista-tepic-compostela-en-beneficio-de-490-mil-habitantes-y-anuncia-ampliacion-hasta-san-blas",
+      "licitacion_comprasmx": null,
+      "pendientes_de_verificar": []
+    },
+    {
+      "id": "conservacion-carreteras-federales-2026",
+      "nombre": "Programa 2026 de conservación de carreteras y reconstrucción de puentes en Nayarit",
+      "dependencia": "SICT / Capufe (federal)",
+      "municipios": [],
+      "descripcion": "Nayarit está incluido en el paquete nacional 2026 de conservación carretera y reconstrucción de puentes; la SICT y Capufe licitaron 31 obras carreteras con fallos entre el 15 y 27 de enero de 2026.",
+      "inversion_mdp": null,
+      "plazo_ejecucion": null,
+      "empleos_estimados": null,
+      "estatus": "En ejecución dentro del programa nacional 2026.",
+      "hitos": [
+        { "fecha": "2026-01", "hecho": "Fallos del paquete de 31 licitaciones carreteras SICT/Capufe." }
+      ],
+      "ficha_oficial": "https://www.gob.mx/sct/prensa/sict-llevara-a-cabo-obras-carreteras-en-oaxaca-bcs-morelos-y-nayarit",
+      "licitacion_comprasmx": null,
+      "pendientes_de_verificar": [
+        "Desglose de contratos 2026 específicos de Nayarit en ComprasMX (requiere consulta manual del portal)."
+      ]
+    }
+  ]
+}
