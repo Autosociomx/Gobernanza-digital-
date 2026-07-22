@@ -16,6 +16,9 @@ const DeveloperChecklist = lazy(() =>
 const ExecutiveFolder = lazy(() =>
   import('./components/ExecutiveFolder').then((m) => ({ default: m.ExecutiveFolder }))
 );
+const OrbeCentral = lazy(() =>
+  import('./components/OrbeCentral').then((m) => ({ default: m.OrbeCentral }))
+);
 
 function ViewFallback() {
   return (
@@ -26,7 +29,7 @@ function ViewFallback() {
 }
 
 function App() {
-  const [currentView, setCurrentView] = useState<'landing' | 'c5' | 'citizen' | 'dev' | 'executive'>('landing');
+  const [currentView, setCurrentView] = useState<'landing' | 'c5' | 'citizen' | 'dev' | 'executive' | 'orbe'>('landing');
   const [citizenTab, setCitizenTab] = useState<any>('home');
   const [citizenAction, setCitizenAction] = useState<any>(null);
 
@@ -58,6 +61,14 @@ function App() {
     return (
       <Suspense fallback={<ViewFallback />}>
         <ExecutiveFolder onBack={() => setCurrentView('landing')} />
+      </Suspense>
+    );
+  }
+
+  if (currentView === 'orbe') {
+    return (
+      <Suspense fallback={<ViewFallback />}>
+        <OrbeCentral onBack={() => setCurrentView('landing')} />
       </Suspense>
     );
   }

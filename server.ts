@@ -1,10 +1,10 @@
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import path from "path";
-import fs from "fs/promises";
 import Database from "better-sqlite3";
-import { GoogleGenAI, ThinkingLevel, Type } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 import Stripe from "stripe";
+import { buildAuraGenerateConfig } from "./src/shared/auraSystemPrompt";
 
 let aiClient: GoogleGenAI | null = null;
 function getAI() {
@@ -51,19 +51,6 @@ async function startServer() {
 
   app.use(express.json());
 
-  // Load System Prompt from public/CONNECTX_SYSTEM_PROMPT.md
-  let systemPrompt = "Eres ConnectX. Experto en administración municipal y gobernanza digital de Tepic. Tono: Institucional, extremadamente breve y directo. Objetivo: Soluciones pragmáticas de infraestructura y transparencia. Siempre incluye un 'Siguiente paso' y usa el idioma solicitado.";
-  
-  try {
-    const promptPath = path.join(process.cwd(), 'public', 'CONNECTX_SYSTEM_PROMPT.md');
-    const fileContent = await fs.readFile(promptPath, 'utf-8');
-    if (fileContent.trim()) {
-      systemPrompt = fileContent;
-    }
-  } catch (error) {
-    console.warn("Could not read CONNECTX_SYSTEM_PROMPT.md, using default fallback.", error);
-  }
-
   // API routes
   app.get("/api/departments", (req, res) => {
     const stmt = db.prepare("SELECT * FROM departments");
@@ -103,29 +90,15 @@ async function startServer() {
     }
 
     try {
-      const finalPrompt = context ? `${context}\n\nPregunta del usuario: ${message}` : message;
       const ai = getAI();
-      
-      let model = "gemini-3.5-flash";
-      let config: any = {
-        systemInstruction: systemPrompt,
-      };
+      const { model, config, finalPrompt } = buildAuraGenerateConfig({ message, context, useThinking, useMaps, useSearch });
 
-      if (useThinking) {
-        model = "gemini-3.1-pro-preview";
-        config.thinkingConfig = { thinkingLevel: ThinkingLevel.HIGH }; 
-      } else if (useMaps) {
-        config.tools = [{ googleMaps: {} }];
-      } else if (useSearch) {
-        config.tools = [{ googleSearch: {} }];
-      }
-      
       const response = await ai.models.generateContent({
         model: model,
         contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
         config: config,
       });
-      
+
       res.json({ response: response.text });
     } catch (error: any) {
       console.error("AI Assistant Error:", error);

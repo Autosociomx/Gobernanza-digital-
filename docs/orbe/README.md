@@ -8,6 +8,18 @@
 > [`modulos.json`](./modulos.json) es el índice legible por máquina que la
 > aplicación y los agentes pueden consumir.
 
+## Dos versiones de este mapa
+
+- **`orbe.html`** (este directorio): demo estática autocontenida, sin
+  backend ni login — sirve para pitch/presentación offline. Su chat es un
+  enrutador por palabras clave, no IA real.
+- **`/orbe` dentro de la app** ([`src/components/OrbeCentral.tsx`](../../src/components/OrbeCentral.tsx),
+  datos en [`src/data/orbeModulos.ts`](../../src/data/orbeModulos.ts)): la
+  versión real, con el agente Aura conectado de verdad (Gemini vía
+  `useAuraChat`/`useAuraVoice`) — atención ciudadana en texto y voz, 24/7, y
+  un "Modo desarrollador" para ver archivos/pendientes de cada módulo y
+  generar el prompt de edición. Es la que se usa en producción.
+
 ## El Orbe
 
 ```mermaid

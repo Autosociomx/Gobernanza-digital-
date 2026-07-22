@@ -4,6 +4,18 @@
   # queda marcado en rojo — protección independiente de GitHub Actions.
   command = "node scripts/verificar-regresiones.mjs && npm run build"
   publish = "dist"
+  functions = "netlify/functions"
+
+# El chat de Aura (Orbe Central) necesita /api/ai/chat en producción, donde
+# no corre server.ts (Netlify solo sirve dist/ como sitio estático). Este
+# redirect debe ir ANTES del catch-all "/* -> /index.html" — Netlify usa el
+# primer redirect que coincide. Los demás endpoints de /api/* (departments,
+# risk-analysis, create-payment-intent) siguen requiriendo server.ts; no
+# tienen función equivalente todavía.
+[[redirects]]
+  from = "/api/ai/chat"
+  to = "/.netlify/functions/ai-chat"
+  status = 200
 
 [[redirects]]
   from = "/*"

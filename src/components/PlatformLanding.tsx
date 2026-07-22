@@ -1,10 +1,10 @@
 import React from 'react';
 import { 
-  ShieldCheck, Activity, Users, FileText, Lock, Globe, Monitor, Smartphone, CheckCircle2, ChevronRight, Clock, ArrowRight, Zap, Scale, LayoutDashboard
+  ShieldCheck, Activity, Users, FileText, Lock, Globe, Monitor, Smartphone, CheckCircle2, ChevronRight, Clock, ArrowRight, Zap, Scale, LayoutDashboard, Sparkles
 } from 'lucide-react';
 
 interface PlatformLandingProps {
-  onNavigate: (view: 'landing' | 'c5' | 'citizen' | 'dev' | 'executive', subView?: string, action?: string) => void;
+  onNavigate: (view: 'landing' | 'c5' | 'citizen' | 'dev' | 'executive' | 'orbe', subView?: string, action?: string) => void;
 }
 
 const WixarikaBanda = () => (
@@ -49,7 +49,8 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
              <button onClick={() => onNavigate('citizen')} className="text-xs font-bold text-[#a0aec0] hover:text-[#0FA3B1] transition-colors uppercase tracking-widest">Portal Ciudadano</button>
              <button onClick={() => onNavigate('c5')} className="text-xs font-bold text-[#a0aec0] hover:text-[#0FA3B1] transition-colors uppercase tracking-widest">C5 de Gestión Pública</button>
              <button onClick={() => onNavigate('executive')} className="text-xs font-bold text-[#a0aec0] hover:text-[#0FA3B1] transition-colors uppercase tracking-widest">Carpeta de Servicio</button>
-             <button 
+             <button onClick={() => onNavigate('orbe')} className="text-xs font-bold text-[#0FA3B1] hover:text-[#F5A623] transition-colors uppercase tracking-widest">Orbe Central</button>
+             <button
                onClick={() => onNavigate('citizen')}
                className="bg-[#D81E5B] text-white px-6 py-3 rounded text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#D81E5B]/80 transition-all shadow-lg"
              >
@@ -86,6 +87,9 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
              </button>
              <button onClick={() => onNavigate('c5')} className="bg-[#F8F6F1]/10 hover:bg-[#F8F6F1]/20 text-[#F8F6F1] border border-[#F8F6F1]/30 px-8 py-4 rounded-md text-sm font-bold tracking-widest uppercase transition-all flex items-center gap-3">
                <Monitor className="w-5 h-5" /> C5 de Gestión Pública
+             </button>
+             <button onClick={() => onNavigate('orbe')} className="bg-[#0FA3B1]/15 hover:bg-[#0FA3B1]/25 text-[#7ee8f2] border border-[#0FA3B1]/50 px-8 py-4 rounded-md text-sm font-bold tracking-widest uppercase transition-all flex items-center gap-3">
+               <Sparkles className="w-5 h-5" /> Habla con el Orbe
              </button>
           </div>
 
