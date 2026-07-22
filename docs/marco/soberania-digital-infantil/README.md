@@ -17,6 +17,7 @@
 | [`FICHA_LEGISLATIVA.md`](./FICHA_LEGISLATIVA.md) | Ficha técnica de iniciativa + articulado y transitorios propuestos |
 | [`DISCURSOS_FOROS.md`](./DISCURSOS_FOROS.md) | Discursos de 3 minutos para los foros de Nuevo León, Chiapas y Guerrero |
 | [`DIAGRAMA_VERIFICACION.md`](./DIAGRAMA_VERIFICACION.md) | Diagramas de flujo (activación y verificación) para presentar a autoridades |
+| [`ESCENARIOS_ESTRATEGICOS.md`](./ESCENARIOS_ESTRATEGICOS.md) | Visión CEO: convergencia con Nayarit ID, Llave MX y el expediente médico CURP |
 
 ---
 
