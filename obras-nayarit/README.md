@@ -19,6 +19,8 @@ cada consulta como evidencia verificable dentro del portal.
 | `datos/obras.json` | Registro estructurado de las obras monitoreadas y su último estado conocido |
 | `evidencia/` | Bitácora: un reporte fechado (`AAAA-MM-DD-reporte.md`) por cada consulta periódica |
 | `index.html` | Página de auditoría ciudadana: fichas con filtros por ámbito y etapa (lee `datos/obras.json`) |
+| `SCHEMA.md` | Definición formal del esquema de datos (v2) y reglas de integridad |
+| `validar.mjs` | Validador del esquema: `npm run validar:obras` (obligatorio antes de subir cambios de datos) |
 
 ## Clasificación y ficha ciudadana
 
