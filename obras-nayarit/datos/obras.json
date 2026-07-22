@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-07-22",
+  "actualizado": "2026-07-22 (2a consulta)",
   "estado": "Nayarit",
   "obras": [
     {
@@ -11,17 +11,20 @@
       "inversion_mdp": 2516,
       "plazo_ejecucion": "4 años",
       "empleos_estimados": 711,
-      "estatus": "Inicio de obras anunciado en junio de 2026; salvamento arqueológico del INAH en curso como condición previa al ingreso de maquinaria.",
+      "estatus": "Confirmado como uno de los 11 proyectos tipo CMRO (construcción, mantenimiento, rehabilitación y operación) del programa carretero federal con inversión público-privada vía Banobras; en marzo de 2026 se anunció el inicio de trabajos 'en las próximas semanas'. El INAH adelanta el salvamento arqueológico en paralelo, sin frenar la obra.",
+      "esquema_contratacion": "Contrato C-MRO (asociación público-privada, Banobras/SICT), con pagos sujetos a estándares de desempeño; por ese esquema no aparece como licitación ordinaria de obra pública en ComprasMX.",
       "hitos": [
         { "fecha": "2025-05-27", "hecho": "El gobernador confirma la primera etapa hasta Platanitos." },
         { "fecha": "2025-09-27", "hecho": "La presidenta Sheinbaum anuncia oficialmente inicio en 2026." },
         { "fecha": "2026-02-17", "hecho": "Brigadas del INAH inician prospección arqueológica del trazo." },
+        { "fecha": "2026-03-04", "hecho": "Se presenta el Programa de Infraestructura Carretera (397,046 mdp); Las Varas–Platanitos figura entre los 11 proyectos CMRO y entre los 18 proyectos con inversión público-privada SICT/Banobras; inicio previsto 'en las próximas semanas'." },
+        { "fecha": "2026-04-07", "hecho": "INAH adelanta el salvamento arqueológico del trazo; declara que obra y salvamento avanzan en paralelo." },
         { "fecha": "2026-06", "hecho": "Al inaugurar Tepic–Compostela, Presidencia anuncia el arranque de los tramos Las Varas–Platanitos y Platanitos–San Blas." }
       ],
       "ficha_oficial": "https://www.proyectosmexico.gob.mx/proyecto_inversion/1000-carretera-las-varas-platanitos/",
       "licitacion_comprasmx": null,
       "pendientes_de_verificar": [
-        "Número de expediente o procedimiento en ComprasMX (no indexado públicamente a la fecha; el esquema construcción+operación sugiere posible concesión/APP publicada en DOF).",
+        "Identificar el contrato C-MRO específico (adjudicatario y fecha) en Fonadin/Banobras o DOF.",
         "Fecha exacta de inicio de trabajos en campo por tramo."
       ]
     },
@@ -34,14 +37,16 @@
       "inversion_mdp": 930,
       "plazo_ejecucion": null,
       "empleos_estimados": null,
-      "estatus": "Avance físico del 80% reportado por la SICT en junio de 2026; conclusión prevista en julio de 2026. Trabajos actuales: guarniciones, parapetos y pavimentación de accesos.",
+      "estatus": "Retrasado: la conclusión estaba prevista para julio de 2026, pero a inicios de julio no hay fecha oficial de apertura. La estructura principal está terminada (ya es posible cruzar el viaducto) y el avance supera el 80%; la entrega se estima ahora entre noviembre y diciembre de 2026, con inauguración presidencial a fin de año.",
       "hitos": [
-        { "fecha": "2026-06-23", "hecho": "SICT reporta 80% de avance físico y prevé conclusión en julio de 2026." }
+        { "fecha": "2026-06-23", "hecho": "SICT reporta 80% de avance físico y prevé conclusión en julio de 2026." },
+        { "fecha": "2026-07-01", "hecho": "Prensa local reporta que sigue sin fecha de apertura pese al avance; estructura principal concluida." },
+        { "fecha": "2026-07-06", "hecho": "El alcalde de Puerto Vallarta informa que la entrega se estima entre noviembre y diciembre de 2026, con inauguración presidencial a finales de año." }
       ],
       "ficha_oficial": "https://www.gob.mx/sict/galerias/avances-del-puente-amado-nervo-en-nayarit",
       "licitacion_comprasmx": null,
       "pendientes_de_verificar": [
-        "Confirmación de la inauguración (prevista julio 2026)."
+        "Fecha oficial de apertura al tránsito (estimada nov-dic 2026; verificar anuncio de la SICT)."
       ]
     },
     {
@@ -49,8 +54,8 @@
       "nombre": "Autopista Tepic – Compostela (concluida) y ampliación hacia la costa",
       "dependencia": "SICT (federal) / Banobras-Fonadin",
       "municipios": ["Tepic", "Xalisco", "Compostela"],
-      "descripcion": "Tramo inaugurado en junio de 2026 por la Presidencia; en el mismo acto se anunció la ampliación del corredor hacia Las Varas, Platanitos y San Blas.",
-      "inversion_mdp": null,
+      "descripcion": "Tramo de 26 km con 10 puentes, dos entronques y un túnel, inaugurado en junio de 2026 por la Presidencia; generó más de 2,900 empleos directos e indirectos. En el mismo acto se anunció la ampliación del corredor hacia Las Varas, Platanitos y San Blas.",
+      "inversion_mdp": 4212,
       "plazo_ejecucion": null,
       "empleos_estimados": null,
       "estatus": "Inaugurada; beneficia a ~490 mil habitantes. Sirve de base al corredor costero hacia San Blas.",
@@ -78,6 +83,25 @@
       "licitacion_comprasmx": null,
       "pendientes_de_verificar": [
         "Desglose de contratos 2026 específicos de Nayarit en ComprasMX (requiere consulta manual del portal)."
+      ]
+    },
+    {
+      "id": "reencarpetamiento-carretera-200",
+      "nombre": "Reencarpetamiento de la Carretera Federal 200 Tepic–Puerto Vallarta (tramo Compostela–Las Varas)",
+      "dependencia": "SICT (federal)",
+      "municipios": ["Compostela"],
+      "descripcion": "Trabajos de reencarpetamiento y conservación de la Carretera 200 en el tramo Compostela–Las Varas, vía principal actual hacia la costa sur mientras avanza el corredor de autopista.",
+      "inversion_mdp": null,
+      "plazo_ejecucion": null,
+      "empleos_estimados": null,
+      "estatus": "En ejecución; la SICT aceleró los trabajos en julio de 2026.",
+      "hitos": [
+        { "fecha": "2026-07", "hecho": "Prensa local reporta que la SICT acelera el reencarpetamiento del tramo Compostela–Las Varas." }
+      ],
+      "ficha_oficial": null,
+      "licitacion_comprasmx": null,
+      "pendientes_de_verificar": [
+        "Monto y contrato del programa de conservación correspondiente."
       ]
     }
   ]
