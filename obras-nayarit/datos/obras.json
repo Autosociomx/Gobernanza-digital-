@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "actualizado": "2026-07-22 (3a consulta)",
+  "actualizado": "2026-07-22 (4a consulta)",
   "estado": "Nayarit",
   "clasificacion": {
     "ambitos": {
@@ -361,6 +361,251 @@
       ],
       "pendientes_de_verificar": [
         "Contrato y calendario de conclusión."
+      ]
+    },
+    {
+      "id": "bahia-acceso-las-conchas",
+      "nombre": "Calle de ingreso al fraccionamiento Las Conchas, Bahía de Banderas",
+      "ambito": "municipal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "H. XII Ayuntamiento de Bahía de Banderas",
+      "quien_propuso": "Ayuntamiento de Bahía de Banderas (presidencia municipal)",
+      "quien_autorizo": "Cabildo de Bahía de Banderas",
+      "municipios": ["Bahía de Banderas"],
+      "descripcion": "Construcción de la calle de ingreso al fraccionamiento Las Conchas; plazo de ejecución estimado de cuatro meses.",
+      "inversion_mdp": 8,
+      "fuente_financiamiento": "Recursos municipales",
+      "contratacion": { "esquema": "Obra pública municipal", "referencia": null },
+      "fecha_inicio": "2026-02",
+      "fecha_entrega_estimada": "Mediados de 2026 (4 meses desde el arranque)",
+      "empleos_estimados": null,
+      "estatus": "Arrancada en febrero de 2026; conclusión por confirmar.",
+      "hitos": [
+        { "fecha": "2026-02", "hecho": "El presidente municipal arranca la obra (inversión de más de 8 mdp)." }
+      ],
+      "fuentes": [
+        "https://www.bahiadebanderas.gob.mx/hector-santana-arranca-obra-de-la-calle-de-ingreso-al-fraccionamiento-las-conchas/"
+      ],
+      "pendientes_de_verificar": [
+        "Confirmar la entrega de la obra y su costo final."
+      ]
+    },
+    {
+      "id": "bahia-av-las-flores",
+      "nombre": "Pavimentación de la avenida Las Flores, San José del Valle, Bahía de Banderas",
+      "ambito": "municipal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "H. XII Ayuntamiento de Bahía de Banderas",
+      "quien_propuso": "Ayuntamiento de Bahía de Banderas",
+      "quien_autorizo": "Cabildo de Bahía de Banderas (recursos propios, sin deuda)",
+      "municipios": ["Bahía de Banderas"],
+      "descripcion": "Pavimentación con concreto hidráulico de la avenida Las Flores en San José del Valle.",
+      "inversion_mdp": 9.8,
+      "fuente_financiamiento": "Recursos municipales propios, sin deuda",
+      "contratacion": { "esquema": "Obra pública municipal", "referencia": null },
+      "fecha_inicio": "2026-05",
+      "fecha_entrega_estimada": null,
+      "empleos_estimados": null,
+      "estatus": "En ejecución desde mayo de 2026.",
+      "hitos": [
+        { "fecha": "2026-05-12", "hecho": "Inicio de la pavimentación con concreto hidráulico (~9.8 mdp)." }
+      ],
+      "fuentes": [
+        "https://noticiasdlb.com/2026/05/12/con-recursos-propios-y-sin-deuda-bahia-de-banderas-mejora-infraestructura-en-san-jose-del-valle/"
+      ],
+      "pendientes_de_verificar": [
+        "Fecha estimada de conclusión."
+      ]
+    },
+    {
+      "id": "bahia-acceso-cecyten",
+      "nombre": "Pavimentación del acceso al CECyTEN, San Juan de Abajo, Bahía de Banderas",
+      "ambito": "municipal",
+      "etapa": "concluida",
+      "dependencia_ejecutora": "H. XII Ayuntamiento de Bahía de Banderas",
+      "quien_propuso": "Ayuntamiento de Bahía de Banderas (demanda comunitaria de casi 30 años)",
+      "quien_autorizo": "Cabildo de Bahía de Banderas",
+      "municipios": ["Bahía de Banderas"],
+      "descripcion": "Pavimentación con concreto hidráulico del camino de acceso al plantel CECyTEN de San Juan de Abajo; atiende un rezago de casi 30 años.",
+      "inversion_mdp": 5,
+      "fuente_financiamiento": "Recursos municipales",
+      "contratacion": { "esquema": "Obra pública municipal", "referencia": null },
+      "fecha_inicio": null,
+      "fecha_entrega_estimada": "Entregada el 22 de julio de 2026",
+      "empleos_estimados": null,
+      "estatus": "Inaugurada el 22 de julio de 2026.",
+      "hitos": [
+        { "fecha": "2026-07-22", "hecho": "Inauguración del acceso pavimentado al CECyTEN (5 mdp)." }
+      ],
+      "fuentes": [
+        "https://noticiaspvnayarit.com.mx/inauguran-pavimento-acceso-cecyten-san-juan-de-abajo-bahia-de-banderas/"
+      ],
+      "pendientes_de_verificar": []
+    },
+    {
+      "id": "compostela-coastecomatillo-paranal",
+      "nombre": "Rehabilitación del camino Coastecomatillo – Paranal, Compostela (etapas 1 y 2)",
+      "ambito": "estatal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "Gobierno del Estado de Nayarit (Secretaría de Infraestructura)",
+      "quien_propuso": "Gobierno del Estado (gira por Compostela)",
+      "quien_autorizo": "Gobierno del Estado de Nayarit",
+      "municipios": ["Compostela"],
+      "descripcion": "Rehabilitación con concreto asfáltico del camino que comunica Coastecomatillo, Paranal y localidades cercanas; etapa 1 entregada y etapa 2 en arranque, con inversión cercana a 27 mdp.",
+      "inversion_mdp": 27,
+      "fuente_financiamiento": "Recursos estatales",
+      "contratacion": { "esquema": "Obra pública estatal", "referencia": null },
+      "fecha_inicio": "2026",
+      "fecha_entrega_estimada": null,
+      "empleos_estimados": null,
+      "estatus": "Etapa 1 entregada en julio de 2026; etapa 2 iniciada.",
+      "hitos": [
+        { "fecha": "2026-04-13", "hecho": "El gobierno estatal anuncia inversión en carretera y educación en Compostela." },
+        { "fecha": "2026-07-02", "hecho": "Entrega de la etapa 1 rehabilitada e inicio de la etapa 2 (~27 mdp)." }
+      ],
+      "fuentes": [
+        "https://ntv.com.mx/2026/07/02/estrenan-un-renovado-camino-en-compostela-que-rehabilito-el-gobierno-de-nayarit/",
+        "https://heraldodemexico.com.mx/nacional/2026/4/13/gobierno-de-nayarit-invierte-en-carretera-educacion-en-compostela-795491.html"
+      ],
+      "pendientes_de_verificar": [
+        "Calendario y monto desglosado de la etapa 2."
+      ]
+    },
+    {
+      "id": "compostela-ut-mazatan",
+      "nombre": "Mejoramiento de la Universidad Tecnológica de Mazatán, Compostela",
+      "ambito": "estatal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "Gobierno del Estado de Nayarit",
+      "quien_propuso": "Gobierno del Estado",
+      "quien_autorizo": "Gobierno del Estado de Nayarit",
+      "municipios": ["Compostela"],
+      "descripcion": "Mejora de infraestructura y equipamiento de la universidad tecnológica en Mazatán (~20 mdp, 243 estudiantes beneficiados); se proyectan entre 50 y 100 mdp adicionales para ampliarla el próximo año.",
+      "inversion_mdp": 20,
+      "fuente_financiamiento": "Recursos estatales",
+      "contratacion": { "esquema": "Obra pública estatal", "referencia": null },
+      "fecha_inicio": "2026",
+      "fecha_entrega_estimada": null,
+      "empleos_estimados": null,
+      "estatus": "En ejecución; ampliación mayor proyectada para 2027.",
+      "hitos": [
+        { "fecha": "2026-05-24", "hecho": "Anuncio de obras educativas e hidráulicas para Compostela, incluida la UT de Mazatán." }
+      ],
+      "fuentes": [
+        "https://ntv.com.mx/2026/05/24/impulsan-obras-educativas-e-hidraulicas-para-fortalecer-desarrollo-en-compostela/"
+      ],
+      "pendientes_de_verificar": [
+        "Confirmar el monto y arranque de la ampliación 2027 (50–100 mdp)."
+      ]
+    },
+    {
+      "id": "santiago-rehabilitacion-centro",
+      "nombre": "Rehabilitación de calles del centro de Santiago Ixcuintla (adoquín y empedrados)",
+      "ambito": "municipal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "Ayuntamiento de Santiago Ixcuintla (Obras Públicas)",
+      "quien_propuso": "Ayuntamiento de Santiago Ixcuintla",
+      "quien_autorizo": "Cabildo de Santiago Ixcuintla",
+      "municipios": ["Santiago Ixcuintla"],
+      "descripcion": "Rehabilitación de adoquín en la calle Rayón (tramos 20 de Noviembre–Amado Nervo y Ocampo–Zaragoza) y de empedrados en San Miguel/Villas de Ixcuintla y el cruce Guillermo Prieto–carretera a Los Corchos, con personal municipal.",
+      "inversion_mdp": null,
+      "fuente_financiamiento": "Recursos municipales (administración directa)",
+      "contratacion": { "esquema": "Administración directa municipal", "referencia": null },
+      "fecha_inicio": "2026",
+      "fecha_entrega_estimada": null,
+      "empleos_estimados": null,
+      "estatus": "En ejecución en distintos puntos de la cabecera municipal (junio de 2026).",
+      "hitos": [
+        { "fecha": "2026-06-02", "hecho": "El gobierno municipal reporta los trabajos de renovación de calles del centro." }
+      ],
+      "fuentes": [
+        "https://ntv.com.mx/2026/06/02/fotos-gobierno-de-santiago-ixcuintla-le-da-nuevo-rostro-a-las-calles-del-centro/"
+      ],
+      "pendientes_de_verificar": [
+        "Inversión total del programa de rehabilitación vial municipal."
+      ]
+    },
+    {
+      "id": "paquete-estatal-xalisco-santiago-48mdp",
+      "nombre": "Paquete estatal de infraestructura en Xalisco y Santiago Ixcuintla (~48 mdp)",
+      "ambito": "estatal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "Gobierno del Estado de Nayarit",
+      "quien_propuso": "Gobierno del Estado (giras de trabajo)",
+      "quien_autorizo": "Gobierno del Estado de Nayarit",
+      "municipios": ["Xalisco", "Santiago Ixcuintla"],
+      "descripcion": "Acciones de infraestructura con inversión conjunta cercana a 48 mdp; incluye compromisos nuevos: estudio vial para el acceso a Loma Bonita, paneles solares y un puente peatonal sobre la carretera.",
+      "inversion_mdp": 48,
+      "fuente_financiamiento": "Recursos estatales",
+      "contratacion": { "esquema": "Obra pública estatal", "referencia": null },
+      "fecha_inicio": "2026",
+      "fecha_entrega_estimada": null,
+      "empleos_estimados": null,
+      "estatus": "En ejecución; compromisos adicionales anunciados en gira (mayo de 2026).",
+      "hitos": [
+        { "fecha": "2026-05", "hecho": "Gira estatal: inversión conjunta de ~48 mdp y nuevos compromisos para las localidades." }
+      ],
+      "fuentes": [
+        "https://www.gob.mx/cms/uploads/attachment/file/1080361/S_ntesis_25-5-2026.pdf"
+      ],
+      "pendientes_de_verificar": [
+        "Desglose de las obras del paquete por municipio y contrato.",
+        "Arranque del puente peatonal y del estudio vial de Loma Bonita."
+      ]
+    },
+    {
+      "id": "xalisco-calle-magnolias",
+      "nombre": "Rehabilitación integral de la calle Magnolias, Jardines de Matatipac, Xalisco",
+      "ambito": "estatal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "Gobierno del Estado de Nayarit",
+      "quien_propuso": "Gobierno del Estado (paquete Tepic–Xalisco de más de 20 mdp)",
+      "quien_autorizo": "Gobierno del Estado de Nayarit",
+      "municipios": ["Xalisco"],
+      "descripcion": "Rehabilitación integral: renovación de red de agua potable, sustitución de 46 tomas domiciliarias, banquetas, luminarias solares y señalamiento vial.",
+      "inversion_mdp": 6,
+      "fuente_financiamiento": "Recursos estatales (paquete Tepic–Xalisco >20 mdp)",
+      "contratacion": { "esquema": "Obra pública estatal", "referencia": null },
+      "fecha_inicio": "2026-06",
+      "fecha_entrega_estimada": null,
+      "empleos_estimados": null,
+      "estatus": "En ejecución desde junio de 2026.",
+      "hitos": [
+        { "fecha": "2026-06-06", "hecho": "Arranque de la obra en gira del gobernador por Tepic y Xalisco (6 mdp)." }
+      ],
+      "fuentes": [
+        "https://ntv.com.mx/2026/06/06/inician-obras-de-infraestructura-en-tepic-y-xalisco-con-inversion-superior-a-20-millones-de-pesos/"
+      ],
+      "pendientes_de_verificar": [
+        "Fecha de conclusión y contrato."
+      ]
+    },
+    {
+      "id": "xalisco-calle-8-de-julio",
+      "nombre": "Pavimentación asfáltica de la calle 8 de Julio, colonia José Santos Godínez, Xalisco",
+      "ambito": "municipal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "Ayuntamiento de Xalisco (Obras Públicas)",
+      "quien_propuso": "Ayuntamiento de Xalisco",
+      "quien_autorizo": "Cabildo de Xalisco",
+      "municipios": ["Xalisco"],
+      "descripcion": "Pavimentación asfáltica para completar la conectividad urbana entre colonias; parte de seis obras de infraestructura vial municipal en marcha.",
+      "inversion_mdp": null,
+      "fuente_financiamiento": "Recursos municipales",
+      "contratacion": { "esquema": "Obra pública municipal", "referencia": null },
+      "fecha_inicio": "2026",
+      "fecha_entrega_estimada": null,
+      "empleos_estimados": null,
+      "estatus": "En ejecución; el municipio reporta seis obras viales en marcha.",
+      "hitos": [
+        { "fecha": "2026", "hecho": "El gobierno municipal reporta el avance de la pavimentación y las seis obras viales." }
+      ],
+      "fuentes": [
+        "https://xalisco.gob.mx/obras-en-marcha-para-mejorar-calles-y-caminos-en-xalisco/",
+        "https://xalisco.gob.mx/categorias/obra-publica/"
+      ],
+      "pendientes_de_verificar": [
+        "Inversión y desglose de las seis obras viales municipales."
       ]
     }
   ]
