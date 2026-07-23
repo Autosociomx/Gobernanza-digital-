@@ -789,11 +789,17 @@ function IAView() {
   const [lang, setLang] = useState<Language>('es');
   const auraVoice = useAuraVoice();
   const [autoSpeak, setAutoSpeak] = useState(false);
+  const { user } = useAuth();
+
+  const nombreFuncionario = user?.displayName?.trim();
+  const saludoEs = nombreFuncionario
+    ? `${nombreFuncionario}, el Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?`
+    : 'El Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?';
 
   const greets = {
-    es: 'Presidenta Geraldine Ponce, el Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?',
-    cora: "Presidenta Geraldine Ponce, ConnectX IA amu'u tyu'un. ¿Tyu'un ne'ij tyu'uti'in Tepic?",
-    wixarika: 'Geraldine Ponce keniu, ConnectX IA keniu. ¿Kewa pikanetsi\'iwau Tepic?'
+    es: saludoEs,
+    cora: "ConnectX IA amu'u tyu'un. ¿Tyu'un ne'ij tyu'uti'in Tepic?",
+    wixarika: 'ConnectX IA keniu. ¿Kewa pikanetsi\'iwau Tepic?'
   };
 
   const getPageContext = React.useCallback(() => {
