@@ -18,6 +18,7 @@
 | [`DISCURSOS_FOROS.md`](./DISCURSOS_FOROS.md) | Discursos de 3 minutos para los foros de Nuevo León, Chiapas y Guerrero |
 | [`DIAGRAMA_VERIFICACION.md`](./DIAGRAMA_VERIFICACION.md) | Diagramas de flujo (activación y verificación) para presentar a autoridades |
 | [`ESCENARIOS_ESTRATEGICOS.md`](./ESCENARIOS_ESTRATEGICOS.md) | Visión CEO: convergencia con Nayarit ID, Llave MX y el expediente médico CURP |
+| [`GUIA_PREVENCION_EDUCACION.md`](./GUIA_PREVENCION_EDUCACION.md) | Qué pueden hacer familias y escuelas hoy: prevención frente a bots, IA de compañía y algoritmos de recomendación, y educación digital por edad |
 
 ---
 

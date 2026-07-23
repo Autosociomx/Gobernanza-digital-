@@ -24,6 +24,8 @@ flujo de denuncia diagramado; sin implementación.
 
 - Articulado: `docs/marco/soberania-digital-infantil/FICHA_LEGISLATIVA.md` (art. 4)
 - Flujo de denuncia: `docs/marco/soberania-digital-infantil/DIAGRAMA_VERIFICACION.md` (§4)
+- Prevención y educación (lado familiar/escolar, complementario a este módulo
+  reactivo): `docs/marco/soberania-digital-infantil/GUIA_PREVENCION_EDUCACION.md`
 
 ## Cómo editarlo
 
