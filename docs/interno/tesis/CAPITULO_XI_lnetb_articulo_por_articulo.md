@@ -83,7 +83,7 @@ Con la LNETB verificada, el siguiente descenso en el orden jurídico es el marco
 
 Fuentes de este capítulo:
 
-- Texto primario (leído íntegro, 18 de julio de 2026): Ley Nacional para Eliminar Trámites Burocráticos, texto vigente, nueva ley DOF 16-07-2025 — PDF oficial de la Cámara de Diputados (Leyes Biblio), 114 artículos, proporcionado por el autor de la investigación. Copia de trabajo del texto extraído: `fuentes/LNETB_texto_extraido_camara_diputados.txt` (en esta misma carpeta).
+- Texto primario (leído íntegro, 18 de julio de 2026): Ley Nacional para Eliminar Trámites Burocráticos, texto vigente, nueva ley DOF 16-07-2025 — PDF oficial de la Cámara de Diputados (Leyes Biblio), 114 artículos, proporcionado por el autor de la investigación. Copia de trabajo del texto extraído: `docs/marco/fuentes-legales/federal/LNETB_texto_extraido_camara_diputados.txt` (corpus legal público del repositorio — ver `docs/marco/fuentes-legales/README.md`).
 - [DOF, nota 5763166, 16/07/2025](https://dof.gob.mx/nota_detalle.php?codigo=5763166&fecha=16%2F07%2F2025) — publicación original.
 - [Cámara de Diputados, LNETB (PDF, Leyes Biblio)](https://www.diputados.gob.mx/LeyesBiblio/pdf/LNETB.pdf) — fuente del texto cotejado.
 - [Lineamientos del modelo de la LNETB, DOF 22-oct-2025](https://www.gob.mx/cms/uploads/attachment/file/1032656/LINEAMIENTOS_modelo_de_la_LNETB.pdf) — instrumento secundario, pendiente de análisis.

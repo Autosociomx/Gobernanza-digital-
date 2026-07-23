@@ -67,9 +67,9 @@ Falta el cuarto piso del andamiaje: la Ley Municipal para el Estado de Nayarit �
 
 Fuentes de este capítulo:
 
-- Texto primario (leído íntegro, 18 de julio de 2026): Ley de Gobierno Digital para el Estado de Nayarit, publicada en el Periódico Oficial del Estado el 13 de junio de 2022 — PDF oficial del Congreso del Estado de Nayarit, 55 artículos, proporcionado por el autor de la investigación. Copia de trabajo: `fuentes/LGD_NAYARIT_texto_extraido_congreso.txt` (en esta misma carpeta).
+- Texto primario (leído íntegro, 18 de julio de 2026): Ley de Gobierno Digital para el Estado de Nayarit, publicada en el Periódico Oficial del Estado el 13 de junio de 2022 — PDF oficial del Congreso del Estado de Nayarit, 55 artículos, proporcionado por el autor de la investigación. Copia de trabajo: `docs/marco/fuentes-legales/estatal/nayarit/LGD_NAYARIT_texto_extraido_congreso.txt` (corpus legal público del repositorio — ver `docs/marco/fuentes-legales/README.md`).
 - [Congreso del Estado de Nayarit, Ley de Gobierno Digital (PDF oficial)](https://congresonayarit.gob.mx/wp-content/uploads/QUE_HACEMOS/LEGISLACION_ESTATAL/leyes/gobierno_digital_para_el_estado_de_nayarit_ley_de.pdf)
 - [SCJN, repositorio de normativa estatal, documento 158962 (espejo)](https://www.scjn.gob.mx/sites/default/files/normativa/electronico/documentos/158962.pdf)
-- Cotejo cruzado con la LNETB: Capítulo XI de esta investigación y `fuentes/LNETB_texto_extraido_camara_diputados.txt`.
+- Cotejo cruzado con la LNETB: Capítulo XI de esta investigación y `docs/marco/fuentes-legales/federal/LNETB_texto_extraido_camara_diputados.txt`.
 
 Pendientes de verificación declarados: (1) ausencia de reformas a la ley estatal — cotejar contra el Periódico Oficial; (2) estado de la armonización ordenada por el Transitorio Décimo Tercero de la LNETB en el Congreso de Nayarit; (3) situación actual del Consejo Estatal de Gobierno Digital frente a la nueva Autoridad Local de Simplificación y Digitalización.

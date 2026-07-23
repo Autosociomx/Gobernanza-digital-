@@ -32,14 +32,14 @@ Diputados, 114 artículos, subido por el autor) **confirmó todas las citas** de
 MX), 91 (código fuente) y Transitorios 14º-16º (plazos vencidos ene-feb 2026). El "hallazgo"
 preliminar del 17-jul era un error de fuentes secundarias — retractado y documentado en §11.4
 como lección metodológica. Todo el Cap. XI quedó en nivel (a) con citas textuales. Texto de
-trabajo de la ley: `fuentes/LNETB_texto_extraido_camara_diputados.txt`.
+trabajo de la ley: `docs/marco/fuentes-legales/federal/LNETB_texto_extraido_camara_diputados.txt` — ahora parte del corpus legal público del repositorio (`docs/marco/fuentes-legales/`).
 
 ✅ **Cap. XII (2026-07-18)**: Ley de Gobierno Digital de Nayarit (55 arts., 13-jun-2022) cotejada
 íntegra con el PDF oficial del Congreso subido por el autor. Hallazgos clave: Art. 24 (función
 municipal expresa de política digital), **Art. 48 fracc. IV (la captura única ya es un derecho
 vigente en Nayarit desde 2022)**, Art. 41 (la Ventanilla Única estatal solo cubre trámites
 estatales — el instrumento municipal es un vacío legal que la plataforma ocupa sin invadir
-competencias). Texto de trabajo: `fuentes/LGD_NAYARIT_texto_extraido_congreso.txt`.
+competencias). Texto de trabajo: `docs/marco/fuentes-legales/estatal/nayarit/LGD_NAYARIT_texto_extraido_congreso.txt`.
 
 Siguiente: Cap. XIII — Ley Municipal para el Estado de Nayarit (falta subir el PDF oficial:
 https://congresonayarit.gob.mx/wp-content/uploads/QUE_HACEMOS/LEGISLACION_ESTATAL/marco_juridico_municipal/municipal_para_el_estado_de_nayarit_ley.pdf).
