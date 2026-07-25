@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'motion/react';
 import { 
   ShieldCheck, Activity, Users, FileText, Lock, Globe, Monitor, Smartphone, CheckCircle2, ChevronRight, Clock, ArrowRight, Zap, Scale, LayoutDashboard
 } from 'lucide-react';
@@ -60,36 +61,63 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
 
         {/* Main Hero Content */}
         <main className="flex-1 flex flex-col justify-center items-center text-center px-6 relative z-10 py-12">
-          <h1 className="text-5xl md:text-7xl lg:text-[4.8rem] font-serif font-normal leading-[1.1] tracking-tight mb-8 max-w-5xl">
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="text-5xl md:text-7xl lg:text-[4.8rem] font-serif font-normal leading-[1.1] tracking-tight mb-8 max-w-5xl"
+          >
              El ecosistema digital<br/>
              para el <em aria-hidden="true" className="italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-[#D81E5B] to-[#0FA3B1]">bienestar ciudadano</em><span className="sr-only">bienestar ciudadano</span><br/>
              de Nayarit
-          </h1>
+          </motion.h1>
           
-          <p className="text-lg md:text-xl text-[#F8F6F1]/70 max-w-2xl font-sans tracking-wider mb-14 leading-relaxed">
+          <motion.p
+             initial={{ opacity: 0, y: 20 }}
+             animate={{ opacity: 1, y: 0 }}
+             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+             className="text-lg md:text-xl text-[#F8F6F1]/70 max-w-2xl font-sans tracking-wider mb-14 leading-relaxed"
+          >
              Portal de Trámites y Servicios Simplificados. El canal digital oficial para los municipios de Bahía de Banderas, Xalisco y Tepic, diseñado por y para la ciudadanía.
-          </p>
+          </motion.p>
 
           {/* KPI Chips */}
-          <div className="flex flex-wrap justify-center gap-3 max-w-3xl mb-16">
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#D81E5B]/20 text-[#ff8ab8] border border-[#D81E5B]/40 uppercase">18 Módulos de Servicios</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#0FA3B1]/20 text-[#7ee8f2] border border-[#0FA3B1]/40 uppercase">Soberanía Tecnológica</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#F5A623]/20 text-[#ffc96a] border border-[#F5A623]/40 uppercase">100+ Pagos Municipales</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#4C9F70]/20 text-[#7de3a8] border border-[#4C9F70]/40 uppercase">Bahía, Xalisco y Tepic</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#D81E5B]/20 text-[#ff8ab8] border border-[#D81E5B]/40 uppercase">Simplificación Regulatoria</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#0FA3B1]/20 text-[#7ee8f2] border border-[#0FA3B1]/40 uppercase">Identidad LlaveMx</span>
-          </div>
+          <motion.div
+             initial={{ opacity: 0 }}
+             animate={{ opacity: 1 }}
+             transition={{ duration: 1, delay: 0.4 }}
+             className="flex flex-wrap justify-center gap-3 max-w-3xl mb-16"
+          >
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#D81E5B]/20 text-[#ff8ab8] border border-[#D81E5B]/40 uppercase hover:scale-105 hover:bg-[#D81E5B]/30 hover:border-[#D81E5B]/60 transition-all duration-300 cursor-default shadow-sm hover:shadow-md">18 Módulos de Servicios</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#0FA3B1]/20 text-[#7ee8f2] border border-[#0FA3B1]/40 uppercase hover:scale-105 hover:bg-[#0FA3B1]/30 hover:border-[#0FA3B1]/60 transition-all duration-300 cursor-default shadow-sm hover:shadow-md">Soberanía Tecnológica</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#F5A623]/20 text-[#ffc96a] border border-[#F5A623]/40 uppercase hover:scale-105 hover:bg-[#F5A623]/30 hover:border-[#F5A623]/60 transition-all duration-300 cursor-default shadow-sm hover:shadow-md">100+ Pagos Municipales</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#4C9F70]/20 text-[#7de3a8] border border-[#4C9F70]/40 uppercase hover:scale-105 hover:bg-[#4C9F70]/30 hover:border-[#4C9F70]/60 transition-all duration-300 cursor-default shadow-sm hover:shadow-md">Bahía, Xalisco y Tepic</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#D81E5B]/20 text-[#ff8ab8] border border-[#D81E5B]/40 uppercase hover:scale-105 hover:bg-[#D81E5B]/30 hover:border-[#D81E5B]/60 transition-all duration-300 cursor-default shadow-sm hover:shadow-md">Simplificación Regulatoria</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#0FA3B1]/20 text-[#7ee8f2] border border-[#0FA3B1]/40 uppercase hover:scale-105 hover:bg-[#0FA3B1]/30 hover:border-[#0FA3B1]/60 transition-all duration-300 cursor-default shadow-sm hover:shadow-md">Identidad LlaveMx</span>
+          </motion.div>
 
-          <div className="flex flex-wrap justify-center gap-6">
-             <button onClick={() => onNavigate('citizen')} className="bg-[#D81E5B] hover:bg-[#D81E5B]/90 text-white px-8 py-4 rounded-md text-sm font-bold tracking-widest uppercase transition-all shadow-[0_8px_32px_rgba(216,30,91,0.35)] flex items-center gap-3">
-               <Smartphone className="w-5 h-5" /> Portal Ciudadano
+          <motion.div
+             initial={{ opacity: 0, y: 20 }}
+             animate={{ opacity: 1, y: 0 }}
+             transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+             className="flex flex-wrap justify-center gap-6"
+          >
+             <button onClick={() => onNavigate('citizen')} className="bg-[#D81E5B] hover:bg-[#D81E5B]/90 text-white px-8 py-4 rounded-md text-sm font-bold tracking-widest uppercase transition-all shadow-[0_8px_32px_rgba(216,30,91,0.35)] hover:shadow-[0_12px_40px_rgba(216,30,91,0.5)] hover:-translate-y-1 flex items-center gap-3">
+               <Smartphone className="w-5 h-5" /> Ingresar al Portal
              </button>
-             <button onClick={() => onNavigate('c5')} className="bg-[#F8F6F1]/10 hover:bg-[#F8F6F1]/20 text-[#F8F6F1] border border-[#F8F6F1]/30 px-8 py-4 rounded-md text-sm font-bold tracking-widest uppercase transition-all flex items-center gap-3">
-               <Monitor className="w-5 h-5" /> C5 de Gestión Pública
+             <button onClick={() => onNavigate('c5')} className="bg-[#F8F6F1]/10 hover:bg-[#F8F6F1]/20 text-[#F8F6F1] border border-[#F8F6F1]/30 px-8 py-4 rounded-md text-sm font-bold tracking-widest uppercase transition-all hover:shadow-[0_12px_40px_rgba(248,246,241,0.15)] hover:-translate-y-1 flex items-center gap-3">
+               <Monitor className="w-5 h-5" /> C5 SOATM (Gestión)
              </button>
-          </div>
+          </motion.div>
 
-          <p className="text-[#a0aec0] text-xs tracking-[0.2em] uppercase mt-20">Julio 2026 · Ecosistema Social de Gobierno Abierto · v3.0</p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 1 }}
+            className="text-[#a0aec0] text-xs tracking-[0.2em] uppercase mt-20"
+          >
+            Julio 2026 · Sistema Operativo de Administración Territorial (SOATM) · v3.0
+          </motion.p>
         </main>
       </div>
 
@@ -101,10 +129,10 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
         {/* 01: El Mandato Social & Reloj de Simplificación */}
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 mb-32">
           <div>
-            <p className="text-[#D81E5B] text-xs font-bold tracking-[0.2em] uppercase mb-4">01 · Marco de Derechos Ciudadanos</p>
-            <h2 className="text-4xl md:text-5xl font-serif font-black leading-[1.1] mb-6 text-[#1a2438]">Hacia un servicio público digno, ágil y transparente.</h2>
+            <p className="text-[#D81E5B] text-xs font-bold tracking-[0.2em] uppercase mb-4">01 · Marco de Derechos Ciudadanos (SOATM)</p>
+            <h2 className="text-4xl md:text-5xl font-serif font-black leading-[1.1] mb-6 text-[#1a2438]">La nueva forma de gobernar a través del territorio.</h2>
             <p className="text-[#4a5568] text-lg leading-relaxed mb-8">
-               La Ley Nacional de Simplificación y Digitalización constitucional exige a los municipios de Bahía de Banderas, Xalisco y Tepic transicionar hacia ventanillas únicas eficientes, seguras y libres de papel. El plazo límite federal se encuentra activo en este año 2026.
+               La implementación del SOATM garantiza una gestión descentralizada, respondiendo a la Ley Nacional de Simplificación y Digitalización. Transicionamos hacia ventanillas únicas eficientes, seguras y libres de papel en este 2026, bajo una óptica de territorio y bienestar.
             </p>
 
             <div className="space-y-6">
@@ -164,8 +192,8 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
         {/* 03: 5 Capas */}
         <div className="max-w-6xl mx-auto mb-32">
           <div className="text-center mb-16">
-             <p className="text-[#0A6B75] text-xs font-bold tracking-[0.2em] uppercase mb-4">03 · Arquitectura del Ecosistema</p>
-             <h2 className="text-4xl md:text-5xl font-serif font-black leading-tight text-[#1a2438]">5 capas de integración y servicio público.</h2>
+             <p className="text-[#0A6B75] text-xs font-bold tracking-[0.2em] uppercase mb-4">03 · Arquitectura del SOATM</p>
+             <h2 className="text-4xl md:text-5xl font-serif font-black leading-tight text-[#1a2438]">5 capas de integración para una nueva gobernanza.</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
