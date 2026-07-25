@@ -10,6 +10,18 @@ ellos con errores de transcripción de voz, y (b) el nombre real, el archivo
 fuente y el componente SOATM (`02-ARQUITECTURA-SISTEMA.md`) al que
 pertenecen.
 
+> **Registro completo de los 29 módulos reales**: `docs/orbe/modulos/` cubre
+> 9 círculos conceptuales del Orbe; no cubre módulos como Agrovisión,
+> Observatorio, Métricas, Gabinete, Interoperabilidad, Análisis Estratégico,
+> ni la mayoría de las pestañas de `CitizenApp.tsx` (Redes, Canjes, Auditoría,
+> Academy, System Audit, Banana Command, Academia/Plan Estratégicos, Cartas
+> Municipales). `docs/marco/modulos/INDICE.json` + una ficha por módulo en
+> `docs/marco/modulos/<id>.md` cubren los 29, con archivo y línea verificados
+> contra `origin/main` y el mismo estado honesto (`real` / `parcial` /
+> `maqueta` / `riesgo`) que ya usa la auditoría de CTAs de este repositorio.
+> La skill de repositorio `.claude/skills/editar-modulo/` usa ese índice para
+> editar un módulo por nombre sin tener que volver a dar contexto cada vez.
+
 ## Tabla de alias → módulo real
 
 | Alias usado por el equipo | Módulo real | Componente SOATM | Estado | Fuente |
