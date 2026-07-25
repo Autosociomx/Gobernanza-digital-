@@ -1,0 +1,275 @@
+{
+  "$schema_nota": "Índice canónico de los 29 módulos reales del código (C5Dashboard + CitizenApp), verificado contra origin/main. Complementa (no reemplaza) docs/orbe/modulos.json, que cubre 9 módulos conceptuales del Orbe. Nota de vocabulario: 'estado' aquí mide completitud de código/UI (¿tiene servicio real detrás?), no cumplimiento legal — es un eje distinto del 'Operativo / Operativo en demo / Preparado / Hoja de ruta' de docs/plataforma/ y MARCO_CUMPLIMIENTO_LNETB.md; ambos vocabularios son intencionalmente distintos, no una contradicción.",
+  "version": 1,
+  "verificado_contra": "origin/main",
+  "commit_verificacion": "f6536a6",
+  "estados_validos": [
+    "real",
+    "parcial",
+    "maqueta",
+    "riesgo"
+  ],
+  "modulos": [
+    {
+      "id": "interoperabilidad",
+      "nombre": "Nodo de Transparencia (Interoperabilidad)",
+      "superficie": "c5",
+      "archivo": "src/components/C5Dashboard.tsx",
+      "lineas": "209-296",
+      "estado": "maqueta",
+      "ficha": "docs/marco/modulos/interoperabilidad.md"
+    },
+    {
+      "id": "tesoreria",
+      "nombre": "Tesorería Digital",
+      "superficie": "c5",
+      "archivo": "src/components/C5Dashboard.tsx",
+      "lineas": "297-364",
+      "estado": "maqueta",
+      "ficha": "docs/marco/modulos/tesoreria.md"
+    },
+    {
+      "id": "obras",
+      "nombre": "Trazabilidad de Obras",
+      "superficie": "c5",
+      "archivo": "src/components/C5Dashboard.tsx",
+      "lineas": "365-417",
+      "estado": "maqueta",
+      "ficha": "docs/marco/modulos/obras.md"
+    },
+    {
+      "id": "servicios",
+      "nombre": "Servicios Públicos",
+      "superficie": "c5",
+      "archivo": "src/components/C5Dashboard.tsx",
+      "lineas": "418-513",
+      "estado": "maqueta",
+      "ficha": "docs/marco/modulos/servicios.md"
+    },
+    {
+      "id": "salud",
+      "nombre": "Salud Inteligente — Nayarit ID",
+      "superficie": "c5",
+      "archivo": "src/components/C5Dashboard.tsx",
+      "lineas": "514-773",
+      "estado": "real",
+      "ficha": "docs/marco/modulos/salud.md"
+    },
+    {
+      "id": "ia",
+      "nombre": "Asistente IA (Aura, vista de gobierno)",
+      "superficie": "c5",
+      "archivo": "src/components/C5Dashboard.tsx",
+      "lineas": "774-1000",
+      "estado": "real",
+      "ficha": "docs/marco/modulos/ia.md"
+    },
+    {
+      "id": "agrovision",
+      "nombre": "Agrovisión 3D",
+      "superficie": "c5",
+      "archivo": "src/components/C5Dashboard.tsx",
+      "lineas": "1001-1084",
+      "estado": "maqueta",
+      "ficha": "docs/marco/modulos/agrovision.md"
+    },
+    {
+      "id": "observatorio",
+      "nombre": "Observatorio Digital",
+      "superficie": "c5",
+      "archivo": "src/components/C5Dashboard.tsx",
+      "lineas": "1085-1455",
+      "estado": "maqueta",
+      "ficha": "docs/marco/modulos/observatorio.md"
+    },
+    {
+      "id": "bienestar",
+      "nombre": "Bienestar Social",
+      "superficie": "c5",
+      "archivo": "src/components/C5Dashboard.tsx",
+      "lineas": "1456-1477",
+      "estado": "maqueta",
+      "ficha": "docs/marco/modulos/bienestar.md"
+    },
+    {
+      "id": "metricas",
+      "nombre": "Métricas Integrales",
+      "superficie": "c5",
+      "archivo": "src/components/C5Dashboard.tsx",
+      "lineas": "1478-1517",
+      "estado": "maqueta",
+      "ficha": "docs/marco/modulos/metricas.md"
+    },
+    {
+      "id": "gabinete",
+      "nombre": "Gabinete en Tiempo Real",
+      "superficie": "c5",
+      "archivo": "src/components/C5Dashboard.tsx",
+      "lineas": "1518-1629",
+      "estado": "maqueta",
+      "ficha": "docs/marco/modulos/gabinete.md"
+    },
+    {
+      "id": "parlamento",
+      "nombre": "Parlamento Municipal",
+      "superficie": "c5",
+      "archivo": "src/components/dashboard/ParlamentoView.tsx",
+      "lineas": "1-527",
+      "estado": "real",
+      "ficha": "docs/marco/modulos/parlamento.md"
+    },
+    {
+      "id": "analisis_politico",
+      "nombre": "Análisis Estratégico y Gobernanza Digital",
+      "superficie": "c5",
+      "archivo": "src/components/dashboard/AnalisisPoliticoView.tsx",
+      "lineas": "1-22",
+      "estado": "maqueta",
+      "ficha": "docs/marco/modulos/analisis_politico.md"
+    },
+    {
+      "id": "home",
+      "nombre": "Inicio ciudadano",
+      "superficie": "citizen_app",
+      "archivo": "src/components/CitizenApp.tsx",
+      "lineas": "1029-1378",
+      "estado": "parcial",
+      "ficha": "docs/marco/modulos/home.md"
+    },
+    {
+      "id": "forum",
+      "nombre": "Parlamento (tab ciudadano)",
+      "superficie": "citizen_app",
+      "archivo": "src/components/dashboard/ParlamentoView.tsx",
+      "lineas": "1-527",
+      "estado": "real",
+      "ficha": "docs/marco/modulos/forum.md"
+    },
+    {
+      "id": "networks",
+      "nombre": "Redes Ciudadanas",
+      "superficie": "citizen_app",
+      "archivo": "src/components/CitizenApp.tsx",
+      "lineas": "1410-1552",
+      "estado": "parcial",
+      "ficha": "docs/marco/modulos/networks.md"
+    },
+    {
+      "id": "payments",
+      "nombre": "Tesorería y Trámites (ciudadano)",
+      "superficie": "citizen_app",
+      "archivo": "src/components/CitizenApp.tsx",
+      "lineas": "1553-1624",
+      "estado": "riesgo",
+      "ficha": "docs/marco/modulos/payments.md"
+    },
+    {
+      "id": "services",
+      "nombre": "Servicios y Reportes (ciudadano)",
+      "superficie": "citizen_app",
+      "archivo": "src/components/CitizenApp.tsx",
+      "lineas": "1625-1741",
+      "estado": "parcial",
+      "ficha": "docs/marco/modulos/services.md"
+    },
+    {
+      "id": "profile",
+      "nombre": "Perfil",
+      "superficie": "citizen_app",
+      "archivo": "src/components/CitizenApp.tsx",
+      "lineas": "1742-1908",
+      "estado": "parcial",
+      "ficha": "docs/marco/modulos/profile.md"
+    },
+    {
+      "id": "security",
+      "nombre": "Centro de Seguridad",
+      "superficie": "citizen_app",
+      "archivo": "src/components/CitizenApp.tsx",
+      "lineas": "1909-2126",
+      "estado": "real",
+      "ficha": "docs/marco/modulos/security.md"
+    },
+    {
+      "id": "canjes",
+      "nombre": "Canjes",
+      "superficie": "citizen_app",
+      "archivo": "src/components/CanjesView.tsx",
+      "lineas": "1-130",
+      "estado": "real",
+      "ficha": "docs/marco/modulos/canjes.md"
+    },
+    {
+      "id": "auditoria",
+      "nombre": "Mystery Shopper",
+      "superficie": "citizen_app",
+      "archivo": "src/components/MysteryShopperView.tsx",
+      "lineas": "1-259",
+      "estado": "real",
+      "ficha": "docs/marco/modulos/auditoria.md"
+    },
+    {
+      "id": "notifications",
+      "nombre": "Notificaciones",
+      "superficie": "citizen_app",
+      "archivo": "src/components/NotificationView.tsx",
+      "lineas": "1-36",
+      "estado": "maqueta",
+      "ficha": "docs/marco/modulos/notifications.md"
+    },
+    {
+      "id": "academy",
+      "nombre": "ConnectX Academy",
+      "superficie": "citizen_app",
+      "archivo": "src/components/ConnectXAcademy.tsx",
+      "lineas": "1-161",
+      "estado": "maqueta",
+      "ficha": "docs/marco/modulos/academy.md"
+    },
+    {
+      "id": "system_audit",
+      "nombre": "Auditoría de Sistema",
+      "superficie": "citizen_app",
+      "archivo": "src/components/SystemAuditView.tsx",
+      "lineas": "1-291",
+      "estado": "real",
+      "ficha": "docs/marco/modulos/system_audit.md"
+    },
+    {
+      "id": "banana_command",
+      "nombre": "Banana Command Center",
+      "superficie": "citizen_app",
+      "archivo": "src/components/BananaCommandCenter.tsx",
+      "lineas": "1-113",
+      "estado": "maqueta",
+      "ficha": "docs/marco/modulos/banana_command.md"
+    },
+    {
+      "id": "strategic_academy",
+      "nombre": "Academia Estratégica",
+      "superficie": "citizen_app",
+      "archivo": "src/components/StrategicAcademyView.tsx",
+      "lineas": "1-223",
+      "estado": "maqueta",
+      "ficha": "docs/marco/modulos/strategic_academy.md"
+    },
+    {
+      "id": "strategic_plan",
+      "nombre": "Plan Maestro Estratégico",
+      "superficie": "citizen_app",
+      "archivo": "src/components/MasterStrategicPlan.tsx",
+      "lineas": "1-314",
+      "estado": "maqueta",
+      "ficha": "docs/marco/modulos/strategic_plan.md"
+    },
+    {
+      "id": "municipal_letters",
+      "nombre": "Cartas Municipales",
+      "superficie": "citizen_app",
+      "archivo": "src/components/MunicipalLettersView.tsx",
+      "lineas": "1-759",
+      "estado": "riesgo",
+      "ficha": "docs/marco/modulos/municipal_letters.md"
+    }
+  ]
+}
