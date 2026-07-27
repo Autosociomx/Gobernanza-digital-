@@ -68,12 +68,13 @@ import { BananaCommandCenter } from './BananaCommandCenter';
 import { StrategicAcademyView } from './StrategicAcademyView';
 import { MasterStrategicPlan } from './MasterStrategicPlan';
 import { MunicipalLettersView } from './MunicipalLettersView';
+import { ObrasPublicasView } from './ObrasPublicasView';
 
 import { AuraCertificationSeal } from './AuraCertificationSeal';
 import { useAuraChat } from '../hooks/useAuraChat';
 import { useAuraVoice } from '../hooks/useAuraVoice';
 
-type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria' | 'academy' | 'system_audit' | 'banana_command' | 'strategic_academy' | 'strategic_plan' | 'municipal_letters';
+type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria' | 'academy' | 'system_audit' | 'banana_command' | 'strategic_academy' | 'strategic_plan' | 'municipal_letters' | 'obras_publicas';
 type Language = 'es' | 'cora' | 'wixarika';
 
 export function CitizenApp({ 
@@ -302,6 +303,7 @@ export function CitizenApp({
   const handleGoToStrategy = React.useCallback(() => setActiveTab('strategic_academy'), []);
   const handleGoToStrategicPlan = React.useCallback(() => setActiveTab('strategic_plan'), []);
   const handleGoToLetters = React.useCallback(() => setActiveTab('municipal_letters'), []);
+  const handleGoToObras = React.useCallback(() => setActiveTab('obras_publicas'), []);
   const handleGoToHome = React.useCallback(() => setActiveTab('home'), []);
   const handleGoToAuditoria = React.useCallback(() => setActiveTab('auditoria'), []);
   const handleGoToSecurity = React.useCallback(() => setActiveTab('security'), []);
@@ -373,6 +375,7 @@ export function CitizenApp({
             onGoToStrategicPlan={handleGoToStrategicPlan}
             onViewManifest={handleGoToStrategicPlan}
             onGoToLetters={handleGoToLetters}
+            onGoToObras={handleGoToObras}
           />
         );
       case 'networks': return <RedesCiudadanasView profile={profile} onBack={handleGoToHome} />;
@@ -390,6 +393,7 @@ export function CitizenApp({
       case 'strategic_academy': return <StrategicAcademyView onBack={handleGoToHome} />;
       case 'strategic_plan': return <MasterStrategicPlan onBack={handleGoToHome} />;
       case 'municipal_letters': return <MunicipalLettersView onBack={handleGoToHome} profile={profile} />;
+      case 'obras_publicas': return <ObrasPublicasView onBack={handleGoToHome} />;
       default: return null;
     }
   }, [
@@ -397,7 +401,7 @@ export function CitizenApp({
     handleShowMap, handleShowTriage, handleGoToForum, handleGoToProfile,
     handleGoToPayments, handleGoToServices, handleGoToAcademy, handleGoToSystemAudit,
     handleGoToBanana, handleGoToStrategy, handleGoToStrategicPlan, handleGoToLetters,
-    handleGoToHome, handleGoToAuditoria, handleGoToSecurity, handleGoToCanjes
+    handleGoToHome, handleGoToAuditoria, handleGoToSecurity, handleGoToCanjes, handleGoToObras
   ]);
 
   useEffect(() => {
@@ -1042,16 +1046,17 @@ const HomeView = React.memo(function HomeView({
   onGoToStrategy,
   onGoToStrategicPlan,
   onViewManifest,
-  onGoToLetters
-}: { 
+  onGoToLetters,
+  onGoToObras
+}: {
   profile: any,
   isOnline?: boolean,
   reducedMotion?: boolean,
-  onShowMap: () => void, 
-  onShowTriage: () => void, 
-  onGoToForum: () => void, 
-  onGoToProfile: () => void, 
-  onGoToPayments: () => void, 
+  onShowMap: () => void,
+  onShowTriage: () => void,
+  onGoToForum: () => void,
+  onGoToProfile: () => void,
+  onGoToPayments: () => void,
   onGoToServices: () => void,
   onGoToAcademy: () => void,
   onGoToSystemAudit: () => void,
@@ -1059,7 +1064,8 @@ const HomeView = React.memo(function HomeView({
   onGoToStrategy: () => void,
   onGoToStrategicPlan: () => void,
   onViewManifest?: () => void,
-  onGoToLetters?: () => void
+  onGoToLetters?: () => void,
+  onGoToObras?: () => void
 }) {
   return (
     <div className="space-y-6 pt-2">
@@ -1360,13 +1366,13 @@ const HomeView = React.memo(function HomeView({
          <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-2">
                <div className="w-2 h-2 rounded-full bg-magenta-500 animate-pulse"></div>
-               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Trazabilidad en Tiempo Real</span>
+               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Obras Nayarit — Fuentes Oficiales</span>
             </div>
             <Bell className="w-4 h-4 text-slate-300" />
          </div>
-         <p className="text-sm font-bold text-slate-900 leading-tight">Reencarpetamiento San Juan: 65% de avance.</p>
-         <button 
-           onClick={onShowMap}
+         <p className="text-sm font-bold text-slate-900 leading-tight">Registro auditable de obra federal, estatal y municipal, con quién la propuso, quién la autorizó y cuánto se invierte.</p>
+         <button
+           onClick={onGoToObras ?? onShowMap}
            className="mt-5 w-full py-3 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-900 flex items-center justify-center gap-2 transition-all hover:bg-slate-100"
          >
            AUDITAR OBRA PÚBLICA <ChevronRight className="w-3 h-3" />
