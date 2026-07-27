@@ -7,7 +7,9 @@ Panel de mando temático adicional del portal ciudadano.
 **Maqueta — la interfaz existe, corre sobre datos de ejemplo, sin servicio detrás**
 
 ## Conexiones
-_Sin conexiones registradas todavía._
+| Con | Qué fluye |
+|---|---|
+| AuraCertificationSeal | Componente compartido con `strategic_academy`, `strategic_plan` y `municipal_letters` — mismo sello decorativo de certificación en los 4 |
 
 ## Dónde vive
 - Código: `src/components/BananaCommandCenter.tsx` — función/componente `BananaCommandCenter()`, líneas 1-113

@@ -7,7 +7,10 @@ Perfil del ciudadano, incluye el escáner de credencial (CredentialScannerView).
 **Parcial — parte de la vista es real, parte es maqueta o tiene botones sin acción**
 
 ## Conexiones
-_Sin conexiones registradas todavía._
+| Con | Qué fluye |
+|---|---|
+| Firestore: users/{uid} | `setDoc` real de actualización de perfil (misma función que usa `home`) |
+| CredentialScannerView | Montado dentro de esta vista; su `onScanComplete` solo hace `console.log`, no persiste nada (ver Pendientes) |
 
 ## Dónde vive
 - Código: `src/components/CitizenApp.tsx` — función/componente `ProfileView()`, líneas 1742-1908

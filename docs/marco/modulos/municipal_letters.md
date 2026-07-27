@@ -7,7 +7,9 @@ Generador de oficios y constancias municipales — hash de verificación, firma 
 **Riesgo — simula un resultado que podría confundirse con uno real (pago, documento oficial, verificación)**
 
 ## Conexiones
-_Sin conexiones registradas todavía._
+| Con | Qué fluye |
+|---|---|
+| AuraCertificationSeal | Componente compartido con `banana_command`, `strategic_academy` y `strategic_plan` |
 
 ## Dónde vive
 - Código: `src/components/MunicipalLettersView.tsx` — función/componente `MunicipalLettersView()`, líneas 1-759

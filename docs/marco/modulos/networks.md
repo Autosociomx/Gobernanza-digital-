@@ -7,7 +7,9 @@ Comités y redes ciudadanas, con mapa de comités y registro externo.
 **Parcial — parte de la vista es real, parte es maqueta o tiene botones sin acción**
 
 ## Conexiones
-_Sin conexiones registradas todavía._
+| Con | Qué fluye |
+|---|---|
+| Firestore: neighborhood_networks | Lectura real vía `onSnapshot`, con auto-siembra si la colección está vacía |
 
 ## Dónde vive
 - Código: `src/components/CitizenApp.tsx` — función/componente `RedesCiudadanasView()`, líneas 1410-1552

@@ -7,7 +7,9 @@ Canje de puntos ciudadanos por beneficios.
 **Real — conectado a Firestore/API, verificado en el código**
 
 ## Conexiones
-_Sin conexiones registradas todavía._
+| Con | Qué fluye |
+|---|---|
+| Firestore: canjes/{uid}/lista | Escritura real vía addDoc — canje de puntos persistido por usuario |
 
 ## Dónde vive
 - Código: `src/components/CanjesView.tsx` — función/componente `CanjesView()`, líneas 1-130

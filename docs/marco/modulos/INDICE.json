@@ -17,7 +17,10 @@
       "archivo": "src/components/C5Dashboard.tsx",
       "lineas": "209-296",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/interoperabilidad.md"
+      "ficha": "docs/marco/modulos/interoperabilidad.md",
+      "conexiones": [
+        "gabinete"
+      ]
     },
     {
       "id": "tesoreria",
@@ -26,7 +29,11 @@
       "archivo": "src/components/C5Dashboard.tsx",
       "lineas": "297-364",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/tesoreria.md"
+      "ficha": "docs/marco/modulos/tesoreria.md",
+      "conexiones": [
+        "servicios",
+        "payments"
+      ]
     },
     {
       "id": "obras",
@@ -35,7 +42,8 @@
       "archivo": "src/components/C5Dashboard.tsx",
       "lineas": "365-417",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/obras.md"
+      "ficha": "docs/marco/modulos/obras.md",
+      "conexiones": []
     },
     {
       "id": "servicios",
@@ -44,7 +52,11 @@
       "archivo": "src/components/C5Dashboard.tsx",
       "lineas": "418-513",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/servicios.md"
+      "ficha": "docs/marco/modulos/servicios.md",
+      "conexiones": [
+        "tesoreria",
+        "services"
+      ]
     },
     {
       "id": "salud",
@@ -53,7 +65,8 @@
       "archivo": "src/components/C5Dashboard.tsx",
       "lineas": "514-773",
       "estado": "real",
-      "ficha": "docs/marco/modulos/salud.md"
+      "ficha": "docs/marco/modulos/salud.md",
+      "conexiones": []
     },
     {
       "id": "ia",
@@ -62,7 +75,8 @@
       "archivo": "src/components/C5Dashboard.tsx",
       "lineas": "774-1000",
       "estado": "real",
-      "ficha": "docs/marco/modulos/ia.md"
+      "ficha": "docs/marco/modulos/ia.md",
+      "conexiones": []
     },
     {
       "id": "agrovision",
@@ -71,7 +85,8 @@
       "archivo": "src/components/C5Dashboard.tsx",
       "lineas": "1001-1084",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/agrovision.md"
+      "ficha": "docs/marco/modulos/agrovision.md",
+      "conexiones": []
     },
     {
       "id": "observatorio",
@@ -80,7 +95,8 @@
       "archivo": "src/components/C5Dashboard.tsx",
       "lineas": "1085-1455",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/observatorio.md"
+      "ficha": "docs/marco/modulos/observatorio.md",
+      "conexiones": []
     },
     {
       "id": "bienestar",
@@ -89,7 +105,8 @@
       "archivo": "src/components/C5Dashboard.tsx",
       "lineas": "1456-1477",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/bienestar.md"
+      "ficha": "docs/marco/modulos/bienestar.md",
+      "conexiones": []
     },
     {
       "id": "metricas",
@@ -98,7 +115,8 @@
       "archivo": "src/components/C5Dashboard.tsx",
       "lineas": "1478-1517",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/metricas.md"
+      "ficha": "docs/marco/modulos/metricas.md",
+      "conexiones": []
     },
     {
       "id": "gabinete",
@@ -107,7 +125,10 @@
       "archivo": "src/components/C5Dashboard.tsx",
       "lineas": "1518-1629",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/gabinete.md"
+      "ficha": "docs/marco/modulos/gabinete.md",
+      "conexiones": [
+        "interoperabilidad"
+      ]
     },
     {
       "id": "parlamento",
@@ -116,7 +137,10 @@
       "archivo": "src/components/dashboard/ParlamentoView.tsx",
       "lineas": "1-527",
       "estado": "real",
-      "ficha": "docs/marco/modulos/parlamento.md"
+      "ficha": "docs/marco/modulos/parlamento.md",
+      "conexiones": [
+        "forum"
+      ]
     },
     {
       "id": "analisis_politico",
@@ -125,7 +149,8 @@
       "archivo": "src/components/dashboard/AnalisisPoliticoView.tsx",
       "lineas": "1-22",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/analisis_politico.md"
+      "ficha": "docs/marco/modulos/analisis_politico.md",
+      "conexiones": []
     },
     {
       "id": "home",
@@ -134,7 +159,8 @@
       "archivo": "src/components/CitizenApp.tsx",
       "lineas": "1029-1378",
       "estado": "parcial",
-      "ficha": "docs/marco/modulos/home.md"
+      "ficha": "docs/marco/modulos/home.md",
+      "conexiones": []
     },
     {
       "id": "forum",
@@ -143,7 +169,10 @@
       "archivo": "src/components/dashboard/ParlamentoView.tsx",
       "lineas": "1-527",
       "estado": "real",
-      "ficha": "docs/marco/modulos/forum.md"
+      "ficha": "docs/marco/modulos/forum.md",
+      "conexiones": [
+        "parlamento"
+      ]
     },
     {
       "id": "networks",
@@ -152,7 +181,8 @@
       "archivo": "src/components/CitizenApp.tsx",
       "lineas": "1410-1552",
       "estado": "parcial",
-      "ficha": "docs/marco/modulos/networks.md"
+      "ficha": "docs/marco/modulos/networks.md",
+      "conexiones": []
     },
     {
       "id": "payments",
@@ -161,7 +191,10 @@
       "archivo": "src/components/CitizenApp.tsx",
       "lineas": "1553-1624",
       "estado": "riesgo",
-      "ficha": "docs/marco/modulos/payments.md"
+      "ficha": "docs/marco/modulos/payments.md",
+      "conexiones": [
+        "tesoreria"
+      ]
     },
     {
       "id": "services",
@@ -170,7 +203,11 @@
       "archivo": "src/components/CitizenApp.tsx",
       "lineas": "1625-1741",
       "estado": "parcial",
-      "ficha": "docs/marco/modulos/services.md"
+      "ficha": "docs/marco/modulos/services.md",
+      "conexiones": [
+        "servicios",
+        "auditoria"
+      ]
     },
     {
       "id": "profile",
@@ -179,7 +216,8 @@
       "archivo": "src/components/CitizenApp.tsx",
       "lineas": "1742-1908",
       "estado": "parcial",
-      "ficha": "docs/marco/modulos/profile.md"
+      "ficha": "docs/marco/modulos/profile.md",
+      "conexiones": []
     },
     {
       "id": "security",
@@ -188,7 +226,10 @@
       "archivo": "src/components/CitizenApp.tsx",
       "lineas": "1909-2126",
       "estado": "real",
-      "ficha": "docs/marco/modulos/security.md"
+      "ficha": "docs/marco/modulos/security.md",
+      "conexiones": [
+        "system_audit"
+      ]
     },
     {
       "id": "canjes",
@@ -197,7 +238,8 @@
       "archivo": "src/components/CanjesView.tsx",
       "lineas": "1-130",
       "estado": "real",
-      "ficha": "docs/marco/modulos/canjes.md"
+      "ficha": "docs/marco/modulos/canjes.md",
+      "conexiones": []
     },
     {
       "id": "auditoria",
@@ -206,7 +248,10 @@
       "archivo": "src/components/MysteryShopperView.tsx",
       "lineas": "1-259",
       "estado": "real",
-      "ficha": "docs/marco/modulos/auditoria.md"
+      "ficha": "docs/marco/modulos/auditoria.md",
+      "conexiones": [
+        "services"
+      ]
     },
     {
       "id": "notifications",
@@ -215,7 +260,8 @@
       "archivo": "src/components/NotificationView.tsx",
       "lineas": "1-36",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/notifications.md"
+      "ficha": "docs/marco/modulos/notifications.md",
+      "conexiones": []
     },
     {
       "id": "academy",
@@ -224,7 +270,8 @@
       "archivo": "src/components/ConnectXAcademy.tsx",
       "lineas": "1-161",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/academy.md"
+      "ficha": "docs/marco/modulos/academy.md",
+      "conexiones": []
     },
     {
       "id": "system_audit",
@@ -233,7 +280,10 @@
       "archivo": "src/components/SystemAuditView.tsx",
       "lineas": "1-291",
       "estado": "real",
-      "ficha": "docs/marco/modulos/system_audit.md"
+      "ficha": "docs/marco/modulos/system_audit.md",
+      "conexiones": [
+        "security"
+      ]
     },
     {
       "id": "banana_command",
@@ -242,7 +292,12 @@
       "archivo": "src/components/BananaCommandCenter.tsx",
       "lineas": "1-113",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/banana_command.md"
+      "ficha": "docs/marco/modulos/banana_command.md",
+      "conexiones": [
+        "strategic_academy",
+        "strategic_plan",
+        "municipal_letters"
+      ]
     },
     {
       "id": "strategic_academy",
@@ -251,7 +306,12 @@
       "archivo": "src/components/StrategicAcademyView.tsx",
       "lineas": "1-223",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/strategic_academy.md"
+      "ficha": "docs/marco/modulos/strategic_academy.md",
+      "conexiones": [
+        "banana_command",
+        "strategic_plan",
+        "municipal_letters"
+      ]
     },
     {
       "id": "strategic_plan",
@@ -260,7 +320,12 @@
       "archivo": "src/components/MasterStrategicPlan.tsx",
       "lineas": "1-314",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/strategic_plan.md"
+      "ficha": "docs/marco/modulos/strategic_plan.md",
+      "conexiones": [
+        "banana_command",
+        "strategic_academy",
+        "municipal_letters"
+      ]
     },
     {
       "id": "municipal_letters",
@@ -269,7 +334,12 @@
       "archivo": "src/components/MunicipalLettersView.tsx",
       "lineas": "1-759",
       "estado": "riesgo",
-      "ficha": "docs/marco/modulos/municipal_letters.md"
+      "ficha": "docs/marco/modulos/municipal_letters.md",
+      "conexiones": [
+        "banana_command",
+        "strategic_academy",
+        "strategic_plan"
+      ]
     }
   ]
 }

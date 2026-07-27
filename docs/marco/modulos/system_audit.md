@@ -7,7 +7,10 @@ Sondeo real de salud del sistema — prueba colecciones de Firestore con `getDoc
 **Real — conectado a Firestore/API, verificado en el código**
 
 ## Conexiones
-_Sin conexiones registradas todavía._
+| Con | Qué fluye |
+|---|---|
+| Firestore: users, tramites, expediente_unico, puntos, auditorias_ciudadanas | Sondeo real de estas 5 colecciones con `query(..., limit(10))` — las mismas 4 primeras que usa Centro de Seguridad (`security`) |
+| security (CitizenApp) | Ambas leen/verifican las mismas colecciones (users, tramites, expediente_unico, puntos) |
 
 ## Dónde vive
 - Código: `src/components/SystemAuditView.tsx` — función/componente `SystemAuditView()`, líneas 1-291

@@ -7,7 +7,9 @@ Vista de formación estratégica del portal ciudadano.
 **Maqueta — la interfaz existe, corre sobre datos de ejemplo, sin servicio detrás**
 
 ## Conexiones
-_Sin conexiones registradas todavía._
+| Con | Qué fluye |
+|---|---|
+| AuraCertificationSeal | Componente compartido con `banana_command`, `strategic_plan` y `municipal_letters` |
 
 ## Dónde vive
 - Código: `src/components/StrategicAcademyView.tsx` — función/componente `StrategicAcademyView()`, líneas 1-223

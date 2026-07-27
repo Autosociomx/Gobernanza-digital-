@@ -7,7 +7,9 @@ Documento/plan maestro estratégico presentado dentro de la app.
 **Maqueta — la interfaz existe, corre sobre datos de ejemplo, sin servicio detrás**
 
 ## Conexiones
-_Sin conexiones registradas todavía._
+| Con | Qué fluye |
+|---|---|
+| AuraCertificationSeal | Componente compartido con `banana_command`, `strategic_academy` y `municipal_letters` |
 
 ## Dónde vive
 - Código: `src/components/MasterStrategicPlan.tsx` — función/componente `MasterStrategicPlan()`, líneas 1-314
