@@ -164,6 +164,110 @@ body {
   .ojo-c .c3{inset:12px;border-width:5px} .ojo-c .c4{inset:17px}
 }
 
+/* OJOS DE DIOS 3D — firma visual del hero de la landing (Nayarit Digital).
+   Misma técnica de perspectiva/translateZ que .ojos-escena, con paleta propia
+   de PlatformLanding.tsx en vez de las variables globales --magenta/--turq/etc,
+   para no alterar el resto de la app. */
+.pl-ojos-escena {
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 1;
+  perspective: 1000px;
+  overflow: hidden;
+}
+.pl-ojo {
+  position: absolute;
+  transform-style: preserve-3d;
+  will-change: transform;
+  filter: drop-shadow(0 18px 28px rgba(0,0,0,.35));
+}
+.pl-ojo-giro {
+  position: absolute; inset: 0;
+  transform-style: preserve-3d;
+  animation: pl-ojo-girar 11s linear infinite;
+}
+.pl-ojo-b .pl-ojo-giro { animation-duration: 15s; animation-direction: reverse; }
+.pl-ojo-c .pl-ojo-giro { animation-duration: 9s; }
+@keyframes pl-ojo-girar {
+  0%   { transform: rotateZ(45deg) rotateY(0deg) rotateX(8deg); }
+  100% { transform: rotateZ(45deg) rotateY(360deg) rotateX(8deg); }
+}
+.pl-ojo { animation: pl-ojo-flotar 7s ease-in-out infinite; }
+.pl-ojo-b { animation-delay: -2.6s; animation-duration: 8.5s; }
+.pl-ojo-c { animation-delay: -4.4s; animation-duration: 9.5s; }
+@keyframes pl-ojo-flotar {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-14px); }
+}
+.pl-ojo-giro::before, .pl-ojo-giro::after {
+  content: '';
+  position: absolute;
+  background: linear-gradient(90deg, #8B5E34, #C49A6C, #8B5E34);
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0,0,0,.4);
+  transform: translateZ(-6px);
+}
+.pl-ojo-giro::before { width: 128%; height: 4.5%; top: 47.75%; left: -14%; }
+.pl-ojo-giro::after  { width: 4.5%; height: 128%; left: 47.75%; top: -14%; }
+
+.pl-capa {
+  position: absolute;
+  border-style: solid;
+  box-shadow:
+    inset 0 2px 3px rgba(255,255,255,.3),
+    inset 0 -2px 3px rgba(0,0,0,.3),
+    0 1px 2px rgba(0,0,0,.25);
+}
+.pl-capa.c1 { transform: translateZ(0px); }
+.pl-capa.c2 { transform: translateZ(2.5px); }
+.pl-capa.c3 { transform: translateZ(5px); }
+.pl-capa.c4 { transform: translateZ(7.5px); }
+.pl-capa.c5 { transform: translateZ(10px); }
+.pl-capa.c6 { transform: translateZ(12px); }
+
+.pl-ojo-a { width: 190px; height: 190px; left: -3%; bottom: 4%; }
+.pl-ojo-a .c1 { inset: 0;    border-width: 16px; border-color: #D81E5B; }
+.pl-ojo-a .c2 { inset: 16px; border-width: 14px; border-color: #F5A623; }
+.pl-ojo-a .c3 { inset: 30px; border-width: 13px; border-color: #F8F6F1; }
+.pl-ojo-a .c4 { inset: 43px; border-width: 13px; border-color: #0FA3B1; }
+.pl-ojo-a .c5 { inset: 56px; border-width: 12px; border-color: #4C9F70; }
+.pl-ojo-a .c6 { inset: 68px; background: #14213D; }
+
+.pl-ojo-b { width: 128px; height: 128px; right: 5%; top: 13%; }
+.pl-ojo-b .c1 { inset: 0;    border-width: 11px; border-color: #0FA3B1; }
+.pl-ojo-b .c2 { inset: 11px; border-width: 10px; border-color: #F8F6F1; }
+.pl-ojo-b .c3 { inset: 21px; border-width: 10px; border-color: #4C9F70; }
+.pl-ojo-b .c4 { inset: 31px; border-width: 9px;  border-color: #F5A623; }
+.pl-ojo-b .c5 { inset: 40px; background: #E85D04; }
+.pl-ojo-b .c6 { display: none; }
+
+.pl-ojo-c { width: 82px; height: 82px; left: 40%; top: 6%; }
+.pl-ojo-c .c1 { inset: 0;   border-width: 9px; border-color: #E85D04; }
+.pl-ojo-c .c2 { inset: 9px; border-width: 8px; border-color: #F5A623; }
+.pl-ojo-c .c3 { inset: 17px; border-width: 8px; border-color: #D81E5B; }
+.pl-ojo-c .c4 { inset: 25px; background: #F8F6F1; }
+.pl-ojo-c .c5, .pl-ojo-c .c6 { display: none; }
+
+@media (max-width: 820px) {
+  .pl-ojo-a { width: 130px; height: 130px; left: -8%; bottom: 2%; }
+  .pl-ojo-a .c1{border-width:12px} .pl-ojo-a .c2{inset:12px;border-width:11px}
+  .pl-ojo-a .c3{inset:23px;border-width:10px} .pl-ojo-a .c4{inset:33px;border-width:9px}
+  .pl-ojo-a .c5{inset:42px;border-width:8px} .pl-ojo-a .c6{inset:50px}
+  .pl-ojo-b { width: 96px; height: 96px; right: -5%; top: 8%; }
+  .pl-ojo-b .c1{border-width:8px} .pl-ojo-b .c2{inset:8px;border-width:8px}
+  .pl-ojo-b .c3{inset:16px;border-width:7px} .pl-ojo-b .c4{inset:23px;border-width:6px}
+  .pl-ojo-b .c5{inset:29px}
+  .pl-ojo-c { display: none; }
+}
+
+@media (max-width: 480px) {
+  .pl-ojo-b { width: 74px; height: 74px; right: 2%; top: 15%; opacity: 0.7; }
+  .pl-ojo-a { opacity: 0.6; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pl-ojo-giro, .pl-ojo { animation: none; }
+}
+
 /* Custom classes replacing .wix-bg, .btn-a etc layout items */
 .hero-banda-top {
   position: absolute; top: 0; left: 0; right: 0; height: 5px;

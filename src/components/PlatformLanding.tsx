@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import {
   ShieldCheck, Users, FileCheck, Lock, Globe, Smartphone, CheckCircle2,
@@ -24,6 +24,59 @@ const WixarikaBanda = () => (
   </div>
 );
 
+// Ojos de Dios en 3D real (perspective + translateZ), tejidos con la paleta
+// Wixárika del sitio. Reaccionan al mouse: la firma visual del hero, en vez
+// de depender solo de la cintita de colores que ya usan muchas páginas.
+const OjosDeDios = () => {
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    let raf: number;
+    let tx = 0, ty = 0, cx = 0, cy = 0;
+
+    const onMouse = (e: MouseEvent) => {
+      tx = e.clientX / window.innerWidth - 0.5;
+      ty = e.clientY / window.innerHeight - 0.5;
+    };
+    window.addEventListener('mousemove', onMouse, { passive: true });
+
+    const loop = () => {
+      cx += (tx - cx) * 0.06;
+      cy += (ty - cy) * 0.06;
+      setOffset({ x: cx, y: cy });
+      raf = requestAnimationFrame(loop);
+    };
+    loop();
+
+    return () => {
+      window.removeEventListener('mousemove', onMouse);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  return (
+    <div className="pl-ojos-escena" aria-hidden="true">
+      <div className="pl-ojo pl-ojo-a" style={{ transform: `translate(${offset.x * 22}px, ${offset.y * 22}px)` }}>
+        <div className="pl-ojo-giro">
+          <div className="pl-capa c1" /><div className="pl-capa c2" /><div className="pl-capa c3" />
+          <div className="pl-capa c4" /><div className="pl-capa c5" /><div className="pl-capa c6" />
+        </div>
+      </div>
+      <div className="pl-ojo pl-ojo-b" style={{ transform: `translate(${offset.x * 38}px, ${offset.y * 38}px)` }}>
+        <div className="pl-ojo-giro">
+          <div className="pl-capa c1" /><div className="pl-capa c2" /><div className="pl-capa c3" />
+          <div className="pl-capa c4" /><div className="pl-capa c5" />
+        </div>
+      </div>
+      <div className="pl-ojo pl-ojo-c" style={{ transform: `translate(${offset.x * 55}px, ${offset.y * 55}px)` }}>
+        <div className="pl-ojo-giro">
+          <div className="pl-capa c1" /><div className="pl-capa c2" /><div className="pl-capa c3" /><div className="pl-capa c4" />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
   return (
     <div className="min-h-screen bg-[#F8F6F1] font-sans overflow-x-hidden selection:bg-[#D81E5B]/20">
@@ -37,6 +90,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
           backgroundImage: 'radial-gradient(circle at 20px 20px, #F8F6F1 2px, transparent 0)',
           backgroundSize: '40px 40px'
         }}></div>
+        <OjosDeDios />
 
         {/* Header — una sola acción principal, sin competir consigo misma */}
         <header className="px-6 md:px-12 py-8 flex justify-between items-center relative z-20">
