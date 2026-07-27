@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "actualizado": "2026-07-22 (4a consulta)",
+  "actualizado": "2026-07-22 (5a consulta)",
   "estado": "Nayarit",
   "clasificacion": {
     "ambitos": {
@@ -607,6 +607,170 @@
       "pendientes_de_verificar": [
         "Inversión y desglose de las seis obras viales municipales."
       ]
+    },
+    {
+      "id": "san-blas-puentes-jalcocotan",
+      "nombre": "Puentes vehiculares y rehabilitación de línea de conducción, Jalcocotán, San Blas",
+      "ambito": "estatal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "Gobierno del Estado de Nayarit (Secretaría de Infraestructura)",
+      "quien_propuso": "Gobierno del Estado (gira por San Blas)",
+      "quien_autorizo": "Gobierno del Estado de Nayarit",
+      "municipios": ["San Blas"],
+      "descripcion": "Construcción de dos puentes vehiculares (calle Veracruz y calle San Luis, 90 días de plazo cada uno) y rehabilitación de cruces de línea de conducción de agua en Jalcocotán.",
+      "inversion_mdp": 26.8,
+      "fuente_financiamiento": "Recursos estatales",
+      "contratacion": { "esquema": "Obra pública estatal", "referencia": null },
+      "fecha_inicio": "2026-05-17",
+      "fecha_entrega_estimada": "Aprox. agosto de 2026 (90 días desde el arranque)",
+      "empleos_estimados": null,
+      "estatus": "En ejecución desde mayo de 2026; entrega estimada por plazo contractual de 90 días.",
+      "hitos": [
+        { "fecha": "2026-05-17", "hecho": "El gobernador arranca la obra de los dos puentes (26.8 mdp)." }
+      ],
+      "fuentes": [
+        "https://ntv.com.mx/2026/05/17/gobernador-de-nayarit-arranca-obras-por-26-8-millones-en-jalcocotan/"
+      ],
+      "pendientes_de_verificar": [
+        "Confirmar la entrega de ambos puentes."
+      ]
+    },
+    {
+      "id": "san-blas-escuela-navarrete",
+      "nombre": "Aula adosada y módulo de sanitarios, Navarrete, San Blas",
+      "ambito": "estatal",
+      "etapa": "aprobada_por_iniciar",
+      "dependencia_ejecutora": "Gobierno del Estado de Nayarit / DIF Nayarit",
+      "quien_propuso": "Gobierno del Estado (gira de infraestructura educativa)",
+      "quien_autorizo": "Gobierno del Estado de Nayarit",
+      "municipios": ["San Blas"],
+      "descripcion": "Construcción de un aula adosada y un módulo de sanitarios en un plantel de Navarrete; beneficiará a ~400 estudiantes.",
+      "inversion_mdp": 4,
+      "fuente_financiamiento": "Recursos estatales",
+      "contratacion": { "esquema": "Obra pública estatal", "referencia": null },
+      "fecha_inicio": null,
+      "fecha_entrega_estimada": null,
+      "empleos_estimados": null,
+      "estatus": "Anunciada el 23 de mayo de 2026 junto con obras para Tepic; inicio de obra por confirmar.",
+      "hitos": [
+        { "fecha": "2026-05-23", "hecho": "Se anuncian nuevas obras y apoyos educativos para escuelas de Tepic y San Blas, incluida esta." }
+      ],
+      "fuentes": [
+        "https://ntv.com.mx/2026/05/23/anuncian-nuevas-obras-y-apoyos-educativos-para-escuelas-de-tepic-y-san-blas/",
+        "https://meridiano.mx/2026/05/25/fortalecen-infraestructura-escolar-y-servicios-basicos-en-tres-municipios/"
+      ],
+      "pendientes_de_verificar": [
+        "Fecha de inicio y de entrega de la obra."
+      ]
+    },
+    {
+      "id": "san-blas-bulevar-acceso-puerto",
+      "nombre": "Modernización del bulevar de acceso al puerto de San Blas",
+      "ambito": "estatal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "Gobierno del Estado de Nayarit",
+      "quien_propuso": "Gobierno del Estado de Nayarit",
+      "quien_autorizo": "Gobierno del Estado de Nayarit",
+      "municipios": ["San Blas"],
+      "descripcion": "Modernización de la vialidad de acceso al puerto de San Blas con pavimento hidráulico estampado, como parte del impulso al desarrollo turístico del municipio.",
+      "inversion_mdp": null,
+      "fuente_financiamiento": "Recursos estatales",
+      "contratacion": { "esquema": "Obra pública estatal", "referencia": null },
+      "fecha_inicio": "2026",
+      "fecha_entrega_estimada": null,
+      "empleos_estimados": null,
+      "estatus": "En ejecución/entrega reciente según reporte de la Secretaría de Infraestructura estatal.",
+      "hitos": [
+        { "fecha": "2026", "hecho": "La Secretaría de Infraestructura estatal reporta la modernización del bulevar de acceso." }
+      ],
+      "fuentes": [
+        "https://sop.nayarit.gob.mx/?p=2958"
+      ],
+      "pendientes_de_verificar": [
+        "Monto de inversión y fecha exacta de entrega."
+      ]
+    },
+    {
+      "id": "san-blas-portal-transparencia",
+      "nombre": "Padrón de obra pública municipal de San Blas (portal de transparencia)",
+      "ambito": "municipal",
+      "etapa": "en_ejecucion",
+      "dependencia_ejecutora": "H. XLIII Ayuntamiento de San Blas",
+      "quien_propuso": "Ayuntamiento de San Blas",
+      "quien_autorizo": "Cabildo de San Blas",
+      "municipios": ["San Blas"],
+      "descripcion": "El ayuntamiento publica en su portal de transparencia un listado de obras públicas municipales (vivienda, agua y drenaje, mejoras viales) por localidad; no se pudo consultar el detalle por bloqueo de acceso automatizado al sitio.",
+      "inversion_mdp": null,
+      "fuente_financiamiento": "Recursos municipales / mezcla de recursos",
+      "contratacion": { "esquema": "Obra pública municipal", "referencia": "Ver transparencia.sanblasnayarit.gob.mx/obraspublicas/" },
+      "fecha_inicio": null,
+      "fecha_entrega_estimada": null,
+      "empleos_estimados": null,
+      "estatus": "Portal identificado como fuente primaria; pendiente de revisión manual (bloqueo de acceso automatizado, HTTP 403).",
+      "hitos": [
+        { "fecha": "2026-07-22", "hecho": "Se identifica el portal de transparencia municipal como fuente primaria; el acceso automatizado devuelve error HTTP 403 y queda pendiente de revisión manual." }
+      ],
+      "fuentes": [
+        "https://transparencia.sanblasnayarit.gob.mx/obraspublicas/"
+      ],
+      "pendientes_de_verificar": [
+        "Revisar manualmente el listado completo de obras publicadas en el portal municipal.",
+        "Desglosar por obra individual con monto y contratista."
+      ]
+    },
+    {
+      "id": "delnayar-paquete-abril-2026",
+      "nombre": "Paquete de infraestructura, salud y educación para Del Nayar (sierra)",
+      "ambito": "estatal",
+      "etapa": "aprobada_por_iniciar",
+      "dependencia_ejecutora": "Gobierno del Estado de Nayarit",
+      "quien_propuso": "Gobierno del Estado (gira de trabajo en Del Nayar)",
+      "quien_autorizo": "Gobierno del Estado de Nayarit",
+      "municipios": ["Del Nayar"],
+      "descripcion": "Compromisos anunciados en gira por Del Nayar: continuidad del tramo carretero Ruiz–Jesús María; barda perimetral en la primaria Abraham Castellanos; domo y juegos infantiles en el preescolar Francisco Zarco; maquinaria para jagüeyes y plaza cívica en Santa Teresa; fortalecimiento del hospital local; rehabilitación de preescolares y primarias de la sierra; ampliación de la oferta en la Universidad Tecnológica de Mesa del Nayar.",
+      "inversion_mdp": null,
+      "fuente_financiamiento": "Recursos estatales",
+      "contratacion": { "esquema": "Obra pública estatal (varias obras menores)", "referencia": null },
+      "fecha_inicio": null,
+      "fecha_entrega_estimada": null,
+      "empleos_estimados": null,
+      "estatus": "Anunciado el 21 de abril de 2026 como conjunto de compromisos; arranque y montos individuales por confirmar.",
+      "hitos": [
+        { "fecha": "2026-04-21", "hecho": "El gobernador visita Del Nayar y anuncia el paquete de obras en infraestructura, salud y educación." }
+      ],
+      "fuentes": [
+        "https://heraldodemexico.com.mx/nacional/2026/4/21/miguel-angel-navarro-quintero-visita-del-nayar-estas-son-las-obras-que-recibira-en-infraestructura-salud-educacion-799710.html"
+      ],
+      "pendientes_de_verificar": [
+        "Montos individuales de cada compromiso.",
+        "Fechas de arranque de cada obra del paquete.",
+        "Avance del tramo carretero Ruiz–Jesús María."
+      ]
+    },
+    {
+      "id": "delnayar-potrero-palmita",
+      "nombre": "Planta de tratamiento de agua y domo escolar, Potrero de la Palmita, Del Nayar",
+      "ambito": "estatal",
+      "etapa": "concluida",
+      "dependencia_ejecutora": "Gobierno del Estado de Nayarit / DIF Nayarit",
+      "quien_propuso": "Gobierno del Estado y DIF Nayarit",
+      "quien_autorizo": "Gobierno del Estado de Nayarit",
+      "municipios": ["Del Nayar"],
+      "descripcion": "Entrega de una planta de tratamiento de agua potable y un domo con rehabilitación de la cancha multiusos en la primaria bilingüe Emiliano Zapata, comunidad de Potrero de la Palmita.",
+      "inversion_mdp": 17,
+      "fuente_financiamiento": "Recursos estatales",
+      "contratacion": { "esquema": "Obra pública estatal", "referencia": null },
+      "fecha_inicio": null,
+      "fecha_entrega_estimada": "Entregada el 6 de julio de 2026",
+      "empleos_estimados": null,
+      "estatus": "Entregada el 6 de julio de 2026 por la presidenta del DIF Nayarit en representación del gobernador.",
+      "hitos": [
+        { "fecha": "2026-07-06", "hecho": "Entrega de la planta de tratamiento de agua y el domo escolar (>17 mdp)." }
+      ],
+      "fuentes": [
+        "https://ntv.com.mx/2026/07/06/invierte-gobierno-de-nayarit-17-millones-para-obras-en-el-nayar/"
+      ],
+      "pendientes_de_verificar": []
     }
   ]
 }
