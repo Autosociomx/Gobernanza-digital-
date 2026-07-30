@@ -1,7 +1,7 @@
-# 🏛️ Gabinete Digital de Especialistas — Nayarit Digital v1.0
+# 🏛️ Gabinete Digital de Especialistas — Nayarit Digital v1.1
 
 > **Arquitectura de gobernanza IA en dos cámaras:**
-> - **Parlamento de las Sillas** (3 sillas: GROQ, Gemini, Claude) → cámara de DECISIÓN. Ver `docs/PARLAMENTO_PROMPT.md`.
+> - **Parlamento de las Sillas** (5 sillas: GROQ, Gemini, Claude, Kimi, Jules) → cámara de DECISIÓN. Ver `docs/PARLAMENTO_PROMPT.md`. *(Ampliado de 3 a 5 en Acta 004: número impar que elimina empates y suma redundancia de proveedores.)*
 > - **Gabinete de Especialistas** (15 agentes de dominio) → cámara de TRABAJO. Revisan, proponen y respaldan mejoras a la aplicación desde su área de expertise.
 > - **Miguel Alexis** → voto humano decisivo único (Regla 4, heredada).
 
@@ -14,17 +14,23 @@
 3. **Formato de intervención obligatorio:** `[HALLAZGO]` (qué observa en lo construido) + `[RECOMENDACIÓN]` (acción concreta y verificable) + `[MÓDULO]` (dónde aplica).
 4. **Sesiones:** *Plenaria* (los 15, produce Backlog Estratégico priorizado) o *Comisión* (3–5 sillas afines, produce dictamen votado como en el Parlamento).
 5. **Toda sesión se archiva** en `docs/actas/` con numeración consecutiva. No hay caja negra.
-6. **Resiliencia de tokens:** los 15 agentes se reparten entre tres proveedores (Groq / Gemini / Anthropic). Si un proveedor agota cuota, sus sillas constan como "ausentes con dictamen pendiente" y la sesión continúa. Ningún proveedor puede detener al Gabinete.
+6. **Resiliencia de tokens:** los 15 agentes se reparten entre cinco proveedores (Groq / Gemini / Anthropic / Kimi / Jules). Si un proveedor agota cuota o no está disponible, sus sillas constan como "ausentes con dictamen pendiente" y la sesión continúa. Ningún proveedor puede detener al Gabinete. Con cinco proveedores, la caída de uno deja el 80% de las sillas activas (antes 66%).
 
 ## Asignación de proveedores (rotación anti-bloqueo)
 
-| Proveedor | Modelo | Sillas asignadas | Costo |
-|-----------|--------|------------------|-------|
-| Groq | `llama-3.3-70b-versatile` | E1, E4, E7, E10, E13 | Capa gratuita |
-| Google Gemini | `gemini-3.5-flash` | E2, E5, E8, E11, E14 | Key ya en servidor |
-| Anthropic | `claude-haiku-4-5-20251001` | E3, E6, E9, E12, E15 | Modelo económico |
+| Proveedor | Modelo | Sillas asignadas | Modo de intervención | Costo |
+|-----------|--------|------------------|----------------------|-------|
+| Groq | `llama-3.3-70b-versatile` | E1, E6, E11 | API servidor | Capa gratuita |
+| Google Gemini | `gemini-3.5-flash` | E2, E7, E12 | API servidor | Key ya en servidor |
+| Anthropic | `claude-haiku-4-5-20251001` | E3, E8, E13 | API servidor | Modelo económico |
+| Kimi (Moonshot AI) | `kimi-k2` | E4, E9, E14 | API servidor | Modelo económico |
+| Jules (Google) | agente asíncrono | E5, E10, E15 | **Pull Request en GitHub** (no usa API) | Capa gratuita con límites |
 
-Credenciales SOLO en variables de entorno del servidor (`GROQ_API_KEY`, `GEMINI_API_KEY`, `ANTHROPIC_API_KEY`). Lección del Acta 002: nada de keys en el cliente.
+La redistribución sigue el patrón **E# mod 5**: cada proveedor recibe 3 sillas no adyacentes, de modo que la caída de un proveedor nunca deja a un bloque temático completo sin voz.
+
+Credenciales SOLO en variables de entorno del servidor (`GROQ_API_KEY`, `GEMINI_API_KEY`, `ANTHROPIC_API_KEY`, `KIMI_API_KEY`). Lección del Acta 002: nada de keys en el cliente.
+
+**Caso especial Jules:** no consume API ni key. Trabaja como agente asíncrono sobre el repositorio y entrega sus intervenciones como **Pull Request**, lo que además cumple de forma nativa el flujo rama + PR exigido por `docs/marco/GOBERNANZA_REPOSITORIO.md`. Sus dictámenes llegan con código o ediciones verificables adjuntas.
 
 ---
 
@@ -122,5 +128,6 @@ Acta_[NNN]_Gabinete_[tema].md en docs/actas/
 
 Las comisiones (3–5 sillas) usan el formato del Parlamento (intervención + votación en paralelo + síntesis).
 
-## 🎯 Primera sesión
-**Acta 003 — Sesión inaugural: revisión integral de lo construido y Backlog Estratégico v1.** Ver `docs/actas/Acta_003_Gabinete_Sesion_Inaugural.md`.
+## 🎯 Historial de sesiones
+- **Acta 003** — Sesión inaugural: revisión integral de lo construido y Backlog Estratégico v1. Ver `docs/actas/Acta_003_Gabinete_Sesion_Inaugural.md`.
+- **Acta 004** — Ampliación de sillas: incorporación de Kimi y Jules; redistribución 5×3. Ver `docs/actas/Acta_004_Ampliacion_Sillas.md`.
