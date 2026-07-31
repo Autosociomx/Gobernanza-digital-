@@ -2,6 +2,22 @@
 
 **Nayarit Digital / ConnectX / SOATM** · Núcleo de inteligencia y gobernanza agéntica
 
+> **Herramientas de este directorio:**
+> [`orbe.html`](./orbe.html) es el diagrama-espejo de consulta (qué módulo hace qué).
+> [`cop.html`](./cop.html) es la herramienta de trabajo: un lienzo con el mismo
+> grafo y un panel COP 1.0 para declarar la intención de un cambio, ver qué
+> módulos conectados hay que cuidar, y generar un bloque de contexto listo
+> para pegarle a un asistente de IA antes de tocar código.
+> [`orbe-3d.html`](./orbe-3d.html) es el Orbe navegable: cada círculo es un
+> Ojo de Dios en 3D real (perspective + translateZ, sin CDNs ni WebGL) con
+> paleta propia, y al tocarlo te manda directo a la pantalla real del módulo
+> en `tepic.netlify.app` (`?view=…&modulo=…`/`&tab=…`) cuando existe. Los
+> módulos que todavía son propuesta sin código (Llave e Identidad, Protección
+> Digital) se muestran en gris y sin enlace falso — nunca se inventa un
+> destino que no existe. Los tres leen el mismo grafo que `modulos.json` —
+> si agregas o cambias un módulo ahí, actualiza también `cop.html` y
+> `orbe-3d.html`.
+
 > Regla de oro de este directorio: **un círculo = un módulo = un archivo.**
 > Para editar un módulo (su alcance, su estado, sus integraciones) se edita
 > únicamente su archivo en [`modulos/`](./modulos/). El registro

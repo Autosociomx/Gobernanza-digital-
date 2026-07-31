@@ -62,8 +62,8 @@ import {
 
 type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio' | 'metricas' | 'parlamento' | 'analisis_politico' | 'interoperabilidad' | 'gabinete';
 
-export function C5Dashboard({ onLogout }: { onLogout: () => void }) {
-  const [activeModule, setActiveModule] = useState<ModuleType>(() => (localStorage.getItem('activeModule') as ModuleType) || 'tesoreria');
+export function C5Dashboard({ onLogout, initialModule }: { onLogout: () => void; initialModule?: ModuleType }) {
+  const [activeModule, setActiveModule] = useState<ModuleType>(() => initialModule || (localStorage.getItem('activeModule') as ModuleType) || 'tesoreria');
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {

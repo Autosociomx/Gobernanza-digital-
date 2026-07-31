@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
-import { 
-  ShieldCheck, Activity, Users, FileText, Lock, Globe, Monitor, Smartphone, CheckCircle2, ChevronRight, Clock, ArrowRight, Zap, Scale, LayoutDashboard
+import {
+  ShieldCheck, Users, FileCheck, Lock, Globe, Smartphone, CheckCircle2,
+  ChevronRight, Clock, ArrowRight, KeyRound, MapPin, Languages, Landmark,
+  Monitor, ClipboardCheck, ArrowDown, Bot
 } from 'lucide-react';
 
 interface PlatformLandingProps {
@@ -22,228 +24,271 @@ const WixarikaBanda = () => (
   </div>
 );
 
+// Ojos de Dios en 3D real (perspective + translateZ), tejidos con la paleta
+// Wixárika del sitio. Reaccionan al mouse: la firma visual del hero, en vez
+// de depender solo de la cintita de colores que ya usan muchas páginas.
+const OjosDeDios = () => {
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    let raf: number;
+    let tx = 0, ty = 0, cx = 0, cy = 0;
+
+    const onMouse = (e: MouseEvent) => {
+      tx = e.clientX / window.innerWidth - 0.5;
+      ty = e.clientY / window.innerHeight - 0.5;
+    };
+    window.addEventListener('mousemove', onMouse, { passive: true });
+
+    const loop = () => {
+      cx += (tx - cx) * 0.06;
+      cy += (ty - cy) * 0.06;
+      setOffset({ x: cx, y: cy });
+      raf = requestAnimationFrame(loop);
+    };
+    loop();
+
+    return () => {
+      window.removeEventListener('mousemove', onMouse);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  return (
+    <div className="pl-ojos-escena" aria-hidden="true">
+      <div className="pl-ojo pl-ojo-a" style={{ transform: `translate(${offset.x * 22}px, ${offset.y * 22}px)` }}>
+        <div className="pl-ojo-giro">
+          <div className="pl-capa c1" /><div className="pl-capa c2" /><div className="pl-capa c3" />
+          <div className="pl-capa c4" /><div className="pl-capa c5" /><div className="pl-capa c6" />
+        </div>
+      </div>
+      <div className="pl-ojo pl-ojo-b" style={{ transform: `translate(${offset.x * 38}px, ${offset.y * 38}px)` }}>
+        <div className="pl-ojo-giro">
+          <div className="pl-capa c1" /><div className="pl-capa c2" /><div className="pl-capa c3" />
+          <div className="pl-capa c4" /><div className="pl-capa c5" />
+        </div>
+      </div>
+      <div className="pl-ojo pl-ojo-c" style={{ transform: `translate(${offset.x * 55}px, ${offset.y * 55}px)` }}>
+        <div className="pl-ojo-giro">
+          <div className="pl-capa c1" /><div className="pl-capa c2" /><div className="pl-capa c3" /><div className="pl-capa c4" />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
   return (
     <div className="min-h-screen bg-[#F8F6F1] font-sans overflow-x-hidden selection:bg-[#D81E5B]/20">
       <WixarikaBanda />
-      
-      {/* HERO COVER */}
-      <div className="bg-[#14213D] text-[#F8F6F1] min-h-[95vh] flex flex-col relative overflow-hidden">
-        {/* Background Nierika pattern abstraction */}
+
+      {/* ============================================================ */}
+      {/* HERO — responde "¿Dónde estoy?" y "¿Para qué sirve esto?"     */}
+      {/* ============================================================ */}
+      <div className="bg-[#14213D] text-[#F8F6F1] min-h-[92vh] flex flex-col relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
           backgroundImage: 'radial-gradient(circle at 20px 20px, #F8F6F1 2px, transparent 0)',
           backgroundSize: '40px 40px'
         }}></div>
+        <OjosDeDios />
 
-        {/* Header */}
+        {/* Header — una sola acción principal, sin competir consigo misma */}
         <header className="px-6 md:px-12 py-8 flex justify-between items-center relative z-20">
            <div className="flex items-center gap-4">
              <div className="w-14 h-14 bg-gradient-to-br from-[#D81E5B] to-[#0FA3B1] rounded-full flex items-center justify-center font-black text-2xl shadow-[0_0_40px_rgba(216,30,91,0.4)] text-white">
                N
              </div>
              <div>
-               <p className="text-[11px] uppercase tracking-[0.3em] font-bold text-[#F5A623]">Nayarit Digital · ConnectX</p>
+               <p className="text-sm font-bold tracking-tight">Nayarit Digital</p>
+               <p className="text-[10px] uppercase tracking-[0.2em] text-[#a0aec0]">Portal de trámites municipales</p>
              </div>
            </div>
-           
-           <nav className="hidden lg:flex items-center gap-8">
-             <button onClick={() => onNavigate('citizen')} className="text-xs font-bold text-[#a0aec0] hover:text-[#0FA3B1] transition-colors uppercase tracking-widest">Portal Ciudadano</button>
-             <button onClick={() => onNavigate('c5')} className="text-xs font-bold text-[#a0aec0] hover:text-[#0FA3B1] transition-colors uppercase tracking-widest">C5 de Gestión Pública</button>
-             <button onClick={() => onNavigate('executive')} className="text-xs font-bold text-[#a0aec0] hover:text-[#0FA3B1] transition-colors uppercase tracking-widest">Carpeta de Servicio</button>
-             <button 
-               onClick={() => onNavigate('citizen')}
-               className="bg-[#D81E5B] text-white px-6 py-3 rounded text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[#D81E5B]/80 transition-all shadow-lg"
+
+           <nav className="flex items-center gap-6">
+             <button
+               onClick={() => document.getElementById('institucional')?.scrollIntoView({ behavior: 'smooth' })}
+               className="hidden md:block text-xs font-semibold text-[#a0aec0] hover:text-[#0FA3B1] transition-colors"
              >
-               Iniciar Trámite
+               Soy funcionario público
+             </button>
+             <button
+               onClick={() => onNavigate('citizen')}
+               className="bg-[#D81E5B] text-white px-6 py-3 rounded text-[11px] font-bold uppercase tracking-[0.15em] hover:bg-[#D81E5B]/85 transition-all shadow-lg"
+             >
+               Empezar mi trámite
              </button>
            </nav>
         </header>
 
-        {/* Main Hero Content */}
-        <main className="flex-1 flex flex-col justify-center items-center text-center px-6 relative z-10 py-12">
+        {/* Hero content */}
+        <main className="flex-1 flex flex-col justify-center items-center text-center px-6 relative z-10 py-10">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="flex items-center gap-2 text-[#7ee8f2] text-xs font-bold uppercase tracking-[0.2em] mb-6"
+          >
+            <MapPin className="w-3.5 h-3.5" />
+            <span>Bahía de Banderas · Xalisco · Tepic</span>
+          </motion.div>
+
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-5xl md:text-7xl lg:text-[4.8rem] font-serif font-normal leading-[1.1] tracking-tight mb-8 max-w-5xl"
+            className="text-5xl md:text-7xl lg:text-[4.6rem] font-serif font-normal leading-[1.1] tracking-tight mb-8 max-w-4xl"
           >
-             El ecosistema digital<br/>
-             para el <em aria-hidden="true" className="italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-[#D81E5B] to-[#0FA3B1]">bienestar ciudadano</em><span className="sr-only">bienestar ciudadano</span><br/>
-             de Nayarit
+             Tu gobierno,<br/>
+             <em aria-hidden="true" className="italic font-medium text-transparent bg-clip-text bg-gradient-to-r from-[#D81E5B] to-[#0FA3B1]">sin filas ni papeleo</em><span className="sr-only">sin filas ni papeleo</span>.
           </motion.h1>
-          
+
           <motion.p
              initial={{ opacity: 0, y: 20 }}
              animate={{ opacity: 1, y: 0 }}
-             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-             className="text-lg md:text-xl text-[#F8F6F1]/70 max-w-2xl font-sans tracking-wider mb-14 leading-relaxed"
+             transition={{ duration: 0.8, delay: 0.15, ease: "easeOut" }}
+             className="text-lg md:text-xl text-[#F8F6F1]/70 max-w-2xl font-sans tracking-wide mb-10 leading-relaxed"
           >
-             Portal de Trámites y Servicios Simplificados. El canal digital oficial para los municipios de Bahía de Banderas, Xalisco y Tepic, diseñado por y para la ciudadanía.
+             Trámites y pagos municipales de Bahía de Banderas, Xalisco y Tepic, en un solo lugar, desde tu teléfono, a cualquier hora.
           </motion.p>
 
-          {/* KPI Chips */}
           <motion.div
              initial={{ opacity: 0 }}
              animate={{ opacity: 1 }}
-             transition={{ duration: 1, delay: 0.4 }}
-             className="flex flex-wrap justify-center gap-3 max-w-3xl mb-16"
+             transition={{ duration: 0.8, delay: 0.3 }}
+             className="flex flex-wrap justify-center gap-3 max-w-2xl mb-12"
           >
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#D81E5B]/20 text-[#ff8ab8] border border-[#D81E5B]/40 uppercase hover:scale-105 hover:bg-[#D81E5B]/30 hover:border-[#D81E5B]/60 transition-all duration-300 cursor-default shadow-sm hover:shadow-md">18 Módulos de Servicios</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#0FA3B1]/20 text-[#7ee8f2] border border-[#0FA3B1]/40 uppercase hover:scale-105 hover:bg-[#0FA3B1]/30 hover:border-[#0FA3B1]/60 transition-all duration-300 cursor-default shadow-sm hover:shadow-md">Soberanía Tecnológica</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#F5A623]/20 text-[#ffc96a] border border-[#F5A623]/40 uppercase hover:scale-105 hover:bg-[#F5A623]/30 hover:border-[#F5A623]/60 transition-all duration-300 cursor-default shadow-sm hover:shadow-md">100+ Pagos Municipales</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#4C9F70]/20 text-[#7de3a8] border border-[#4C9F70]/40 uppercase hover:scale-105 hover:bg-[#4C9F70]/30 hover:border-[#4C9F70]/60 transition-all duration-300 cursor-default shadow-sm hover:shadow-md">Bahía, Xalisco y Tepic</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#D81E5B]/20 text-[#ff8ab8] border border-[#D81E5B]/40 uppercase hover:scale-105 hover:bg-[#D81E5B]/30 hover:border-[#D81E5B]/60 transition-all duration-300 cursor-default shadow-sm hover:shadow-md">Simplificación Regulatoria</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#0FA3B1]/20 text-[#7ee8f2] border border-[#0FA3B1]/40 uppercase hover:scale-105 hover:bg-[#0FA3B1]/30 hover:border-[#0FA3B1]/60 transition-all duration-300 cursor-default shadow-sm hover:shadow-md">Identidad LlaveMx</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wide bg-[#D81E5B]/20 text-[#ff8ab8] border border-[#D81E5B]/40">Gratis y en minutos</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wide bg-[#0FA3B1]/20 text-[#7ee8f2] border border-[#0FA3B1]/40">+100 trámites y pagos</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wide bg-[#4C9F70]/20 text-[#7de3a8] border border-[#4C9F70]/40">Identidad protegida</span>
           </motion.div>
 
           <motion.div
              initial={{ opacity: 0, y: 20 }}
              animate={{ opacity: 1, y: 0 }}
-             transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-             className="flex flex-wrap justify-center gap-6"
+             transition={{ duration: 0.8, delay: 0.45, ease: "easeOut" }}
+             className="flex flex-col items-center gap-4"
           >
              <button onClick={() => onNavigate('citizen')} className="bg-[#D81E5B] hover:bg-[#D81E5B]/90 text-white px-8 py-4 rounded-md text-sm font-bold tracking-widest uppercase transition-all shadow-[0_8px_32px_rgba(216,30,91,0.35)] hover:shadow-[0_12px_40px_rgba(216,30,91,0.5)] hover:-translate-y-1 flex items-center gap-3">
-               <Smartphone className="w-5 h-5" /> Ingresar al Portal
+               <Smartphone className="w-5 h-5" /> Empezar mi trámite
              </button>
-             <button onClick={() => onNavigate('c5')} className="bg-[#F8F6F1]/10 hover:bg-[#F8F6F1]/20 text-[#F8F6F1] border border-[#F8F6F1]/30 px-8 py-4 rounded-md text-sm font-bold tracking-widest uppercase transition-all hover:shadow-[0_12px_40px_rgba(248,246,241,0.15)] hover:-translate-y-1 flex items-center gap-3">
-               <Monitor className="w-5 h-5" /> C5 SOATM (Gestión)
-             </button>
+             <p className="text-[#a0aec0] text-xs tracking-wide">Entra con tu cuenta de Google · sin formularios largos</p>
           </motion.div>
 
-          <motion.p
+          <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 1 }}
-            className="text-[#a0aec0] text-xs tracking-[0.2em] uppercase mt-20"
+            transition={{ duration: 1, delay: 0.8 }}
+            onClick={() => document.getElementById('como-funciona')?.scrollIntoView({ behavior: 'smooth' })}
+            className="flex flex-col items-center gap-1 text-[#a0aec0] hover:text-white text-[11px] uppercase tracking-widest mt-16 transition-colors"
           >
-            Julio 2026 · Sistema Operativo de Administración Territorial (SOATM) · v3.0
-          </motion.p>
+            ¿Qué puedo hacer aquí? <ArrowDown className="w-4 h-4" />
+          </motion.button>
         </main>
       </div>
 
       <WixarikaBanda />
 
-      {/* CONTENT SECTION (Light Theme) */}
+      {/* ============================================================ */}
+      {/* SECCIÓN — "¿Por qué debería usarlo?" (beneficio + confianza)  */}
+      {/* ============================================================ */}
       <div className="bg-[#F8F6F1] text-[#1a2438] py-24 px-6 md:px-12 relative">
-        
-        {/* 01: El Mandato Social & Reloj de Simplificación */}
+
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 mb-32">
           <div>
-            <p className="text-[#D81E5B] text-xs font-bold tracking-[0.2em] uppercase mb-4">01 · Marco de Derechos Ciudadanos (SOATM)</p>
-            <h2 className="text-4xl md:text-5xl font-serif font-black leading-[1.1] mb-6 text-[#1a2438]">La nueva forma de gobernar a través del territorio.</h2>
+            <p className="text-[#D81E5B] text-xs font-bold tracking-[0.2em] uppercase mb-4">Por qué cambia esto tu día a día</p>
+            <h2 className="text-4xl md:text-5xl font-serif font-black leading-[1.1] mb-6 text-[#1a2438]">Lo que antes era una mañana perdida, ahora es un formulario.</h2>
             <p className="text-[#4a5568] text-lg leading-relaxed mb-8">
-               La implementación del SOATM garantiza una gestión descentralizada, respondiendo a la Ley Nacional de Simplificación y Digitalización. Transicionamos hacia ventanillas únicas eficientes, seguras y libres de papel en este 2026, bajo una óptica de territorio y bienestar.
+               Cada trámite que haces aquí genera un acuse digital firmado y con folio propio — así puedes comprobarlo cuando lo necesites, sin depender de una copia en papel que se puede perder.
             </p>
 
-            <div className="space-y-6">
-              <div className="flex gap-5 p-6 bg-white border border-[#d4ccc2] rounded-xl border-l-4 border-l-[#D81E5B] shadow-sm">
-                <Scale className="w-8 h-8 text-[#D81E5B] shrink-0" />
-                <div>
-                  <h3 className="font-bold text-[17px] mb-2 text-[#1a2438]">Gobernanza y Transparencia</h3>
-                  <p className="text-sm text-[#4a5568] leading-relaxed">Cada trámite completado genera un acuse digital firmado y auditable, reduciendo tiempos de espera y discrecionalidad.</p>
-                </div>
-              </div>
-              <div className="flex gap-5 p-6 bg-white border border-[#d4ccc2] rounded-xl border-l-4 border-l-[#0FA3B1] shadow-sm">
-                <Lock className="w-8 h-8 text-[#0FA3B1] shrink-0" />
-                <div>
-                  <h3 className="font-bold text-[17px] mb-2 text-[#1a2438]">Identidad Digital Segura</h3>
-                  <p className="text-sm text-[#4a5568] leading-relaxed">Preparado para la federación con LlaveMx, asegurando que los datos personales de la ciudadanía estén protegidos bajo estrictos protocolos.</p>
-                </div>
+            <div className="flex gap-5 p-6 bg-white border border-[#d4ccc2] rounded-xl border-l-4 border-l-[#D81E5B] shadow-sm">
+              <FileCheck className="w-8 h-8 text-[#D81E5B] shrink-0" />
+              <div>
+                <h3 className="font-bold text-[17px] mb-2 text-[#1a2438]">Un expediente, no una pila de copias</h3>
+                <p className="text-sm text-[#4a5568] leading-relaxed">Tus documentos quedan guardados una sola vez. La próxima vez que hagas un trámite, no vuelves a entregar lo que ya entregaste.</p>
               </div>
             </div>
           </div>
 
-          {/* Digital Clock Panel */}
+          {/* Panel comparativo: antes / ahora */}
           <div className="bg-[#14213D] text-white rounded-2xl p-8 md:p-10 relative overflow-hidden shadow-2xl flex flex-col justify-center">
              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#D81E5B] via-[#F5A623] to-[#0FA3B1]"></div>
-             
-             <div className="flex items-center gap-3 mb-6">
-               <Clock className="w-7 h-7 text-[#F5A623]" />
-               <h3 className="text-2xl font-serif font-normal tracking-wide">La digitalización ya está en marcha</h3>
-             </div>
 
-             <p className="text-[#a0aec0] mb-8 text-[15px] leading-relaxed">
-               La LNETB impulsa una transición ágil de servicios municipales hacia plataformas autogestionables para optimizar recursos e incrementar el bienestar.
-             </p>
+             <div className="flex items-center gap-3 mb-8">
+               <Clock className="w-7 h-7 text-[#F5A623]" />
+               <h3 className="text-2xl font-serif font-normal tracking-wide">Antes y ahora</h3>
+             </div>
 
              <div className="space-y-8">
                <div>
-                 <h3 className="text-[#FF7AA8] text-[11px] font-bold uppercase tracking-widest mb-3">Riesgo de Rezago — Continuar con la inercia</h3>
+                 <h3 className="text-[#FF7AA8] text-[11px] font-bold uppercase tracking-widest mb-3">Como era antes</h3>
                  <ul className="space-y-2 text-[14px] text-[#e8e0d4]">
-                   <li className="flex gap-3"><span className="text-[#D81E5B] font-bold">✖</span> <span>Largas filas, burocracia lenta y uso ineficiente de recursos públicos.</span></li>
-                   <li className="flex gap-3"><span className="text-[#D81E5B] font-bold">✖</span> <span>Falta de trazabilidad e incertidumbre para el ciudadano sobre su trámite.</span></li>
+                   <li className="flex gap-3"><span className="text-[#D81E5B] font-bold">✖</span> <span>Ir a la ventanilla y hacer fila en horario de oficina.</span></li>
+                   <li className="flex gap-3"><span className="text-[#D81E5B] font-bold">✖</span> <span>Llevar copias del mismo papel a cada trámite.</span></li>
+                   <li className="flex gap-3"><span className="text-[#D81E5B] font-bold">✖</span> <span>No saber en qué va tu trámite ni cuánto falta.</span></li>
                  </ul>
                </div>
                <div>
-                 <h3 className="text-[#4C9F70] text-[11px] font-bold uppercase tracking-widest mb-3">Impacto Social — Transformación de Servicio</h3>
+                 <h3 className="text-[#4C9F70] text-[11px] font-bold uppercase tracking-widest mb-3">Como es aquí</h3>
                  <ul className="space-y-2 text-[14px] text-[#e8e0d4]">
-                   <li className="flex gap-3"><span className="text-[#4C9F70] font-bold">✅</span> <span>Transparencia total y certeza jurídica inmediata para cada hogar.</span></li>
-                   <li className="flex gap-3"><span className="text-[#4C9F70] font-bold">✅</span> <span>Expediente único digital que elimina el requisito de entregar papeles duplicados.</span></li>
+                   <li className="flex gap-3"><span className="text-[#4C9F70] font-bold">✅</span> <span>Lo haces desde tu teléfono, a la hora que puedas.</span></li>
+                   <li className="flex gap-3"><span className="text-[#4C9F70] font-bold">✅</span> <span>Tu expediente único evita que repitas papeles.</span></li>
+                   <li className="flex gap-3"><span className="text-[#4C9F70] font-bold">✅</span> <span>Sigues cada trámite paso a paso, con acuse firmado.</span></li>
                  </ul>
                </div>
              </div>
-
-             <button onClick={() => onNavigate('executive')} className="mt-10 w-full bg-[#F5A623] hover:bg-[#F5A623]/90 text-[#14213D] py-4 rounded-md font-bold uppercase tracking-widest text-[11px] transition-colors shadow-lg">
-               Revisar Propuesta de Servicio Público
-             </button>
           </div>
         </div>
 
-        {/* 03: 5 Capas */}
-        <div className="max-w-6xl mx-auto mb-32">
+        {/* ============================================================ */}
+        {/* SECCIÓN — "¿Qué puedo hacer aquí?" / "¿Cómo empiezo?"        */}
+        {/* Reemplaza el mapa de arquitectura interna (5 capas) por el   */}
+        {/* recorrido real del ciudadano: 3 pasos, no 5 componentes.     */}
+        {/* ============================================================ */}
+        <div id="como-funciona" className="max-w-6xl mx-auto mb-32 scroll-mt-8">
           <div className="text-center mb-16">
-             <p className="text-[#0A6B75] text-xs font-bold tracking-[0.2em] uppercase mb-4">03 · Arquitectura del SOATM</p>
-             <h2 className="text-4xl md:text-5xl font-serif font-black leading-tight text-[#1a2438]">5 capas de integración para una nueva gobernanza.</h2>
+             <p className="text-[#0A6B75] text-xs font-bold tracking-[0.2em] uppercase mb-4">Cómo funciona</p>
+             <h2 className="text-4xl md:text-5xl font-serif font-black leading-tight text-[#1a2438]">Tres pasos, un trámite resuelto.</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-             <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+             <div className="bg-white border border-[#d4ccc2] p-7 rounded-xl relative overflow-hidden">
                <div className="absolute top-0 left-0 right-0 h-1 bg-[#D81E5B]"></div>
                <div className="w-12 h-12 bg-[#D81E5B]/10 text-[#D81E5B] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">1</div>
-               <h3 className="font-bold text-[#1a2438] mb-2 text-lg">Landing Page</h3>
-               <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">La cara pública del ecosistema. Identidad visual y posicionamiento social.</p>
-               <button onClick={() => window.scrollTo({top:0, behavior:'smooth'})} className="text-[#D81E5B] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Inicio <ChevronRight className="w-3 h-3"/></button>
+               <h3 className="font-bold text-[#1a2438] mb-2 text-lg flex items-center gap-2"><KeyRound className="w-4 h-4 text-[#D81E5B]" /> Entra con tu cuenta</h3>
+               <p className="text-[14px] text-[#4a5568] leading-relaxed">Inicia sesión con tu cuenta de Google en segundos. Sin formularios largos ni contraseñas nuevas que recordar.</p>
              </div>
-             
-             <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
+
+             <div className="bg-white border border-[#d4ccc2] p-7 rounded-xl relative overflow-hidden">
                <div className="absolute top-0 left-0 right-0 h-1 bg-[#0FA3B1]"></div>
                <div className="w-12 h-12 bg-[#0FA3B1]/10 text-[#0B7C87] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">2</div>
-               <h3 className="font-bold text-[#1a2438] mb-2 text-lg">C5 de Gestión</h3>
-               <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">Centro de mando de gestión. 14 módulos de atención, tesorería y auditoría.</p>
-               <button onClick={() => onNavigate('c5')} className="text-[#0B7C87] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Ver Gestión <ChevronRight className="w-3 h-3"/></button>
+               <h3 className="font-bold text-[#1a2438] mb-2 text-lg flex items-center gap-2"><ClipboardCheck className="w-4 h-4 text-[#0B7C87]" /> Elige tu trámite o pago</h3>
+               <p className="text-[14px] text-[#4a5568] leading-relaxed">Más de 100 trámites y pagos municipales. ¿No sabes cuál necesitas? Pregúntale a Aura, el asistente del portal.</p>
              </div>
-             
-             <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
+
+             <div className="bg-white border border-[#d4ccc2] p-7 rounded-xl relative overflow-hidden">
                <div className="absolute top-0 left-0 right-0 h-1 bg-[#4C9F70]"></div>
                <div className="w-12 h-12 bg-[#4C9F70]/10 text-[#3B7A56] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">3</div>
-               <h3 className="font-bold text-[#1a2438] mb-2 text-lg">CitizenApp</h3>
-               <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">El gobierno en el bolsillo. Trámites, ventanilla única y expediente digital seguro.</p>
-               <button onClick={() => onNavigate('citizen')} className="text-[#3B7A56] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Abrir App <ChevronRight className="w-3 h-3"/></button>
+               <h3 className="font-bold text-[#1a2438] mb-2 text-lg flex items-center gap-2"><FileCheck className="w-4 h-4 text-[#3B7A56]" /> Recibe tu acuse digital</h3>
+               <p className="text-[14px] text-[#4a5568] leading-relaxed">Firmado, con folio y verificable. Sin volver a hacer fila para comprobar que tu trámite existe.</p>
              </div>
-             
-             <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
-               <div className="absolute top-0 left-0 right-0 h-1 bg-[#F5A623]"></div>
-               <div className="w-12 h-12 bg-[#F5A623]/10 text-[#8F5E06] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">4</div>
-               <h3 className="font-bold text-[#1a2438] mb-2 text-lg">Asistencia Aura</h3>
-               <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">Asistencia ciudadana en lenguaje amigable para acompañar trámites y resolver dudas.</p>
-               <button onClick={() => onNavigate('citizen')} className="text-[#8F5E06] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Ver Aura <ChevronRight className="w-3 h-3"/></button>
-             </div>
-             
-             <div className="bg-white border border-[#d4ccc2] p-6 rounded-xl hover:shadow-md transition-shadow relative overflow-hidden group">
-               <div className="absolute top-0 left-0 right-0 h-1 bg-[#E85D04]"></div>
-               <div className="w-12 h-12 bg-[#E85D04]/10 text-[#B54903] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">5</div>
-               <h3 className="font-bold text-[#1a2438] mb-2 text-lg">Carpeta Pública</h3>
-               <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">Estrategia técnica y marco normativo institucional para la simplificación administrativa.</p>
-               <button onClick={() => onNavigate('executive')} className="text-[#B54903] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Carpeta <ChevronRight className="w-3 h-3"/></button>
-             </div>
+          </div>
+
+          <div className="text-center">
+            <button onClick={() => onNavigate('citizen')} className="inline-flex items-center gap-2 bg-[#14213D] hover:bg-[#14213D]/90 text-white px-7 py-3.5 rounded-md text-sm font-bold tracking-wide transition-all hover:-translate-y-0.5">
+              Empezar ahora <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
 
-        {/* 04: Pueblos Originarios */}
+        {/* ============================================================ */}
+        {/* SECCIÓN — Equidad territorial: "¿esto es para alguien como   */}
+        {/* yo?" para quien vive fuera de las cabeceras municipales.     */}
+        {/* ============================================================ */}
         <div className="max-w-6xl mx-auto mb-32">
           <div className="text-center mb-16">
-             <p className="text-[#35704E] text-xs font-bold tracking-[0.2em] uppercase mb-4">04 · Pueblos Originarios Primero</p>
-             <h2 className="text-4xl md:text-5xl font-serif font-black leading-tight text-[#1a2438]">Las ciudades indígenas<br/>dejan de ser las últimas de la fila.</h2>
+             <p className="text-[#35704E] text-xs font-bold tracking-[0.2em] uppercase mb-4">Pueblos originarios primero</p>
+             <h2 className="text-4xl md:text-5xl font-serif font-black leading-tight text-[#1a2438]">Las comunidades indígenas<br/>dejan de ser las últimas de la fila.</h2>
              <p className="text-[#4a5568] text-lg leading-relaxed max-w-3xl mx-auto mt-6">
                 La transformación digital que solo llega a las cabeceras urbanas no es transformación: es privilegio.
                 El piloto arranca en Bahía de Banderas, Xalisco y Tepic — y la ruta continúa hacia la sierra,
@@ -257,93 +302,112 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                <Users className="w-8 h-8 text-[#F5A623] mb-5" />
                <h3 className="font-bold text-lg mb-3">Del Nayar en la hoja de ruta</h3>
                <p className="text-[14px] text-[#a0aec0] leading-relaxed mb-5">
-                  El municipio más remoto del estado — corazón náayeri y wixárika — proyecta pasar
-                  del lugar <span className="text-white font-bold">#2,344</span> al
-                  <span className="text-[#F5A623] font-bold"> #198</span> nacional en gobierno digital
-                  al sumarse a la plataforma. Ese dato es el argumento para toda la sierra:
-                  La Yesca y Huajicori siguen la misma ruta.
+                  El municipio más remoto del estado — corazón náayeri y wixárika — proyecta avanzar del lugar
+                  <span className="text-white font-bold"> #2,344</span> al
+                  <span className="text-[#F5A623] font-bold"> #198</span> nacional en gobierno digital al sumarse
+                  a la plataforma. Esa es la meta que traza la ruta para toda la sierra: La Yesca y Huajicori le siguen.
                </p>
-               <p className="text-[10px] uppercase tracking-widest font-bold text-[#4C9F70]">Meta 20/20 · Nadie se queda fuera</p>
+               <p className="text-[10px] uppercase tracking-widest font-bold text-[#4C9F70]">Meta 2026 · Nadie se queda fuera</p>
              </div>
 
              <div className="bg-white border border-[#d4ccc2] p-8 rounded-xl relative overflow-hidden shadow-sm">
                <div className="absolute top-0 left-0 right-0 h-1 bg-[#4C9F70]"></div>
-               <Globe className="w-8 h-8 text-[#4C9F70] mb-5" />
-               <h3 className="font-bold text-lg mb-3 text-[#1a2438]">En su lengua, no solo en español</h3>
+               <Languages className="w-8 h-8 text-[#4C9F70] mb-5" />
+               <h3 className="font-bold text-lg mb-3 text-[#1a2438]">En tu lengua, no solo en español</h3>
                <p className="text-[14px] text-[#4a5568] leading-relaxed mb-5">
-                  La plataforma opera en español, náayeri (cora) y wixárika. Un trámite que no se
-                  entiende es una fila disfrazada: aquí el ciudadano de la sierra lee su gobierno
-                  en su propia lengua.
+                  La plataforma opera en español, náayeri (cora) y wixárika. Un trámite que no se entiende
+                  es una fila disfrazada: aquí lo lees en tu propia lengua.
                </p>
-               <p className="text-[10px] uppercase tracking-widest font-bold text-[#35704E]">3 lenguas · Selector integrado en el C5</p>
+               <p className="text-[10px] uppercase tracking-widest font-bold text-[#35704E]">3 lenguas disponibles</p>
              </div>
 
              <div className="bg-white border border-[#d4ccc2] p-8 rounded-xl relative overflow-hidden shadow-sm">
                <div className="absolute top-0 left-0 right-0 h-1 bg-[#E85D04]"></div>
-               <Smartphone className="w-8 h-8 text-[#E85D04] mb-5" />
-               <h3 className="font-bold text-lg mb-3 text-[#1a2438]">Infraestructura con fondo propio</h3>
+               <Globe className="w-8 h-8 text-[#E85D04] mb-5" />
+               <h3 className="font-bold text-lg mb-3 text-[#1a2438]">Con fondo propio para la sierra</h3>
                <p className="text-[14px] text-[#4a5568] leading-relaxed mb-5">
-                  El FAISPIAM — el fondo federal de infraestructura para pueblos indígenas y
-                  afromexicanos — está integrado en la tesorería del sistema: cada peso destinado
-                  a la sierra queda trazado y auditable.
+                  El FAISPIAM — fondo federal de infraestructura para pueblos indígenas y afromexicanos —
+                  está integrado en el sistema: cada peso destinado a la sierra queda trazado y auditable.
                </p>
-               <p className="text-[10px] uppercase tracking-widest font-bold text-[#B54903]">Trazabilidad ASF · Bienestar social</p>
+               <p className="text-[10px] uppercase tracking-widest font-bold text-[#B54903]">Trazabilidad pública</p>
              </div>
           </div>
         </div>
 
-        {/* 07: Modelo Financiero & Ranking */}
-        <div className="max-w-6xl mx-auto bg-white border border-[#d4ccc2] rounded-2xl p-8 md:p-14 shadow-sm">
-           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        {/* ============================================================ */}
+        {/* SECCIÓN — "¿Cómo se protegen mis datos?" (antes vivía        */}
+        {/* diluido dentro de otra sección; aquí es su propia respuesta) */}
+        {/* ============================================================ */}
+        <div className="max-w-6xl mx-auto mb-32">
+          <div className="bg-white border border-[#d4ccc2] rounded-2xl p-8 md:p-14 shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
               <div>
-                 <div className="inline-block border border-[#F5A623]/50 text-[#7A5210] px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase mb-6 bg-[#F5A623]/10">Índice de Gobierno Abierto</div>
-                 <h2 className="text-3xl md:text-4xl font-serif font-black leading-tight mb-6 text-[#1a2438]">Tepic, Xalisco y Bahía: Líderes en Simplificación.</h2>
-                 <p className="text-[#4a5568] text-[16px] leading-relaxed mb-8">
-                    Con la implementación progresiva de ConnectX en Bahía de Banderas, Xalisco y Tepic, los municipios lideran la transición nacional hacia el expediente único sin costo tecnológico excesivo.
-                 </p>
-                 <div className="flex gap-12">
-                    <div>
-                       <h3 className="text-4xl font-black text-[#8F5E06] font-sans">#1</h3>
-                       <p className="text-[10px] uppercase tracking-widest text-[#4a5568] mt-2 font-bold">Lugar Regional</p>
-                    </div>
-                    <div>
-                       <h3 className="text-4xl font-black text-[#4C9F70] font-sans">3/3</h3>
-                       <p className="text-[10px] uppercase tracking-widest text-[#4a5568] mt-2 font-bold">Municipios Piloto</p>
-                    </div>
-                 </div>
+                <p className="text-[#0FA3B1] text-xs font-bold tracking-[0.2em] uppercase mb-4">Tu información, protegida</p>
+                <h2 className="text-3xl md:text-4xl font-serif font-black leading-tight mb-6 text-[#1a2438]">Tus datos no se comparten sin tu permiso.</h2>
+                <p className="text-[#4a5568] text-[16px] leading-relaxed mb-8">
+                  Cada módulo — Salud, Bienestar, Obras — pide tu consentimiento explícito antes de acceder a tu
+                  expediente. Nada se comparte entre dependencias por default.
+                </p>
+                <button onClick={() => onNavigate('executive')} className="text-[#0B7C87] text-sm font-bold flex items-center gap-2 hover:gap-3 transition-all">
+                  Ver el marco de protección de datos <ChevronRight className="w-4 h-4" />
+                </button>
               </div>
 
-              <div className="bg-[#F8F6F1] p-8 rounded-xl border border-[#d4ccc2]">
-                 <h3 className="font-bold text-xl mb-6 text-[#1a2438] flex items-center gap-3">
-                   <Activity className="w-5 h-5 text-[#D81E5B]" />
-                   Sustentabilidad y Ahorros
-                 </h3>
-                 <p className="text-sm text-[#4a5568] mb-6">La digitalización elimina el gasto operativo en archivo físico, fotocopias y almacenamiento redundante, canalizando recursos al bienestar social.</p>
-                 <div className="space-y-4">
-                    <div className="flex justify-between items-center border-b border-[#d4ccc2] pb-3">
-                       <span className="text-[#4a5568] text-sm">Gasto en Papel y Archivo</span>
-                       <span className="font-bold text-[#D81E5B] font-mono">-85% de ahorro</span>
-                    </div>
-                    <div className="flex justify-between items-center border-b border-[#d4ccc2] pb-3">
-                       <span className="text-[#4a5568] text-sm">Tiempo promedio de Trámite</span>
-                       <span className="font-bold text-[#35704E] font-mono">De 14 días a 10 mins</span>
-                    </div>
-                    <div className="flex justify-between items-center border-b border-[#d4ccc2] pb-3">
-                       <span className="text-[#4a5568] text-sm">Validaciones Automáticas</span>
-                       <span className="font-bold text-[#35704E] font-mono">100% Digital</span>
-                    </div>
-                    <div className="flex justify-between items-center pt-2">
-                       <span className="text-[#1a2438] font-black uppercase text-xs tracking-widest">Ahorro Social Estimado</span>
-                       <span className="font-black text-[#D81E5B] font-mono">Millones en productividad</span>
-                    </div>
-                 </div>
+              <div className="space-y-5">
+                <div className="flex gap-4">
+                  <Lock className="w-6 h-6 text-[#D81E5B] shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-bold text-[15px] text-[#1a2438] mb-1">Identidad digital segura</h3>
+                    <p className="text-sm text-[#4a5568] leading-relaxed">Tu cuenta está protegida y preparada para integrarse con LlaveMx, la identidad digital federal, cuando esté disponible en tu municipio.</p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <ShieldCheck className="w-6 h-6 text-[#0FA3B1] shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-bold text-[15px] text-[#1a2438] mb-1">Consentimiento por módulo</h3>
+                    <p className="text-sm text-[#4a5568] leading-relaxed">Tú decides qué información puede ver cada servicio. Puedes revisar y retirar ese permiso cuando quieras.</p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <CheckCircle2 className="w-6 h-6 text-[#4C9F70] shrink-0 mt-1" />
+                  <div>
+                    <h3 className="font-bold text-[15px] text-[#1a2438] mb-1">Todo queda registrado</h3>
+                    <p className="text-sm text-[#4a5568] leading-relaxed">Cada acceso a tu expediente genera un registro auditable — nadie consulta tus datos sin que quede huella.</p>
+                  </div>
+                </div>
               </div>
-           </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ============================================================ */}
+        {/* SECCIÓN — Acceso institucional: audiencia secundaria,        */}
+        {/* deliberadamente discreta para no competir con el trámite.    */}
+        {/* ============================================================ */}
+        <div id="institucional" className="max-w-6xl mx-auto scroll-mt-8">
+          <div className="border-t border-[#d4ccc2] pt-14">
+            <div className="flex items-center gap-3 mb-6">
+              <Landmark className="w-5 h-5 text-[#8a8578]" />
+              <p className="text-[#6b6558] text-xs font-bold tracking-[0.15em] uppercase">¿Eres funcionario público o autoridad?</p>
+            </div>
+            <p className="text-[#6b6558] text-sm mb-6 max-w-2xl">Estas herramientas son para equipos de gobierno — no forman parte del trámite ciudadano.</p>
+            <div className="flex flex-wrap gap-4">
+              <button onClick={() => onNavigate('c5')} className="flex items-center gap-2 text-sm font-semibold text-[#4a5568] hover:text-[#1a2438] border border-[#d4ccc2] hover:border-[#1a2438]/30 px-5 py-3 rounded-md transition-colors bg-white">
+                <Monitor className="w-4 h-4" /> Panel de gestión pública (C5)
+              </button>
+              <button onClick={() => onNavigate('executive')} className="flex items-center gap-2 text-sm font-semibold text-[#4a5568] hover:text-[#1a2438] border border-[#d4ccc2] hover:border-[#1a2438]/30 px-5 py-3 rounded-md transition-colors bg-white">
+                <Bot className="w-4 h-4" /> Carpeta de servicio institucional
+              </button>
+            </div>
+          </div>
         </div>
 
       </div>
 
       <WixarikaBanda />
+      <p className="text-center text-[10px] uppercase tracking-[0.2em] text-[#8a8578] py-6 bg-[#F8F6F1]">
+        Nayarit Digital · SOATM · Julio 2026
+      </p>
     </div>
   );
 };
