@@ -25,15 +25,36 @@ function ViewFallback() {
   );
 }
 
+const VALID_VIEWS = ['landing', 'c5', 'citizen', 'dev', 'executive'] as const;
+type ViewType = (typeof VALID_VIEWS)[number];
+
+// Enlace profundo: ?view=c5&modulo=agrovision o ?view=citizen&tab=services
+// permite que herramientas externas (p. ej. docs/orbe/*.html) manden a un
+// ciudadano o a un operador directo al módulo correcto, en vez de siempre
+// aterrizar en la landing. Solo se lee una vez, al cargar la página.
+function getInitialStateFromUrl() {
+  if (typeof window === 'undefined') {
+    return { view: 'landing' as ViewType, tab: 'home', modulo: undefined as string | undefined };
+  }
+  const params = new URLSearchParams(window.location.search);
+  const view = params.get('view');
+  return {
+    view: (VALID_VIEWS as readonly string[]).includes(view || '') ? (view as ViewType) : ('landing' as ViewType),
+    tab: params.get('tab') || 'home',
+    modulo: params.get('modulo') || undefined,
+  };
+}
+const initialUrlState = getInitialStateFromUrl();
+
 function App() {
-  const [currentView, setCurrentView] = useState<'landing' | 'c5' | 'citizen' | 'dev' | 'executive'>('landing');
-  const [citizenTab, setCitizenTab] = useState<any>('home');
+  const [currentView, setCurrentView] = useState<ViewType>(initialUrlState.view);
+  const [citizenTab, setCitizenTab] = useState<any>(initialUrlState.tab);
   const [citizenAction, setCitizenAction] = useState<any>(null);
 
   if (currentView === 'c5') {
     return (
       <Suspense fallback={<ViewFallback />}>
-        <C5Dashboard onLogout={() => setCurrentView('landing')} />
+        <C5Dashboard onLogout={() => setCurrentView('landing')} initialModule={initialUrlState.modulo as any} />
       </Suspense>
     );
   }
