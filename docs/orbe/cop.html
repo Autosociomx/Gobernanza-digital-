@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-[#03050a] text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COP 1.0 — Orbe Central · Nayarit Digital</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    },
+                    colors: {
+                        neural: {
+                            bg: '#03050a',
+                            panel: 'rgba(10, 15, 26, 0.85)',
+                            cyan: '#00f0ff',
+                            emerald: '#00ff9d',
+                            purple: '#b026ff',
+                            amber: '#ffb800'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { margin: 0; overflow: hidden; }
+
+        .glass-panel {
+            background: rgba(10, 15, 26, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Lienzo infinito */
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            cursor: grab;
+            position: relative;
+            background-image: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        #canvas-container:active { cursor: grabbing; }
+
+        #canvas-content {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            transform-origin: 0 0;
+        }
+
+        /* Estilos de Nodos Neuronales */
+        .neural-node {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+        }
+
+        .neural-node::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: inherit;
+            opacity: 0.15;
+            z-index: -1;
+            transition: all 0.3s;
+        }
+
+        .neural-node:hover::before, .neural-node.active::before {
+            inset: -12px;
+            opacity: 0.3;
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+
+        .neural-node.active {
+            transform: translate(-50%, -50%) scale(1.15);
+            box-shadow: 0 0 30px var(--glow-color);
+            z-index: 20;
+        }
+
+        /* Sinapsis / Conexiones Eléctricas */
+        .synapse {
+            fill: none;
+            stroke-width: 2;
+            transition: all 0.3s ease;
+        }
+
+        .synapse-idle {
+            stroke: rgba(255, 255, 255, 0.1);
+            stroke-dasharray: 4, 6;
+        }
+
+        .synapse-active {
+            stroke: var(--glow-color);
+            stroke-width: 3;
+            stroke-dasharray: 8, 8;
+            animation: electric-flow 0.8s linear infinite;
+            filter: drop-shadow(0 0 6px var(--glow-color));
+        }
+
+        @keyframes electric-flow {
+            to { stroke-dashoffset: -16; }
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        /* Scrollbar minimalista */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+
+        .node-label {
+            position: absolute;
+            bottom: -35px;
+            white-space: nowrap;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+            color: #cbd5e1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            pointer-events: none;
+            transition: all 0.3s;
+        }
+
+        .neural-node.active .node-label {
+            color: #fff;
+            font-weight: 700;
+            bottom: -40px;
+        }
+    </style>
+</head>
+<body class="text-slate-100 font-sans antialiased overflow-hidden">
+
+    <!-- Lienzo Neuronal Infinito -->
+    <div id="canvas-container">
+        <div id="canvas-content">
+            <!-- SVG para las conexiones eléctricas -->
+            <svg id="synapse-layer" class="absolute inset-0 w-full h-full pointer-events-none" style="overflow: visible;"></svg>
+            <!-- Contenedor de nodos -->
+            <div id="nodes-layer" class="absolute inset-0 w-full h-full"></div>
+        </div>
+    </div>
+
+    <!-- Controles Flotantes del Lienzo (Top Left) -->
+    <div class="fixed top-6 left-6 z-40 flex flex-col gap-3">
+        <div class="glass-panel p-3 rounded-2xl flex items-center gap-4">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-purple-600 p-[2px] shadow-[0_0_15px_rgba(0,240,255,0.3)]">
+                <div class="w-full h-full bg-slate-950 rounded-full flex items-center justify-center">
+                    <i class="fa-solid fa-atom text-cyan-400"></i>
+                </div>
+            </div>
+            <div>
+                <h1 class="font-bold tracking-wide text-white">Orbe Central</h1>
+                <p class="text-[10px] text-cyan-400 font-mono tracking-widest uppercase">Nayarit Digital · Grafo real</p>
+            </div>
+        </div>
+
+        <div class="glass-panel p-2 rounded-xl flex flex-col gap-2 w-max">
+            <button onclick="zoomIn()" class="w-8 h-8 rounded-lg hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white transition" title="Acercar">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+            <div class="h-[1px] bg-slate-800 mx-2"></div>
+            <button onclick="zoomOut()" class="w-8 h-8 rounded-lg hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white transition" title="Alejar">
+                <i class="fa-solid fa-minus"></i>
+            </button>
+            <div class="h-[1px] bg-slate-800 mx-2"></div>
+            <button onclick="resetView()" class="w-8 h-8 rounded-lg hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white transition" title="Centrar Vista">
+                <i class="fa-solid fa-crosshairs"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Toggle Panel Button -->
+    <button id="toggle-panel-btn" onclick="toggleRightPanel()" class="fixed top-6 right-6 z-50 glass-panel px-4 py-2.5 rounded-xl text-xs font-bold text-white hover:bg-slate-800 transition flex items-center gap-2 shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+        <i class="fa-solid fa-microchip text-purple-400"></i>
+        <span>Protocolo COP 1.0</span>
+        <i id="toggle-icon" class="fa-solid fa-chevron-right ml-2 text-slate-400"></i>
+    </button>
+
+    <!-- Panel Derecho (Context Operating Protocol) -->
+    <aside id="right-panel" class="fixed right-0 top-0 h-full w-[420px] glass-panel border-l border-slate-800/50 flex flex-col z-40 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] translate-x-0 shadow-2xl pt-20">
+
+        <!-- Header del Panel -->
+        <div class="px-6 pb-4 border-b border-slate-800/50 shrink-0">
+            <div class="flex items-center justify-between mb-1">
+                <h2 class="text-sm font-bold text-white flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Context Hub (COP 1.0)
+                </h2>
+                <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-slate-400">STANDARD SPEC</span>
+            </div>
+            <p class="text-xs text-slate-400">Define la intención. La IA interpreta el contexto real del Orbe.</p>
+        </div>
+
+        <div class="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+
+            <!-- Módulo en Foco -->
+            <div>
+                <h3 class="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-3">Círculo Seleccionado</h3>
+                <div id="selected-node-info" class="p-4 rounded-2xl bg-slate-900/50 border border-slate-700/50 flex items-start gap-4">
+                    <div id="info-icon" class="w-10 h-10 rounded-xl bg-cyan-900/30 text-cyan-400 flex items-center justify-center shrink-0 border border-cyan-800/50 text-lg">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between gap-2">
+                            <h4 id="info-title" class="font-bold text-slate-100 text-sm">Selecciona un módulo</h4>
+                            <span id="info-estado" class="text-[9px] font-mono px-1.5 py-0.5 rounded uppercase tracking-wide shrink-0"></span>
+                        </div>
+                        <p id="info-desc" class="text-xs text-slate-400 mt-1">Haz clic en un círculo del Orbe para aislar su contexto.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Intención Declarativa -->
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Intención del Cambio</h3>
+                    <span class="text-[10px] text-amber-400 bg-amber-950/30 px-2 py-0.5 rounded-full border border-amber-900/50"><i class="fa-solid fa-wand-magic-sparkles mr-1"></i>IA Guía</span>
+                </div>
+                <div class="space-y-3">
+                    <div>
+                        <label class="text-[11px] text-slate-300 block mb-1.5">¿Qué quieres lograr? (Objetivo)</label>
+                        <input id="intent-objective" type="text" oninput="updateSpec()" value="Mejorar la fluidez y reducir el tiempo de respuesta" class="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500 transition">
+                    </div>
+                    <div>
+                        <label class="text-[11px] text-slate-300 block mb-1.5">Reglas Inquebrantables (Restricciones)</label>
+                        <textarea id="intent-restrictions" oninput="updateSpec()" class="w-full bg-slate-950/50 border border-slate-800 rounded-lg px-3 py-2 text-xs text-rose-300 focus:outline-none focus:border-rose-500 transition h-16 resize-none">- No alterar la base de datos principal
+- Mantener diseño intuitivo para celulares</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Análisis de Conexiones (Blast Radius) -->
+            <div>
+                <h3 class="text-[10px] font-mono text-slate-500 uppercase tracking-widest mb-3">Impacto Neuronal</h3>
+                <div class="bg-slate-900/30 rounded-xl p-3 border border-slate-800/50">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs text-slate-300">Riesgo de Afectación:</span>
+                        <span id="risk-badge" class="text-[10px] font-bold text-emerald-400">SEGURO (15%)</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-slate-950 rounded-full overflow-hidden">
+                        <div id="risk-bar" class="h-full bg-emerald-500 w-[15%]"></div>
+                    </div>
+                    <div id="impact-list" class="mt-3 space-y-1.5">
+                        <!-- Llenado dinámicamente -->
+                        <div class="text-[11px] text-slate-400 flex items-center gap-2"><i class="fa-solid fa-circle-dot text-[8px]"></i> Esperando selección...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Protocolo Generado -->
+            <div>
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Paquete de Contexto</h3>
+                    <div class="flex gap-2">
+                        <button id="btn-optimize-ai" onclick="optimizeWithAI()" class="text-purple-400 hover:text-purple-300 transition text-[11px] font-bold flex items-center gap-1 bg-purple-900/30 px-2 py-1 rounded-md border border-purple-800/50">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Optimizar
+                        </button>
+                        <button onclick="copyCOP()" class="text-cyan-400 hover:text-cyan-300 transition text-[11px] font-bold flex items-center gap-1 bg-cyan-900/30 px-2 py-1 rounded-md border border-cyan-800/50">
+                            <i class="fa-solid fa-copy"></i> Copiar
+                        </button>
+                    </div>
+                </div>
+                <div class="relative">
+                    <textarea id="cop-spec" readonly class="w-full h-40 bg-[#060913] border border-slate-800/80 rounded-xl p-3 text-[10px] font-mono text-emerald-400 focus:outline-none shadow-inner resize-none"></textarea>
+                    <!-- Capa de Carga de IA -->
+                    <div id="ai-loading" class="absolute inset-0 bg-[#060913]/90 backdrop-blur-sm rounded-xl hidden flex-col items-center justify-center border border-purple-500/50 z-10">
+                        <i class="fa-solid fa-circle-notch fa-spin text-purple-400 text-2xl mb-2"></i>
+                        <span class="text-[10px] font-mono text-purple-300 animate-pulse mt-2">Sintetizando protocolo...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración de API Key (local, nunca se sube al repo) -->
+            <div>
+                <button onclick="toggleKeyBox()" class="text-[10px] font-mono text-slate-500 hover:text-slate-300 uppercase tracking-widest flex items-center gap-1.5">
+                    <i class="fa-solid fa-key"></i> Configurar API key de Gemini <i id="key-toggle-icon" class="fa-solid fa-chevron-down ml-1"></i>
+                </button>
+                <div id="key-box" class="hidden mt-2 p-3 rounded-xl bg-slate-900/40 border border-slate-800/60">
+                    <input id="gemini-key" type="password" placeholder="Pega tu API key de Gemini (aistudio.google.com)"
+                        class="w-full bg-slate-950/60 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500 transition">
+                    <p class="text-[10px] text-slate-500 mt-2 leading-relaxed">
+                        Se guarda solo en <code class="text-slate-400">localStorage</code> de este navegador. Nunca se
+                        envía a nuestro servidor ni se sube al repositorio — el botón "Optimizar" la usa para llamar
+                        directo a la API de Gemini desde tu máquina.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </aside>
+
+    <script>
+        // --- GRAFO REAL DEL ORBE (docs/orbe/modulos.json — misma fuente de verdad
+        // que consume la app y los agentes; ver docs/orbe/README.md) ---
+        const ESTADO_COLOR = {
+            disenado: '#64748b',
+            propuesta: '#eab308',
+            en_construccion: '#f97316',
+            piloto: '#3b82f6',
+            desplegado: '#10b981',
+            produccion: '#10b981',
+        };
+        const ESTADO_LABEL = {
+            disenado: 'Diseñado',
+            propuesta: 'Propuesta',
+            en_construccion: 'En construcción',
+            piloto: 'Piloto',
+            desplegado: 'Desplegado',
+            produccion: 'Producción',
+        };
+
+        const NEURAL_GRAPH = {
+            'orbe-nucleo': {
+                id: 'orbe-nucleo',
+                label: 'Orbe Central (Aura)',
+                desc: 'Núcleo agéntico: voz + conciencia de página. Orquesta la conversación y enruta al módulo correcto — no almacena datos, cada círculo guarda los suyos.',
+                color: '#b026ff',
+                icon: 'fa-brain',
+                estado: 'en_construccion',
+                connections: ['llave-identidad', 'expediente-familiar', 'tepictu-salud', 'tesoreria', 'obras', 'servicios-publicos', 'bienestar', 'pulso-nayarit', 'proteccion-digital'],
+                risk: 55,
+                rules: [
+                    'El núcleo orquesta, no almacena: los datos viven en cada módulo.',
+                    'Cualquier fallo de comprensión debe redirigir a un operador humano.',
+                ]
+            },
+            'llave-identidad': {
+                id: 'llave-identidad',
+                label: 'Llave e Identidad',
+                desc: 'Identidad ciudadana: Llave MX (adultos) y Llave Infantil (menores, con consentimiento del tutor).',
+                color: '#00f0ff',
+                icon: 'fa-fingerprint',
+                estado: 'propuesta',
+                connections: ['expediente-familiar', 'proteccion-digital', 'orbe-nucleo'],
+                risk: 90,
+                rules: [
+                    'La llave del tutor es transversal: cualquier módulo que toque datos de un menor consume su consentimiento — nunca implementa el suyo propio.',
+                    'Separación de bases con candado: verificación de edad y expediente médico nunca comparten base de datos.',
+                ]
+            },
+            'expediente-familiar': {
+                id: 'expediente-familiar',
+                label: 'Expediente Digital Familiar',
+                desc: 'Expediente único por CURP para padres y niños. Piloto verificado funcionando en Tepic.',
+                color: '#00ff9d',
+                icon: 'fa-folder-open',
+                estado: 'piloto',
+                connections: ['llave-identidad', 'tepictu-salud', 'bienestar', 'orbe-nucleo'],
+                risk: 85,
+                rules: [
+                    'La llave del tutor abre el expediente: sin consentimiento parental, no hay acceso.',
+                    'CURP como identificador único — no dupliques captura de datos ya existentes.',
+                ]
+            },
+            'tepictu-salud': {
+                id: 'tepictu-salud',
+                label: 'TEPICTU Salud',
+                desc: 'Triaje médico con IA que funciona sin conexión a internet.',
+                color: '#f43f5e',
+                icon: 'fa-stethoscope',
+                estado: 'disenado',
+                connections: ['expediente-familiar', 'bienestar', 'orbe-nucleo'],
+                risk: 80,
+                rules: [
+                    'El triaje deriva citas hacia Expediente Digital Familiar, no las agenda por su cuenta.',
+                    'Casos vulnerables se enrutan a Bienestar Social.',
+                    'Debe seguir operando sin conexión — no asumas backend siempre disponible.',
+                ]
+            },
+            'tesoreria': {
+                id: 'tesoreria',
+                label: 'Tesorería Digital',
+                desc: 'Pagos y cobros municipales.',
+                color: '#ffb800',
+                icon: 'fa-sack-dollar',
+                estado: 'disenado',
+                connections: ['servicios-publicos', 'obras', 'bienestar', 'orbe-nucleo'],
+                risk: 88,
+                rules: [
+                    'Los pagos no procesan tarjetas directamente — siempre a través de una pasarela segura.',
+                    'Un reporte con costo (Servicios Públicos) genera cargo aquí; no dupliques el cobro.',
+                ]
+            },
+            'obras': {
+                id: 'obras',
+                label: 'Trazabilidad de Obras',
+                desc: 'Seguimiento público de obra pública, con trazabilidad de fondos.',
+                color: '#f97316',
+                icon: 'fa-map-location-dot',
+                estado: 'disenado',
+                connections: ['servicios-publicos', 'tesoreria', 'orbe-nucleo'],
+                risk: 50,
+                rules: [
+                    'Una obra mayor se origina desde un reporte de Servicios Públicos — no crees obras huérfanas.',
+                    'Fondos como el FAISPIAM deben quedar trazados y auditables.',
+                ]
+            },
+            'servicios-publicos': {
+                id: 'servicios-publicos',
+                label: 'Servicios Públicos Inteligente',
+                desc: 'Reportes ciudadanos (baches, luz, agua) geolocalizados.',
+                color: '#8b5cf6',
+                icon: 'fa-lightbulb',
+                estado: 'disenado',
+                connections: ['obras', 'tesoreria', 'tepictu-salud', 'orbe-nucleo'],
+                risk: 45,
+                rules: [
+                    'Un reporte con costo fluye a Tesorería; una obra mayor fluye a Trazabilidad de Obras.',
+                    'Las coordenadas solo pueden registrarse dentro de los límites del municipio piloto.',
+                ]
+            },
+            'bienestar': {
+                id: 'bienestar',
+                label: 'Bienestar Social',
+                desc: 'Programas sociales y derivación de casos vulnerables.',
+                color: '#4C9F70',
+                icon: 'fa-hand-holding-heart',
+                estado: 'disenado',
+                connections: ['tepictu-salud', 'servicios-publicos', 'llave-identidad', 'tesoreria', 'orbe-nucleo'],
+                risk: 70,
+                rules: [
+                    'Recibe derivaciones de TEPICTU Salud (casos vulnerables) y respeta el consentimiento de Llave e Identidad.',
+                ]
+            },
+            'pulso-nayarit': {
+                id: 'pulso-nayarit',
+                label: 'Pulso Nayarit',
+                desc: 'Auditoría cívica con ledger criptográfico (Supabase/Postgres). El backend más maduro del ecosistema — deliberadamente aislado del resto, sin compartir identidad con los demás módulos.',
+                color: '#14b8a6',
+                icon: 'fa-chart-line',
+                estado: 'desplegado',
+                connections: ['orbe-nucleo'],
+                risk: 30,
+                rules: [
+                    'Aislamiento intencional: no compartas identidad ni base de datos con el resto del Orbe sin una decisión explícita que revierta ese diseño.',
+                    'El ledger es de solo-anexado — nunca reescribas registros históricos.',
+                ]
+            },
+            'proteccion-digital': {
+                id: 'proteccion-digital',
+                label: 'Protección Digital',
+                desc: 'Canal de denuncia digital disponible 24/7.',
+                color: '#D81E5B',
+                icon: 'fa-shield-halved',
+                estado: 'propuesta',
+                connections: ['llave-identidad', 'bienestar', 'orbe-nucleo'],
+                risk: 92,
+                rules: [
+                    'Consume el consentimiento parental de Llave e Identidad — nunca implementa el suyo propio.',
+                    'El anonimato del denunciante es la restricción más alta: ningún cambio debe poder revertirlo.',
+                ]
+            },
+        };
+
+        // --- SISTEMA DE LIENZO INFINITO ---
+        const canvasContainer = document.getElementById('canvas-container');
+        const canvasContent = document.getElementById('canvas-content');
+        const nodesLayer = document.getElementById('nodes-layer');
+        const synapseLayer = document.getElementById('synapse-layer');
+
+        let scale = 1;
+        let panX = window.innerWidth / 2; // Iniciar centrado
+        let panY = window.innerHeight / 2;
+        let isDragging = false;
+        let startX, startY;
+        let selectedNodeId = null;
+
+        // --- DISTRIBUCIÓN CIRCULAR DE NODOS ---
+        const nodeElements = {};
+        const radius = window.innerHeight * 0.4; // Radio dinámico basado en pantalla — 9 círculos necesitan más espacio
+
+        function initGraph() {
+            const nodes = Object.values(NEURAL_GRAPH);
+            const centerNodeId = 'orbe-nucleo';
+            const outerNodes = nodes.filter(n => n.id !== centerNodeId);
+
+            // Posicionar el núcleo al centro
+            createNodeElement(NEURAL_GRAPH[centerNodeId], 0, 0);
+
+            // Posicionar el resto en un círculo
+            const angleStep = (2 * Math.PI) / outerNodes.length;
+            outerNodes.forEach((node, index) => {
+                const angle = index * angleStep - (Math.PI / 2); // Empezar arriba
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+                createNodeElement(node, x, y);
+            });
+
+            drawSynapses();
+            applyTransform();
+
+            // Seleccionar el núcleo por defecto
+            selectNode(centerNodeId);
+        }
+
+        function createNodeElement(node, x, y) {
+            const el = document.createElement('div');
+            el.className = 'neural-node bg-slate-900 border border-slate-700 shadow-lg';
+            // Size modifier
+            const size = node.id === 'orbe-nucleo' ? 90 : 66;
+            const iconSize = node.id === 'orbe-nucleo' ? 'text-3xl' : 'text-lg';
+
+            el.style.width = `${size}px`;
+            el.style.height = `${size}px`;
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
+            el.style.setProperty('--glow-color', node.color);
+            el.style.borderColor = `${node.color}55`; // Transparencia hex
+
+            el.innerHTML = `
+                <i class="fa-solid ${node.icon} ${iconSize}" style="color: ${node.color}"></i>
+                <div class="node-label">${node.label}</div>
+            `;
+
+            el.onclick = (e) => {
+                e.stopPropagation();
+                selectNode(node.id);
+            };
+
+            nodesLayer.appendChild(el);
+            nodeElements[node.id] = { element: el, x, y, data: node };
+        }
+
+        function drawSynapses() {
+            synapseLayer.innerHTML = ''; // Clear
+
+            Object.values(nodeElements).forEach(sourceNode => {
+                sourceNode.data.connections.forEach(targetId => {
+                    const targetNode = nodeElements[targetId];
+                    if (!targetNode) return;
+
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    const id = `link-${sourceNode.data.id}-${targetId}`;
+                    path.setAttribute('id', id);
+                    path.setAttribute('class', 'synapse synapse-idle');
+
+                    // Curva Bezier suave entre los nodos
+                    const dx = targetNode.x - sourceNode.x;
+                    const dy = targetNode.y - sourceNode.y;
+
+                    path.setAttribute('d', `M${sourceNode.x},${sourceNode.y} Q${sourceNode.x + dx/2 + dy/4},${sourceNode.y + dy/2 - dx/4} ${targetNode.x},${targetNode.y}`);
+
+                    synapseLayer.appendChild(path);
+                });
+            });
+        }
+
+        // --- INTERACCIONES DEL LIENZO ---
+        canvasContainer.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.neural-node')) return; // No arrastrar si tocas un nodo
+            isDragging = true;
+            startX = e.clientX - panX;
+            startY = e.clientY - panY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            panX = e.clientX - startX;
+            panY = e.clientY - startY;
+            applyTransform();
+        });
+
+        window.addEventListener('mouseup', () => { isDragging = false; });
+
+        canvasContainer.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const zoomSensitivity = 0.001;
+            const delta = -e.deltaY * zoomSensitivity;
+            const newScale = Math.min(Math.max(0.3, scale + delta), 3);
+
+            // Zoom toward mouse pointer logic
+            const rect = canvasContainer.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            panX = mouseX - (mouseX - panX) * (newScale / scale);
+            panY = mouseY - (mouseY - panY) * (newScale / scale);
+            scale = newScale;
+
+            applyTransform();
+        }, { passive: false });
+
+        function applyTransform() {
+            canvasContent.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+
+            // Efecto parallax sútil en el fondo
+            canvasContainer.style.backgroundPosition = `${panX * 0.2}px ${panY * 0.2}px`;
+            canvasContainer.style.backgroundSize = `${40 * scale}px ${40 * scale}px`;
+        }
+
+        function zoomIn() { scale = Math.min(scale + 0.2, 3); applyTransform(); }
+        function zoomOut() { scale = Math.max(scale - 0.2, 0.3); applyTransform(); }
+        function resetView() {
+            scale = 1;
+            panX = window.innerWidth / 2;
+            panY = window.innerHeight / 2;
+            applyTransform();
+        }
+
+        // --- LÓGICA DE SELECCIÓN Y COP 1.0 ---
+        function selectNode(id) {
+            selectedNodeId = id;
+            const nodeInfo = NEURAL_GRAPH[id];
+
+            // 1. Actualizar Vista del Grafo
+            Object.values(nodeElements).forEach(n => {
+                n.element.classList.remove('active');
+                n.element.style.opacity = '0.3'; // Dim non-selected
+            });
+
+            nodeElements[id].element.classList.add('active');
+            nodeElements[id].element.style.opacity = '1';
+
+            // Resaltar sinapsis y nodos conectados
+            document.querySelectorAll('.synapse').forEach(path => {
+                path.setAttribute('class', 'synapse synapse-idle');
+                path.style.opacity = '0.1';
+            });
+
+            const connectedNodes = new Set([id]);
+
+            // Encontrar conexiones de salida
+            nodeInfo.connections.forEach(targetId => {
+                connectedNodes.add(targetId);
+                const path = document.getElementById(`link-${id}-${targetId}`);
+                if (path) {
+                    path.setAttribute('class', 'synapse synapse-active');
+                    path.style.setProperty('--glow-color', nodeInfo.color);
+                    path.style.opacity = '1';
+                }
+            });
+
+            // Encontrar conexiones de entrada
+            Object.values(NEURAL_GRAPH).forEach(sourceNode => {
+                if (sourceNode.connections.includes(id)) {
+                    connectedNodes.add(sourceNode.id);
+                    const path = document.getElementById(`link-${sourceNode.id}-${id}`);
+                    if (path) {
+                        path.setAttribute('class', 'synapse synapse-active');
+                        path.style.setProperty('--glow-color', sourceNode.color);
+                        path.style.opacity = '1';
+                    }
+                }
+            });
+
+            // Iluminar nodos conectados
+            connectedNodes.forEach(connId => {
+                if (connId !== id) {
+                    nodeElements[connId].element.style.opacity = '0.8';
+                }
+            });
+
+            // 2. Actualizar Panel Lateral
+            document.getElementById('info-icon').className = `w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border text-lg`;
+            document.getElementById('info-icon').style.backgroundColor = `${nodeInfo.color}30`;
+            document.getElementById('info-icon').style.color = nodeInfo.color;
+            document.getElementById('info-icon').style.borderColor = `${nodeInfo.color}50`;
+            document.getElementById('info-icon').innerHTML = `<i class="fa-solid ${nodeInfo.icon}"></i>`;
+
+            document.getElementById('info-title').innerText = nodeInfo.label;
+            document.getElementById('info-desc').innerText = nodeInfo.desc;
+
+            const estadoEl = document.getElementById('info-estado');
+            const estadoColor = ESTADO_COLOR[nodeInfo.estado] || '#64748b';
+            estadoEl.innerText = ESTADO_LABEL[nodeInfo.estado] || nodeInfo.estado;
+            estadoEl.style.color = estadoColor;
+            estadoEl.style.background = `${estadoColor}22`;
+            estadoEl.style.border = `1px solid ${estadoColor}55`;
+
+            // Update Risk Profile
+            const riskBadge = document.getElementById('risk-badge');
+            const riskBar = document.getElementById('risk-bar');
+            riskBar.style.width = `${nodeInfo.risk}%`;
+
+            if (nodeInfo.risk > 70) {
+                riskBadge.innerText = `CRÍTICO (${nodeInfo.risk}%)`;
+                riskBadge.className = 'text-[10px] font-bold text-rose-400';
+                riskBar.className = 'h-full bg-rose-500 w-full transition-all';
+            } else if (nodeInfo.risk > 30) {
+                riskBadge.innerText = `MODERADO (${nodeInfo.risk}%)`;
+                riskBadge.className = 'text-[10px] font-bold text-amber-400';
+                riskBar.className = 'h-full bg-amber-500 w-full transition-all';
+            } else {
+                riskBadge.innerText = `SEGURO (${nodeInfo.risk}%)`;
+                riskBadge.className = 'text-[10px] font-bold text-emerald-400';
+                riskBar.className = 'h-full bg-emerald-500 w-full transition-all';
+            }
+
+            // Mapear impactos
+            const impactList = document.getElementById('impact-list');
+            if (connectedNodes.size <= 1) {
+                impactList.innerHTML = `<div class="text-[11px] text-emerald-400"><i class="fa-solid fa-shield-check mr-1"></i> Aislamiento total. Sin impacto externo.</div>`;
+            } else {
+                let impactsHTML = '';
+                connectedNodes.forEach(cId => {
+                    if (cId !== id) {
+                        impactsHTML += `<div class="text-[11px] text-slate-300 flex items-center justify-between">
+                            <span><i class="fa-solid fa-arrow-right-arrow-left text-slate-500 text-[10px] mr-1.5"></i> ${NEURAL_GRAPH[cId].label}</span>
+                            <span class="text-[9px] text-amber-400/70 border border-amber-400/20 px-1 rounded">Verificar</span>
+                        </div>`;
+                    }
+                });
+                impactList.innerHTML = impactsHTML;
+            }
+
+            updateSpec();
+
+            // Asegurar que el panel está abierto
+            const panel = document.getElementById('right-panel');
+            if (panel.classList.contains('translate-x-full')) toggleRightPanel();
+        }
+
+        function updateSpec() {
+            if (!selectedNodeId) return;
+            const node = NEURAL_GRAPH[selectedNodeId];
+
+            const objective = document.getElementById('intent-objective').value || 'Sin definir';
+            const restrictionsRaw = document.getElementById('intent-restrictions').value;
+            const restrictionsList = restrictionsRaw.split('\n').map(r => r.trim()).filter(r => r);
+
+            const connectedStrs = Array.from(new Set([
+                ...node.connections,
+                ...Object.keys(NEURAL_GRAPH).filter(k => NEURAL_GRAPH[k].connections.includes(node.id))
+            ])).map(k => `"${NEURAL_GRAPH[k].label}"`);
+
+            const spec = `---
+COP_VERSION: 1.0
+PROJECT: "Nayarit Digital / Orbe Central"
+---
+[INTENT_BLOCK]
+Focus_Module: "${node.label}" (${ESTADO_LABEL[node.estado] || node.estado})
+Objective: "${objective}"
+
+[STRICT_RULES]
+${node.rules.map(r => `- ${r}`).join('\n')}
+${restrictionsList.map(r => r.startsWith('-') ? r : `- ${r}`).join('\n')}
+
+[NEURAL_DEPENDENCIES]
+Must_Keep_Intact: [${connectedStrs.join(', ')}]
+Risk_Level: ${node.risk}%
+
+[AI_INSTRUCTION]
+Tú eres un intérprete COP 1.0.
+Tu única misión es procesar el [INTENT_BLOCK] cumpliendo todas las [STRICT_RULES]. No asumas contexto fuera de los módulos listados. Si la solución afecta a [NEURAL_DEPENDENCIES], debes pedir confirmación antes de generar código.`;
+
+            document.getElementById('cop-spec').value = spec;
+        }
+
+        // --- MANEJO DEL UI ---
+        function toggleRightPanel() {
+            const panel = document.getElementById('right-panel');
+            const icon = document.getElementById('toggle-icon');
+
+            if (panel.classList.contains('translate-x-full')) {
+                panel.classList.remove('translate-x-full');
+                icon.classList.replace('fa-chevron-left', 'fa-chevron-right');
+            } else {
+                panel.classList.add('translate-x-full');
+                icon.classList.replace('fa-chevron-right', 'fa-chevron-left');
+            }
+        }
+
+        function toggleKeyBox() {
+            const box = document.getElementById('key-box');
+            const icon = document.getElementById('key-toggle-icon');
+            box.classList.toggle('hidden');
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-up');
+        }
+
+        function copyCOP() {
+            const specText = document.getElementById('cop-spec').value;
+            navigator.clipboard.writeText(specText).then(() => {
+                const btn = event.currentTarget;
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = `<i class="fa-solid fa-check text-emerald-400"></i> <span class="text-emerald-400">¡Copiado!</span>`;
+                setTimeout(() => { btn.innerHTML = originalHtml; }, 2000);
+            });
+        }
+
+        // --- API KEY LOCAL (nunca se sube al repo; vive solo en este navegador) ---
+        const KEY_STORAGE = 'cop1_gemini_key';
+        const keyInput = document.getElementById('gemini-key');
+        keyInput.value = localStorage.getItem(KEY_STORAGE) || '';
+        keyInput.addEventListener('input', () => {
+            localStorage.setItem(KEY_STORAGE, keyInput.value.trim());
+        });
+
+        // --- INTEGRACIÓN CON GEMINI API (LLM) ---
+        async function optimizeWithAI() {
+            if (!selectedNodeId) return;
+            const node = NEURAL_GRAPH[selectedNodeId];
+            const objective = document.getElementById('intent-objective').value || 'Sin definir';
+            const restrictions = document.getElementById('intent-restrictions').value || 'Ninguna';
+
+            const connectedStrs = Array.from(new Set([
+                ...node.connections,
+                ...Object.keys(NEURAL_GRAPH).filter(k => NEURAL_GRAPH[k].connections.includes(node.id))
+            ])).map(k => NEURAL_GRAPH[k].label);
+
+            const aiLoading = document.getElementById('ai-loading');
+            const copSpec = document.getElementById('cop-spec');
+            const btnOptimize = document.getElementById('btn-optimize-ai');
+
+            const apiKey = (localStorage.getItem(KEY_STORAGE) || '').trim();
+            if (!apiKey) {
+                document.getElementById('key-box').classList.remove('hidden');
+                document.getElementById('key-toggle-icon').classList.replace('fa-chevron-down', 'fa-chevron-up');
+                keyInput.focus();
+                copSpec.value = 'Falta tu API key de Gemini.\nAbre "Configurar API key de Gemini" abajo, pégala ahí y vuelve a intentar.\n\n' + copSpec.value;
+                return;
+            }
+
+            // Mostrar UI de carga
+            aiLoading.classList.remove('hidden');
+            aiLoading.classList.add('flex');
+            btnOptimize.disabled = true;
+            btnOptimize.style.opacity = '0.5';
+
+            const systemPrompt = "Eres un Arquitecto de Software Experto y el creador del estándar COP 1.0 (Context Operating Protocol). Tu tarea es reescribir y optimizar la intención del usuario y convertirla en un documento de contexto estructurado, asertivo y libre de ambigüedades. Este documento se enviará a otra IA (ej. Claude o ChatGPT) para que genere código seguro sin romper el ecosistema del Orbe Central de Nayarit Digital. Usa tono directivo. Devuelve SOLO el texto del protocolo, sin bloques de código markdown alrededor.";
+
+            const userPrompt = `Por favor, optimiza este contexto y genera la especificación COP 1.0:
+
+[DATOS DEL ENTORNO]
+- Módulo en Foco: ${node.label} — ${ESTADO_LABEL[node.estado] || node.estado} (${node.desc})
+- Riesgo de Modificación: ${node.risk}%
+- Dependencias Conectadas (No romper): ${connectedStrs.length > 0 ? connectedStrs.join(', ') : 'Ninguna'}
+- Reglas Arquitectónicas Inquebrantables: ${node.rules.join(' | ')}
+
+[DATOS DEL USUARIO]
+- Intención / Objetivo: ${objective}
+- Restricciones impuestas: ${restrictions}
+
+[FORMATO DE SALIDA ESPERADO COP 1.0]
+---
+COP_VERSION: 1.0
+PROJECT: "Nayarit Digital / Orbe Central"
+CONFIDENCE_SCORE: (calcula un estimado % de qué tan seguro es este cambio basado en el riesgo)
+---
+[INTENT_BLOCK]
+(Redacta el objetivo de forma técnica y cristalina)
+
+[STRICT_RULES]
+(Combina las reglas del módulo y las restricciones del usuario en formato de lista imperativa)
+
+[NEURAL_DEPENDENCIES]
+(Lista las dependencias de forma clara y advierte sobre el impacto en ellas)
+
+[AI_DIRECTIVE]
+(Un párrafo final estricto donde le ordenas a la IA que consumirá esto que no asuma nada fuera de este contexto y respete estrictamente los límites establecidos.)`;
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userPrompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            let retries = 3;
+            let delay = 1000;
+            let success = false;
+
+            while(retries > 0 && !success) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates[0].content?.parts[0]?.text) {
+                        copSpec.value = result.candidates[0].content.parts[0].text.trim();
+                        success = true;
+                    } else {
+                        throw new Error(result.error?.message || "Estructura de respuesta inválida");
+                    }
+                } catch (error) {
+                    console.warn("Fallo en la llamada a Gemini, reintentando...", error);
+                    retries--;
+                    if(retries === 0) {
+                        console.error("Error definitivo llamando a Gemini API:", error);
+                        copSpec.value = "Error al conectar con la IA de optimización: " + error.message + "\nRevisa que tu API key sea válida.\n\n" + copSpec.value;
+                    } else {
+                        await new Promise(r => setTimeout(r, delay));
+                        delay *= 2; // Exponential backoff para prevenir throttling
+                    }
+                }
+            }
+
+            // Ocultar UI de carga
+            aiLoading.classList.add('hidden');
+            aiLoading.classList.remove('flex');
+            btnOptimize.disabled = false;
+            btnOptimize.style.opacity = '1';
+        }
+
+        // Iniciar
+        window.onload = initGraph;
+
+        // Manejar redimensionamiento
+        window.addEventListener('resize', () => {
+            panX = window.innerWidth / 2;
+            panY = window.innerHeight / 2;
+            applyTransform();
+        });
+
+    </script>
+</body>
+</html>

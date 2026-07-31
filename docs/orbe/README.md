@@ -2,6 +2,15 @@
 
 **Nayarit Digital / ConnectX / SOATM** · Núcleo de inteligencia y gobernanza agéntica
 
+> **Herramientas de este directorio:**
+> [`orbe.html`](./orbe.html) es el diagrama-espejo de consulta (qué módulo hace qué).
+> [`cop.html`](./cop.html) es la herramienta de trabajo: un lienzo 3D del mismo
+> grafo con panel COP 1.0 para declarar la intención de un cambio, ver qué
+> módulos conectados hay que cuidar, y generar un bloque de contexto listo
+> para pegarle a un asistente de IA antes de tocar código. Ambos leen el
+> mismo grafo que `modulos.json` — si agregas o cambias un módulo ahí,
+> actualiza el `NEURAL_GRAPH` de `cop.html` también.
+
 > Regla de oro de este directorio: **un círculo = un módulo = un archivo.**
 > Para editar un módulo (su alcance, su estado, sus integraciones) se edita
 > únicamente su archivo en [`modulos/`](./modulos/). El registro
