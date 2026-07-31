@@ -117,7 +117,7 @@ export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
                  Estrategia <br/><em className="text-[var(--magenta)] italic">Nayarit Digital</em>
               </h1>
               <p className="text-[1.1rem] text-[var(--gris)] max-w-xl leading-relaxed">
-                 Dossier institucional para la transformación y simplificación digital en <strong>Bahía de Banderas, Xalisco y Tepic</strong>. Un plan integral para dignificar la labor del servidor público sindicalizado y elevar la calidad de vida ciudadana mediante la transparencia.
+                 Dossier institucional para la transformación y simplificación digital en <strong>Tepic</strong>, con ruta de réplica a los 20 municipios de Nayarit. Un plan integral para dignificar la labor del servidor público sindicalizado y elevar la calidad de vida ciudadana mediante la transparencia.
               </p>
            </motion.div>
         </div>
@@ -185,7 +185,7 @@ export function ExecutiveFolder({ onBack }: { onBack: () => void }) {
               </div>
               <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm font-mono text-[11px] text-slate-700 leading-relaxed max-h-[300px] overflow-y-auto">
                  <p className="font-bold mb-4">Asunto: Propuesta Institucional: Implementación de la Estrategia Nayarit Digital y Simplificación Administrativa</p>
-                 <p>Estimados Coordinadores Municipales de Bahía de Banderas, Xalisco y Tepic,</p>
+                 <p>Estimados coordinadores y coordinadoras del equipo municipal de Tepic,</p>
                  <br/>
                  <p>Me permito presentarles el dossier de la plataforma <strong>Nayarit Digital OS</strong>, un ecosistema integrado diseñado para consolidar administraciones eficientes, cercanas y totalmente transparentes para los ciudadanos de sus demarcaciones.</p>
                  <br/>
