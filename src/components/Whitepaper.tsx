@@ -31,7 +31,7 @@ export function Whitepaper() {
               NAYARIT <span className="text-rose-400">DIGITAL</span>
             </h1>
             <p className="text-xl md:text-2xl text-slate-300 max-w-2xl font-serif italic">
-              Cumplimiento Integral de la Ley Nacional de Simplificación y Digitalización en Bahía de Banderas, Xalisco y Tepic
+              Cumplimiento Integral de la Ley Nacional para Eliminar Trámites Burocráticos (LNETB) en Tepic, Nayarit — piloto replicable en los 2,470 municipios del país
             </p>
             
             <div className="pt-12 grid grid-cols-2 md:grid-cols-4 gap-6 text-xs uppercase tracking-widest font-bold text-slate-400">
@@ -61,11 +61,14 @@ export function Whitepaper() {
               <h2 className="text-2xl font-black uppercase tracking-tight">1. Resumen Ejecutivo</h2>
             </div>
             <p className="text-lg text-slate-600 leading-relaxed">
-              La Ley Nacional de Simplificación y Digitalización constitucional exige a los municipios transicionar hacia ventanillas únicas eficientes, seguras y libres de papel. Esto impulsa a los ayuntamientos a adoptar herramientas de identidad digital, interoperabilidad gubernamental, y trazabilidad total en beneficio de la ciudadanía.
+              La Ley Nacional para Eliminar Trámites Burocráticos (LNETB) constitucional exige a los municipios transicionar hacia ventanillas únicas eficientes, seguras y libres de papel. Esto impulsa a los ayuntamientos a adoptar herramientas de identidad digital, interoperabilidad gubernamental, y trazabilidad total en beneficio de la ciudadanía.
+            </p>
+            <p className="text-slate-600 leading-relaxed mb-8 text-[15px]">
+              El SOATM (Sistema Operativo de Administración Territorial) no es una invención del proyecto: es la implementación en software abierto de obligaciones que ya existen en los tres órdenes de gobierno — la LNETB federal (Arts. 2, 3, 66-76), la Ley de Gobierno Digital de Nayarit (Arts. 2, 5 y 6) y el marco normativo municipal de Tepic. La ley ya lo mandaba; nosotros lo descubrimos y lo programamos.
             </p>
             <div className="bg-rose-50 border-l-4 border-rose-500 p-6 rounded-r-xl">
               <p className="text-xl font-serif font-medium text-slate-800 italic">
-                Bahía de Banderas, Xalisco y Tepic lideran este cambio histórico.
+                Tepic lidera este cambio histórico — y el código abierto lo lleva a todo México.
               </p>
             </div>
             <p className="text-lg text-slate-600 leading-relaxed">
