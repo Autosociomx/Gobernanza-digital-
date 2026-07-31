@@ -36,7 +36,7 @@ export function DeveloperChecklist({ onLogout }: { onLogout: () => void }) {
       icon: Layers,
       color: 'text-magenta-500',
       tasks: [
-        { id: 'l1', label: 'Estructura Visual Editorial (Geraldine Style)', status: 'complete' },
+        { id: 'l1', label: 'Estructura Visual Editorial (estilo institucional)', status: 'complete' },
         { id: 'l2', label: 'Estrategia "Primero Tepic" (Sección)', status: 'complete' },
         { id: 'l3', label: 'Infraestructura Google Cloud (Sección)', status: 'complete' },
         { id: 'l4', label: 'Responsive Optimization', status: 'in-progress' },
