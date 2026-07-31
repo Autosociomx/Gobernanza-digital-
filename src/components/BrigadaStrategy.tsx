@@ -179,7 +179,7 @@ export function BrigadaStrategy() {
                </div>
                <div>
                   <h4 className="text-xs font-bold uppercase tracking-widest text-rose-300">Hoja de Ruta de Simplificación</h4>
-                  <p className="text-lg font-serif">Plan Piloto: Bahía de Banderas, Xalisco y Tepic</p>
+                  <p className="text-lg font-serif">Plan Piloto: Tepic (ruta estatal a los 20 municipios)</p>
                </div>
             </div>
 
