@@ -145,6 +145,11 @@ export function C5Dashboard({ onLogout, initialModule }: { onLogout: () => void;
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden bg-[#0a0a0c]">
+        {/* Banda DEMO persistente: todos los datos del C5 son simulados hasta conectar los servidores de cada dependencia */}
+        <div className="bg-amber-400 text-slate-950 text-[11px] font-black uppercase tracking-widest px-6 py-2 flex items-center justify-between z-20">
+          <span>⚠ Vista demostrativa — datos simulados</span>
+          <span className="hidden md:inline normal-case font-semibold tracking-normal">Las cifras reales aparecerán al conectar los servidores de cada dependencia municipal</span>
+        </div>
         {/* Header */}
         <header className="h-16 border-b border-slate-800 flex items-center justify-between px-6 bg-[#161920]/50 backdrop-blur-md sticky top-0 z-10">
           <div className="flex items-center gap-4">
@@ -167,7 +172,7 @@ export function C5Dashboard({ onLogout, initialModule }: { onLogout: () => void;
               <span className="text-xs font-mono text-emerald-400">STATE: ONLINE</span>
             </div>
             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-rose-400 to-orange-400 border-2 border-slate-800 overflow-hidden">
-               <img src="/geraldine-perfil.jpg" alt="Profile" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1586996292898-71f4036c4e07?w=100&h=100&fit=crop&crop=faces" }}/>
+               <img src="/perfil-institucional.jpg" alt="Perfil institucional" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1586996292898-71f4036c4e07?w=100&h=100&fit=crop&crop=faces" }}/>
             </div>
           </div>
         </header>
@@ -314,9 +319,9 @@ function TesoreriaView() {
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[
-          { label: 'Recaudación Semanal', value: '$2.4M', icon: TrendingUp, color: 'text-emerald-400' },
-          { label: 'Pagos Digitales', value: '84%', icon: CheckCircle2, color: 'text-purple-400' },
-          { label: 'Trámites Activos', value: '1,240', icon: Activity, color: 'text-blue-400' }
+          { label: 'Recaudación Semanal (simulada)', value: '$2.4M', icon: TrendingUp, color: 'text-emerald-400' },
+          { label: 'Pagos Digitales (simulado)', value: '84%', icon: CheckCircle2, color: 'text-purple-400' },
+          { label: 'Trámites Activos (simulado)', value: '1,240', icon: Activity, color: 'text-blue-400' }
         ].map((stat, i) => (
           <div key={i} className="bg-[#161920] border border-slate-800 rounded-xl p-5 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-br from-slate-800/0 to-slate-800/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -777,9 +782,9 @@ function IAView() {
   const [autoSpeak, setAutoSpeak] = useState(false);
 
   const greets = {
-    es: 'Presidenta Geraldine Ponce, el Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?',
-    cora: "Presidenta Geraldine Ponce, ConnectX IA amu'u tyu'un. ¿Tyu'un ne'ij tyu'uti'in Tepic?",
-    wixarika: 'Geraldine Ponce keniu, ConnectX IA keniu. ¿Kewa pikanetsi\'iwau Tepic?'
+    es: 'Bienvenida/o al C5 de la administración municipal. El Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?',
+    cora: "ConnectX IA amu'u tyu'un (bienvenida/o). ¿Tyu'un ne'ij tyu'uti'in Tepic?",
+    wixarika: 'ConnectX IA keniu (bienvenida/o). ¿Kewa pikanetsi\'iwau Tepic?'
   };
 
   const getPageContext = React.useCallback(() => {
@@ -888,7 +893,7 @@ function IAView() {
                    {msg.content}
                  </div>
                  <span className="text-[10px] text-slate-600 mt-3 font-black uppercase tracking-widest px-2">
-                   {msg.role === 'user' ? 'G. Ponce' : 'ConnectX Strategic AI'} · {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                   {msg.role === 'user' ? 'Funcionaria/o' : 'ConnectX Strategic AI'} · {new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                  </span>
               </motion.div>
             ))}
@@ -977,7 +982,7 @@ function IAView() {
               <div className="mt-12 p-6 bg-purple-600/5 rounded-3xl border border-purple-600/20">
                  <p className="text-[10px] text-purple-400 font-black uppercase tracking-widest mb-3">Reporte Algorítmico:</p>
                  <p className="text-sm text-slate-400 italic leading-relaxed font-medium">
-                   "La integración del módulo de recaudación digital en Tepic ha superado las proyecciones iniciales, eliminando el 100% de la opacidad en transferencias de ventanilla."
+                   "Simulación de reporte algorítmico: así se leería un análisis del módulo de recaudación digital en Tepic una vez conectados los datos reales de Tesorería. Cifra y redacción demostrativas."
                  </p>
               </div>
            </div>
@@ -1127,10 +1132,10 @@ function ObservatorioView() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Índice Madurez (IMDM)', val: '72/100', status: '+4 pts este mes', color: 'text-cyan-400' },
-          { label: 'Gobernanza Digital', val: 'Ley Art. 42', status: 'Firma E. Activa', color: 'text-emerald-400' },
-          { label: 'Ciudadanos Registrados', val: '45,210', status: '↑ 14% vs mayo', color: 'text-purple-400' },
-          { label: 'Presupuesto Federal', val: 'FORTAMUN', status: 'Ejecución: 92%', color: 'text-amber-400' },
+          { label: 'Índice Madurez (simulado)', val: '72/100', status: 'Dato demostrativo', color: 'text-cyan-400' },
+          { label: 'Gobernanza Digital', val: 'LGD Nayarit', status: 'Arts. 2, 5 y 6: obliga a Ayuntamientos', color: 'text-emerald-400' },
+          { label: 'Ciudadanos Registrados (simulado)', val: '45,210', status: 'Dato demostrativo', color: 'text-purple-400' },
+          { label: 'Presupuesto Federal (simulado)', val: 'FORTAMUN', status: 'Ejecución: dato demostrativo', color: 'text-amber-400' },
         ].map((kpi, i) => (
           <div key={i} className="bg-[#161920] border border-slate-800 rounded-xl p-5 border-b-[3px] border-b-cyan-500/50">
             <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-1">{kpi.label}</p>
@@ -1156,13 +1161,13 @@ function ObservatorioView() {
                 onClick={() => setActiveStrategyTab('blueocean')}
                 className={cn("text-[10px] font-black uppercase tracking-widest pb-3 px-2 transition-all whitespace-nowrap", activeStrategyTab === 'blueocean' ? "text-indigo-400 border-b-2 border-indigo-400" : "text-slate-500 hover:text-slate-300")}
               >
-                Océanos Azules (Oro 20%)
+                Océanos Azules (uso interno)
               </button>
               <button 
                 onClick={() => setActiveStrategyTab('business')}
                 className={cn("text-[10px] font-black uppercase tracking-widest pb-3 px-2 transition-all whitespace-nowrap", activeStrategyTab === 'business' ? "text-emerald-400 border-b-2 border-emerald-400" : "text-slate-500 hover:text-slate-300")}
               >
-                Negocios Escalables
+                Negocios Escalables (uso interno)
               </button>
            </div>
 
@@ -1176,11 +1181,12 @@ function ObservatorioView() {
                             <h5 className="text-sm font-bold text-white uppercase tracking-tight">Ley de Gobierno Digital Nayarit</h5>
                          </div>
                          <p className="text-[11px] text-slate-400 leading-relaxed">
-                            Marco legal vigente que habilita la interoperabilidad entre dependencias municipales y estatales. El 100% de los trámites deben ser digitales para el cierre de 2026.
+                            Marco legal vigente que obliga a los Ayuntamientos al gobierno digital con interoperabilidad, expediente digital e identidad electrónica. El SOATM es su implementación en software abierto.
                          </p>
                          <div className="mt-4 flex flex-wrap gap-2">
-                            <span className="text-[8px] bg-cyan-500/10 text-cyan-400 px-2 py-1 rounded font-bold uppercase">Art. 12: Firma Electrónica</span>
-                            <span className="text-[8px] bg-cyan-500/10 text-cyan-400 px-2 py-1 rounded font-bold uppercase">Art. 45: Pagos Digitales</span>
+                            <span className="text-[8px] bg-cyan-500/10 text-cyan-400 px-2 py-1 rounded font-bold uppercase">Art. 2: Obliga a Ayuntamientos</span>
+                            <span className="text-[8px] bg-cyan-500/10 text-cyan-400 px-2 py-1 rounded font-bold uppercase">Art. 5: Expediente Digital e Interoperabilidad</span>
+                            <span className="text-[8px] bg-cyan-500/10 text-cyan-400 px-2 py-1 rounded font-bold uppercase">Art. 6: Simplificación Administrativa</span>
                          </div>
                       </div>
                       <div className="bg-slate-900/50 rounded-xl p-5 border border-slate-800 hover:border-amber-500/50 transition-colors group">
@@ -1238,7 +1244,7 @@ function ObservatorioView() {
                          </div>
                          <div className="p-4 bg-emerald-500/5 rounded-xl border border-emerald-500/20">
                             <h5 className="text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-                               <Activity className="w-3 h-3" /> Agrotech (Oro de Océanos)
+                               <Activity className="w-3 h-3" /> Agro Digital (uso interno)
                             </h5>
                             <p className="text-[11px] text-slate-300 leading-relaxed">
                                Digitalización del 20% de los productores que generan el 80% del valor. Marketplace directo al consumidor eliminando intermediarios físicos.
@@ -1518,10 +1524,10 @@ function MetricView() {
 function GabineteView() {
   const officials = [
     {
-      name: "Geraldine Ponce",
-      title: "Presidenta Municipal",
+      name: "Presidencia Municipal",
+      title: "Titular del Ejecutivo",
       department: "Presidencia",
-      kpiName: "Aprobación Ciudadana",
+      kpiName: "Aprobación Ciudadana (simulada)",
       kpiValue: "84%",
       kpiStatus: "positive",
       avatar: "https://images.unsplash.com/photo-1586996292898-71f4036c4e07?w=200&h=200&fit=crop&crop=faces",
@@ -1529,10 +1535,10 @@ function GabineteView() {
       projects: 12
     },
     {
-      name: "Alejandro Galván",
-      title: "Jefe de Gabinete",
+      name: "Jefatura de Gabinete",
+      title: "Titular de Gabinete",
       department: "Gabinete",
-      kpiName: "Eficiencia Operativa",
+      kpiName: "Eficiencia Operativa (simulada)",
       kpiValue: "92%",
       kpiStatus: "positive",
       avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop&crop=faces",
@@ -1540,10 +1546,10 @@ function GabineteView() {
       projects: 8
     },
     {
-      name: "Mtra. Blanca Simancas",
-      title: "Secretaria del Ayuntamiento",
+      name: "Secretaría del Ayuntamiento",
+      title: "Titular de Secretaría",
       department: "Secretaría",
-      kpiName: "Trámites Digitalizados",
+      kpiName: "Trámites Digitalizados (simulada)",
       kpiValue: "80%",
       kpiStatus: "neutral",
       avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=faces",
@@ -1551,10 +1557,10 @@ function GabineteView() {
       projects: 5
     },
     {
-      name: "Lic. Carlos Robles",
-      title: "Director de Obras Públicas",
+      name: "Dirección de Obras Públicas",
+      title: "Titular de Obras",
       department: "Infraestructura",
-      kpiName: "Obras en Tiempo",
+      kpiName: "Obras en Tiempo (simulada)",
       kpiValue: "88%",
       kpiStatus: "positive",
       avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&h=200&fit=crop&crop=faces",
@@ -1567,29 +1573,29 @@ function GabineteView() {
     <div className="space-y-8">
       <div>
         <h2 className="text-2xl font-serif font-black text-white mb-2">Gabinete en Tiempo Real</h2>
-        <p className="text-slate-400">Adiós al directorio web tradicional. Aquí los ciudadanos evalúan el desempeño real, el tiempo de respuesta y la eficiencia de cada servidor público. Cuentas claras para construir confianza.</p>
+        <p className="text-slate-400">Adiós al directorio web tradicional: desempeño, tiempo de respuesta y eficiencia por dependencia, no por nombre. Cuentas claras para construir confianza. <span className="text-amber-400 font-bold">Todos los datos de esta vista son simulados de demostración.</span></p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-[#161920] rounded-xl p-6 border border-slate-800">
           <div className="text-slate-400 text-sm font-medium mb-1">Total Gabinete</div>
           <div className="text-3xl font-black text-white">42</div>
-          <div className="text-emerald-400 text-sm font-bold mt-2">100% Declaración 3de3</div>
+          <div className="text-emerald-400 text-sm font-bold mt-2">Meta: 100% Declaración 3de3</div>
         </div>
         <div className="bg-[#161920] rounded-xl p-6 border border-slate-800">
-          <div className="text-slate-400 text-sm font-medium mb-1">Promedio Respuesta</div>
+          <div className="text-slate-400 text-sm font-medium mb-1">Promedio Respuesta (simulado)</div>
           <div className="text-3xl font-black text-white">18h</div>
-          <div className="text-emerald-400 text-sm font-bold mt-2">-40% vs Administración Anterior</div>
+          <div className="text-emerald-400 text-sm font-bold mt-2">Dato demostrativo</div>
         </div>
         <div className="bg-[#161920] rounded-xl p-6 border border-slate-800">
-          <div className="text-slate-400 text-sm font-medium mb-1">Evaluación Ciudadana</div>
+          <div className="text-slate-400 text-sm font-medium mb-1">Evaluación Ciudadana (simulada)</div>
           <div className="text-3xl font-black text-emerald-400">8.9/10</div>
-          <div className="text-slate-500 text-sm mt-2">Basado en NayaritID</div>
+          <div className="text-slate-500 text-sm mt-2">Dato demostrativo</div>
         </div>
         <div className="bg-[#161920] rounded-xl p-6 border border-slate-800">
-          <div className="text-slate-400 text-sm font-medium mb-1">Iniciativas Cumplidas</div>
+          <div className="text-slate-400 text-sm font-medium mb-1">Iniciativas Cumplidas (simulado)</div>
           <div className="text-3xl font-black text-white">142</div>
-          <div className="text-emerald-400 text-sm font-bold mt-2">Validadas por C5</div>
+          <div className="text-slate-500 text-sm mt-2">Dato demostrativo</div>
         </div>
       </div>
 
