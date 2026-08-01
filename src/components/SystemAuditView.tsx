@@ -81,12 +81,9 @@ export function SystemAuditView({ onBack }: { onBack: () => void }) {
     addLog('Conectando con Firestore Nayarit Digital...', 'info');
 
     const totalSteps = collections.length + 1;
-    let currentStep = 0;
+    let completedSteps = 0;
 
-    for (const col of collections) {
-      currentStep++;
-      setProgress((currentStep / totalSteps) * 100);
-      
+    await Promise.all(collections.map(async (col) => {
       addLog(`Revisando integridad de la colección: [${col.name}]`, 'info');
       updateCollectionStatus(col.name, 'checking');
 
@@ -120,7 +117,10 @@ export function SystemAuditView({ onBack }: { onBack: () => void }) {
       
       // Artificial delay for visual feedback
       await new Promise(r => setTimeout(r, 600));
-    }
+
+      completedSteps++;
+      setProgress((completedSteps / totalSteps) * 100);
+    }));
 
     setProgress(100);
     addLog('✅ Auditoría completada. El sistema se encuentra en estado de Gobernanza Digital.', 'success');
