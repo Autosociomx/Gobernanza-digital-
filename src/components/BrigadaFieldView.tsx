@@ -11,7 +11,6 @@ import {
   ChevronRight,
   ClipboardList,
   Coins,
-  Target,
   AlertCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -19,14 +18,18 @@ import { cn } from '../lib/utils';
 
 export function BrigadaFieldView() {
   const [step, setStep] = useState<'welcome' | 'map' | 'survey' | 'success' | 'legal'>('welcome');
-  const [activePriority, setActivePriority] = useState<'recaudacion' | 'servicios' | 'voto'>('recaudacion');
+  const [activePriority, setActivePriority] = useState<'recaudacion' | 'servicios'>('recaudacion');
   const [isOnline, setIsOnline] = useState(true);
   const [scanning, setScanning] = useState(false);
 
+  // Solo filtros de gestión pública. Jamás filtros electorales en la
+  // plataforma municipal: medir "potencial de voto" con infraestructura
+  // pública es uso electoral de recursos públicos (falta grave). Si se
+  // requiere herramienta de territorio para campaña, es un sistema 100%
+  // separado: otro código, otra base de datos, financiamiento privado.
   const priorities = {
     recaudacion: { label: 'Deuda Predial', color: 'text-amber-400', icon: Coins },
-    servicios: { label: 'Reportes Fallas', color: 'text-cyan-400', icon: AlertCircle },
-    voto: { label: 'Potencial Voto', color: 'text-magenta-400', icon: Target }
+    servicios: { label: 'Reportes Fallas', color: 'text-cyan-400', icon: AlertCircle }
   };
   
   // Simulation of offline detection
