@@ -22,7 +22,7 @@ export function PitchDefense() {
       icon: Coins,
       question: "¿Cómo se financia este proyecto de digitalización si el presupuesto municipal es limitado?",
       context: "Inquietud del Tesorero o Responsable de Presupuestos.",
-      answer: "No requiere licencias de software privativas ni dependencias de grandes consorcios de TI externos. Se basa en soberanía tecnológica y el marco de ConnectX. La inversión se amortiza de inmediato a través del ahorro masivo en consumibles de oficina (papel, toner, archivo físico) y la optimización de tiempos en los procesos de atención municipal de Bahía de Banderas, Xalisco y Tepic.",
+      answer: "No requiere licencias de software privativas ni dependencias de grandes consorcios de TI externos. Se basa en soberanía tecnológica y el marco de ConnectX. La inversión se amortiza de inmediato a través del ahorro masivo en consumibles de oficina (papel, toner, archivo físico) y la optimización de tiempos en los procesos de atención municipal de Tepic.",
       keywords: ["Soberanía Tecnológica", "Ahorro Operativo", "Amortización Rápida"]
     },
     {

@@ -21,7 +21,7 @@ import {
 export const TesisCienciaPolitica = () => {
   // Document Center Tabs
   // 0: Dossier ConnectX Financial
-  // 1: Escalera de Valor & Estrategia Política (Geraldine Ponce PDF)
+  // 1: Escalera de Valor & Estrategia Política (continuidad institucional)
   // 2: Roadmap Ecosistema 48 Dependencias
   const [activeDocument, setActiveDocument] = useState<number>(1);
   const [selectedMunSize, setSelectedMunSize] = useState<'pequeno' | 'mediano' | 'grande'>('mediano');
@@ -66,7 +66,7 @@ export const TesisCienciaPolitica = () => {
       <div className="bg-slate-900 border-b border-slate-800 p-2 md:p-4 grid grid-cols-1 sm:grid-cols-3 gap-2 sticky top-[0px] z-30 shadow-lg">
         {[
           { icon: <Briefcase size={16} />, title: "1. Dossier ConnectX", subtitle: "Modelo Financiero" },
-          { icon: <TrendingUp size={16} />, title: "2. Escalera de Valor & Política", subtitle: "Gobernatura 2027 (Caso G. Ponce)" },
+          { icon: <TrendingUp size={16} />, title: "2. Escalera de Valor & Política", subtitle: "Continuidad Institucional 2027" },
           { icon: <Database size={16} />, title: "3. Hoja de Ruta Téc.", subtitle: "Ecosistema 48 Dependencias" }
         ].map((doc, idx) => (
           <button
@@ -215,7 +215,7 @@ export const TesisCienciaPolitica = () => {
             </motion.div>
           )}
 
-          {/* DOCUMENT 1 (NEW): VALUE LADDER & POLITICAL STRATEGY (GERALDINE PDF INCLUDED) */}
+          {/* DOCUMENT 1: VALUE LADDER & INSTITUTIONAL CONTINUITY */}
           {activeDocument === 1 && (
             <motion.div
               key="doc2"
@@ -234,28 +234,28 @@ export const TesisCienciaPolitica = () => {
                 
                 <div className="relative z-10 flex-grow space-y-4">
                   <div className="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md">
-                    CASO DE ÉXITO GUBERNAMENTAL
+                    CASO DE ESTUDIO · CONTINUIDAD INSTITUCIONAL
                   </div>
-                  <h2 className="text-4xl md:text-5xl font-serif italic mb-1 text-rose-100">Geraldine Ponce</h2>
-                  <h3 className="text-lg md:text-2xl font-bold">Presidenta Municipal de Tepic <br/><span className="text-rose-200 font-light">Candidata a Gobernadora de Nayarit 2027</span></h3>
-                  
+                  <h2 className="text-4xl md:text-5xl font-serif italic mb-1 text-rose-100">El SOATM es del municipio</h2>
+                  <h3 className="text-lg md:text-2xl font-bold">Estándar abierto, agnóstico a candidaturas <br/><span className="text-rose-200 font-light">El sistema permanece aunque cambie cualquier administración</span></h3>
+
                   <p className="text-sm md:text-base font-light text-rose-100 mt-4 max-w-xl italic">
-                    "La gobernante que ya transformó Tepic. Ahora lleva ese cambio a los 20 municipios de Nayarit."
+                    "Ninguna administración es dueña del sistema: lo adopta el cabildo como estándar público, lo opera la plantilla certificada y lo audita la ciudadanía. Cambia el gobierno; el SOATM sigue."
                   </p>
                 </div>
 
                 <div className="relative z-10 shrink-0 grid grid-cols-2 gap-3 w-full md:w-auto">
                   <div className="bg-slate-900/50 p-4 rounded-xl text-center backdrop-blur-md border border-white/10">
-                    <p className="text-2xl font-black text-white">30</p>
-                    <p className="text-[9px] uppercase tracking-wider text-rose-200 font-bold">AÑOS</p>
+                    <p className="text-2xl font-black text-white">20</p>
+                    <p className="text-[9px] uppercase tracking-wider text-rose-200 font-bold">MUNICIPIOS EN RUTA</p>
                   </div>
                   <div className="bg-slate-900/50 p-4 rounded-xl text-center backdrop-blur-md border border-white/10">
-                    <p className="text-2xl font-black text-white">1ª</p>
-                    <p className="text-[9px] uppercase tracking-wider text-rose-200 font-bold">MUJER PRESIDENTA</p>
+                    <p className="text-2xl font-black text-white">48</p>
+                    <p className="text-[9px] uppercase tracking-wider text-rose-200 font-bold">DEPENDENCIAS</p>
                   </div>
                   <div className="bg-slate-900/50 p-4 rounded-xl text-center backdrop-blur-md border border-white/10">
-                    <p className="text-2xl font-black text-white">519K</p>
-                    <p className="text-[9px] uppercase tracking-wider text-rose-200 font-bold">SEGUIDORES IG</p>
+                    <p className="text-2xl font-black text-white">0</p>
+                    <p className="text-[9px] uppercase tracking-wider text-rose-200 font-bold">DESPIDOS · PACTO</p>
                   </div>
                   <div className="bg-slate-900/50 p-4 rounded-xl text-center backdrop-blur-md border border-white/10">
                     <p className="text-2xl font-black text-white">100%</p>
@@ -268,8 +268,8 @@ export const TesisCienciaPolitica = () => {
               <div className="bg-white p-8 md:p-12 rounded-[2.5rem] border border-slate-200/60 shadow-sm">
                 <div className="text-center max-w-3xl mx-auto mb-12">
                   <span className="text-xs font-bold text-rose-600 uppercase tracking-[0.2em] mb-2 block">LA ESCALERA DE VALOR</span>
-                  <h3 className="text-3xl font-black text-slate-800 tracking-tight">Cómo ConnectX escala y retiene el poder político</h3>
-                  <p className="text-slate-500 text-sm mt-3">Desde el primer contacto exploratorio hasta la consolidación del ecosistema tecnológico estatal para la campaña a la Gobernatura 2027.</p>
+                  <h3 className="text-3xl font-black text-slate-800 tracking-tight">Cómo ConnectX escala y consolida la capacidad institucional</h3>
+                  <p className="text-slate-500 text-sm mt-3">Desde el primer contacto exploratorio hasta la consolidación del ecosistema tecnológico estatal como estándar público que trasciende administraciones.</p>
                 </div>
 
                 <div className="relative">
@@ -284,7 +284,7 @@ export const TesisCienciaPolitica = () => {
                           <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Día 1 / Oferta Inicial</p>
                           <h4 className="text-lg font-bold text-slate-900 mb-2">Auditoría de Fricción (El Acercamiento)</h4>
                           <p className="text-xs text-slate-600 leading-relaxed">
-                            <strong>¿Cómo inicia la relación?:</strong> Ofrecemos a la gobernante un análisis de datos gratuito de sus redes sociales (519K seguidores). Demostramos cuantitativamente dónde está la frustración ciudadana (baches, luminarias) y cómo el sistema actual pierde los folios.
+                            <strong>¿Cómo inicia la relación?:</strong> Ofrecemos al ayuntamiento un análisis gratuito de sus canales de atención ciudadana. Demostramos cuantitativamente dónde está la fricción ciudadana (baches, luminarias) y cómo el sistema actual pierde los folios.
                           </p>
                         </div>
                       </div>
@@ -305,7 +305,7 @@ export const TesisCienciaPolitica = () => {
                           <p className="text-[10px] font-bold uppercase tracking-wider text-blue-500 mb-1">Día 30 / El Quick Win</p>
                           <h4 className="text-lg font-bold text-slate-900 mb-2">Módulo Ciudadano (Bot Tepic)</h4>
                           <p className="text-xs text-slate-600 leading-relaxed relative z-10">
-                            <strong>El día a día:</strong> Se instala el módulo de atención inmediata por WhatsApp. Tepicenses comienzan a reportar sin ventanillas ni colas. El político obtiene victorias tempranas, subiendo su aprobación en semanas al demostrar que <em>"sí escucha y moderniza"</em>.
+                            <strong>El día a día:</strong> Se instala el módulo de atención inmediata por WhatsApp. Tepicenses comienzan a reportar sin ventanillas ni colas. La administración obtiene resultados tempranos, elevando la confianza ciudadana en semanas al demostrar que <em>"sí escucha y moderniza"</em>.
                           </p>
                           <div className="absolute -bottom-4 -right-4 opacity-10 text-blue-500"><MessageSquare size={100} /></div>
                         </div>
@@ -319,7 +319,7 @@ export const TesisCienciaPolitica = () => {
                           <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-500 mb-1">Mes 6 / Core Business</p>
                           <h4 className="text-lg font-bold text-slate-900 mb-2">Gobernanza Total Tepic</h4>
                           <p className="text-xs text-slate-600 leading-relaxed">
-                            <strong>El Ecosistema:</strong> Se activan las <strong>Obras Trazables en Vivo (100% Transparencia)</strong>. ConnectX entra a Tesorería, Salud y Permisos. Se configura el panel de C5 para que la Alcaldesa supervise cada métrica desde su celular.
+                            <strong>El Ecosistema:</strong> Se activan las <strong>Obras Trazables en Vivo (100% Transparencia)</strong>. ConnectX entra a Tesorería, Salud y Permisos. Se configura el panel de C5 para que la presidencia municipal supervise cada métrica desde su celular.
                           </p>
                         </div>
                       </div>
@@ -341,9 +341,9 @@ export const TesisCienciaPolitica = () => {
                             <Cpu size={80} />
                           </div>
                           <p className="text-[10px] font-bold uppercase tracking-wider text-rose-500 mb-1">Año 3+ / Escalabilidad y El MOAT</p>
-                          <h4 className="text-lg font-bold text-white mb-2">Gobernatura Nayarit 2027</h4>
+                          <h4 className="text-lg font-bold text-white mb-2">Ruta Estatal Nayarit 2027</h4>
                           <p className="text-xs text-slate-300 leading-relaxed relative z-10">
-                            <strong>El Legado Político:</strong> ConnectX se expande a los <strong>20 municipios por digitalizar</strong>, orquestando el Agro, Seguridad y Economía estatal. Nadie puede competir contra esta cantidad histórica de Big Data territorial. Representa el salto indiscutible a la Gubernatura con una plataforma científica e irrefutable.
+                            <strong>El legado institucional:</strong> ConnectX se expande a los <strong>20 municipios por digitalizar</strong>, orquestando el agro, la seguridad y la economía estatal. La inteligencia territorial acumulada se convierte en infraestructura pública permanente: un estándar estatal verificable que trasciende a cualquier administración.
                           </p>
                         </div>
                       </div>
@@ -353,7 +353,7 @@ export const TesisCienciaPolitica = () => {
 
                 <div className="mt-12 text-center p-4 bg-slate-50 border border-slate-100 rounded-xl">
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Resultado de la Escalera</p>
-                  <p className="text-sm font-semibold text-slate-700">"El político inicia contratando un bot; termina consolidando su plataforma presidencial gracias a la inteligencia de datos."</p>
+                  <p className="text-sm font-semibold text-slate-700">"El municipio inicia con un bot de atención; termina consolidando un estándar estatal de gobierno digital gracias a la inteligencia de datos."</p>
                 </div>
               </div>
             </motion.div>

@@ -16,9 +16,9 @@ export function BananaCommandCenter({ onBack }: { onBack: () => void }) {
     },
     {
       id: 'academy',
-      title: 'Estrategia NLP de Academia',
-      description: 'Anclajes psicológicos para la certificación sindical.',
-      prompt: 'Utiliza técnicas de Programación Neurolingüística (PNL) para motivar al servidor público. Evita palabras que impliquen reemplazo. Usa términos como "Ampliación de Capacidades" y "Soberanía Profesional". El tono debe ser inspirador pero directivo.'
+      title: 'Estrategia de Comunicación de Academia',
+      description: 'Comunicación honesta para la certificación sindical.',
+      prompt: 'Comunica con claridad y honestidad al servidor público: el sistema amplifica sus capacidades y NO sustituye personal. Afirma explícitamente el pacto de cero despidos y la certificación con doble sello (municipio y sindicato). Usa términos como "Ampliación de Capacidades". Nunca uses técnicas de manipulación ni eufemismos: la confianza del sindicato se gana diciendo la verdad completa.'
     },
     {
       id: 'governance',
