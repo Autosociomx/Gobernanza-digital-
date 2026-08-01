@@ -197,6 +197,11 @@ async function startServer() {
   // Payment Intent Route
   app.post("/api/create-payment-intent", async (req, res) => {
     const { amount, currency } = req.body;
+
+    if (typeof amount !== 'number' || !Number.isInteger(amount) || amount <= 0) {
+      return res.status(400).json({ error: "Monto inválido. Debe ser un número entero positivo." });
+    }
+
     const stripe = getStripe();
     if (!stripe) {
       return res.status(500).json({ error: "Stripe no configurado." });
