@@ -26,11 +26,17 @@ service firebase.storage {
       // el personal que sube un documento no conserva acceso de lectura).
       allow read: if request.auth != null && esPropietarioVinculado();
 
-      // Subir un archivo requiere que exista un registro previo válido:
-      // el cliente primero crea el documento en Firestore (que sí exige
-      // código de personal activo o ser el paciente/familiar vinculado)
-      // y solo entonces puede subir el archivo binario correspondiente.
+      // CIERRE DE BRECHA (auditoría 30-jul-2026, H6): antes bastaba con
+      // que el perfil existiera — cualquier autenticado podía subir o
+      // SOBRESCRIBIR archivos clínicos de cualquier CURP. Ahora la
+      // escritura exige ser el paciente vinculado. Las subidas por
+      // personal de salud (practicante/trabajadora social/promotor con
+      // código) quedan temporalmente fuera del cliente: deben pasar por
+      // un Cloud Function / Admin SDK que valide el código de personal en
+      // servidor (Storage Rules no puede verificar códigos de personal).
+      // Ruta de implementación documentada en el changelog del paquete P0.
       allow write: if request.auth != null && perfilExiste() &&
+        esPropietarioVinculado() &&
         request.resource.size < 15 * 1024 * 1024 &&
         request.resource.contentType.matches('image/.*|application/pdf');
     }
