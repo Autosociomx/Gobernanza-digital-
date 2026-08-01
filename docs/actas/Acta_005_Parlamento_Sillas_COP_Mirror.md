@@ -1,7 +1,9 @@
-# Acta 004 — Parlamento de las Sillas · Sesión sobre el COP Mirror y el Registro de Módulos
+# Acta 005 — Parlamento de las Sillas · Sesión sobre el COP Mirror y el Registro de Módulos
+
+> **Nota de renumeración:** este documento se archivó primero como "Acta 004". Al sincronizar con la rama `feat/ampliacion-sillas-kimi-jules` (que registra su propia `Acta_004_Ampliacion_Sillas.md`, con fecha de commit real anterior: 2026-07-30 vs. 2026-08-01 de esta sesión) se detectó la colisión y se renumeró esta acta a **005** por orden cronológico real. La votación, el contenido y las tres intervenciones no cambian — solo el número de archivo y las referencias cruzadas.
 
 **Tema:** Revisión del registro `docs/marco/modulos/` y la herramienta "COP Mirror" (espejo de edición de tepic.netlify.app), construidos en esta sesión de trabajo. Propuestas para que dejen de leerse como maqueta de demostración y pasen a ser instrumento real de atención municipal SOATM.
-**Fecha:** 2026-07-24 · **Marco:** `docs/agentes/GABINETE_ESPECIALISTAS.md` (cámara de decisión, 3 sillas) · **Rama:** `claude/modulos-registro-espejo`
+**Fecha:** 2026-07-24 · **Marco:** `docs/agentes/GABINETE_ESPECIALISTAS.md` (cámara de decisión — 3 de las 5 sillas presentes, quorum cumplido según Acta 004) · **Rama:** `claude/modulos-registro-espejo`
 **Formato:** intervención + voto en paralelo + síntesis (comisión de 3, no plenaria de 15 — no convoca al Gabinete completo porque el tema es una entrega puntual, no una revisión integral del proyecto).
 
 ---
@@ -50,6 +52,6 @@
 
 ### 📄 DOCUMENTO RESGUARDADO
 Este acta queda firmada conceptualmente por las 3 sillas del Parlamento y archivada como:
-`docs/actas/Acta_004_Parlamento_Sillas_COP_Mirror.md`
+`docs/actas/Acta_005_Parlamento_Sillas_COP_Mirror.md`
 
 **Pendiente de voto decisivo humano (Miguel Alexis):** decidir el punto 1 del backlog (qué hacer con el hallazgo de `municipal_letters` antes de ampliar la distribución) — las tres sillas coinciden en que no es una decisión técnica, es una decisión sobre a quién se le muestra qué.
