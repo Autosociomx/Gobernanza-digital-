@@ -13,7 +13,7 @@ Documento de presentación para la reunión de lunes. Método: para cada depende
 
 **El océano azul:** comparación de imágenes satelitales **actuales contra 2–3 años atrás** (Sentinel-2, gratuito, cada 5 días) para detectar cambios de uso de suelo y obra nueva, cruzados contra el padrón catastral. Cada diferencia detectada genera una orden de verificación de campo con folio; el inspector confirma con foto georreferenciada y el valor catastral se actualiza.
 
-- **Ley:** CPEUM Art. 115 fr. IV (catastro y predial son competencia municipal). Marco fiscal: Código Fiscal del Estado de Nayarit + Ley de Ingresos municipal vigente (POR VERIFICAR texto exacto).
+- **Ley (VERIFICADA, nivel artículo):** CPEUM Art. 115 fr. IV + **Ley de Hacienda Municipal del Estado de Nayarit Art. 22** — el valor catastral puede revaluarse antes de 3 años cuando hay construcciones o ampliaciones (fr. I), cambio físico de urbanización (fr. II), *elementos de catastración técnica* (fr. IV) u obras que modifiquen el valor (fr. VI). La detección satelital + verificación de campo es exactamente la fr. IV: **no se necesita ninguna reforma legal**. Más: Ley de Ingresos de Tepic 2026 (ya proyecta +173 MDP por predial atrasado y actualizaciones — la recuperación predial es estrategia declarada del propio municipio).
 - **Ejecución ConnectX:** capa de cambios sobre el NayaritMap → lista de predios candidatos → app del inspector con folio y evidencia → actualización → medición pública de recaudación recuperada.
 - **Honestidad técnica (decirlo así):** Sentinel-2 a 10 m detecta obra grande; el detalle fino lo confirma el inspector en campo. No prometemos "predial por satélite": prometemos *detección de candidatos + verificación humana con folio*.
 - **Victoria temprana:** piloto en 2 colonias en 30 días. **La narrativa del lunes:** *"la plataforma se autofinancia — cada predio actualizado es ingreso recurrente anual, sin subir un solo impuesto."*
@@ -24,7 +24,7 @@ Documento de presentación para la reunión de lunes. Método: para cada depende
 
 **El océano azul:** **padrón digital de cobradores** con credencial verificable + **cada cobro (aunque sea en efectivo) se registra al momento** con folio y QR. El comerciante escanea el QR de su recibo y comprueba que su pago ya está registrado en Tesorería. Cero papel, cero recibos falsos, cero "coyotes".
 
-- **Ley:** LGD Nayarit Art. 6 (simplificación administrativa) + LNETB (eliminación de trámites y papel) + CPEUM 115 fr. IV.
+- **Ley (VERIFICADA):** LGD Nayarit Art. 6 (simplificación administrativa) + LNETB (eliminación de trámites y papel) + CPEUM 115 fr. IV + Ley de Ingresos de Tepic 2026 (derechos y aprovechamientos municipales) + Ley de Hacienda Municipal del Estado de Nayarit Art. 34 (obligaciones y formas de pago del contribuyente — el recibo digital con QR es su equivalente verificable).
 - **Ejecución ConnectX:** el patrón ya existe en el repo — **QR Mágico** (PR #7: pagos gubernamentales con QR) + folio sellado del Nodo de Transparencia. Padrón de cobradores = misma arquitectura que perfiles con rol (ya funciona en Salud).
 - **Pacto social (decirlo así):** **cero despidos** — el cobrador no desaparece: se reconvierte en *verificador digital* con credencial y app. El sindicato es co-autor del cambio.
 - **Victoria temprana:** un tianguis o mercado piloto en 2 semanas: cada cobro registrado al minuto, reporte diario automático para Tesorería.
@@ -63,12 +63,12 @@ Documento de presentación para la reunión de lunes. Método: para cada depende
 
 **El océano azul:** fugas reportadas con foto y georreferencia priorizadas por volumen; avisos de corte publicados por colonia; convenios de pago en línea con QR.
 
-- **Ley:** Ley de Aguas Nacionales + reglamento del organismo operador municipal (POR VERIFICAR nombre del organismo en Tepic).
+- **Ley:** Ley de Aguas Nacionales + **SIAPA Tepic** (organismo operador confirmado en la Ley de Ingresos de Tepic 2026; razón social completa y estatuto POR VERIFICAR).
 - **Conexión:** Tesorería (recaudación de agua) + Servicios Públicos (mismo flujo de folio).
 
 ## 7. Rastro municipal — la bitácora sanitaria digital
 
-Ya dictaminado en `OCEANOS_AZULES.md` (§3): CPEUM 115 fr. III + NOM-009-ZOO-1994 / NOM-033-ZOO-1995 / NOM-194-SSA1-2004. Bitácora de sacrificio con folio, derechos cobrados con QR, trazabilidad cárnica que alimenta el Módulo Ganado.
+Ya dictaminado en `OCEANOS_AZULES.md` (§3) y ahora **verificado a nivel artículo**: CPEUM 115 fr. III + **Ley Ganadera y de Desarrollo Pecuario del Estado de Nayarit (2025) Art. 128** — la ley nueva *obliga al rastro a llevar bitácora con informe mensual* y a tener clave de Prestador de Servicio Ganadero; Art. 131 exige la cadena SINIIGA + fierro + guía REEMO + certificado para cada sacrificio; y su **Transitorio Octavo obliga a los municipios a adecuar su marco normativo en 90 días**. Más las NOMs federales vigentes: 009-ZOO-1994 (proceso sanitario de la carne), 008-ZOO-1994 (construcción del establecimiento), 033-ZOO-1995 (sacrificio humanitario), 194-SSA1-2004 (especificaciones sanitarias, COFEPRIS). La bitácora digital del rastro no es una propuesta: **es un requisito de ley que hoy no existe en digital en ningún rastro municipal.**
 
 ## 8. DIF / Bienestar — padrón único de beneficiarios con CURP
 
@@ -101,4 +101,4 @@ Ya dictaminado en `OCEANOS_AZULES.md` (§6): actas con solicitud en línea y pag
 2. *"La plataforma se paga sola: Catastro satelital recupera predial sin subir impuestos."*
 3. *"Cero papel no significa cero empleos: el cobrador se vuelve verificador digital. Pacto de cero despidos."*
 
-**Pendientes para cerrar este plan:** texto exacto de la Ley de Ingresos municipal y Código Fiscal de Nayarit (Catastro/Tesorería), nombre del organismo operador de agua de Tepic, Ley Ganadera de Nayarit (Rastro/Ganado) — ya listados en la Biblioteca Legal §5.
+**Pendientes para cerrar este plan:** Ley de Catastro del Estado de Nayarit (texto vigente), razón social y estatuto del SIAPA Tepic, Reglamento de la Ley Ganadera 2025 y Reglamento de Rastro de Tepic — ya listados en la Biblioteca Legal §7. *(Actualización 2026-08-01: Ley de Ingresos Tepic 2026, Ley de Hacienda Municipal del Estado de Nayarit y Ley Ganadera y de Desarrollo Pecuario 2025 ya quedaron VERIFICADAS con texto.)*

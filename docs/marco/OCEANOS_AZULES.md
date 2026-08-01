@@ -8,11 +8,11 @@ Método: un océano azul = demanda real + obligación legal vigente + **cero com
 ## 🌊 1. Módulo Ganado — la ventanilla digital del Padrón Ganadero Nacional (el más grande)
 
 - **Demanda:** todo productor pecuario de Nayarit debe tener Clave UPP, inventario y guías de movilización; hoy es papel y oficina.
-- **Ley:** Ley Federal de Sanidad Animal Arts. 56 y 58 (PGN/UPP, obligatorio desde 2007) + SINIIGA + NOMs de rastro. Verificado en Biblioteca Legal §3.
+- **Ley:** Ley Federal de Sanidad Animal Arts. 56 y 58 (PGN/UPP, obligatorio desde 2007) + **Ley Ganadera y de Desarrollo Pecuario de Nayarit (2025)** Arts. 79, 94, 117–123 (SINIIGA, guías REEMO, registro municipal de mostrencos y fierros) + NOMs de rastro. Verificado en Biblioteca Legal §5.
 - **Competencia:** cero. Ningún municipio de México ofrece la ventanilla digital del PGN.
 - **Capacidad nuestra:** el patrón ya existe — identidad única + folio sellado + bitácora (mismo diseño que Nayarit ID y el Nodo de Transparencia). El rastro municipal es CPEUM 115 fr. III: competencia directa del Ayuntamiento.
 - **Por qué lo dejábamos pasar:** Agrovisión se pensó solo como cultivo (NDVI); la ganadería es el sector con trazabilidad **obligatoria por ley** — el cliente ya está obligado a venir.
-- **Primer paso:** ficha en `docs/marco/modulos/ganado.md` + mock de alta UPP con folio sellado. Conseguir la Ley Ganadera de Nayarit (pendiente de la biblioteca).
+- **Primer paso:** ficha en `docs/marco/modulos/ganado.md` + mock de alta UPP con folio sellado. La Ley Ganadera 2025 ya está VERIFICADA en la Biblioteca Legal §5.
 
 ## 🌊 2. Llave Infantil — identidad digital de menores como producto propio
 
@@ -25,7 +25,7 @@ Método: un océano azul = demanda real + obligación legal vigente + **cero com
 ## 🌊 3. Rastro municipal digital — donde convergen ganadería, salud y comercio
 
 - **Demanda:** todo rastro municipal opera con bitácora de papel; COFEPRIS y SENASICA exigen registros.
-- **Ley:** CPEUM 115 fr. III + NOM-009-ZOO-1994, NOM-033-ZOO-1995, NOM-194-SSA1-2004. Verificado.
+- **Ley (VERIFICADA, nivel artículo):** CPEUM 115 fr. III + **Ley Ganadera y de Desarrollo Pecuario del Estado de Nayarit (2025)** — Art. 128: registro estatal de rastros y **bitácora obligatoria con informe mensual**; Art. 131: sacrificio solo con cadena SINIIGA + fierro + guía REEMO + certificado; Transitorio Octavo: **los municipios deben adecuar su marco normativo en 90 días**. NOMs federales vigentes: 009-ZOO-1994 (proceso sanitario de la carne), 008-ZOO-1994 (construcción), 033-ZOO-1995 (sacrificio humanitario), 194-SSA1-2004 (COFEPRIS).
 - **Competencia:** cero. Es el servicio municipal menos digitalizado del país.
 - **Conexión:** es el punto de cobro (derechos de rastro = Tesorería) + sanidad (módulo Salud) + trazabilidad cárnica (Módulo Ganado). Un solo módulo alimenta tres.
 
