@@ -170,7 +170,5 @@ export const seedInfrastructure = async () => {
     }
   ];
 
-  for (const asset of initialAssets) {
-    await saveAsset(asset);
-  }
+  await Promise.all(initialAssets.map(asset => saveAsset(asset)));
 };
