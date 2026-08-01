@@ -289,8 +289,13 @@ service cloud.firestore {
 
     match /neighborhood_networks/{networkId} {
       allow read: if true;
-      allow create: if isAuthenticated();
-      allow update: if isAuthenticated();
+      // Validación de esquema (antes: cualquier autenticado escribía
+      // cualquier cosa) y solo el líder propietario o el personal con
+      // cuenta pueden modificar una red existente.
+      allow create: if isAuthenticated() && isValidNeighborhoodNetwork(request.resource.data) &&
+        (isEditor() || request.resource.data.leaderId == request.auth.uid);
+      allow update: if isAuthenticated() && isValidNeighborhoodNetwork(request.resource.data) &&
+        (isEditor() || request.auth.uid == resource.data.leaderId);
     }
 
     match /tramites/{tramiteId} {
@@ -325,8 +330,15 @@ service cloud.firestore {
 
     match /perfiles_salud/{curp} {
       // "list" no se permite: nadie puede enumerar todos los perfiles.
-      // "get" requiere sesión y conocer el CURP exacto (no navegable).
-      allow get: if isAuthenticated();
+      // "get" solo para el paciente vinculado o el personal con cuenta
+      // (editor/admin). El CURP es predecible (se deriva de nombre +
+      // fecha de nacimiento), así que "conocer el CURP" NO es control de
+      // acceso suficiente para datos de salud — datos sensibles LFPDPPP.
+      // El alta asistida por personal de salud sigue funcionando vía
+      // código de personal en create; la LECTURA del expediente la hace
+      // el personal desde su rol editor/admin, no adivinando CURPs.
+      allow get: if isAdmin() || isEditor() ||
+        (isAuthenticated() && resource.data.uidVinculado == request.auth.uid);
       allow create: if isAuthenticated() && isValidPerfilSalud(request.resource.data) &&
         puedeRegistrarPerfilSalud(request.resource.data);
       allow update: if isAuthenticated() && isValidPerfilSalud(request.resource.data) &&
