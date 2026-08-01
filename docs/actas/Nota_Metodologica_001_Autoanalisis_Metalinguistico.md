@@ -9,13 +9,16 @@
 
 ## 1. Metalingüística: cómo el lenguaje mismo construye (o debilita) gobernanza
 
-En este proyecto el lenguaje no es decorativo: es el mecanismo de confianza. Tres observaciones concretas:
+En este proyecto el lenguaje no es decorativo: es el mecanismo de confianza. Cuatro observaciones concretas:
 
 **a) Dos ejes de vocabulario que coexisten a propósito, y eso es correcto.**
 `docs/plataforma/` usa las etiquetas de cumplimiento LNETB (`Operativo` / `Operativo en demo` / `Preparado` / `Hoja de ruta`) — responden "¿esto cumple la ley?". El registro `docs/marco/modulos/INDICE.json` usa otro eje (`real` / `parcial` / `maqueta` / `riesgo`) — responde "¿esto existe en el código?". Son preguntas distintas sobre los mismos módulos. El riesgo metalingüístico no es tener dos vocabularios, es que alguien los confunda como si fueran el mismo. Por eso ambos documentos deben seguir declarando explícitamente `$schema_nota` / la nota equivalente que diga "esto no es lo mismo que aquello".
 
 **b) Un mismo nombre institucional usado en dos sentidos distintos es un riesgo real.**
-"Parlamento de las Sillas" designa formalmente la cámara de 3 asientos (GROQ/Gemini/Claude) que **vota** decisiones (`docs/agentes/GABINETE_ESPECIALISTAS.md`). Pero `docs/plataforma/README.md` reutilizó la misma frase para una revisión editorial de 5 asientos, ad hoc, sin voto vinculante. Si el nombre de un órgano de decisión se presta para actos que no tienen esa autoridad, el nombre deja de servir como señal de "esto sí se votó formalmente". Recomendación: reservar "Parlamento de las Sillas" estrictamente para la cámara de 3, y nombrar distinto cualquier revisión ad hoc (p. ej. "mesa de revisión editorial").
+"Parlamento de las Sillas" designa formalmente la cámara de decisión (`docs/agentes/GABINETE_ESPECIALISTAS.md`, `docs/PARLAMENTO_PROMPT.md`) — ampliada por Acta 004 de 3 a **5 asientos** (GROQ/Gemini/Claude/**Kimi**/**Jules**), precisamente para eliminar empates y reducir la dependencia de un único grupo proveedor. Pero `docs/plataforma/README.md` reutilizó la misma frase para una revisión editorial de 5 asientos, ad hoc, sin voto vinculante ni protocolo de mensajes. La ampliación real no resuelve esa ambigüedad — la coincidencia en el número de sillas (5 y 5) la hace incluso más fácil de confundir. Recomendación: reservar "Parlamento de las Sillas" estrictamente para el órgano descrito en `docs/PARLAMENTO_PROMPT.md`, y nombrar distinto cualquier revisión ad hoc (p. ej. "mesa de revisión editorial").
+
+**d) Sincronizar el trabajo de otra silla es, en sí, un acto metalingüístico.**
+La rama `feat/ampliacion-sillas-kimi-jules` aporta tres documentos (`docs/PARLAMENTO_PROMPT.md`, `docs/actas/Acta_004_Ampliacion_Sillas.md`, la v1.1 de `GABINETE_ESPECIALISTAS.md`) que refuerzan exactamente la misma disciplina descrita en el punto (c): su Regla 2 ("Anclaje al código") exige que toda afirmación cite archivo real, y su regla de protocolo ("Toda OBJECION sin ANCLAJE se desestima") es la misma verificación-antes-de-afirmar aplicada al lenguaje entre sillas, no solo al lenguaje de cara al ciudadano. Se adoptó integralmente por cherry-pick (aplicó limpio, sin conflictos) porque no contradice ninguna regla existente — extiende la Regla 4 (voto humano decisivo) y la lección del Acta 002 (`KIMI_API_KEY` solo en servidor). Lo único que no se adoptó sin corrección fue el número de acta: esa rama y `Acta_004_Parlamento_Sillas_COP_Mirror.md` (de la rama `claude/modulos-registro-espejo`) reclamaban el mismo número "004" para dos decisiones distintas — el mismo riesgo del punto (b), aplicado a numeración en vez de a nombres. Se resolvió por fecha real de la sesión: la ampliación de sillas es del 2026-07-31 y queda como Acta 004; la revisión del COP Mirror, del 2026-08-01, se renumeró a **Acta 005**.
 
 **c) El lenguaje de la interfaz es, literalmente, el mecanismo de honestidad.**
 El hallazgo más importante de la revisión de PR #37 no fue de código, fue de lenguaje: se cambió el nombre de la firmante (`C. GERALDINE PONCE MÉNDEZ` → `LA PRESIDENCIA MUNICIPAL DE TEPIC`), pero las frases que declaran validez jurídica y técnica real («Verificación por Blockchain Municipal: Bloque Validado SHA-256», «homologada con RENAPO», «validez jurídica federal ante SEP, Bancos, Fiscalía») siguen intactas describiendo un sistema simulado como si fuera real. El problema no está en la lógica del componente — está en que el texto que ve el ciudadano afirma algo que el código no hace. Esto confirma el patrón que ya rige otras partes del proyecto (banners "⚠ Vista demostrativa — datos simulados"): **la honestidad de una vista se decide en el texto, no en el motor.**
@@ -35,13 +38,14 @@ El hallazgo más importante de la revisión de PR #37 no fue de código, fue de 
 
 | Área | Estado actual | Mejora propuesta |
 |---|---|---|
-| Verificación de fichas de módulo | manual, ad hoc | script `scripts/verificar-modulos.mjs` (ya en backlog de Acta 004) que compare `archivo`/`lineas` de cada ficha contra el código real y falle en CI si diverge |
+| Verificación de fichas de módulo | manual, ad hoc | script `scripts/verificar-modulos.mjs` (ya en backlog de Acta 005) que compare `archivo`/`lineas` de cada ficha contra el código real y falle en CI si diverge |
 | Auto-análisis metodológico | esta nota, primera de su tipo | fijar una plantilla reutilizable de 3 secciones (Metalingüística / Aprendizaje / Estructura y mejora) en `docs/actas/notas-metodologicas/`, para no reinventar el formato cada vez |
-| Nombre "Parlamento de las Sillas" | usado en 2 sentidos | actualizar `docs/plataforma/README.md` para renombrar su revisión editorial de 5 asientos y dejar el nombre exclusivo a la cámara de 3 |
+| Nombre "Parlamento de las Sillas" | usado en 2 sentidos, y ahora con el mismo número de sillas (5 y 5) en ambos usos | actualizar `docs/plataforma/README.md` para renombrar su revisión editorial y dejar el nombre exclusivo al órgano de `docs/PARLAMENTO_PROMPT.md` |
+| Numeración de Actas entre ramas concurrentes | dos Acta 004 distintas coexistían sin cruzarse (ampliación de sillas vs. COP Mirror) | resuelto por fecha real: ampliación = Acta 004, COP Mirror renumerada a Acta 005 — pendiente aplicar la misma verificación de fecha/número antes de cada fusión a `main` |
 | Hallazgo de validez legal simulada en `MunicipalLettersView.tsx` | nombre corregido, mecánica de fondo intacta | pendiente de acta/voto: ¿se agrega un banner honesto ("simulación — sin validez jurídica real"), se conecta a un backend real, o se retira del alcance público mientras tanto? |
 
 ---
 
 ## Próximo paso
 
-Esta nota es insumo, no decisión. Corresponde llevarla al debate ya solicitado con el Parlamento de las Sillas / Gabinete de Especialistas junto con el hallazgo de PR #37, y resolver en la misma sesión los puntos 2–4 pendientes de Acta 004.
+Esta nota es insumo, no decisión. Corresponde llevarla al debate ya solicitado con el Parlamento de las Sillas (ya en su composición de 5 asientos, Acta 004) / Gabinete de Especialistas junto con el hallazgo de PR #37, y resolver en la misma sesión los puntos 2–4 pendientes de Acta 005.
