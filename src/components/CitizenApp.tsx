@@ -40,7 +40,9 @@ import {
   WifiOff,
   Mic,
   Volume2,
-  VolumeX
+  VolumeX,
+  CheckCircle2,
+  Calendar
 } from 'lucide-react';
   import { motion, AnimatePresence } from 'motion/react';
   import { cn } from '../lib/utils';
@@ -1757,6 +1759,7 @@ function ProfileView({
   const [isEditing, setIsEditing] = useState(false);
   const [localProfile, setLocalProfile] = useState(profile);
   const [showScanner, setShowScanner] = useState(false);
+  const [showVerification, setShowVerification] = useState(false);
 
   useEffect(() => {
     setLocalProfile(profile);
@@ -1770,7 +1773,7 @@ function ProfileView({
   return (
     <div className="pt-2 pb-10 space-y-6">
       {showScanner && (
-         <CredentialScannerView 
+         <CredentialScannerView
             onBack={() => setShowScanner(false)}
             onScanComplete={(data) => {
                console.log("Scan Data:", data);
@@ -1778,6 +1781,21 @@ function ProfileView({
                // Here we could update the profile
             }}
          />
+      )}
+      {showVerification && (
+        <IdentityVerificationModal
+          onClose={() => setShowVerification(false)}
+          onVerified={(data) => {
+            onUpdate({
+              ...profile,
+              registrationVerified: true,
+              verificationSource: data.source,
+              verificationAccount: data.accountNumber,
+              verificationDate: data.verifiedAt
+            });
+            setShowVerification(false);
+          }}
+        />
       )}
       <ViewHeader title="Mi Perfil Nayarit ID" onBack={onBack} />
       
@@ -1835,9 +1853,18 @@ function ProfileView({
                <p className="text-xs text-slate-600 mt-2">{profile.email} · {profile.phone}</p>
                <p className="text-xs text-slate-600 mt-1 italic">{profile.neighborhood || 'Sin Colonia Asignada'}</p>
                <p className="text-xs text-slate-600 mt-1">{profile.address}</p>
-               <p className="text-[10px] font-mono text-emerald-500 mt-3 uppercase tracking-[0.2em] font-bold inline-flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded">
-                 <ShieldCheck className="w-3 h-3" /> Estado: {profile.registrationVerified ? 'Identidad Verificada' : 'Pendiente de Verificación'}
-               </p>
+               {profile.registrationVerified ? (
+                 <p className="text-[10px] font-mono text-emerald-500 mt-3 uppercase tracking-[0.2em] font-bold inline-flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded">
+                   <ShieldCheck className="w-3 h-3" /> Estado: Identidad Verificada
+                 </p>
+               ) : (
+                 <button
+                   onClick={() => setShowVerification(true)}
+                   className="text-[10px] font-mono text-amber-600 mt-3 uppercase tracking-[0.2em] font-bold inline-flex items-center gap-1 bg-amber-50 px-2 py-1 rounded hover:bg-amber-100 transition-colors"
+                 >
+                   <ShieldCheck className="w-3 h-3" /> Estado: Pendiente de Verificación &rarr;
+                 </button>
+               )}
              </>
            )}
         </div>
@@ -1901,6 +1928,155 @@ function ProfileView({
          >
            CERRAR SESIÓN NAYARIT ID
          </button>
+      </div>
+    </div>
+  );
+}
+
+const VERIFICATION_SOURCES = [
+  { id: 'cfe', label: 'CFE', desc: 'Comisión Federal de Electricidad', icon: Lightbulb, color: 'text-amber-500', bg: 'bg-amber-50', border: 'border-amber-200', accountLabel: 'Número de servicio', accountPlaceholder: 'Ej. 123456789012' },
+  { id: 'catastro', label: 'Catastro', desc: 'Padrón Catastral Municipal', icon: Home, color: 'text-indigo-500', bg: 'bg-indigo-50', border: 'border-indigo-200', accountLabel: 'Folio catastral', accountPlaceholder: 'Ej. NAY-01-002233' },
+  { id: 'siapa', label: 'SIAPA', desc: 'Agua Potable y Alcantarillado', icon: Droplets, color: 'text-cyan-500', bg: 'bg-cyan-50', border: 'border-cyan-200', accountLabel: 'Número de contrato', accountPlaceholder: 'Ej. 0045-778812' },
+] as const;
+
+function IdentityVerificationModal({
+  onClose,
+  onVerified
+}: {
+  onClose: () => void,
+  onVerified: (data: { source: string, accountNumber: string, verifiedAt: string }) => void
+}) {
+  const [step, setStep] = useState<'select' | 'form' | 'loading' | 'success' | 'error'>('select');
+  const [source, setSource] = useState<typeof VERIFICATION_SOURCES[number] | null>(null);
+  const [accountNumber, setAccountNumber] = useState('');
+  const [lastPaymentDate, setLastPaymentDate] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const today = new Date().toISOString().split('T')[0];
+
+  const handleVerify = () => {
+    if (!source) return;
+    if (!accountNumber.trim() || !lastPaymentDate) {
+      setErrorMsg('Completa el número de cuenta y la fecha del último pago.');
+      setStep('error');
+      return;
+    }
+    if (lastPaymentDate > today) {
+      setErrorMsg('La fecha del último pago no puede ser futura.');
+      setStep('error');
+      return;
+    }
+    setStep('loading');
+    // Simulación de consulta contra la base del organismo seleccionado (maqueta, sin integración real todavía)
+    setTimeout(() => {
+      setStep('success');
+      setTimeout(() => {
+        onVerified({ source: source.id, accountNumber: accountNumber.trim(), verifiedAt: new Date().toISOString() });
+      }, 1100);
+    }, 1400);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl p-6 max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-5">
+          <div>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nayarit ID</p>
+            <h3 className="text-lg font-black text-slate-900">Verificación del Titular</h3>
+          </div>
+          <button onClick={onClose} className="p-2 bg-slate-50 rounded-full text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {step === 'select' && (
+          <div className="space-y-4">
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Para dar el salto al mundo digital, confirma que eres el titular de la cuenta consultando uno de estos padrones municipales/estatales.
+            </p>
+            <div className="space-y-3">
+              {VERIFICATION_SOURCES.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => { setSource(s); setStep('form'); }}
+                  className={cn("w-full flex items-center gap-3 p-4 rounded-2xl border text-left transition-colors hover:brightness-95", s.bg, s.border)}
+                >
+                  <div className={cn("w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm", s.color)}>
+                    <s.icon className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-slate-800">{s.label}</p>
+                    <p className="text-[11px] text-slate-500">{s.desc}</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-slate-400" />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {(step === 'form' || step === 'error') && source && (
+          <div className="space-y-4">
+            <div className={cn("flex items-center gap-3 p-3 rounded-xl border", source.bg, source.border)}>
+              <source.icon className={cn("w-5 h-5", source.color)} />
+              <p className="text-sm font-bold text-slate-800">{source.label} · {source.desc}</p>
+            </div>
+
+            <div>
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">{source.accountLabel}</label>
+              <input
+                type="text"
+                value={accountNumber}
+                onChange={(e) => setAccountNumber(e.target.value)}
+                placeholder={source.accountPlaceholder}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold mt-1"
+              />
+            </div>
+
+            <div>
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1 inline-flex items-center gap-1">
+                <Calendar className="w-3 h-3" /> Fecha del último pago registrado
+              </label>
+              <input
+                type="date"
+                value={lastPaymentDate}
+                max={today}
+                onChange={(e) => setLastPaymentDate(e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold mt-1"
+              />
+              <p className="text-[10px] text-slate-400 mt-1 pl-1">Este dato solo lo conoce el titular real de la cuenta y sirve para confirmar tu identidad.</p>
+            </div>
+
+            {step === 'error' && (
+              <p className="text-xs font-bold text-red-500 bg-red-50 border border-red-100 rounded-xl px-3 py-2">{errorMsg}</p>
+            )}
+
+            <div className="flex gap-3">
+              <button onClick={() => setStep('select')} className="flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-slate-500 bg-slate-50 border border-slate-200">
+                Cambiar Fuente
+              </button>
+              <button onClick={handleVerify} className="flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest text-white bg-slate-900 shadow-lg active:scale-[0.98] transition-transform">
+                Verificar
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 'loading' && source && (
+          <div className="py-10 flex flex-col items-center justify-center text-center">
+            <Loader2 className={cn("w-8 h-8 animate-spin mb-4", source.color)} />
+            <p className="text-sm font-bold text-slate-700">Consultando {source.label}...</p>
+            <p className="text-[11px] text-slate-400 mt-1">Confirmando titularidad de la cuenta</p>
+          </div>
+        )}
+
+        {step === 'success' && source && (
+          <div className="py-10 flex flex-col items-center justify-center text-center">
+            <CheckCircle2 className="w-10 h-10 text-emerald-500 mb-4" />
+            <p className="text-sm font-black text-slate-800">Identidad Verificada</p>
+            <p className="text-[11px] text-slate-400 mt-1">Titularidad confirmada con {source.label}. Bienvenido al mundo digital.</p>
+          </div>
+        )}
       </div>
     </div>
   );
