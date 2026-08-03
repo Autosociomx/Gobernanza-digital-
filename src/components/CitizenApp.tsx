@@ -1953,9 +1953,9 @@ function SecurityCenterView({ user, onBack }: { user: FirebaseUser | null, onBac
       
       const tramitesQuery = query(collection(db, 'tramites'), where('uid', '==', user.uid));
       const tramitesDocs = await getDocs(tramitesQuery);
-      for (const d of tramitesDocs.docs) {
-         await deleteDoc(doc(db, 'tramites', d.id));
-      }
+
+      await Promise.all(tramitesDocs.docs.map(d => deleteDoc(doc(db, 'tramites', d.id))));
+
       await deleteDoc(doc(db, 'users', user.uid));
       await user.delete();
     } catch (e: any) {
