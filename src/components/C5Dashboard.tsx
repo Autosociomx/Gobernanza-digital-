@@ -34,7 +34,6 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { NayaritMap } from './NayaritMap';
-import { MandoCentral } from './MandoCentral';
 import { ParlamentoView } from './dashboard/ParlamentoView';
 import { AnalisisPoliticoView } from './dashboard/AnalisisPoliticoView';
 import { useAuraChat } from '../hooks/useAuraChat';
@@ -61,7 +60,7 @@ import {
   Legend
 } from 'recharts';
 
-type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio' | 'metricas' | 'parlamento' | 'analisis_politico' | 'interoperabilidad' | 'gabinete' | 'infraestructura';
+type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio' | 'metricas' | 'parlamento' | 'analisis_politico' | 'interoperabilidad' | 'gabinete';
 
 export function C5Dashboard({ onLogout, initialModule }: { onLogout: () => void; initialModule?: ModuleType }) {
   const [activeModule, setActiveModule] = useState<ModuleType>(() => initialModule || (localStorage.getItem('activeModule') as ModuleType) || 'tesoreria');
@@ -85,7 +84,6 @@ export function C5Dashboard({ onLogout, initialModule }: { onLogout: () => void;
     { id: 'parlamento', name: 'Parlamento Municipal', icon: Users, color: 'text-indigo-400', bg: 'bg-indigo-400/10' },
     { id: 'analisis_politico', name: 'Análisis Estratégico', icon: Brain, color: 'text-purple-400', bg: 'bg-purple-400/10' },
     { id: 'interoperabilidad', name: 'Nodo Transparencia', icon: Building2, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
-    { id: 'infraestructura', name: 'Infraestructura Geoespacial', icon: ShieldCheck, color: 'text-amber-400', bg: 'bg-amber-400/10' },
   ] as const;
 
   return (
@@ -198,7 +196,6 @@ export function C5Dashboard({ onLogout, initialModule }: { onLogout: () => void;
               {activeModule === 'parlamento' && <ParlamentoView />}
               {activeModule === 'analisis_politico' && <AnalisisPoliticoView />}
               {activeModule === 'interoperabilidad' && <InteroperabilidadView />}
-              {activeModule === 'infraestructura' && <MandoCentral />}
             </motion.div>
           </AnimatePresence>
         </main>
