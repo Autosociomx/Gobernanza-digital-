@@ -1,74 +1,119 @@
-# 📦 PAQUETE DE PRESENTACIÓN INSTITUCIONAL
-## H. Ayuntamiento de Tepic, Nayarit — Agosto 2026
+# 📦 EXPEDIENTE DE PRESENTACIÓN INSTITUCIONAL
+## Laboratorio Municipal de Simplificación y Digitalización
+### H. Ayuntamiento de Tepic, Nayarit — Agosto 2026
 
 **Proyecto:** Nayarit Digital · ConnectX — SOATM
 **Proponente tecnológico:** Miguel Alexis Pérez Aguilar · AutosocioMX
-**Objeto:** Propuesta de Laboratorio Municipal de Simplificación y Digitalización
+**Objeto:** Propuesta técnica y documental para evaluación institucional
 
 ---
 
-## 📋 Contenido del paquete
+## ⚠️ CLÁUSULA DE PROTECCIÓN
 
-### [Carpeta 01 — Propuesta](01-propuesta/PROPUESTA_LABORATORIO_TEPIC.md)
-Qué es, qué no es, el problema, el marco normativo, la propuesta, metas de simplificación, lo que pedimos al Ayuntamiento, próximos pasos.
-**Lectura obligatoria para:** Presidencia Municipal, Secretaría del Ayuntamiento.
+> El presente expediente constituye una propuesta técnica y documental para evaluación institucional. No constituye autorización, certificación, dictamen jurídico, acto administrativo ni reconocimiento de cumplimiento por parte del Ayuntamiento de Tepic.
 
-### [Carpeta 02 — Expediente Jurídico](02-juridico/EXPEDIENTE_JURIDICO.md)
-Fundamento del trámite, marco normativo federal/estatal/municipal, análisis de competencias (quién puede autorizar qué), AIR/exención, protección de datos.
-**Lectura obligatoria para:** Área Jurídica, Unidad de Transparencia, Mejora Regulatoria.
+---
 
-### [Carpeta 03 — Expediente Técnico](03-tecnico/EXPEDIENTE_TECNICO.md)
-Arquitectura real (lo que existe), stack tecnológico, seguridad, lo que el sistema NO tiene, plan de construcción.
-**Lectura obligatoria para:** Dirección de Tecnologías, C5, Sistemas.
+## 🚦 Semáforo de evidencia (aplica a todo el expediente)
 
-### [Carpeta 04 — Reingeniería](04-reingenieria/REINGENIERIA.md)
-AS-IS vs TO-BE, metas cuantificables, matriz de eliminación de requisitos, justificación jurídica de cada simplificación.
-**Lectura obligatoria para:** Dependencia responsable del trámite, Área Jurídica.
+| 🟢 VERIFICADO | 🟡 PREPARADO / DEMO | 🔵 POR VERIFICAR | 🟠 REQUIERE AUTORIZACIÓN | 🔴 NO EXISTE |
+|---|---|---|---|---|
+| Evidencia primaria o técnica comprobable | Diseño, prototipo o demo funcional | Requiere confirmación con fuente oficial o autoridad | Depende de autorización institucional | No implementado actualmente |
 
-### [Carpeta 05 — Anexos](05-anexos/ANEXOS.md)
-Índice de 16 documentos de respaldo existentes en el repositorio: biblioteca legal verificada, protocolo de seguridad, contra-auditoría LNETB, libro blanco, arquitectura de datos, plan de trabajo municipal por dependencia.
-**Lectura recomendada para:** Todas las áreas.
+**Sin porcentajes. Sin "certificado". Sin "aprobado". Sin "cumple".**
+
+---
+
+## 📋 Contenido del expediente
+
+| Carpeta | Propósito | Para quién |
+|---|---|---|
+| **[00_INDICE_MAESTRO](00_INDICE_MAESTRO/README.md)** | Mapa del expediente + matriz de trazabilidad general (12 problemas → obligación → solución → evidencia → brecha → responsable) | Presidencia · Secretaría |
+| **[01_PROBLEMA_PUBLICO](01_PROBLEMA_PUBLICO/)** | Diagnóstico: ¿qué problema resolvemos, a quién afecta, con qué evidencia? | Todas las áreas |
+| **[02_TRAMITE_PRIORIZADO](02_TRAMITE_PRIORIZADO/)** | Ficha del trámite piloto: Constancia de Residencia · fundamento · actores · requisitos actuales | Dependencia responsable |
+| **[03_REINGENIERIA](03_REINGENIERIA_Y_SIMPLIFICACION/)** | AS-IS vs TO-BE · matriz requisito por requisito · análisis de cargas · indicadores | Mejora Regulatoria · Área responsable |
+| **[04_SOLUCION_DIGITAL](04_SOLUCION_DIGITAL/)** | Arquitectura funcional y técnica · flujo digital · identidad · expediente · firma · interoperabilidad | Tecnologías · C5 · Sistemas |
+| **[05_MARCO_JURIDICO](05_MARCO_JURIDICO/README.md)** | 🏛️ Corazón del expediente: 19 normas con cadena artículo → fuente primaria → evidencia → estado | Jurídico · Transparencia |
+| **[06_EVIDENCIA_TECNICA](06_EVIDENCIA_TECNICA/)** | Inventario real del repositorio · matriz código/funcionalidad · limitaciones conocidas | Tecnologías · Auditoría |
+| **[07_GOBERNANZA](07_GOBERNANZA_E_INSTITUCIONALIZACION/)** | Roles y responsabilidades · qué es del Ayuntamiento y qué del proponente · convenios requeridos | Jurídico · Presidencia |
+| **[08_PILOTO_TEPIC](08_PILOTO_TEPIC/)** | Propuesta de piloto · fases A→F · sandbox · criterios GO/NO-GO | Todas las áreas |
+| **[09_ALINEACION_ATDT](09_ALINEACION_ATDT/)** | Alineación con el Modelo Nacional · principios · indicadores · matriz ATDT-Tepic | Mejora Regulatoria · ATDT |
+| **[10_RIESGOS](10_RIESGOS_Y_CONTRAAUDITORIA/)** | Matriz de riesgos · contra-auditoría LNETB · 25 objeciones adversariales · plan de mitigación | Contraloría · Jurídico |
+| **[11_INSTRUMENTOS](11_INSTRUMENTOS_INSTITUCIONALES/)** | Borradores: convenio · punto de acuerdo · ficha AIR/exención · aviso de privacidad · designación | Jurídico · Secretaría |
 
 ---
 
 ## ⚡ RESUMEN EJECUTIVO (3 minutos)
 
 ### El problema
-Los ciudadanos de Tepic hacen 2 visitas, presentan 4 documentos y esperan 3 días para una simple constancia de residencia — papeles que el propio municipio ya tiene en catastro, SIAPA y registro civil.
+Los ciudadanos de Tepic realizan visitas presenciales y presentan documentos físicos para trámites municipales simples — papeles que otras dependencias del propio municipio ya poseen.
 
 ### La ley ya obliga
-La LNETB (2025) y la Ley de Gobierno Digital de Nayarit ordenan a los municipios eliminar trámites, digitalizar los que queden y dejar de pedir papeles que el gobierno ya posee.
+La LNETB (DOF 16-jul-2025), los Lineamientos del Modelo Nacional (DOF 22-oct-2025) y la Ley de Gobierno Digital de Nayarit (Arts. 2, 5, 6) establecen obligaciones de simplificación, digitalización, identidad digital e interoperabilidad para los municipios mexicanos. **El municipio de Tepic ya es sujeto obligado.**
 
 ### La propuesta
-Un laboratorio piloto con **un solo trámite** (Constancia de Residencia) para demostrar que se puede: 0 visitas, 0 copias, <10 minutos. Si funciona, se replica.
+Un laboratorio piloto con **un solo trámite** (Constancia Municipal de Residencia) para demostrar, en entorno controlado y sin efectos jurídicos, cómo podría implementarse el Modelo Nacional en Tepic. Si el Ayuntamiento lo valida y autoriza, el modelo se replica a otros trámites.
 
-### Lo que tenemos hoy (🟢)
-- Prototipo funcional del trámite digital punta a punta
-- Backend con IA, pagos y base de datos
-- Biblioteca legal con 100+ ordenamientos verificados
-- Protocolo de seguridad con guardia automatizada
+### Lo que existe hoy (🟢)
+- **Frontend React** funcional con 30+ componentes y 5 vistas (code-splitting)
+- **Infraestructura backend** (Express + SQLite + Gemini AI + Stripe) para capacidades generales — sin endpoints específicos del trámite de Constancia de Residencia aún
+- **Prototipo de demostración** del flujo digital completo (validación CURP, OTP, constancia con QR) en `demo/constancia-residencia/`
+- **Biblioteca legal** con 100+ ordenamientos verificados contra fuentes oficiales primarias
+- **Protocolo de seguridad** documentado con guardia CI automatizada
+- **Contra-auditoría LNETB** que corrigió afirmaciones inexactas de documentación anterior
 
-### Lo que necesitamos del Ayuntamiento (🔴)
-- Revisar y validar el fundamento jurídico del trámite
-- Determinar si procede el piloto
-- Designar un enlace institucional
+### Lo que NO existe hoy (🔴)
+- Conexión a RENAPO, Catastro Tepic, SIAPA o cualquier fuente gubernamental
+- Firma electrónica avanzada (solo OTP demostrativo en prototipo)
+- Expediente digital implementado en producción
+- Autorización del Ayuntamiento
+- Datos personales reales de ciudadanos
+- WCAG verificado · lenguas originarias funcionales
 
-### El encuadre correcto
-> "No venimos a decirle al Ayuntamiento cómo cumplir la ley. Presentamos una herramienta que puede ayudarle a implementar las obligaciones de simplificación y digitalización que ya le corresponden."
+### Lo que solicitamos al Ayuntamiento
+1. Recibir y revisar este expediente
+2. Designar un enlace institucional
+3. Determinar la viabilidad jurídica y administrativa del piloto
+4. Si procede, aprobar el piloto mediante el instrumento que corresponda
 
 ---
 
-## 🏷️ Sistema de etiquetas
+## 🧩 Los tres universos del expediente
 
-Toda afirmación en este paquete usa una de tres etiquetas:
-
-| 🟢 DEMOSTRADO | 🟡 PROPUESTO | 🔴 DEPENDE DE AUTORIDAD |
+| A. EVIDENCIA EXISTENTE | B. PROPUESTA | C. SOLO PUEDE PRODUCIRLA LA AUTORIDAD |
 |---|---|---|
-| Existe código, documento o evidencia reproducible | La arquitectura está diseñada pero no existe institucionalmente | No puede resolverlo el proponente tecnológico |
+| Código fuente | Proceso TO-BE | Acuerdo de Cabildo |
+| Biblioteca jurídica | Interoperabilidad futura | Fundamento municipal definitivo |
+| Arquitectura documentada | Identidad digital (diseño) | Designación de funcionario firmante |
+| Protocolo de seguridad | Expediente digital (diseño) | Convenios (RENAPO, SAT, SIAPA) |
+| Contra-auditoría | Modelo de gobernanza | Determinación AIR/exención |
+| Prototipos demo | Plan de piloto | Aviso de privacidad publicado |
+| Infraestructura (servidor, BD) | Arquitectura de conectores | Accesos a sistemas oficiales |
 
-**Sin porcentajes. Sin "certificado". Sin "aprobado".**
+**Nunca mezclar A, B y C. Cada afirmación debe declarar a qué universo pertenece.**
 
 ---
 
-*Paquete preparado para presentación institucional. No constituye un sistema gubernamental autorizado.*
+## 📊 Estado consolidado del proyecto
+
+| Área | Estado |
+|---|---|
+| Repositorio y evidencia técnica | 🟢 Verificado internamente |
+| Documentación técnica | 🟢 Existe |
+| Expediente regulatorio | 🟢 Existe (9 docs) |
+| Biblioteca jurídica | 🟢 100+ ordenamientos con estatus |
+| Contra-auditoría LNETB | 🟢 Completada |
+| Paquete presentación Tepic | 🟢 Estructura 12 carpetas creada |
+| Matriz jurídica artículo → evidencia | 🟢 19 normas con cadena trazable |
+| Fuentes primarias (PDFs) | 🔴 No descargadas aún (carpeta creada) |
+| Verificación artículo por artículo | 🟡 4 verificados / 6 por verificar / 2 no sustentados |
+| Integraciones gubernamentales | 🔴 No existentes |
+| Firma institucional | 🔴 Pendiente |
+| Autorización municipal | 🔴 Pendiente |
+| Datos reales | 🔴 No utilizar todavía |
+| Piloto institucional | ⚪ Por determinar por el Ayuntamiento |
+
+---
+
 *Agosto 2026 · Nayarit Digital · ConnectX · SOATM*
+*Repositorio: Autosociomx/Gobernanza-digital-*
