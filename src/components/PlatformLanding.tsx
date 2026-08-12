@@ -88,12 +88,10 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
              transition={{ duration: 1, delay: 0.4 }}
              className="flex flex-wrap justify-center gap-3 max-w-3xl mb-16"
           >
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#D81E5B]/20 text-[#ff8ab8] border border-[#D81E5B]/40 uppercase hover:scale-105 hover:bg-[#D81E5B]/30 hover:border-[#D81E5B]/60 transition-all duration-300 cursor-default shadow-sm hover:shadow-md">18 Módulos de Servicios</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#0FA3B1]/20 text-[#7ee8f2] border border-[#0FA3B1]/40 uppercase hover:scale-105 hover:bg-[#0FA3B1]/30 hover:border-[#0FA3B1]/60 transition-all duration-300 cursor-default shadow-sm hover:shadow-md">Soberanía Tecnológica</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#F5A623]/20 text-[#ffc96a] border border-[#F5A623]/40 uppercase hover:scale-105 hover:bg-[#F5A623]/30 hover:border-[#F5A623]/60 transition-all duration-300 cursor-default shadow-sm hover:shadow-md">100+ Pagos Municipales</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#4C9F70]/20 text-[#7de3a8] border border-[#4C9F70]/40 uppercase hover:scale-105 hover:bg-[#4C9F70]/30 hover:border-[#4C9F70]/60 transition-all duration-300 cursor-default shadow-sm hover:shadow-md">Piloto: Tepic</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#D81E5B]/20 text-[#ff8ab8] border border-[#D81E5B]/40 uppercase hover:scale-105 hover:bg-[#D81E5B]/30 hover:border-[#D81E5B]/60 transition-all duration-300 cursor-default shadow-sm hover:shadow-md">Simplificación Regulatoria</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#0FA3B1]/20 text-[#7ee8f2] border border-[#0FA3B1]/40 uppercase hover:scale-105 hover:bg-[#0FA3B1]/30 hover:border-[#0FA3B1]/60 transition-all duration-300 cursor-default shadow-sm hover:shadow-md">Identidad LlaveMx</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#4C9F70]/20 text-[#7de3a8] border border-[#4C9F70]/40 uppercase cursor-default shadow-sm">Piloto: Tepic — Constancia de Residencia</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#0FA3B1]/20 text-[#7ee8f2] border border-[#0FA3B1]/40 uppercase cursor-default shadow-sm">CURP Verificada · Algoritmo RENAPO</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#F5A623]/20 text-[#ffc96a] border border-[#F5A623]/40 uppercase cursor-default shadow-sm">Stack 100% Open Source</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#D81E5B]/20 text-[#ff8ab8] border border-[#D81E5B]/40 uppercase cursor-default shadow-sm">Trámite Digital Punta a Punta</span>
           </motion.div>
 
           <motion.div
