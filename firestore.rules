@@ -325,8 +325,11 @@ service cloud.firestore {
 
     match /perfiles_salud/{curp} {
       // "list" no se permite: nadie puede enumerar todos los perfiles.
-      // "get" requiere sesión y conocer el CURP exacto (no navegable).
-      allow get: if isAuthenticated();
+      // "get" solo el titular vinculado o un admin: cerrar la brecha de
+      // confidencialidad de datos de salud (el CURP es deducible y no debe
+      // bastar para leer el perfil completo). Hallazgo E3, Acta 006.
+      allow get: if isAdmin() ||
+        get(/databases/$(database)/documents/perfiles_salud/$(curp)).data.uidVinculado == request.auth.uid;
       allow create: if isAuthenticated() && isValidPerfilSalud(request.resource.data) &&
         puedeRegistrarPerfilSalud(request.resource.data);
       allow update: if isAuthenticated() && isValidPerfilSalud(request.resource.data) &&
