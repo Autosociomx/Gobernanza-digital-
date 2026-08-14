@@ -9,3 +9,6 @@ coverage/
 
 # Firebase config contiene apiKey real — NO commitear (hallazgo E3 Acta 006)
 firebase-applet-config.json
+
+# Carpeta de trabajo temporal de auditoría
+.openclaw/

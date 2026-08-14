@@ -212,7 +212,7 @@ function InteroperabilidadView() {
       <div className="space-y-2">
         <p className="text-[10px] font-black text-emerald-500 uppercase tracking-[0.4em]">Infraestructura Digital ConnectX</p>
         <h3 className="text-4xl font-serif font-black text-white tracking-tighter">Nodo de Transparencia Activa</h3>
-        <p className="text-slate-500 text-sm max-w-2xl leading-relaxed">Arquitectura de bus de servicios interoperables. Garantía de integridad de datos bajo la Ley de Gobierno Digital del Estado de Nayarit.</p>
+        <p className="text-slate-500 text-sm max-w-2xl leading-relaxed">Arquitectura de bus de servicios (propuesta de interoperabilidad). La integridad de datos bajo la Ley de Gobierno Digital del Estado de Nayarit está diseñada, no implementada.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

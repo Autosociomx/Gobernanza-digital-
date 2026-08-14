@@ -52,7 +52,7 @@ const TEMPLATES: LetterTemplate[] = [
   {
     id: 'no_adeudo',
     name: 'Constancia de No Adeudo Municipal',
-    description: 'Certificado que valida el cumplimiento de obligaciones del impuesto predial y servicio de agua potable.',
+    description: 'Documento de demostración. La constancia oficial que valida el cumplimiento de obligaciones de predial y agua requiere emisión y firma del Ayuntamiento.',
     cost: 'Gratuito',
     time: 'Inmediato (Digital)',
     legalBase: 'Ley de Hacienda para el Municipio de Tepic, Nayarit.'
@@ -60,10 +60,10 @@ const TEMPLATES: LetterTemplate[] = [
   {
     id: 'identidad',
     name: 'Constancia de Identidad Ciudadana',
-    description: 'Documento supletorio de identificación oficial, validado mediante huella digital e Identidad Digital Única (IDN-U).',
+    description: 'Documento supletorio de identificación (demo). La validación por huella digital e Identidad Digital Única (IDN-U) es propuesta, no implementada.',
     cost: 'Gratuito',
     time: 'Inmediato (Digital)',
-    legalBase: 'Ley General de Población y Convenio de Interoperabilidad Nayarit-SEGOB.'
+    legalBase: 'Ley General de Población (referencia). Convenio Nayarit-SEGOB: propuesto, no firmado.'
   }
 ];
 
@@ -139,7 +139,7 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
     doc.text(`OFICIO NÚMERO: ${generatedLetter.id}`, 20, 46);
     doc.setFont('Helvetica', 'normal');
     doc.text(`Fecha de Emisión: Tepic, Nayarit, a ${generatedLetter.date}`, 120, 46);
-    doc.text('Asunto: Constancia Municipal Homologada', 20, 52);
+    doc.text('Asunto: Constancia Municipal (demo, sin validez oficial)', 20, 52);
 
     // Body
     doc.setFont('Helvetica', 'bold');
@@ -723,13 +723,13 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
                 </div>
                 <div>
                   <h4 className="font-serif font-black text-lg text-white">3. Propuesta Ciudadana</h4>
-                  <p className="text-[8px] text-slate-500 uppercase font-black tracking-widest">Cumplimiento Legal Absoluto</p>
+                  <p className="text-[8px] text-slate-500 uppercase font-black tracking-widest">Cumplimiento legal: pendiente de verificación</p>
                 </div>
               </div>
               <ul className="space-y-3.5 text-xs text-slate-400">
                 <li className="flex items-start gap-2.5">
                   <div className="w-1 h-1 rounded-full bg-emerald-500 mt-2 shrink-0" />
-                  <span><strong>Cero Papelería:</strong> Conexión nativa con portales como el SAT y RENAPO para auto-comprobar identidad y domicilio de forma digital.</span>
+                  <span><strong>Cero Papelería (objetivo):</strong> Conexión propuesta con portales como SAT y RENAPO para auto-comprobar identidad y domicilio. No implementada hoy.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <div className="w-1 h-1 rounded-full bg-emerald-500 mt-2 shrink-0" />
@@ -737,7 +737,7 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
                 </li>
                 <li className="flex items-start gap-2.5">
                   <div className="w-1 h-1 rounded-full bg-emerald-500 mt-2 shrink-0" />
-                  <span><strong>Validez Jurídica Federal:</strong> Documentos legalmente válidos para dependencias como la SEP, Bancos, o Fiscalía del Estado.</span>
+                  <span><strong>Validez jurídica (pendiente):</strong> Documentos que serían válidos solo tras convenio y autorización del Ayuntamiento — hoy son demostración sin validez legal.</span>
                 </li>
               </ul>
             </div>

@@ -89,9 +89,9 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
              className="flex flex-wrap justify-center gap-3 max-w-3xl mb-16"
           >
              <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#4C9F70]/20 text-[#7de3a8] border border-[#4C9F70]/40 uppercase cursor-default shadow-sm">Piloto: Tepic — Constancia de Residencia</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#0FA3B1]/20 text-[#7ee8f2] border border-[#0FA3B1]/40 uppercase cursor-default shadow-sm">CURP Verificada · Algoritmo RENAPO</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#F5A623]/20 text-[#ffc96a] border border-[#F5A623]/40 uppercase cursor-default shadow-sm">Stack 100% Open Source</span>
-             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#D81E5B]/20 text-[#ff8ab8] border border-[#D81E5B]/40 uppercase cursor-default shadow-sm">Trámite Digital Punta a Punta</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#0FA3B1]/20 text-[#7ee8f2] border border-[#0FA3B1]/40 uppercase cursor-default shadow-sm">CURP (demo · sin verificación RENAPO)</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#F5A623]/20 text-[#ffc96a] border border-[#F5A623]/40 uppercase cursor-default shadow-sm">Stack de demo</span>
+             <span className="px-4 py-1.5 rounded-full text-xs font-bold tracking-wider bg-[#D81E5B]/20 text-[#ff8ab8] border border-[#D81E5B]/40 uppercase cursor-default shadow-sm">Trámite digital (demo)</span>
           </motion.div>
 
           <motion.div
@@ -147,8 +147,8 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
               <div className="flex gap-5 p-6 bg-white border border-[#d4ccc2] rounded-xl border-l-4 border-l-[#0FA3B1] shadow-sm">
                 <Lock className="w-8 h-8 text-[#0FA3B1] shrink-0" />
                 <div>
-                  <h3 className="font-bold text-[17px] mb-2 text-[#1a2438]">Identidad Digital Segura</h3>
-                  <p className="text-sm text-[#4a5568] leading-relaxed">Preparado para la federación con LlaveMx, asegurando que los datos personales de la ciudadanía estén protegidos bajo estrictos protocolos.</p>
+                  <h3 className="font-bold text-[17px] mb-2 text-[#1a2438]">Identidad Digital (propuesta)</h3>
+                  <p className="text-sm text-[#4a5568] leading-relaxed">Preparado para federación con LlaveMx como propuesta; hoy la protección de datos personales no está implementada.</p>
                 </div>
               </div>
             </div>
@@ -218,7 +218,7 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
                <div className="absolute top-0 left-0 right-0 h-1 bg-[#4C9F70]"></div>
                <div className="w-12 h-12 bg-[#4C9F70]/10 text-[#3B7A56] rounded-lg flex items-center justify-center font-serif font-bold text-xl mb-5">3</div>
                <h3 className="font-bold text-[#1a2438] mb-2 text-lg">CitizenApp</h3>
-               <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">El gobierno en el bolsillo. Trámites, ventanilla única y expediente digital seguro.</p>
+               <p className="text-[13px] text-[#4a5568] leading-relaxed mb-6">El gobierno en el bolsillo. Trámites, ventanilla única y expediente digital (demo).</p>
                <button onClick={() => onNavigate('citizen')} className="text-[#3B7A56] text-[10px] font-bold uppercase tracking-widest flex items-center gap-1 group-hover:gap-2 transition-all">Abrir App <ChevronRight className="w-3 h-3"/></button>
              </div>
              

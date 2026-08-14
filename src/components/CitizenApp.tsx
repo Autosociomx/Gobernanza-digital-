@@ -220,7 +220,7 @@ export function CitizenApp({
   const translations = {
     es: {
       welcome: `Hola, ${profile.name.split(' ')[0]}`,
-      ai_greet: `¡Hola ${profile.name.split(' ')[0]}! Soy tu Asistente de Nayarit Digital Certificado. Puedo ayudarte con tus reportes técnicos, salud preventiva o cualquier duda sobre los Comités Ciudadanos. ¿En qué te puedo apoyar hoy?`,
+      ai_greet: `¡Hola ${profile.name.split(' ')[0]}! Soy tu Asistente de Nayarit Digital (prototipo). Puedo ayudarte con reportes, salud preventiva o dudas sobre Comités Ciudadanos. ¿En qué te puedo apoyar hoy?`,
       home: "Inicio",
       forum: "Campaña",
       networks: "Redes",
@@ -1197,7 +1197,7 @@ const HomeView = React.memo(function HomeView({
         </div>
       </div>
 
-      {/* Marco Legal y Cumplimiento Federal */}
+      {/* Marco Legal (demo — sin cumplimiento verificado) */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -1287,7 +1287,7 @@ const HomeView = React.memo(function HomeView({
            </div>
            <div className="text-left">
               <p className="font-serif font-black text-xl leading-tight text-slate-900">Academia ConnectX</p>
-              <p className="text-[10px] text-magenta-500 font-bold uppercase tracking-widest">Certificación: Servidor Público Digital</p>
+              <p className="text-[10px] text-magenta-500 font-bold uppercase tracking-widest">Formación propuesta: Servidor Público Digital</p>
            </div>
         </div>
         <div className="w-10 h-10 bg-magenta-100 rounded-full flex items-center justify-center group-hover:bg-magenta-500 transition-colors shrink-0">
@@ -1559,11 +1559,11 @@ function TesoreriaYTramitesView({ onPay, onBack }: { onPay: (item: any) => void,
          <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full -mr-10 -mt-10 blur-2xl"></div>
          <div className="flex items-center gap-2 mb-4">
             <ShieldCheck className="w-5 h-5 text-emerald-400" />
-            <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Cumplimiento Ley Federal de Digitalización</span>
+            <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">Demo · sin cumplimiento verificado</span>
          </div>
-         <p className="text-[10px] font-bold uppercase tracking-widest text-white/60 mb-2">Obligación Fiscal Auditada</p>
+         <p className="text-[10px] font-bold uppercase tracking-widest text-white/60 mb-2">Datos de demostración</p>
          <h3 className="text-4xl font-serif font-black mb-1">$240.00</h3>
-         <p className="text-xs text-white/60">Periodo vigente con validez jurídica (Llave MX)</p>
+         <p className="text-xs text-white/60">Documento de demostración — integración con Llave MX propuesta, no implementada</p>
       </div>
 
       <div className="space-y-4">
@@ -1572,8 +1572,8 @@ function TesoreriaYTramitesView({ onPay, onBack }: { onPay: (item: any) => void,
            Módulo 01 — Ecosistema de Pagos Digitales
         </h3>
         {[
-          { icon: Droplets, title: 'Servicio de Agua - Junio 2026', val: '$240.00', status: 'Certificado', color: 'text-blue-500' },
-          { icon: FileText, title: 'Renovación de Licencia', val: '$850.00', status: 'Certificado', color: 'text-magenta-500' },
+          { icon: Droplets, title: 'Servicio de Agua - Junio 2026', val: '$240.00', status: 'Demo', color: 'text-blue-500' },
+          { icon: FileText, title: 'Renovación de Licencia', val: '$850.00', status: 'Demo', color: 'text-magenta-500' },
         ].map((item, i) => (
           <div key={i} className="flex items-center justify-between p-5 bg-white border border-slate-200 rounded-3xl shadow-sm hover:border-emerald-200 transition-colors">
              <div className="flex items-center gap-4">
@@ -1615,7 +1615,7 @@ function TesoreriaYTramitesView({ onPay, onBack }: { onPay: (item: any) => void,
            ))}
         </div>
         <p className="text-[10px] text-slate-400 text-center px-6 leading-relaxed">
-           Todos los documentos emitidos cuentan con firma electrónica avanzada y son válidos ante cualquier autoridad, cumpliendo con la simplificación administrativa.
+           Documentos de demostración. La firma electrónica avanzada y la validez ante autoridades son propuestas de integración, no capacidades implementadas.
         </p>
       </div>
     </div>
@@ -1642,7 +1642,7 @@ function ServiciosYReportesView({ onShowTriage, onGoToAuditoria, onBack }: { onS
                  </div>
                  <div>
                     <span className="text-lg font-black text-white block mb-1">Triaje de Salud (IA)</span>
-                    <span className="text-[9px] text-rose-300 font-bold uppercase tracking-widest">Atención Médica Inmediata y Segura</span>
+                    <span className="text-[9px] text-rose-300 font-bold uppercase tracking-widest">Atención Médica (demo de orientación, no diagnóstico)</span>
                  </div>
                </div>
                <ChevronRight className="w-5 h-5 text-white/30 group-hover:text-rose-400 transition-colors" />
@@ -1865,12 +1865,12 @@ function ProfileView({
                  <Sparkles className="w-5 h-5 text-magenta-500" />
               </div>
               <div>
-                 <p className="text-[10px] font-black text-white uppercase tracking-tight">Estándar de Gestión Pública</p>
-                 <p className="text-[9px] text-white/40 font-bold uppercase tracking-widest leading-tight">Certificado: Google Cloud · Gemini · Claude</p>
+                 <p className="text-[10px] font-black text-white uppercase tracking-tight">Stack de demostración</p>
+                 <p className="text-[9px] text-white/40 font-bold uppercase tracking-widest leading-tight">Sin certificación oficial · Google Cloud · Gemini</p>
               </div>
            </div>
            <div className="px-3 py-1 bg-magenta-500/10 rounded-full border border-magenta-500/20">
-              <span className="text-[8px] font-black text-magenta-500 uppercase">Auditado</span>
+              <span className="text-[8px] font-black text-magenta-500 uppercase">Demo</span>
            </div>
         </div>
       </div>
@@ -1976,7 +1976,7 @@ function SecurityCenterView({ user, onBack }: { user: FirebaseUser | null, onBac
     <div className="pt-2 pb-10 space-y-6">
       <ViewHeader title="Seguridad y Nayarit ID" onBack={onBack} />
       
-      {/* Block 1: Technical Certification - The Proof */}
+      {/* Block 1: Stack de demostración — sin certificación */}
       <div className="bg-slate-900 rounded-3xl p-6 text-white relative overflow-hidden shadow-2xl">
          <div className="absolute top-0 right-0 w-32 h-32 bg-magenta-500/20 rounded-full -mr-10 -mt-10 blur-3xl"></div>
          <div className="relative z-10">
@@ -1984,9 +1984,9 @@ function SecurityCenterView({ user, onBack }: { user: FirebaseUser | null, onBac
                <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
                   <ShieldCheck className="w-5 h-5 text-magenta-400" />
                </div>
-               <p className="text-[10px] font-black uppercase tracking-widest text-white/50">Certificado de Gobernanza Digital</p>
+               <p className="text-[10px] font-black uppercase tracking-widest text-white/50">Estado de prototipo</p>
             </div>
-            <h3 className="text-xl font-serif font-black mb-6 leading-tight">Ecosistema Público Auditado por Google Cloud & Gemini AI</h3>
+            <h3 className="text-xl font-serif font-black mb-6 leading-tight">Demo construida sobre Google Cloud & Gemini — sin auditoría oficial</h3>
             
             <div className="space-y-4">
                <div className="flex items-center justify-between py-2 border-b border-white/10">
@@ -1999,11 +1999,11 @@ function SecurityCenterView({ user, onBack }: { user: FirebaseUser | null, onBac
                </div>
                <div className="flex items-center justify-between py-2 border-b border-white/10">
                   <span className="text-[10px] font-bold text-white/40 uppercase">Inteligencia</span>
-                  <span className="text-xs font-mono text-magenta-400">G:3.1 | C:3.5 | L:70B</span>
+                  <span className="text-xs font-mono text-magenta-400">Gemini (prototipo)</span>
                </div>
                <div className="flex items-center justify-between py-2">
                   <span className="text-[10px] font-bold text-white/40 uppercase">Protocolo ID</span>
-                  <span className="text-xs font-mono text-magenta-400">Hybrid Trust Nayarit</span>
+                  <span className="text-xs font-mono text-magenta-400">Propuesta — sin integración real</span>
                </div>
             </div>
          </div>
@@ -2024,13 +2024,13 @@ function SecurityCenterView({ user, onBack }: { user: FirebaseUser | null, onBac
             <div className="flex items-start gap-3">
                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></div>
                <p className="text-[11px] text-emerald-800 font-medium leading-relaxed">
-                  Los datos de **Identificación, Teléfono, Correo y Domicilio** son validados físicamente por personal certificado.
+                  Los datos de **Identificación, Teléfono, Correo y Domicilio** se validarían físicamente por personal autorizado (flujo propuesto, no implementado).
                </p>
             </div>
             <div className="flex items-start gap-3">
                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></div>
                <p className="text-[11px] text-emerald-800 font-medium leading-relaxed">
-                  **Sincronización segura**: La información se vincula directamente a la red de gobernanza para servicios de emergencia inmediatos.
+                  **Sincronización (propuesta)**: La información se vincularía a la red de gobernanza para servicios de emergencia — no implementado.
                </p>
             </div>
          </div>
@@ -2079,7 +2079,7 @@ function SecurityCenterView({ user, onBack }: { user: FirebaseUser | null, onBac
          <div className="bg-white rounded-3xl border border-slate-100 divide-y divide-slate-50 overflow-hidden shadow-sm">
             {[
               { label: 'Autenticación Biométrica', isToggle: true, enabled: isBiometricEnabled, onToggle: () => setIsBiometricEnabled(!isBiometricEnabled) },
-              { label: 'Cifrado de Extremo a Extremo', status: 'Activo', color: 'text-emerald-500' },
+              { label: 'Cifrado de Extremo a Extremo', status: 'No implementado (demo)', color: 'text-amber-500' },
               { label: 'Verificación en Dos Pasos', status: 'Configurado', color: 'text-emerald-500' },
               { label: 'Nivel de Privacidad', status: 'Máximo', color: 'text-blue-500' }
             ].map((item, i) => (
