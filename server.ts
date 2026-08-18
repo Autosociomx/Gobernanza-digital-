@@ -106,13 +106,13 @@ async function startServer() {
       const finalPrompt = context ? `${context}\n\nPregunta del usuario: ${message}` : message;
       const ai = getAI();
       
-      let model = "gemini-3.5-flash";
+      let model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
       let config: any = {
         systemInstruction: systemPrompt,
       };
 
       if (useThinking) {
-        model = "gemini-3.1-pro-preview";
+        model = "gemini-2.5-pro";
         config.thinkingConfig = { thinkingLevel: ThinkingLevel.HIGH }; 
       } else if (useMaps) {
         config.tools = [{ googleMaps: {} }];
@@ -120,11 +120,22 @@ async function startServer() {
         config.tools = [{ googleSearch: {} }];
       }
       
-      const response = await ai.models.generateContent({
-        model: model,
-        contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
-        config: config,
-      });
+      let response;
+      try {
+        response = await ai.models.generateContent({
+          model: model,
+          contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
+          config: config,
+        });
+      } catch (primaryErr) {
+        console.warn(`Error invoking primary model ${model}, falling back to gemini-2.5-flash:`, primaryErr);
+        // Fallback resilient model call without experimental options if failed
+        response = await ai.models.generateContent({
+          model: "gemini-2.5-flash",
+          contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
+          config: { systemInstruction: systemPrompt },
+        });
+      }
       
       res.json({ response: response.text });
     } catch (error: any) {
@@ -164,8 +175,9 @@ async function startServer() {
       Responde estrictamente en formato JSON.
       `;
 
+      const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
       const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
+        model: model,
         contents: prompt,
         config: {
           responseMimeType: "application/json",
