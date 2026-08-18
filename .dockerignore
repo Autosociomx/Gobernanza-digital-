@@ -1,0 +1,15 @@
+# Ignorar dependencias locales
+node_modules/
+npm-debug.log
+
+# Ignorar archivos compilados
+dist/
+
+# Ignorar variables de entorno
+.env
+.env.*
+!.env.example
+
+# Archivos de SO
+.DS_Store
+Thumbs.db

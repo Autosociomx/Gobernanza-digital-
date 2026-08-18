@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  connectx-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: connectx-soatm-app
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      # Variables de entorno requeridas por la aplicación.
+      # Para entornos locales, se pueden definir en un archivo .env
+      - VITE_FIREBASE_API_KEY=${VITE_FIREBASE_API_KEY}
+      - VITE_FIREBASE_AUTH_DOMAIN=${VITE_FIREBASE_AUTH_DOMAIN}
+      - VITE_FIREBASE_PROJECT_ID=${VITE_FIREBASE_PROJECT_ID}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-}
+    restart: unless-stopped
+    healthcheck:
+      # Dependiendo de tu implementación de backend, este curl valida que el server este vivo
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
