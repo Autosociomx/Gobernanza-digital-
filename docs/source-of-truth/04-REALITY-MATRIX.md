@@ -1,123 +1,125 @@
 # Matriz de Realidad — Gobernanza Digital
 
-**Versión:** 0.1  
+**Versión:** 0.2  
 **Fecha de corte:** 2026-08-19  
-**Objetivo:** separar concepto, documentación, código, integración y producción.
+**Objetivo:** separar concepto, documentación, código, integración y producción usando evidencia reproducible.
 
-## 1. Reglas
+## 1. Estados
 
-### Madurez
+Madurez:
 
-- `CONCEPTO`
-- `ESPECIFICACIÓN`
-- `PROTOTIPO`
-- `IMPLEMENTADO`
-- `INTEGRADO`
-- `PRODUCCIÓN`
-- `DEPRECADO`
-- `DESCARTADO`
+`CONCEPTO -> ESPECIFICACIÓN -> PROTOTIPO -> IMPLEMENTADO -> INTEGRADO -> PRODUCCIÓN`
 
-### Tipo de evidencia
+Estados terminales: `DEPRECADO`, `DESCARTADO`.
 
-- `CODE`
-- `DEPLOYMENT`
-- `DOC`
-- `DECISION`
-- `RESEARCH`
-- `CHAT`
-- `INFERENCE`
+Evidencia: `CODE`, `DEPLOYMENT`, `DOC`, `DECISION`, `RESEARCH`, `CHAT`, `ARTIFACT`, `TEST`.
 
-### Confianza
+Confianza: `CONFIRMADO`, `ALTA_CONFIANZA`, `PROBABLE`, `NO_VERIFICADO`, `CONTRADICTORIO`.
 
-- `CONFIRMADO`
-- `ALTA_CONFIANZA`
-- `PROBABLE`
-- `NO_VERIFICADO`
-- `CONTRADICTORIO`
+## 2. Evidencia nueva incorporada
 
-## 2. Matriz inicial
+### ORBE ciudadano v0.1
 
-| Capacidad | Madurez | Evidencia | Confianza | Qué sí podemos afirmar | Qué NO debemos afirmar todavía | Próxima prueba |
-|---|---|---|---|---|---|---|
-| ORBE ciudadano | PROTOTIPO / IMPLEMENTADO parcial | CODE, PR #44 | ALTA_CONFIANZA | existe interfaz/intents y trabajo de catálogo ciudadano | asistente de voz gubernamental plenamente integrado y productivo | verificar `main`, integración con CitizenApp, voz y flujo completo |
-| Intents ciudadanos | IMPLEMENTADO | CODE, PR #44 | ALTA_CONFIANZA | existen intents estructurados para casos municipales | cobertura completa de servicios municipales | inventario de intents y tests de resolución |
-| Catálogo municipal | IMPLEMENTADO | CODE, PR #44 | ALTA_CONFIANZA | existe conocimiento estructurado con estados de evidencia | catálogo oficial exhaustivo | reconciliar contra fuentes municipales oficiales |
-| Human handoff | ESPECIFICACIÓN / parcial | DOC, CODE parcial | PROBABLE | existe como principio y flujo esperado | operación institucional con SLA real | demostrar handoff a canal humano real |
-| Context.OS | ESPECIFICACIÓN / IMPLEMENTACIÓN parcial | DOC, CODE parcial | PROBABLE | existe como arquitectura/plano contextual en evolución | runtime completo, estable y productivo | localizar módulos actuales y ejecutar casos sin LLM específico |
-| Policy Engine | ESPECIFICACIÓN | DECISION, DOC | ALTA_CONFIANZA | está definido como requisito arquitectónico | autorización determinista completa | implementar primer `ALLOW/DENY/REQUIRE_*` versionado |
-| Consent Engine | ESPECIFICACIÓN / parcial | DOC, CODE parcial | PROBABLE | consentimiento es requisito constitucional | gestión completa revocable y auditable | consentimiento persistente con propósito/TTL/revocación |
-| Evidence/Audit | ESPECIFICACIÓN / parcial | DOC, CODE parcial | PROBABLE | trazabilidad/evidencia están definidas | evidencia criptográficamente verificable end-to-end | emitir evidence record en primer flujo real |
-| ID.mx | CONCEPTO / ESPECIFICACIÓN | DOC, DECISION | ALTA_CONFIANZA | capa propuesta de expediente/contexto autorizado | identidad oficial o expediente productivo interoperable | definir esquema mínimo y data ownership |
-| Llave MX | NO INTEGRADO | auditoría previa | ALTA_CONFIANZA | no existe integración oficial confirmada | login/identidad oficial funcionando | implementar OIDC/integración cuando exista acceso institucional |
-| SOATM | ESPECIFICACIÓN / implementación parcial | DOC, CODE parcial | ALTA_CONFIANZA | existe como concepto operativo/interoperable | bus municipal productivo completo | identificar Service Catalog, adapters y contratos reales |
-| Service Catalog | PROTOTIPO / IMPLEMENTADO parcial | CODE, DOC | PROBABLE | existe catálogo/intents que puede evolucionar a registro canónico | registry institucional completo | normalizar `Service` schema/versiones |
-| Government Service Graph | CONCEPTO / ESPECIFICACIÓN | DOC, DECISION | PROBABLE | está definido como componente objetivo | grafo ejecutable en producción | modelo mínimo de nodos/edges y resolver un caso |
-| Institutional Connectors | PROTOTIPO / parcial | CODE | PROBABLE | existen integraciones y mocks en el repositorio | conectores certificados a sistemas gubernamentales reales | inventario y clasificación mock/sandbox/real |
-| Tesorería | PROTOTIPO | CODE, DOC | ALTA_CONFIANZA | existe experiencia/dominio de tesorería | conexión productiva a recaudación municipal | demostrar lectura/escritura real con sandbox institucional |
-| Pagos | PROTOTIPO / SANDBOX | CODE, auditoría previa | ALTA_CONFIANZA | existen flujos de pago de demostración | cobro municipal productivo | separar provider sandbox y gateway institucional |
-| Catastro | PROTOTIPO / dominio | CODE, DOC | PROBABLE | existen casos/experiencia de catastro | interoperabilidad con padrón catastral real | primer connector read-only |
-| Registro Civil | PROTOTIPO / dominio | CODE, DOC | PROBABLE | existe orientación/intents del dominio | emisión oficial de actas | enlace/verificación con fuente oficial |
-| Servicios Públicos | PROTOTIPO / dominio | CODE, DOC | PROBABLE | existen casos como baches/luminarias | creación real de órdenes municipales | ticket institucional end-to-end |
-| Salud | PROTOTIPO / dominio | CODE, DOC | PROBABLE | existe orientación/funcionalidad de demostración | diagnóstico médico o expediente clínico interoperable productivo | delimitar alcance clínico y compliance |
-| Backend | IMPLEMENTADO parcial | CODE, auditoría previa | ALTA_CONFIANZA | hay servicios backend | plataforma gubernamental completa y robusta | inventario de endpoints, auth, persistence, contract tests |
-| Persistencia | IMPLEMENTADO parcial | CODE | PROBABLE | hay mecanismos de persistencia en partes del sistema | repositorio ciudadano/institucional unificado de producción | mapa de databases/collections y ownership |
-| Firebase/Firestore | IMPLEMENTADO / CONFIGURADO parcial | CODE | ALTA_CONFIANZA | hay configuración y reglas en repo | arquitectura soberana definitiva | aislar data layer y documentar estrategia de sustitución |
-| Gemini | IMPLEMENTADO como proveedor parcial | CODE | ALTA_CONFIANZA | existen llamadas/configuración a Gemini | dependencia necesaria del sistema | crear interfaz AIProvider y fallback |
-| OpenAI/otros modelos | CONCEPTO / posible proveedor | DOC/DECISION | PROBABLE | arquitectura debe admitir proveedores alternativos | integración actual confirmada | adapter de segundo proveedor o modelo local |
-| Tests unitarios | DEUDA / NO VERIFICADO ACTUAL | auditoría previa | PROBABLE | auditoría anterior detectó carencia | cero tests hoy sin revalidar | contar suite actual y cobertura |
-| Contract tests | NO CONFIRMADO | INFERENCE | PROBABLE | son necesarios | que ya existan | implementar primer contract test de Service/Policy |
-| Observabilidad | PARCIAL / NO VERIFICADO | CODE, DOC | PROBABLE | existen piezas de logging/configuración | tracing end-to-end productivo | correlation ID + structured logs en un flujo |
-| Producción gubernamental | NO CONFIRMADO | ninguna evidencia suficiente | ALTA_CONFIANZA | existe demo/despliegue tecnológico | operación institucional oficial | piloto formal con dependencia y métricas |
-| Nayarit Digital | IMPLEMENTACIÓN TERRITORIAL EN DESARROLLO | CODE, DOC, DECISION | ALTA_CONFIANZA | es instancia territorial del ecosistema | plataforma estatal oficial desplegada | definir piloto, alcance y autoridad institucional |
+Artefacto auditado: `ORBE_ciudadano_nucleo_conversacional_v0.1_limpio_2026-08-19.zip`  
+SHA-256: `e777cf5ec88a3dd42f9593ff1afa47a2614f9e8281e101087297b3c5f8db2407`
 
-## 3. Claims externos permitidos hoy
+### Context.OS Observatory v0.3
 
-Con la evidencia actual, son razonables formulaciones como:
+Artefacto auditado: `context-os-observatory-v03.zip`  
+SHA-256: `00ee850882be1d8ccc319acc75647092d8c198ee344b501ced943fa844f2188a`
 
-- “Tenemos un prototipo funcional y una arquitectura en evolución para interacción ciudadana e interoperabilidad.”
-- “ORBE ya cuenta con intents y catálogo estructurado para varios casos municipales.”
-- “Estamos separando experiencia, políticas, identidad, interoperabilidad y sistemas institucionales para evitar dependencia de un proveedor.”
-- “El proyecto está diseñado para integrarse con infraestructura existente, no para reemplazarla indiscriminadamente.”
+Verificación ejecutada: `npm run verify` -> **24/24 tests PASS**, 0 fallos.  
+Servidor local y endpoints de health, ontology, project-baseline y claims lint verificados.
 
-## 4. Claims bloqueados hasta nueva evidencia
+Detalles: `05-ARTIFACT-AUDIT-2026-08-19.md`.
 
-No afirmar todavía, salvo evidencia posterior explícita:
+## 3. Matriz canónica v0.2
 
-- “Estamos integrados con Llave MX.”
-- “Tenemos pagos municipales reales en producción.”
-- “Context.OS ya es un control plane productivo completo.”
+| Capacidad | Madurez | Evidencia | Confianza | Qué sí existe | Qué falta para ascender |
+|---|---|---|---|---|---|
+| ORBE Experience Plane | IMPLEMENTADO | ARTIFACT, CODE | CONFIRMADO | UI ciudadana, ocho casos, diálogo por slots, límites de autoridad | integrar contrato con Context.OS Runtime |
+| ORBE voz | IMPLEMENTADO dependiente del cliente | ARTIFACT, CODE | CONFIRMADO | SpeechRecognition/webkitSpeechRecognition + speechSynthesis | ASR/TTS portable, accesible y con estrategia soberana |
+| ORBE intent resolver | IMPLEMENTADO determinístico | ARTIFACT, CODE | CONFIRMADO | matching por keywords + cambio de intención | IntentEnvelope, NLP semántico y pruebas de regresión |
+| ORBE cerebro cognitivo | ESPECIFICACIÓN | ARTIFACT, DOC | CONFIRMADO | capas, habilidades, rúbrica y roadmap descritos en `/cerebro` | convertir narrativa en componentes ejecutables |
+| ORBE LLM | NO IMPLEMENTADO en artefacto v0.1 | ARTIFACT, CODE | CONFIRMADO | ninguna llamada LLM localizada | AIProvider opcional detrás de política y contratos |
+| ORBE persistencia | NO IMPLEMENTADA | ARTIFACT, CODE | CONFIRMADO | estado vive en React; `db/schema.ts` vacío | session/context store con minimización y TTL |
+| Human handoff | PROTOTIPO UX / NO INTEGRADO | ARTIFACT, CODE | ALTA_CONFIANZA | mensajes y botón de siguiente paso | canal humano real, SLA, tracking y evidencia |
+| Context.OS Observatory | IMPLEMENTADO / VERIFICADO | ARTIFACT, CODE, TEST | CONFIRMADO | servidor, scanner, store, ontología, estrategia, grafo, linter, dashboard | empaquetado/operación si se adopta como servicio interno |
+| Observatory API | IMPLEMENTADA / VERIFICADA LOCAL | ARTIFACT, TEST | CONFIRMADO | health, scan, discover, audit, graph, strategy, ontology, export, etc. | auth/gateway/rate-limit antes de exposición pública |
+| Observatory security scanner | IMPLEMENTADO | ARTIFACT, CODE, TEST | CONFIRMADO | bloqueo SSRF, IP privadas, DNS público, pinning, límites | threat model externo y pruebas de carga/adversariales |
+| Observatory evidence integrity | IMPLEMENTADO | ARTIFACT, CODE, TEST | CONFIRMADO | hash canónico e integridad referencial | firma institucional/ledger si se requiere no repudio |
+| Observatory claim linter | IMPLEMENTADO CON BRECHA P1 | ARTIFACT, CODE, TEST | CONFIRMADO | reglas de claims legales, identidad, seguridad, soberanía | corregir variante `cumple 100% la LNETB` y añadir regresión |
+| OpenAI analyzer del Observatory | IMPLEMENTADO COMO OPCIONAL | ARTIFACT, CODE, TEST mock | ALTA_CONFIANZA | adapter Responses API; scoring determinístico no depende de IA | prueba real con credencial autorizada y provider abstraction |
+| Context.OS Runtime | ESPECIFICACIÓN / NO IMPLEMENTADO EN OBSERVATORY | DOC, DECISION, ARTIFACT | CONFIRMADO | responsabilidad y ontología están claras | construir control plane mínimo ejecutable |
+| Policy Engine | ESPECIFICACIÓN | DECISION, DOC | ALTA_CONFIANZA | requisito arquitectónico definido | PDP versionado con ALLOW/DENY/REQUIRE_* y tests |
+| Consent Engine | ESPECIFICACIÓN | DECISION, DOC | ALTA_CONFIANZA | principio y estados definidos | grants persistentes con purpose, scope, TTL, revoke |
+| Evidence Record de ejecución | ESPECIFICACIÓN | DECISION, DOC | ALTA_CONFIANZA | requisito de trazabilidad | emitir evidencia en el primer vertical slice |
+| ID.mx | CONCEPTO / ESPECIFICACIÓN | DOC, DECISION | ALTA_CONFIANZA | rol definido como índice/vista de evidencia autorizada | esquema, ownership y primer caso read-only |
+| Llave MX | NO INTEGRADO | DOC, AUDIT | ALTA_CONFIANZA | arquitectura prevé federación | convenio/acceso + integración oficial demostrable |
+| SOATM Integration Plane | ESPECIFICACIÓN / IMPLEMENTACIÓN PARCIAL en repo madre | DOC, CODE previo | ALTA_CONFIANZA | concepto operativo y piezas de integración | contratos, adapters, service auth y event contract formales |
+| Service Catalog | PROTOTIPO / IMPLEMENTADO PARCIAL | CODE, DOC | ALTA_CONFIANZA | catálogo/intents disponibles | registry canónico versionado con autoridad y fuentes |
+| Government Service Graph | ESPECIFICACIÓN; grafo de evidencia sí existe en Observatory | ARTIFACT, DOC | ALTA_CONFIANZA | patrón y primer grafo de evidencia ejecutable | separar Service Graph operacional del Evidence Graph |
+| Institutional Connectors | PROTOTIPO / NO CERTIFICADO | CODE previo | PROBABLE | existen integraciones/mocks en repo madre | inventario mock/sandbox/real + adapter contract |
+| Pagos municipales | PROTOTIPO / SANDBOX | auditoría previa | ALTA_CONFIANZA | demos de pago | gateway institucional y conciliación real |
+| Firebase/Firestore | IMPLEMENTADO / CONFIGURADO PARCIAL | CODE previo | ALTA_CONFIANZA | configuración y reglas existen | data abstraction, ownership y exit strategy |
+| Gemini | IMPLEMENTADO COMO PROVEEDOR EN REPO MADRE | CODE previo | ALTA_CONFIANZA | integración previa existe | desacoplar mediante AIProvider; no convertirlo en dependencia constitucional |
+| Tests Observatory | IMPLEMENTADOS | TEST | CONFIRMADO | 24/24 PASS el 2026-08-19 | cobertura de producción, carga y seguridad adicional |
+| Tests ORBE v0.1 | INSUFICIENTES / BUILD NO REPRODUCIDO EN ESTA AUDITORÍA | ARTIFACT | CONFIRMADO | test de render/metadata incluido | tests unitarios intent/dialogue/voz/a11y + build reproducible |
+| Producción gubernamental | NO CONFIRMADA | ninguna evidencia suficiente | ALTA_CONFIANZA | demos y artefactos tecnológicos | piloto institucional formal, operación, seguridad y métricas |
+| Nayarit Digital | IMPLEMENTACIÓN TERRITORIAL EN DESARROLLO | CODE, DOC, DECISION | ALTA_CONFIANZA | instancia territorial del ecosistema | alcance/piloto/autoridad institucional formalizados |
+
+## 4. Corrección ontológica principal
+
+No usar `Context.OS` como una sola etiqueta para todo.
+
+A partir de esta versión se distinguen:
+
+1. **Context.OS Observatory** — Evidence Intelligence. Ya implementado y probado.
+2. **Context.OS Runtime** — Institutional Control Plane. Pendiente de implementación mínima.
+
+El Observatory puede alimentar decisiones del Runtime, pero **no autoriza ni ejecuta actos administrativos**.
+
+## 5. Claims permitidos hoy
+
+- “ORBE cuenta con una interfaz conversacional funcional, diálogo de seguimiento y voz basada en capacidades del navegador.”
+- “Context.OS Observatory v0.3 es software ejecutable; su suite actual pasa 24/24 pruebas.”
+- “El Observatory separa evidencia observada, inferencias e incógnitas y genera estrategia trazable.”
+- “La arquitectura distingue ORBE, Context.OS Runtime, ID.mx, Llave MX y sistemas institucionales.”
+- “Estamos construyendo el Runtime de Context.OS como pieza separada del Observatorio.”
+
+## 6. Claims bloqueados
+
+No afirmar sin evidencia adicional:
+
+- “ORBE ya posee un cerebro cognitivo autónomo.”
+- “ORBE está conectado a sistemas municipales reales.”
+- “ORBE procesa voz mediante infraestructura soberana propia.”
+- “Context.OS Observatory es el Runtime institucional.”
+- “Context.OS autoriza actos administrativos.”
+- “Estamos integrados oficialmente con Llave MX.”
+- “Cumplimos 100% la LNETB.”
 - “SOATM ya conecta todos los sistemas municipales.”
 - “ID.mx es un expediente único oficial.”
-- “Cumplimos totalmente la normativa aplicable.”
 - “La plataforma está lista para millones de usuarios.”
 - “Operamos oficialmente para un gobierno.”
 
-## 5. Criterio de ascenso de madurez
+## 7. Próximo criterio de construcción
 
-### CONCEPTO -> ESPECIFICACIÓN
-Responsabilidad, contratos, límites, riesgos y criterios de aceptación documentados.
+El siguiente incremento no debe ser otro dashboard.
 
-### ESPECIFICACIÓN -> PROTOTIPO
-Existe comportamiento demostrable, aunque use mocks/sandbox.
+Debe construir el **Vertical Slice 001**:
 
-### PROTOTIPO -> IMPLEMENTADO
-Código reproducible, persistencia/configuración definida y pruebas mínimas.
+`ORBE -> IntentEnvelope -> Context.OS Runtime -> Policy/Consent -> SOATM Adapter -> EvidenceRecord -> ORBE`
 
-### IMPLEMENTADO -> INTEGRADO
-Dependencia real conectada mediante contrato y autenticación válida.
+Caso recomendado: reporte de bache/luminaria, por ser de menor riesgo que pagos, identidad o modificación registral.
 
-### INTEGRADO -> PRODUCCIÓN
-Despliegue operado, monitoreado, con seguridad, observabilidad, recuperación, evidencia y responsable institucional.
+Contratos mínimos:
 
-## 6. Backlog de verificación inmediato
-
-1. Recontar tests en `main` actual.
-2. Inventariar endpoints backend reales.
-3. Clasificar todas las integraciones como mock, sandbox, demo o real.
-4. Verificar estado de voz ORBE en `main`.
-5. Mapear persistencia y datos personales.
-6. Localizar toda implementación vinculada a Context.OS/SOATM/ID.mx.
-7. Identificar dependencias directas de Gemini/Firebase/Stripe.
-8. Revisar CI/CD y evidencia de builds verdes.
-9. Definir el primer flujo end-to-end institucional.
-10. Actualizar esta matriz sólo con evidencia nueva.
+- `IntentEnvelope`
+- `ContextEnvelope`
+- `PolicyDecision`
+- `ConsentGrant`
+- `ServiceDescriptor`
+- `ExecutionRequest`
+- `ExecutionResult`
+- `EvidenceRecord`
