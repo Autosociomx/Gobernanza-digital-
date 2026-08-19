@@ -4,6 +4,8 @@
 **Estado:** evidencia técnica reproducible para Source of Truth v0.1  
 **Alcance:** dos artefactos ZIP entregados para auditoría, sin incorporarlos como código productivo al repositorio.
 
+> Nota de verificación: Context.OS Observatory v0.3 fue ejecutado localmente durante esta auditoría. `npm run verify` completó 24/24 pruebas sin fallos y el servidor respondió correctamente en `GET /api/health`, `GET /api/ontology`, `GET /api/project-baseline` y `POST /api/claims/lint`. ORBE v0.1 fue inspeccionado estáticamente; su instalación de dependencias no completó dentro de la ventana de auditoría, por lo que su build no se certifica aquí.
+
 ## 1. Identidad de artefactos
 
 ### ORBE ciudadano — núcleo conversacional v0.1
