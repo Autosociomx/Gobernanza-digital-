@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { processCitizenUtterance, INITIAL_BRIDGE_STATE, type BridgeState } from '../orbe/contextosBridge';
 import { executeContextOS } from '../services/contextosRuntimeClient';
 import { useAuraVoice } from './useAuraVoice';
@@ -11,9 +11,12 @@ export function useOrbeContextPilot() {
   );
   const [isThinking, setIsThinking] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const inFlightRef = useRef(false);
 
   const submit = useCallback(
     async (text: string) => {
+      if (inFlightRef.current) return undefined;
+      inFlightRef.current = true;
       setIsThinking(true);
       setHasError(false);
       try {
@@ -29,6 +32,7 @@ export function useOrbeContextPilot() {
         setStatusText(safeMessage);
         return undefined;
       } finally {
+        inFlightRef.current = false;
         setIsThinking(false);
       }
     },
