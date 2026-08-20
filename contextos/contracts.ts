@@ -63,6 +63,8 @@ export interface PolicyDecision {
 
 export interface ConsentGrant {
   grantId: string;
+  requestId: string;
+  subjectId?: string;
   purpose: string;
   scopes: string[];
   issuedAt: string;
@@ -122,6 +124,7 @@ export interface EvidenceRecord {
     rawCitizenPayloadStored: false;
     personalContactStored: false;
   };
+  integrityAssurance: 'CHECKSUM_ONLY';
   hashAlgorithm: 'sha256';
   hash: string;
 }
