@@ -99,6 +99,13 @@ export async function processCitizenUtterance(
   }
 
   if (state.pending?.kind === 'LOCATION') {
+    if (isNegative(text)) {
+      return {
+        state: INITIAL_BRIDGE_STATE,
+        route: 'CANCELLED',
+        citizenMessage: 'De acuerdo. No completé ni envié el reporte de laboratorio.',
+      };
+    }
     return sendToRuntime(mergeLocationClarification(state.pending.intent, text), executor);
   }
 
