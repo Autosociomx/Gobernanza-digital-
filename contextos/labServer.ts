@@ -5,9 +5,26 @@ const app = express();
 const runtime = createLabContextOSRuntime();
 const port = Number(process.env.CONTEXTOS_PORT ?? 3011);
 const host = process.env.CONTEXTOS_HOST ?? '127.0.0.1';
+const allowedOrigins = new Set(
+  (process.env.CONTEXTOS_ALLOWED_ORIGINS ?? 'http://localhost:3000,http://127.0.0.1:3000')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean),
+);
 
 app.disable('x-powered-by');
 app.use(express.json({ limit: '64kb' }));
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && allowedOrigins.has(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  }
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+});
 
 app.get('/api/contextos/v0.1/health', (_req, res) => {
   res.json({
