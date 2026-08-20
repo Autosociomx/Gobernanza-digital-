@@ -4,12 +4,14 @@ import { isContextOSBridgeEnabled } from '../../services/contextosRuntimeClient'
 import { OrbeCitizen } from './OrbeCitizen';
 
 export function OrbeContextPilot() {
-  const enabled = isContextOSBridgeEnabled();
+  if (!isContextOSBridgeEnabled()) return null;
+  return <EnabledOrbeContextPilot />;
+}
+
+function EnabledOrbeContextPilot() {
   const pilot = useOrbeContextPilot();
   const [showText, setShowText] = useState(false);
   const [value, setValue] = useState('');
-
-  if (!enabled) return null;
 
   const submitText = (event: React.FormEvent) => {
     event.preventDefault();
@@ -38,10 +40,13 @@ export function OrbeContextPilot() {
               onChange={(event) => setValue(event.target.value)}
               placeholder="Ej. Quiero reportar un bache..."
               aria-label="Solicitud para ORBE"
+              maxLength={512}
+              disabled={pilot.isThinking}
               className="min-w-0 flex-1 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-cyan-300"
             />
             <button
               type="submit"
+              disabled={pilot.isThinking}
               className="rounded-xl bg-cyan-400 px-3 py-2 text-xs font-semibold text-slate-950"
             >
               Enviar
