@@ -44,6 +44,7 @@ export function createEvidenceRecord(input: EvidenceInput, options: EvidenceOpti
       rawCitizenPayloadStored: false as const,
       personalContactStored: false as const,
     },
+    integrityAssurance: 'CHECKSUM_ONLY' as const,
     hashAlgorithm: 'sha256' as const,
   };
 
