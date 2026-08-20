@@ -6,6 +6,11 @@ import { sha256 } from './canonical';
 export interface EvidenceInput {
   correlationId: string;
   serviceId?: string;
+  semantic?: {
+    contractId: string;
+    contractVersion?: string;
+    registryVersion?: string;
+  };
   policy: PolicyDecision;
   execution?: ExecutionResult;
 }
@@ -26,6 +31,7 @@ export function createEvidenceRecord(input: EvidenceInput, options: EvidenceOpti
     schemaVersion: CONTEXTOS_SCHEMA_VERSION,
     eventType: input.execution ? ('EXECUTION' as const) : ('POLICY_ONLY' as const),
     serviceId: input.serviceId,
+    semantic: input.semantic,
     policy: {
       decision: input.policy.decision,
       policyVersion: input.policy.policyVersion,
