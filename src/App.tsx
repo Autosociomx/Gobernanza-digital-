@@ -10,6 +10,9 @@ const C5Dashboard = lazy(() =>
 const CitizenApp = lazy(() =>
   import('./components/CitizenApp').then((m) => ({ default: m.CitizenApp }))
 );
+const OrbeContextPilot = lazy(() =>
+  import('./components/orbe/OrbeContextPilot').then((m) => ({ default: m.OrbeContextPilot }))
+);
 const DeveloperChecklist = lazy(() =>
   import('./components/DeveloperChecklist').then((m) => ({ default: m.DeveloperChecklist }))
 );
@@ -63,6 +66,7 @@ function App() {
     return (
       <Suspense fallback={<ViewFallback />}>
         <CitizenApp onLogout={() => setCurrentView('landing')} initialTab={citizenTab} initialAction={citizenAction} />
+        <OrbeContextPilot />
       </Suspense>
     );
   }
