@@ -5,21 +5,32 @@ name: Guardia de regresiones
 # metadatos genéricos, pérdida de code-splitting y borrado de archivos de
 # despliegue. Referencia: docs/marco/PROTOCOLO_SEGURIDAD.md
 
-on:
+"on":
   push:
-    branches: [main]
+    branches:
+      - main
+      - 'agent/**'
   pull_request:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: guardia-regresiones-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   guardia:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Instalar dependencias
@@ -27,6 +38,12 @@ jobs:
 
       - name: Verificar regresiones (config y archivos)
         run: node scripts/verificar-regresiones.mjs
+
+      - name: Verificar tipos
+        run: npm run lint
+
+      - name: Probar Context.OS Runtime
+        run: npm run test:contextos
 
       - name: Compilar y verificar que la llave no esté en el bundle
         run: |
