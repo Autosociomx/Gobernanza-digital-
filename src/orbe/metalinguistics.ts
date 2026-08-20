@@ -1,30 +1,31 @@
 import type { IntentEnvelope, RuntimeResponse } from '../../contextos/contracts';
 import { CONTEXTOS_SCHEMA_VERSION } from '../../contextos/contracts';
+import {
+  findSemanticContractByIntent,
+  findSemanticContractForText,
+  interpolateCitizenMessage,
+  matchesPatternSet,
+} from '../../shared/semantic/registry';
+import type {
+  SemanticContract,
+  SemanticRoute,
+  SemanticSpeechAct,
+} from '../../shared/semantic/types';
 
-export type OrbeSpeechAct =
-  | 'ACTION_REQUEST'
-  | 'INCIDENT_ASSERTION'
-  | 'INFORMATION_REQUEST'
-  | 'AMBIGUOUS'
-  | 'OTHER';
-
+export type OrbeSpeechAct = SemanticSpeechAct;
 export type PublicWorksSubject = 'pothole' | 'streetlight';
-type RuntimePublicWorksSubject = 'bache' | 'luminaria';
-
-const RUNTIME_SUBJECT_BY_SEMANTIC: Record<PublicWorksSubject, RuntimePublicWorksSubject> = {
-  pothole: 'bache',
-  streetlight: 'luminaria',
-};
-
-export type OrbeRoute = 'CONTEXTOS' | 'CONFIRM_ACTION' | 'ASK_INTENT' | 'CHAT';
+export type OrbeRoute = SemanticRoute;
 
 export interface MetalinguisticInterpretation {
   speechAct: OrbeSpeechAct;
   route: OrbeRoute;
-  domain?: 'public_works';
+  domain?: string;
   subject?: PublicWorksSubject;
   confidence: number;
   reasonCodes: string[];
+  contractId?: string;
+  contractVersion?: string;
+  intentName?: string;
 }
 
 export interface IntentBuildContext {
@@ -34,42 +35,7 @@ export interface IntentBuildContext {
   requestId?: string;
 }
 
-const INFORMATION_PATTERNS = [
-  /\bcomo\s+(puedo\s+)?report(ar|o)\b/,
-  /\bdonde\s+(puedo\s+)?report(ar|o)\b/,
-  /\bque\s+(necesito|requisitos?)\b/,
-  /\bquiero\s+saber\b/,
-  /\bme\s+puedes\s+decir\b/,
-  /\bcual\s+es\s+el\s+proceso\b/,
-];
-
-const ACTION_PATTERNS = [
-  /\bquiero\s+reportar\b/,
-  /\bnecesito\s+reportar\b/,
-  /\bvengo\s+a\s+reportar\b/,
-  /\breporta(r)?\b/,
-  /\bregistra(r)?\s+(este|un|una)?\s*reporte\b/,
-];
-
-const INCIDENT_PATTERNS = [
-  /\bhay\s+(un|una)\b/,
-  /\bno\s+(sirve|funciona|prende|enciende)\b/,
-  /\besta\s+(apagada|apagado|rota|roto|fundida|fundido)\b/,
-  /\bse\s+(fundio|rompio|cayo)\b/,
-];
-
-const AFFIRMATIVE_PATTERNS = [/^si\b/, /^adelante\b/, /^confirmo\b/, /^hazlo\b/, /^de\s+acuerdo\b/];
-const NEGATIVE_PATTERNS = [
-  /^no$/,
-  /^no\s+gracias$/,
-  /^no\s+por\s+favor$/,
-  /\bcancel(?:a|ar|alo)\b/,
-  /\bmejor\s+no\b/,
-  /\bpero\s+no\b/,
-  /\bno\s+quiero\b/,
-];
-
-function normalize(text: string): string {
+export function normalizeCitizenText(text: string): string {
   return text
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
@@ -79,99 +45,111 @@ function normalize(text: string): string {
     .trim();
 }
 
-function detectSubject(normalized: string): PublicWorksSubject | undefined {
-  if (/\b(bache|baches|hoyo|hoyos|pavimento\s+roto)\b/.test(normalized)) return 'pothole';
-  if (/\b(luminaria|luminarias|lampara|lamparas|alumbrado|poste\s+de\s+luz|luz\s+de\s+la\s+calle)\b/.test(normalized)) {
-    return 'streetlight';
+function contractForInterpretation(
+  interpretation: MetalinguisticInterpretation,
+): SemanticContract | undefined {
+  if (!interpretation.intentName) return undefined;
+  const contract = findSemanticContractByIntent(interpretation.intentName);
+  if (
+    !contract ||
+    interpretation.contractId !== contract.id ||
+    interpretation.contractVersion !== contract.version
+  ) {
+    return undefined;
   }
-  return undefined;
+  return contract;
 }
 
-function matchesAny(text: string, patterns: RegExp[]): boolean {
-  return patterns.some((pattern) => pattern.test(text));
+function defaultContract(): SemanticContract {
+  const contract = findSemanticContractByIntent('report_public_infrastructure_issue');
+  if (!contract) throw new Error('PUBLIC_WORKS_SEMANTIC_CONTRACT_NOT_REGISTERED');
+  return contract;
 }
 
-export function isAffirmative(text: string): boolean {
-  const normalized = normalize(text);
-  return !matchesAny(normalized, NEGATIVE_PATTERNS) && matchesAny(normalized, AFFIRMATIVE_PATTERNS);
+export function isAffirmative(
+  text: string,
+  contract: SemanticContract = defaultContract(),
+): boolean {
+  const normalized = normalizeCitizenText(text);
+  return (
+    !matchesPatternSet(normalized, contract.confirmations.negativePatterns) &&
+    matchesPatternSet(normalized, contract.confirmations.affirmativePatterns)
+  );
 }
 
-export function isNegative(text: string): boolean {
-  return matchesAny(normalize(text), NEGATIVE_PATTERNS);
+export function isNegative(
+  text: string,
+  contract: SemanticContract = defaultContract(),
+): boolean {
+  return matchesPatternSet(
+    normalizeCitizenText(text),
+    contract.confirmations.negativePatterns,
+  );
 }
 
 export function interpretCitizenUtterance(text: string): MetalinguisticInterpretation {
-  const normalized = normalize(text);
-  const subject = detectSubject(normalized);
+  const normalized = normalizeCitizenText(text);
+  const semanticMatch = findSemanticContractForText(normalized);
 
-  if (!subject) {
+  if (!semanticMatch) {
     return {
       speechAct: 'OTHER',
       route: 'CHAT',
       confidence: 0.2,
-      reasonCodes: ['PUBLIC_WORKS_SUBJECT_NOT_DETECTED'],
+      reasonCodes: ['SEMANTIC_CONTRACT_NOT_MATCHED'],
     };
   }
 
-  if (matchesAny(normalized, INFORMATION_PATTERNS)) {
-    return {
-      speechAct: 'INFORMATION_REQUEST',
-      route: 'CHAT',
-      domain: 'public_works',
-      subject,
-      confidence: 0.96,
-      reasonCodes: ['INFORMATIONAL_SPEECH_ACT', 'NO_EXECUTION_IMPLIED'],
-    };
-  }
+  const { contract, subject } = semanticMatch;
+  const speechAct = contract.speechActs.find((definition) =>
+    matchesPatternSet(normalized, definition.patterns),
+  );
 
-  if (matchesAny(normalized, ACTION_PATTERNS)) {
+  if (speechAct) {
     return {
-      speechAct: 'ACTION_REQUEST',
-      route: 'CONTEXTOS',
-      domain: 'public_works',
-      subject,
-      confidence: 0.97,
-      reasonCodes: ['EXPLICIT_ACTION_REQUEST', 'PUBLIC_WORKS_SUBJECT_DETECTED'],
-    };
-  }
-
-  if (matchesAny(normalized, INCIDENT_PATTERNS)) {
-    return {
-      speechAct: 'INCIDENT_ASSERTION',
-      route: 'CONFIRM_ACTION',
-      domain: 'public_works',
-      subject,
-      confidence: 0.9,
-      reasonCodes: ['INCIDENT_ASSERTED', 'ACTION_NOT_EXPLICIT'],
+      speechAct: speechAct.act,
+      route: speechAct.route,
+      domain: contract.domain,
+      subject: subject.id as PublicWorksSubject,
+      confidence: speechAct.confidence,
+      reasonCodes: [...speechAct.reasonCodes, 'SEMANTIC_CONTRACT_MATCHED'],
+      contractId: contract.id,
+      contractVersion: contract.version,
+      intentName: contract.intentName,
     };
   }
 
   return {
     speechAct: 'AMBIGUOUS',
     route: 'ASK_INTENT',
-    domain: 'public_works',
-    subject,
+    domain: contract.domain,
+    subject: subject.id as PublicWorksSubject,
     confidence: 0.65,
-    reasonCodes: ['PUBLIC_WORKS_SUBJECT_DETECTED', 'SPEECH_ACT_AMBIGUOUS'],
+    reasonCodes: ['SEMANTIC_CONTRACT_MATCHED', 'SPEECH_ACT_AMBIGUOUS'],
+    contractId: contract.id,
+    contractVersion: contract.version,
+    intentName: contract.intentName,
   };
 }
 
-function extractLocation(text: string): IntentEnvelope['data']['location'] | undefined {
-  const normalized = normalize(text);
-
-  // Expresiones deícticas como "aquí", "afuera de mi casa" o "por mi casa"
-  // no identifican una ubicación verificable y no deben convertirse en dirección.
-  if (/\b(aqui|aca|afuera\s+de\s+mi\s+casa|por\s+mi\s+casa|cerca\s+de\s+mi\s+casa)\b/.test(normalized)) {
+function extractLocation(
+  text: string,
+  contract: SemanticContract,
+): IntentEnvelope['data']['location'] | undefined {
+  const normalized = normalizeCitizenText(text);
+  if (matchesPatternSet(normalized, contract.deixis.unresolvedLocationPatterns)) {
     return undefined;
   }
 
-  const connector = /\b(?:en|sobre|frente\s+a|esquina\s+de|por)\s+(.{4,120})$/i.exec(text.trim());
-  if (!connector?.[1]) return undefined;
-
-  const candidate = connector[1].trim().replace(/[.,;:!?]+$/, '');
-  if (candidate.length < 4) return undefined;
-
-  return { address: candidate };
+  for (const pattern of contract.deixis.locationConnectorPatterns) {
+    const connector = new RegExp(pattern, 'i').exec(text.trim());
+    if (!connector?.[1]) continue;
+    const candidate = connector[1].trim().replace(/[.,;:!?]+$/, '');
+    if (candidate.length >= 4 && candidate.length <= 120) {
+      return { address: candidate };
+    }
+  }
+  return undefined;
 }
 
 function createRequestId(): string {
@@ -186,7 +164,11 @@ export function buildPublicWorksIntentEnvelope(
   interpretation: MetalinguisticInterpretation,
   context: IntentBuildContext = {},
 ): IntentEnvelope {
-  if (interpretation.domain !== 'public_works' || !interpretation.subject) {
+  const contract = contractForInterpretation(interpretation);
+  const subject = contract?.subjects.find(
+    (candidate) => candidate.id === interpretation.subject,
+  );
+  if (!contract || contract.domain !== 'public_works' || !subject) {
     throw new Error('PUBLIC_WORKS_INTERPRETATION_REQUIRED');
   }
 
@@ -200,25 +182,27 @@ export function buildPublicWorksIntentEnvelope(
       subjectId: context.subjectId,
       authenticated: context.authenticated ?? false,
     },
-    jurisdiction: {
-      country: 'MX',
-      state: 'NAY',
-      municipality: 'TEPIC',
-    },
+    jurisdiction: { ...contract.jurisdiction },
     intent: {
-      name: 'report_public_infrastructure_issue',
-      subject: RUNTIME_SUBJECT_BY_SEMANTIC[interpretation.subject],
+      name: contract.intentName,
+      subject: subject.runtimeValue,
       confidence: interpretation.confidence,
+      semanticContractId: contract.id,
+      semanticContractVersion: contract.version,
+      semanticRegistryVersion: contract.registryVersion,
     },
-    purpose: 'report_public_infrastructure_issue',
+    purpose: contract.purpose,
     data: {
       description: text.trim(),
-      location: extractLocation(text),
+      location: extractLocation(text, contract),
     },
   };
 }
 
-export function mergeLocationClarification(intent: IntentEnvelope, text: string): IntentEnvelope {
+export function mergeLocationClarification(
+  intent: IntentEnvelope,
+  text: string,
+): IntentEnvelope {
   const trimmed = text.trim();
   if (trimmed.length < 4 || trimmed.length > 120) return intent;
 
@@ -231,9 +215,34 @@ export function mergeLocationClarification(intent: IntentEnvelope, text: string)
   };
 }
 
+export function semanticCitizenMessage(
+  interpretation: MetalinguisticInterpretation,
+  kind: 'confirmAction' | 'askIntent' | 'informational',
+): string {
+  const contract = contractForInterpretation(interpretation);
+  if (!contract) {
+    if (kind === 'askIntent') {
+      return 'Entendí el tema, pero no tu intención. ¿Quieres información o iniciar una acción de laboratorio?';
+    }
+    if (kind === 'confirmAction') {
+      return 'Detecté un posible incidente, pero no una solicitud explícita. ¿Quieres continuar en modo laboratorio?';
+    }
+    return 'Esto parece una consulta informativa. No ejecuté ninguna acción.';
+  }
+
+  const subject = contract.subjects.find(
+    (candidate) => candidate.id === interpretation.subject,
+  );
+  return interpolateCitizenMessage(contract.citizenMessages[kind], {
+    subject: subject?.label ?? 'incidente',
+  });
+}
+
 export function runtimeResponseToCitizenMessage(response: RuntimeResponse): string {
   if (response.status === 'EXECUTED') {
-    const ref = response.execution?.externalReference ? ` Folio de laboratorio: ${response.execution.externalReference}.` : '';
+    const ref = response.execution?.externalReference
+      ? ` Folio de laboratorio: ${response.execution.externalReference}.`
+      : '';
     return `Preparé el reporte en modo laboratorio.${ref} No es una orden municipal oficial ni produce efectos administrativos.`;
   }
 

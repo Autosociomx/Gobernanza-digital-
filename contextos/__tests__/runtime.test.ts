@@ -5,8 +5,10 @@ import { verifyEvidenceRecord } from '../evidence';
 import { CONTACT_CONSENT_SCOPE, PUBLIC_WORKS_PURPOSE } from '../policyEngine';
 import { createPublicWorksReportAdapter } from '../adapters/publicWorksReportAdapter';
 import { ContextOSRuntime } from '../runtime';
+import { PUBLIC_WORKS_REPORT_SEMANTIC_CONTRACT } from '../../shared/semantic/contracts/publicWorksReport';
 
 const FIXED_NOW = new Date('2026-08-19T21:30:00.000Z');
+const SEMANTIC = PUBLIC_WORKS_REPORT_SEMANTIC_CONTRACT;
 
 function makeRuntime() {
   const adapter = createPublicWorksReportAdapter({ idFactory: () => 'ticket-001' });
@@ -18,6 +20,17 @@ function makeRuntime() {
   });
 }
 
+function semanticIntent(subject = 'bache'): IntentEnvelope['intent'] {
+  return {
+    name: SEMANTIC.intentName,
+    subject,
+    confidence: 0.98,
+    semanticContractId: SEMANTIC.id,
+    semanticContractVersion: SEMANTIC.version,
+    semanticRegistryVersion: SEMANTIC.registryVersion,
+  };
+}
+
 function intent(overrides: Partial<IntentEnvelope> = {}): IntentEnvelope {
   const base: IntentEnvelope = {
     schemaVersion: CONTEXTOS_SCHEMA_VERSION,
@@ -26,7 +39,7 @@ function intent(overrides: Partial<IntentEnvelope> = {}): IntentEnvelope {
     channel: 'orbe',
     actor: { type: 'citizen', authenticated: false },
     jurisdiction: { country: 'MX', state: 'NAY', municipality: 'Tepic' },
-    intent: { name: 'report_public_infrastructure_issue', subject: 'bache', confidence: 0.98 },
+    intent: semanticIntent(),
     purpose: PUBLIC_WORKS_PURPOSE,
     data: {
       description: 'Bache profundo frente a la escuela.',
@@ -55,7 +68,49 @@ describe('ContextOSRuntime vertical slice 001', () => {
     expect(result.policy.decision).toBe('ALLOW');
     expect(result.execution?.externalReference).toBe('LAB-PW-ticket-001');
     expect(result.execution?.executionMode).toBe('LAB_MOCK');
+    expect(result.policy.reasonCodes).toContain('SEMANTIC_CONTRACT_BOUND');
+    expect(result.evidence.semantic).toEqual({
+      contractId: SEMANTIC.id,
+      contractVersion: SEMANTIC.version,
+      registryVersion: SEMANTIC.registryVersion,
+    });
     expect(verifyEvidenceRecord(result.evidence)).toBe(true);
+  });
+
+  it('denies ORBE envelopes without complete semantic provenance', async () => {
+    const missing = await makeRuntime().execute({
+      intent: intent({
+        intent: {
+          name: SEMANTIC.intentName,
+          subject: 'bache',
+          confidence: 0.98,
+        },
+      }),
+    });
+    expect(missing.status).toBe('DENIED');
+    expect(missing.policy.reasonCodes).toContain('SEMANTIC_CONTRACT_REQUIRED');
+  });
+
+  it('denies semantic contract, contract-version and registry-version drift', async () => {
+    const contractMismatch = await makeRuntime().execute({
+      intent: intent({ intent: { ...semanticIntent(), semanticContractId: 'tampered.contract' } }),
+    });
+    const versionMismatch = await makeRuntime().execute({
+      intent: intent({
+        requestId: 'req-version',
+        intent: { ...semanticIntent(), semanticContractVersion: '99.0.0' },
+      }),
+    });
+    const registryMismatch = await makeRuntime().execute({
+      intent: intent({
+        requestId: 'req-registry',
+        intent: { ...semanticIntent(), semanticRegistryVersion: 'tampered.registry' },
+      }),
+    });
+
+    expect(contractMismatch.policy.reasonCodes).toContain('SEMANTIC_CONTRACT_MISMATCH');
+    expect(versionMismatch.policy.reasonCodes).toContain('SEMANTIC_CONTRACT_VERSION_MISMATCH');
+    expect(registryMismatch.policy.reasonCodes).toContain('SEMANTIC_REGISTRY_VERSION_MISMATCH');
   });
 
   it('requires clarification when minimum location is missing', async () => {
@@ -131,7 +186,7 @@ describe('ContextOSRuntime vertical slice 001', () => {
 
   it('blocks unsupported report subjects before adapter execution', async () => {
     const result = await makeRuntime().execute({
-      intent: intent({ intent: { name: 'report_public_infrastructure_issue', subject: 'fuga-agua' } }),
+      intent: intent({ intent: semanticIntent('fuga-agua') }),
     });
     expect(result.status).toBe('DENIED');
     expect(result.policy.reasonCodes).toContain('SUBJECT_NOT_SUPPORTED');
@@ -227,7 +282,7 @@ describe('ContextOSRuntime vertical slice 001', () => {
 
   it('requires the report subject before execution', async () => {
     const result = await makeRuntime().execute({
-      intent: intent({ intent: { name: 'report_public_infrastructure_issue' } }),
+      intent: intent({ intent: { ...semanticIntent(), subject: undefined } }),
     });
     expect(result.status).toBe('NEEDS_INPUT');
     expect(result.policy.requiredFields).toContain('intent.subject');
@@ -255,6 +310,21 @@ describe('ContextOSRuntime vertical slice 001', () => {
     });
     expect(result.status).toBe('DENIED');
     expect(result.policy.reasonCodes).toContain('JURISDICTION_REQUIRED');
+  });
+
+
+  it('denies malformed nested fields without throwing', async () => {
+    const malformed = {
+      ...intent(),
+      data: {
+        description: 123,
+        location: { address: 456 },
+      },
+    } as unknown as IntentEnvelope;
+    const result = await makeRuntime().execute({ intent: malformed });
+    expect(result.status).toBe('DENIED');
+    expect(result.policy.reasonCodes).toContain('DESCRIPTION_INVALID');
+    expect(result.execution).toBeUndefined();
   });
 
   it('turns adapter exceptions into auditable ERROR responses', async () => {

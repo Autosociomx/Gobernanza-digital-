@@ -151,8 +151,24 @@ describe('ORBE metalinguistic boundary', () => {
     const pothole = interpretCitizenUtterance('quiero reportar un bache en calle Puebla 10');
     const streetlight = interpretCitizenUtterance('quiero reportar una luminaria en calle Puebla 10');
 
-    expect(buildPublicWorksIntentEnvelope('quiero reportar un bache en calle Puebla 10', pothole).intent.subject).toBe('bache');
-    expect(buildPublicWorksIntentEnvelope('quiero reportar una luminaria en calle Puebla 10', streetlight).intent.subject).toBe('luminaria');
+    const potholeIntent = buildPublicWorksIntentEnvelope(
+      'quiero reportar un bache en calle Puebla 10',
+      pothole,
+    );
+    const streetlightIntent = buildPublicWorksIntentEnvelope(
+      'quiero reportar una luminaria en calle Puebla 10',
+      streetlight,
+    );
+
+    expect(potholeIntent.intent.subject).toBe('bache');
+    expect(streetlightIntent.intent.subject).toBe('luminaria');
+    expect(potholeIntent.intent.semanticContractId).toBe(
+      'mx.nay.tepic.public-works.report.semantic',
+    );
+    expect(potholeIntent.intent.semanticContractVersion).toBe('0.1.0');
+    expect(potholeIntent.intent.semanticRegistryVersion).toBe(
+      'orbe.semantic-registry.v0.1',
+    );
   });
 
   it('does not treat an ambiguous mixed confirmation as authorization', async () => {
