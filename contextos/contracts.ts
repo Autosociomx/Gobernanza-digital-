@@ -26,6 +26,9 @@ export interface IntentEnvelope {
     name: string;
     subject?: string;
     confidence?: number;
+    semanticContractId?: string;
+    semanticContractVersion?: string;
+    semanticRegistryVersion?: string;
   };
   purpose: string;
   data: {
@@ -78,11 +81,16 @@ export interface ServiceDescriptor {
   title: string;
   description: string;
   intentNames: string[];
+  purpose: string;
+  semanticContractId: string;
+  semanticContractVersion: string;
+  semanticRegistryVersion: string;
   riskLevel: RiskLevel;
   adapterId: string;
   executionMode: ExecutionMode;
   allowedJurisdictions: string[];
   requiredFields: string[];
+  allowedSubjects: string[];
 }
 
 export interface ExecutionRequest {
@@ -108,6 +116,11 @@ export interface EvidenceRecord {
   schemaVersion: typeof CONTEXTOS_SCHEMA_VERSION;
   eventType: 'POLICY_ONLY' | 'EXECUTION';
   serviceId?: string;
+  semantic?: {
+    contractId: string;
+    contractVersion?: string;
+    registryVersion?: string;
+  };
   policy: {
     decision: Decision;
     policyVersion: string;
