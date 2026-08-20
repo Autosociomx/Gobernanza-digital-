@@ -22,7 +22,16 @@ export function createPublicWorksReportAdapter(options: PublicWorksAdapterOption
       }
 
       const subject = request.intent.intent.subject?.trim().toLowerCase();
-      if (subject && !['bache', 'luminaria'].includes(subject)) {
+      if (!subject) {
+        return {
+          status: 'REJECTED',
+          adapterId: this.id,
+          executionMode: 'LAB_MOCK',
+          resultCode: 'SUBJECT_REQUIRED',
+          message: 'El laboratorio requiere identificar bache o luminaria.',
+        };
+      }
+      if (!['bache', 'luminaria'].includes(subject)) {
         return {
           status: 'REJECTED',
           adapterId: this.id,
