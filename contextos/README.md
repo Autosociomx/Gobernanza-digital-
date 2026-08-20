@@ -17,8 +17,10 @@ Caso: reporte ciudadano de **bache o luminaria** en Tepic.
 - política determinística;
 - minimización de datos;
 - consentimiento obligatorio si se comparte contacto personal;
+- consentimiento ligado a la solicitud y, cuando existe, al sujeto autenticado;
+- idempotencia en memoria para impedir dobles ejecuciones durante el laboratorio;
 - adapter `LAB_MOCK` sin efectos institucionales;
-- evidencia con SHA-256 y `correlationId`;
+- evidencia con checksum SHA-256 y `correlationId`;
 - pruebas del flujo permitido, bloqueos y manipulación de evidencia.
 
 ## Lo que no hace
@@ -28,6 +30,8 @@ Caso: reporte ciudadano de **bache o luminaria** en Tepic.
 - no integra Llave MX;
 - no usa LLM para decidir políticas;
 - no persiste expediente ciudadano;
+- el checksum no es firma digital, sello de tiempo ni prueba de inmutabilidad frente a un atacante;
+- la idempotencia v0.1 vive en memoria y no sustituye un almacén transaccional;
 - no sustituye Context.OS Observatory;
 - no expone un conector institucional real.
 
