@@ -57,6 +57,23 @@ describe('Semantic Contract Registry v0.1', () => {
     expect(affirmative('sí, pero no')).toBe(false);
   });
 
+
+  it('rejects a contract that routes an informational question to execution', () => {
+    const unsafeContract = {
+      ...PUBLIC_WORKS_REPORT_SEMANTIC_CONTRACT,
+      speechActs: PUBLIC_WORKS_REPORT_SEMANTIC_CONTRACT.speechActs.map((definition) =>
+        definition.act === 'INFORMATION_REQUEST'
+          ? { ...definition, route: 'CONTEXTOS' as const }
+          : definition,
+      ),
+    };
+    const result = validateSemanticRegistry([unsafeContract]);
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContain(
+      `SPEECH_ACT_ROUTE_INVALID:${unsafeContract.id}:INFORMATION_REQUEST`,
+    );
+  });
+
   it('has no semantic/runtime drift', () => {
     expect(auditSemanticRuntimeAlignment()).toEqual({
       valid: true,
