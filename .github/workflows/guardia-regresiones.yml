@@ -7,7 +7,9 @@ name: Guardia de regresiones
 
 "on":
   push:
-    branches: [main]
+    branches:
+      - main
+      - 'agent/**'
   pull_request:
     branches: [main]
   workflow_dispatch:
