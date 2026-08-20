@@ -6,6 +6,7 @@ import {
   isNegative,
   mergeLocationClarification,
   runtimeResponseToCitizenMessage,
+  semanticCitizenMessage,
   type MetalinguisticInterpretation,
 } from './metalinguistics';
 
@@ -28,12 +29,6 @@ export interface BridgeResult {
 export type RuntimeExecutor = (request: RuntimeRequest) => Promise<RuntimeResponse>;
 
 export const INITIAL_BRIDGE_STATE: BridgeState = { pending: null };
-
-function subjectLabel(subject?: string): string {
-  if (subject === 'pothole') return 'bache';
-  if (subject === 'streetlight') return 'luminaria';
-  return 'incidente';
-}
 
 async function sendToRuntime(
   intent: IntentEnvelope,
@@ -125,7 +120,7 @@ export async function processCitizenUtterance(
         },
       },
       route: 'CLARIFY',
-      citizenMessage: `Detecté un posible reporte de ${subjectLabel(interpretation.subject)}, pero no me pediste ejecutarlo. ¿Quieres que prepare un reporte de laboratorio?`,
+      citizenMessage: semanticCitizenMessage(interpretation, 'confirmAction'),
     };
   }
 
@@ -133,13 +128,13 @@ export async function processCitizenUtterance(
     return {
       state,
       route: 'CLARIFY',
-      citizenMessage: 'Entendí el tema, pero no tu intención. ¿Quieres información o quieres preparar un reporte de laboratorio?',
+      citizenMessage: semanticCitizenMessage(interpretation, 'askIntent'),
     };
   }
 
   return {
     state,
     route: 'CHAT',
-    citizenMessage: 'Esto parece una consulta informativa. No ejecuté ninguna acción y debe continuar por el canal de orientación.',
+    citizenMessage: semanticCitizenMessage(interpretation, 'informational'),
   };
 }
