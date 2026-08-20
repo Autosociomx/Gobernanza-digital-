@@ -10,7 +10,7 @@ export const PUBLIC_WORKS_REPORT_SERVICE: ServiceDescriptor = {
   adapterId: 'lab.public-works-report.v1',
   executionMode: 'LAB_MOCK',
   allowedJurisdictions: ['MX-NAY-TEPIC'],
-  requiredFields: ['data.description', 'data.location'],
+  requiredFields: ['intent.subject', 'data.description', 'data.location'],
 };
 
 const SERVICES = [PUBLIC_WORKS_REPORT_SERVICE] as const;
