@@ -12,6 +12,7 @@
     "lint": "tsc --noEmit",
     "test": "vitest run",
     "test:contextos": "vitest run contextos/__tests__/runtime.test.ts",
+    "test:orbe-contextos": "vitest run contextos/__tests__/runtime.test.ts src/orbe/__tests__/contextosBridge.test.ts",
     "contextos:lab": "tsx contextos/labServer.ts",
     "test:firestore-rules": "JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 npx firebase emulators:exec --only firestore \"node scripts/test-firestore-rules.mjs\""
   },
