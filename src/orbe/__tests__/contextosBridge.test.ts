@@ -146,4 +146,81 @@ describe('ORBE metalinguistic boundary', () => {
     expect(intent.data.contact).toBeUndefined();
     expect(intent.data.location?.address).toBe('calle Puebla 10');
   });
+
+  it('maps semantic subjects to the Spanish runtime contract', () => {
+    const pothole = interpretCitizenUtterance('quiero reportar un bache en calle Puebla 10');
+    const streetlight = interpretCitizenUtterance('quiero reportar una luminaria en calle Puebla 10');
+
+    expect(buildPublicWorksIntentEnvelope('quiero reportar un bache en calle Puebla 10', pothole).intent.subject).toBe('bache');
+    expect(buildPublicWorksIntentEnvelope('quiero reportar una luminaria en calle Puebla 10', streetlight).intent.subject).toBe('luminaria');
+  });
+
+  it('does not treat an ambiguous mixed confirmation as authorization', async () => {
+    const executor = vi.fn();
+    const first = await processCitizenUtterance(
+      INITIAL_BRIDGE_STATE,
+      'Hay un bache en avenida Allende',
+      executor as unknown as RuntimeExecutor,
+    );
+    const second = await processCitizenUtterance(
+      first.state,
+      'sí, pero no',
+      executor as unknown as RuntimeExecutor,
+    );
+
+    expect(second.route).toBe('CANCELLED');
+    expect(executor).not.toHaveBeenCalled();
+  });
+
+  it('does not accept quiero by itself as a clear confirmation', async () => {
+    const executor = vi.fn();
+    const first = await processCitizenUtterance(
+      INITIAL_BRIDGE_STATE,
+      'Hay un bache en avenida Allende',
+      executor as unknown as RuntimeExecutor,
+    );
+    const second = await processCitizenUtterance(
+      first.state,
+      'quiero',
+      executor as unknown as RuntimeExecutor,
+    );
+
+    expect(second.route).toBe('CLARIFY');
+    expect(executor).not.toHaveBeenCalled();
+  });
+
+  it('allows cancellation while a concrete location is pending', async () => {
+    const first = await processCitizenUtterance(
+      INITIAL_BRIDGE_STATE,
+      'Quiero reportar un bache afuera de mi casa',
+      labExecutor(),
+    );
+    const second = await processCitizenUtterance(first.state, 'no', labExecutor());
+
+    expect(second.route).toBe('CANCELLED');
+    expect(second.state.pending).toBeNull();
+  });
+
+  it('preserves the request correlation across location clarification', async () => {
+    const executor = labExecutor();
+    const first = await processCitizenUtterance(
+      INITIAL_BRIDGE_STATE,
+      'Quiero reportar una luminaria que no sirve',
+      executor,
+    );
+    const requestId = first.state.pending?.kind === 'LOCATION'
+      ? first.state.pending.intent.requestId
+      : undefined;
+
+    const second = await processCitizenUtterance(
+      first.state,
+      'Avenida Insurgentes esquina con Jacarandas',
+      executor,
+    );
+
+    expect(requestId).toBeTruthy();
+    expect(second.runtimeResponse?.correlationId).toBe(requestId);
+    expect(second.runtimeResponse?.status).toBe('EXECUTED');
+  });
+
 });
