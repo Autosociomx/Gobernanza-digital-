@@ -39,6 +39,7 @@ function intent(overrides: Partial<IntentEnvelope> = {}): IntentEnvelope {
 function consent(overrides: Partial<ConsentGrant> = {}): ConsentGrant {
   return {
     grantId: 'consent-001',
+    requestId: 'req-001',
     purpose: PUBLIC_WORKS_PURPOSE,
     scopes: [CONTACT_CONSENT_SCOPE],
     issuedAt: '2026-08-19T21:00:00.000Z',
@@ -128,12 +129,13 @@ describe('ContextOSRuntime vertical slice 001', () => {
     expect(result.policy.reasonCodes).toContain('CONSENT_EXPIRED');
   });
 
-  it('blocks unsupported report subjects at the adapter boundary', async () => {
+  it('blocks unsupported report subjects before adapter execution', async () => {
     const result = await makeRuntime().execute({
       intent: intent({ intent: { name: 'report_public_infrastructure_issue', subject: 'fuga-agua' } }),
     });
     expect(result.status).toBe('DENIED');
-    expect(result.execution?.resultCode).toBe('SUBJECT_NOT_SUPPORTED');
+    expect(result.policy.reasonCodes).toContain('SUBJECT_NOT_SUPPORTED');
+    expect(result.execution).toBeUndefined();
   });
 
   it('does not store raw citizen payload in evidence', async () => {
@@ -151,6 +153,7 @@ describe('ContextOSRuntime vertical slice 001', () => {
       policy: { ...result.evidence.policy, reasonCodes: ['TAMPERED'] },
     };
     expect(verifyEvidenceRecord(tampered)).toBe(false);
+    expect(result.evidence.integrityAssurance).toBe('CHECKSUM_ONLY');
   });
 
   it('denies malformed envelopes before service execution', async () => {
@@ -159,5 +162,117 @@ describe('ContextOSRuntime vertical slice 001', () => {
     expect(result.status).toBe('DENIED');
     expect(result.policy.reasonCodes).toContain('REQUEST_ID_REQUIRED');
     expect(result.execution).toBeUndefined();
+  });
+
+  it('returns the original result for an identical idempotent retry', async () => {
+    const runtime = makeRuntime();
+    const first = await runtime.execute({ intent: intent() });
+    const retry = await runtime.execute({ intent: intent() });
+    expect(retry.status).toBe('EXECUTED');
+    expect(retry.execution?.externalReference).toBe(first.execution?.externalReference);
+    expect(retry.evidence.evidenceId).toBe(first.evidence.evidenceId);
+  });
+
+  it('coalesces concurrent retries into one adapter execution', async () => {
+    const runtime = makeRuntime();
+    const [first, retry] = await Promise.all([
+      runtime.execute({ intent: intent() }),
+      runtime.execute({ intent: intent() }),
+    ]);
+    expect(retry.status).toBe('EXECUTED');
+    expect(retry.execution?.externalReference).toBe(first.execution?.externalReference);
+    expect(retry.evidence.evidenceId).toBe(first.evidence.evidenceId);
+  });
+
+  it('denies reuse of a completed requestId with a different payload', async () => {
+    const runtime = makeRuntime();
+    await runtime.execute({ intent: intent() });
+    const conflict = await runtime.execute({
+      intent: intent({ data: { description: 'Otro bache distinto.', location: { landmark: 'Otra calle' } } }),
+    });
+    expect(conflict.status).toBe('DENIED');
+    expect(conflict.policy.reasonCodes).toContain('IDEMPOTENCY_CONFLICT');
+  });
+
+  it('binds consent to the requestId', async () => {
+    const result = await makeRuntime().execute({
+      intent: intent({
+        data: {
+          description: 'Luminaria apagada desde hace tres días.',
+          location: { landmark: 'Parque de la colonia' },
+          contact: { phone: '3110000000' },
+        },
+      }),
+      consent: consent({ requestId: 'another-request' }),
+    });
+    expect(result.status).toBe('NEEDS_CONSENT');
+    expect(result.policy.reasonCodes).toContain('CONSENT_REQUEST_MISMATCH');
+  });
+
+  it('binds consent to an authenticated subject when present', async () => {
+    const result = await makeRuntime().execute({
+      intent: intent({
+        actor: { type: 'citizen', authenticated: true, subjectId: 'citizen-001' },
+        data: {
+          description: 'Luminaria apagada desde hace tres días.',
+          location: { landmark: 'Parque de la colonia' },
+          contact: { phone: '3110000000' },
+        },
+      }),
+      consent: consent({ subjectId: 'citizen-002' }),
+    });
+    expect(result.status).toBe('NEEDS_CONSENT');
+    expect(result.policy.reasonCodes).toContain('CONSENT_SUBJECT_MISMATCH');
+  });
+
+  it('requires the report subject before execution', async () => {
+    const result = await makeRuntime().execute({
+      intent: intent({ intent: { name: 'report_public_infrastructure_issue' } }),
+    });
+    expect(result.status).toBe('NEEDS_INPUT');
+    expect(result.policy.requiredFields).toContain('intent.subject');
+  });
+
+  it('requires clarification for out-of-range coordinates', async () => {
+    const result = await makeRuntime().execute({
+      intent: intent({
+        data: {
+          description: 'Bache profundo frente a la escuela.',
+          location: { lat: 999, lng: 999 },
+        },
+      }),
+    });
+    expect(result.status).toBe('NEEDS_INPUT');
+    expect(result.policy.reasonCodes).toContain('LOCATION_COORDINATES_INVALID');
+  });
+
+  it('denies malformed jurisdiction without throwing', async () => {
+    const result = await makeRuntime().execute({
+      intent: {
+        ...intent(),
+        jurisdiction: { country: 'MX', municipality: 'Tepic' },
+      } as unknown as IntentEnvelope,
+    });
+    expect(result.status).toBe('DENIED');
+    expect(result.policy.reasonCodes).toContain('JURISDICTION_REQUIRED');
+  });
+
+  it('turns adapter exceptions into auditable ERROR responses', async () => {
+    const runtime = new ContextOSRuntime({
+      adapters: {
+        'lab.public-works-report.v1': {
+          id: 'lab.public-works-report.v1',
+          async execute() {
+            throw new Error('adapter failure');
+          },
+        },
+      },
+      now: () => FIXED_NOW,
+      idFactory: () => 'evidence-error',
+    });
+    const result = await runtime.execute({ intent: intent() });
+    expect(result.status).toBe('ERROR');
+    expect(result.execution?.resultCode).toBe('ADAPTER_EXECUTION_FAILED');
+    expect(verifyEvidenceRecord(result.evidence)).toBe(true);
   });
 });
