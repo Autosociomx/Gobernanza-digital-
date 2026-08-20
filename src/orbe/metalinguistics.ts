@@ -9,6 +9,13 @@ export type OrbeSpeechAct =
   | 'OTHER';
 
 export type PublicWorksSubject = 'pothole' | 'streetlight';
+type RuntimePublicWorksSubject = 'bache' | 'luminaria';
+
+const RUNTIME_SUBJECT_BY_SEMANTIC: Record<PublicWorksSubject, RuntimePublicWorksSubject> = {
+  pothole: 'bache',
+  streetlight: 'luminaria',
+};
+
 export type OrbeRoute = 'CONTEXTOS' | 'CONFIRM_ACTION' | 'ASK_INTENT' | 'CHAT';
 
 export interface MetalinguisticInterpretation {
@@ -51,8 +58,16 @@ const INCIDENT_PATTERNS = [
   /\bse\s+(fundio|rompio|cayo)\b/,
 ];
 
-const AFFIRMATIVE_PATTERNS = [/^si\b/, /^sí\b/, /\badelante\b/, /\bconfirmo\b/, /\bhazlo\b/, /\bquiero\b/];
-const NEGATIVE_PATTERNS = [/^no\b/, /\bcancela\b/, /\bmejor\s+no\b/];
+const AFFIRMATIVE_PATTERNS = [/^si\b/, /^adelante\b/, /^confirmo\b/, /^hazlo\b/, /^de\s+acuerdo\b/];
+const NEGATIVE_PATTERNS = [
+  /^no$/,
+  /^no\s+gracias$/,
+  /^no\s+por\s+favor$/,
+  /\bcancel(?:a|ar|alo)\b/,
+  /\bmejor\s+no\b/,
+  /\bpero\s+no\b/,
+  /\bno\s+quiero\b/,
+];
 
 function normalize(text: string): string {
   return text
@@ -77,7 +92,8 @@ function matchesAny(text: string, patterns: RegExp[]): boolean {
 }
 
 export function isAffirmative(text: string): boolean {
-  return matchesAny(normalize(text), AFFIRMATIVE_PATTERNS);
+  const normalized = normalize(text);
+  return !matchesAny(normalized, NEGATIVE_PATTERNS) && matchesAny(normalized, AFFIRMATIVE_PATTERNS);
 }
 
 export function isNegative(text: string): boolean {
@@ -191,7 +207,7 @@ export function buildPublicWorksIntentEnvelope(
     },
     intent: {
       name: 'report_public_infrastructure_issue',
-      subject: interpretation.subject,
+      subject: RUNTIME_SUBJECT_BY_SEMANTIC[interpretation.subject],
       confidence: interpretation.confidence,
     },
     purpose: 'report_public_infrastructure_issue',
@@ -204,12 +220,10 @@ export function buildPublicWorksIntentEnvelope(
 
 export function mergeLocationClarification(intent: IntentEnvelope, text: string): IntentEnvelope {
   const trimmed = text.trim();
-  if (trimmed.length < 4) return intent;
+  if (trimmed.length < 4 || trimmed.length > 120) return intent;
 
   return {
     ...intent,
-    requestId: createRequestId(),
-    occurredAt: new Date().toISOString(),
     data: {
       ...intent.data,
       location: { address: trimmed },
