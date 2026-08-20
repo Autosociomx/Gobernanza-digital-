@@ -75,9 +75,17 @@ export function validateSemanticRegistry(
       }
     }
 
+    const requiredRoutes = {
+      INFORMATION_REQUEST: 'CHAT',
+      INCIDENT_ASSERTION: 'CONFIRM_ACTION',
+      ACTION_REQUEST: 'CONTEXTOS',
+    } as const;
     for (const definition of contract.speechActs) {
       if (definition.confidence < 0 || definition.confidence > 1) {
         errors.push(`INVALID_CONFIDENCE:${contract.id}:${definition.act}`);
+      }
+      if (definition.route !== requiredRoutes[definition.act]) {
+        errors.push(`SPEECH_ACT_ROUTE_INVALID:${contract.id}:${definition.act}`);
       }
     }
   }
