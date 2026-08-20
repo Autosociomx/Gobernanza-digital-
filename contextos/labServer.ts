@@ -16,7 +16,10 @@ app.disable('x-powered-by');
 app.use(express.json({ limit: '64kb' }));
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  if (origin && allowedOrigins.has(origin)) {
+  if (origin && !allowedOrigins.has(origin)) {
+    return res.status(403).json({ error: 'ORIGIN_NOT_ALLOWED' });
+  }
+  if (origin) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Vary', 'Origin');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
