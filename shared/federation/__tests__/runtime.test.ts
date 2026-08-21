@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { tepicCatalog } from '../catalog';
 import { resolveCitizenIntent } from '../runtime';
 import type { MunicipalityCatalog } from '../types';
 
@@ -12,9 +13,9 @@ const catalog: MunicipalityCatalog = {
       name: 'Reporte de bache o luminaria',
       family: 'servicios_publicos',
       authority: 'Ayuntamiento de Tepic',
-      office: 'Servicios Públicos Municipales',
+      office: 'por verificar con directorio oficial',
       citizen_description: 'Reportes urbanos.',
-      source_status: 'verificado',
+      source_status: 'por_verificar',
       legal_effect: 'none_in_demo',
       orbe_actions: ['informar', 'orientar'],
       restricted_actions: ['cerrar_reporte_sin_evidencia'],
@@ -43,6 +44,22 @@ describe('federated intent runtime', () => {
     expect(result.consent_required).toContain('location');
     expect(result.official_effect).toBe('NONE_UNTIL_EXTERNAL_ACCEPTANCE');
     expect(result.integration?.mode).toBe('external_portal');
+  });
+
+  it('uses the repository canonical catalog and its verified Click por Tepic bridge', () => {
+    const result = resolveCitizenIntent({
+      action: 'report',
+      subject: 'public-lighting',
+      territory: { municipality: 'Tepic', state: 'Nayarit' },
+    }, tepicCatalog);
+
+    expect(result.status).toBe('ROUTE_FOUND');
+    expect(result.source_status).toBe('por_verificar');
+    expect(result.integration).toEqual(expect.objectContaining({
+      mode: 'external_portal',
+      url: 'https://app.tepic.gob.mx/click/',
+      status: 'verificado',
+    }));
   });
 
   it('does not pretend to route another municipality', () => {
