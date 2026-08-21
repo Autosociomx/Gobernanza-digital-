@@ -44,6 +44,7 @@ describe('federated intent runtime', () => {
     expect(result.consent_required).toContain('location');
     expect(result.official_effect).toBe('NONE_UNTIL_EXTERNAL_ACCEPTANCE');
     expect(result.integration?.mode).toBe('external_portal');
+    expect(result).not.toHaveProperty('official_folio');
   });
 
   it('uses the repository canonical catalog and its verified Click por Tepic bridge', () => {
