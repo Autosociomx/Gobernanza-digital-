@@ -1,10 +1,9 @@
 import type { Express } from 'express';
-import path from 'path';
-import fs from 'fs/promises';
 import Database from 'better-sqlite3';
 import { createHash, randomUUID } from 'node:crypto';
+import { tepicCatalog } from '../shared/federation/catalog';
 import { resolveCitizenIntent } from '../shared/federation/runtime';
-import type { CitizenIntent, MunicipalityCatalog } from '../shared/federation/types';
+import type { CitizenIntent } from '../shared/federation/types';
 
 const db = new Database('government_data.db');
 
@@ -22,29 +21,16 @@ db.exec(`
   ON federated_receipts(intent_id, created_at);
 `);
 
-async function loadTepicCatalog(): Promise<MunicipalityCatalog> {
-  const catalogPath = path.join(
-    process.cwd(),
-    'data',
-    'municipality',
-    'tepic',
-    'services.json',
-  );
-  const raw = await fs.readFile(catalogPath, 'utf-8');
-  return JSON.parse(raw) as MunicipalityCatalog;
-}
-
 function canonicalHash(value: unknown) {
   return createHash('sha256').update(JSON.stringify(value)).digest('hex');
 }
 
 export function registerFederationRoutes(app: Express) {
-  app.post('/api/federation/resolve', async (req, res) => {
+  app.post('/api/federation/resolve', (req, res) => {
     try {
       const intent = req.body as CitizenIntent;
-      const catalog = await loadTepicCatalog();
       const intentId = intent.intent_id || randomUUID();
-      const resolution = resolveCitizenIntent({ ...intent, intent_id: intentId }, catalog);
+      const resolution = resolveCitizenIntent({ ...intent, intent_id: intentId }, tepicCatalog);
       const createdAt = new Date().toISOString();
 
       const previous = db.prepare(`
