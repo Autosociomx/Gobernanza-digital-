@@ -5,6 +5,7 @@ import fs from "fs/promises";
 import Database from "better-sqlite3";
 import { GoogleGenAI, ThinkingLevel, Type } from "@google/genai";
 import Stripe from "stripe";
+import { registerFederationRoutes } from "./server/federationRoutes";
 
 let aiClient: GoogleGenAI | null = null;
 function getAI() {
@@ -50,6 +51,7 @@ async function startServer() {
   const PORT = 3000;
 
   app.use(express.json());
+  registerFederationRoutes(app);
 
   // Load System Prompt from public/CONNECTX_SYSTEM_PROMPT.md
   let systemPrompt = "Eres ConnectX. Experto en administración municipal y gobernanza digital de Tepic. Tono: Institucional, extremadamente breve y directo. Objetivo: Soluciones pragmáticas de infraestructura y transparencia. Siempre incluye un 'Siguiente paso' y usa el idioma solicitado.";
