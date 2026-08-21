@@ -38,7 +38,13 @@
       "source_status": "por_verificar",
       "legal_effect": "none_in_demo",
       "orbe_actions": ["informar", "capturar_reporte_demo", "orientar"],
-      "restricted_actions": ["cerrar_reporte_sin_evidencia", "asignar_presupuesto"]
+      "restricted_actions": ["cerrar_reporte_sin_evidencia", "asignar_presupuesto"],
+      "integration": {
+        "mode": "external_portal",
+        "url": "https://app.tepic.gob.mx/click/",
+        "status": "verificado",
+        "can_issue_official_folio": true
+      }
     },
     {
       "id": "tepic.apertura_negocio",
