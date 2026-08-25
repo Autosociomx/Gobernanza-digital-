@@ -40,7 +40,9 @@ import { useAuraChat } from '../hooks/useAuraChat';
 import { useAuraVoice } from '../hooks/useAuraVoice';
 import { listarColaCitas, actualizarEstadoCita, type CitaSalud, type EstadoCita } from '../services/citasSaludService';
 import { obtenerPerfil, registrarAcceso, esCurpValido, type PerfilSalud } from '../services/saludPerfilService';
+import { getMasterRegistry, type InfrastructureAsset } from '../services/infrastructureService';
 import { useAuth } from './FirebaseProvider';
+import { DemoDataBadge } from './DemoDataBadge';
 
 type Language = 'es' | 'cora' | 'wixarika';
 
@@ -62,12 +64,44 @@ import {
 
 type ModuleType = 'tesoreria' | 'obras' | 'servicios' | 'salud' | 'bienestar' | 'ia' | 'agrovision' | 'observatorio' | 'metricas' | 'parlamento' | 'analisis_politico' | 'interoperabilidad' | 'gabinete';
 
+const MODULOS_VALIDOS: readonly ModuleType[] = [
+  'tesoreria', 'obras', 'servicios', 'salud', 'bienestar', 'ia', 'agrovision',
+  'observatorio', 'metricas', 'parlamento', 'analisis_politico', 'interoperabilidad', 'gabinete'
+];
+
+/**
+ * `initialModule` llega desde la URL (`?modulo=…` en App.tsx) y el valor
+ * recordado llega de localStorage: ambos son texto arbitrario. Sin validar,
+ * un id desconocido dejaba el lienzo en blanco (ninguna vista coincide) y el
+ * encabezado sin nombre de módulo. Aquí se descarta lo que no exista.
+ */
+function moduloValido(valor: unknown): valor is ModuleType {
+  return typeof valor === 'string' && (MODULOS_VALIDOS as readonly string[]).includes(valor);
+}
+
+/** Descarga un archivo generado en el navegador (sin backend). */
+function descargarArchivo(nombre: string, contenido: string, tipo = 'text/plain;charset=utf-8') {
+  const url = URL.createObjectURL(new Blob([contenido], { type: tipo }));
+  const enlace = document.createElement('a');
+  enlace.href = url;
+  enlace.download = nombre;
+  document.body.appendChild(enlace);
+  enlace.click();
+  document.body.removeChild(enlace);
+  URL.revokeObjectURL(url);
+}
+
 export function C5Dashboard({ onLogout, initialModule }: { onLogout: () => void; initialModule?: ModuleType }) {
-  const [activeModule, setActiveModule] = useState<ModuleType>(() => initialModule || (localStorage.getItem('activeModule') as ModuleType) || 'tesoreria');
+  const [activeModule, setActiveModule] = useState<ModuleType>(() => {
+    if (moduloValido(initialModule)) return initialModule;
+    let recordado: string | null = null;
+    try { recordado = localStorage.getItem('activeModule'); } catch { /* almacenamiento bloqueado */ }
+    return moduloValido(recordado) ? recordado : 'tesoreria';
+  });
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
-    localStorage.setItem('activeModule', activeModule);
+    try { localStorage.setItem('activeModule', activeModule); } catch { /* almacenamiento bloqueado */ }
   }, [activeModule]);
 
   const modules = [
@@ -215,6 +249,8 @@ function InteroperabilidadView() {
         <p className="text-slate-500 text-sm max-w-2xl leading-relaxed">Arquitectura de bus de servicios (propuesta de interoperabilidad). La integridad de datos bajo la Ley de Gobierno Digital del Estado de Nayarit está diseñada, no implementada.</p>
       </div>
 
+      <DemoDataBadge detail="Toda la telemetría de esta vista es una simulación de cómo se vería el bus de interoperabilidad: los contadores, los estados 'Sincronizado', las latencias y los hashes SHA256 son valores fijos escritos en el código. No hay ningún endpoint consultado ni ninguna cadena de bloques detrás." />
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
          <div className="bg-[#161920] border border-emerald-500/20 p-6 rounded-2xl relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
@@ -268,7 +304,7 @@ function InteroperabilidadView() {
                <h4 className="text-sm font-semibold text-white uppercase">Blockchain Municipal (Hashes)</h4>
             </div>
             <p className="text-[11px] text-slate-400 mb-4 pr-8">
-               Muestreo en tiempo real de Mensajes de Datos sellados criptográficamente para auditoría federal.
+               Ejemplo de cómo se vería el muestreo de Mensajes de Datos sellados criptográficamente para auditoría federal. Los folios y hashes de abajo son ilustrativos.
             </p>
             <div className="space-y-2 h-[240px] overflow-hidden relative">
                <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#161920] to-transparent z-10"></div>
@@ -311,7 +347,9 @@ function TesoreriaView() {
         <h3 className="text-2xl font-bold text-white tracking-tight">Tesorería Digital</h3>
         <p className="text-slate-400 text-sm mt-1">Recaudación centralizada e historial único por ciudadano.</p>
       </div>
-      
+
+      <DemoDataBadge detail="Las cifras de recaudación, el porcentaje de pagos digitales y la gráfica de proyección son valores fijos de ejemplo escritos en el código. Todavía no existe una agregación de pagos reales detrás de esta vista." />
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[
           { label: 'Recaudación Semanal', value: '$2.4M', icon: TrendingUp, color: 'text-emerald-400' },
@@ -362,49 +400,125 @@ function TesoreriaView() {
   );
 }
 
+const COLOR_POR_ESTADO: Record<string, string> = {
+  CRITICAL: '#F43F5E',
+  RISK: '#F59E0B',
+  UNDER_MAINTENANCE: '#38BDF8',
+  PLANNED: '#94A3B8',
+  OPTIMAL: '#10B981'
+};
+
+const ETIQUETA_ESTADO: Record<string, string> = {
+  CRITICAL: 'Crítico',
+  RISK: 'En riesgo',
+  UNDER_MAINTENANCE: 'En mantenimiento',
+  PLANNED: 'Planeado',
+  OPTIMAL: 'Óptimo'
+};
+
+/**
+ * Trazabilidad de Obras — conectada al registro real de infraestructura en
+ * Firestore (`infrastructureService.getMasterRegistry`, colección
+ * `infrastructure`), el mismo que consumen SovereignMap y CitizenApp.
+ * Los marcadores del mapa y las alertas se derivan del estado real de cada
+ * activo; ya no hay arreglos de obras inventadas en esta vista.
+ */
 function ObrasView() {
+  const [activos, setActivos] = useState<InfrastructureAsset[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState(false);
+
+  const cargarActivos = React.useCallback(() => {
+    setCargando(true);
+    setError(false);
+    getMasterRegistry()
+      .then(setActivos)
+      .catch(() => setError(true))
+      .finally(() => setCargando(false));
+  }, []);
+
+  useEffect(() => { cargarActivos(); }, [cargarActivos]);
+
+  const marcadores = activos
+    .filter((a) => typeof a.location?.lat === 'number' && typeof a.location?.lng === 'number')
+    .map((a) => ({
+      lat: a.location.lat,
+      lng: a.location.lng,
+      title: `${a.name} · ${ETIQUETA_ESTADO[a.status] ?? a.status}`,
+      color: COLOR_POR_ESTADO[a.status] ?? '#E5007A'
+    }));
+
+  const enProceso = activos.filter((a) => a.status === 'UNDER_MAINTENANCE' || a.status === 'PLANNED').length;
+  const alertas = activos.filter((a) => a.status === 'CRITICAL' || a.status === 'RISK');
+
   return (
     <div className="space-y-6">
-      <div>
-        <h3 className="text-2xl font-bold text-white tracking-tight">Trazabilidad de Obras</h3>
-        <p className="text-slate-400 text-sm mt-1">Monitoreo en tiempo real de infraestructura estatal con alertas de sobrecosto.</p>
+      <div className="flex justify-between items-start gap-4">
+        <div>
+          <h3 className="text-2xl font-bold text-white tracking-tight">Trazabilidad de Obras</h3>
+          <p className="text-slate-400 text-sm mt-1">Registro maestro de infraestructura del estado (colección <span className="font-mono text-slate-500">infrastructure</span>), con alertas derivadas del estado de cada activo.</p>
+        </div>
+        <button
+          onClick={cargarActivos}
+          disabled={cargando}
+          className="shrink-0 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded transition-colors disabled:opacity-50 flex items-center gap-2"
+        >
+          {cargando ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
+          {cargando ? 'Actualizando…' : 'Actualizar'}
+        </button>
       </div>
+
+      {error && (
+        <p className="text-amber-400 text-sm">No se pudo leer el registro de infraestructura. Verifica la conexión con Firestore y los permisos de tu cuenta.</p>
+      )}
+      {!cargando && !error && activos.length === 0 && (
+        <p className="text-slate-500 text-sm">El registro de infraestructura está vacío: todavía no se ha dado de alta ninguna obra. Esta vista no inventa obras de ejemplo — mostrará lo que exista en la colección.</p>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-[#161920] border border-slate-800 rounded-xl p-6">
           <div className="flex justify-between items-center mb-6">
-            <h4 className="text-sm font-semibold text-slate-300">Mapa de Obras Activas</h4>
-            <span className="px-2.5 py-1 bg-amber-500/10 text-amber-500 rounded-full text-xs font-medium">42 en proceso</span>
+            <h4 className="text-sm font-semibold text-slate-300">Mapa de Obras Registradas</h4>
+            <span className="px-2.5 py-1 bg-amber-500/10 text-amber-500 rounded-full text-xs font-medium">
+              {activos.length} registrada{activos.length === 1 ? '' : 's'} · {enProceso} en proceso
+            </span>
           </div>
           <div className="aspect-video bg-slate-800/30 rounded-lg border border-slate-800 relative overflow-hidden">
-             <NayaritMap 
+             <NayaritMap
                center={{ lat: 21.5090, lng: -104.8947 }}
-               zoom={14}
-               markers={[
-                 { lat: 21.5090, lng: -104.8947, title: "Obra Principal Centro", color: "#F59E0B" },
-                 { lat: 21.5150, lng: -104.9050, title: "Frente de Trabajo Norte", color: "#10B981" },
-                 { lat: 21.5020, lng: -104.8850, title: "Reporte Crítico", color: "#F43F5E" }
-               ]}
+               zoom={11}
+               markers={marcadores}
              />
           </div>
         </div>
 
         <div className="bg-[#161920] border border-slate-800 rounded-xl p-6">
-          <h4 className="text-sm font-semibold text-slate-300 mb-6">Alertas Automáticas</h4>
+          <h4 className="text-sm font-semibold text-slate-300 mb-6">Alertas por Estado del Activo</h4>
+          {cargando && <p className="text-slate-500 text-sm">Cargando registro…</p>}
+          {!cargando && alertas.length === 0 && (
+            <p className="text-slate-500 text-sm">
+              {activos.length === 0
+                ? 'Sin activos registrados, no hay alertas que calcular.'
+                : 'Ningún activo registrado está marcado como crítico o en riesgo.'}
+            </p>
+          )}
           <div className="space-y-4">
-            {[
-              { title: 'Retraso Crítico: Puente Insurgentes', desc: 'Desfase de 15 días detectado en cronograma.', status: 'rojo' },
-              { title: 'Requisición de Material', desc: 'Aprobación pendiente para asfalto.', status: 'ambar' },
-              { title: 'Entrega Exitosa', desc: 'Unidad médica rehabilitada en tiempo.', status: 'verde' },
-            ].map((alert, i) => (
-              <div key={i} className="flex gap-4 p-4 rounded-lg bg-slate-800/30 border border-slate-800/50">
+            {alertas.map((activo) => (
+              <div key={activo.id ?? activo.iun} className="flex gap-4 p-4 rounded-lg bg-slate-800/30 border border-slate-800/50">
                 <div className={cn(
                   "w-2 rounded-full flex-shrink-0",
-                  alert.status === 'rojo' ? 'bg-rose-500' : alert.status === 'ambar' ? 'bg-amber-500' : 'bg-emerald-500'
+                  activo.status === 'CRITICAL' ? 'bg-rose-500' : 'bg-amber-500'
                 )}></div>
-                <div>
-                  <h5 className="font-semibold text-sm text-slate-200">{alert.title}</h5>
-                  <p className="text-xs text-slate-500 mt-1">{alert.desc}</p>
+                <div className="min-w-0">
+                  <h5 className="font-semibold text-sm text-slate-200 truncate">
+                    {ETIQUETA_ESTADO[activo.status]}: {activo.name}
+                  </h5>
+                  <p className="text-xs text-slate-500 mt-1">
+                    {activo.location?.municipality ? `${activo.location.municipality} · ` : ''}
+                    Responsable: {activo.responsible || 'sin asignar'}
+                    {typeof activo.metrics?.integrityScore === 'number' ? ` · Integridad ${activo.metrics.integrityScore}/100` : ''}
+                  </p>
+                  <p className="text-[10px] font-mono text-slate-600 mt-1">{activo.iun}</p>
                 </div>
               </div>
             ))}
@@ -415,15 +529,37 @@ function ObrasView() {
   );
 }
 
+const TICKETS_SERVICIOS = [
+  { id: 'TK-092', user: 'Juan Pérez', cat: 'Fuga de Agua', loc: 'Zona Centro', status: 'Asignado' },
+  { id: 'TK-093', user: 'Ana G.', cat: 'Bacheo', loc: 'Colonia X', status: 'Recibido' },
+  { id: 'TK-094', user: 'Luis M.', cat: 'Luminaria', loc: 'Libramiento', status: 'Resuelto' },
+  { id: 'TK-095', user: 'María D.', cat: 'Basura', loc: 'Parque', status: 'En Proceso' },
+];
+
+/** Escapa un campo para CSV (comillas dobles y separadores). */
+function campoCsv(valor: string) {
+  return `"${String(valor).replace(/"/g, '""')}"`;
+}
+
 function ServiciosView() {
   const [isExporting, setIsExporting] = useState(false);
+  const [ultimoExport, setUltimoExport] = useState<string | null>(null);
 
+  // Exporta de verdad: arma el CSV con las filas que se ven en pantalla y lo
+  // descarga en el navegador. No hay envío por correo — antes el botón lo
+  // afirmaba en un alert() sin hacer nada.
   const handleExport = () => {
     setIsExporting(true);
-    setTimeout(() => {
+    try {
+      const encabezados = ['ID Ticket', 'Ciudadano', 'Categoria', 'Ubicacion', 'Estado'];
+      const filas = TICKETS_SERVICIOS.map((t) => [t.id, t.user, t.cat, t.loc, t.status].map(campoCsv).join(','));
+      const csv = [encabezados.map(campoCsv).join(','), ...filas].join('\r\n');
+      const nombre = `reportes-servicios-${new Date().toISOString().slice(0, 10)}.csv`;
+      descargarArchivo(nombre, `﻿${csv}`, 'text/csv;charset=utf-8');
+      setUltimoExport(`${nombre} (${TICKETS_SERVICIOS.length} filas) descargado a este equipo.`);
+    } finally {
       setIsExporting(false);
-      alert('Reporte CSV generado exitosamente. Se ha enviado una copia al correo institucional.');
-    }, 1500);
+    }
   };
 
   return (
@@ -432,6 +568,8 @@ function ServiciosView() {
         <h3 className="text-2xl font-bold text-white tracking-tight">Servicios Públicos Inteligentes</h3>
         <p className="text-slate-400 text-sm mt-1">Clasificador de IA y asignación de cuadrillas automáticas.</p>
       </div>
+
+      <DemoDataBadge detail="Los KPIs y los tickets de la tabla son datos de ejemplo escritos en el código; no provienen todavía de los reportes ciudadanos reales. La exportación a CSV sí funciona: descarga exactamente las filas que ves." />
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
          {/* KPI Cards */}
@@ -453,8 +591,8 @@ function ServiciosView() {
 
       <div className="bg-[#161920] border border-slate-800 rounded-xl overflow-hidden">
         <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-800/20">
-          <h4 className="text-sm font-semibold text-slate-300">Flujo de Reportes en Tiempo Real</h4>
-          <button 
+          <h4 className="text-sm font-semibold text-slate-300">Flujo de Reportes</h4>
+          <button
             onClick={handleExport}
             disabled={isExporting}
             className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded transition-colors disabled:opacity-50 flex items-center gap-2"
@@ -463,6 +601,9 @@ function ServiciosView() {
             {isExporting ? 'Procesando...' : 'Exportar CSV'}
           </button>
         </div>
+        {ultimoExport && (
+          <p className="px-4 py-2 text-[11px] text-emerald-400 bg-emerald-500/5 border-b border-emerald-500/20">{ultimoExport}</p>
+        )}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm whitespace-nowrap">
             <thead className="bg-slate-800/30 text-slate-500 font-mono text-[10px] uppercase tracking-wider">
@@ -475,12 +616,7 @@ function ServiciosView() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/50">
-              {[
-                { id: 'TK-092', user: 'Juan Pérez', cat: 'Fuga de Agua', loc: 'Zona Centro', status: 'Asignado' },
-                { id: 'TK-093', user: 'Ana G.', cat: 'Bacheo', loc: 'Colonia X', status: 'Recibido' },
-                { id: 'TK-094', user: 'Luis M.', cat: 'Luminaria', loc: 'Libramiento', status: 'Resuelto' },
-                { id: 'TK-095', user: 'María D.', cat: 'Basura', loc: 'Parque', status: 'En Proceso' },
-              ].map((row, i) => (
+              {TICKETS_SERVICIOS.map((row, i) => (
                 <tr key={i} className="hover:bg-slate-800/20 transition-colors">
                   <td className="px-6 py-4 font-mono text-xs text-slate-400">{row.id}</td>
                   <td className="px-6 py-4 text-slate-300">{row.user}</td>
@@ -775,6 +911,17 @@ function IAView() {
   const [lang, setLang] = useState<Language>('es');
   const auraVoice = useAuraVoice();
   const [autoSpeak, setAutoSpeak] = useState(false);
+  const [mostrarNotaAuditoria, setMostrarNotaAuditoria] = useState(false);
+
+  // Ojo: esto NO es un sistema de internacionalización. Lo único traducido es
+  // el saludo inicial de abajo; el asistente responde siempre en español y la
+  // síntesis de voz usa es-MX (ver useAuraVoice.ts). No describir la vista
+  // como "plataforma trilingüe".
+  const NOMBRE_IDIOMA: Record<Language, string> = {
+    es: 'Español',
+    cora: 'Cora (náayeri)',
+    wixarika: 'Wixárika (huichol)'
+  };
 
   const greets = {
     es: 'Presidenta Geraldine Ponce, el Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?',
@@ -835,9 +982,10 @@ function IAView() {
           </h3>
           <p className="text-slate-500 text-xs mt-2 uppercase font-black tracking-widest flex items-center gap-3">
              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-             GOBERNANZA DATA-DRIVEN · COBERTURA TOTAL
+             ASISTENTE CONVERSACIONAL · RESPONDE EN ESPAÑOL
           </p>
         </div>
+        <div className="flex flex-col items-end gap-2">
         <div className="flex gap-2">
           {auraVoice.isSupported && (
             <button
@@ -854,10 +1002,13 @@ function IAView() {
               {autoSpeak ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           )}
-          {['es', 'cora', 'wixarika'].map(l => (
+          {(['es', 'cora', 'wixarika'] as Language[]).map(l => (
             <button
               key={l}
-              onClick={() => setLang(l as Language)}
+              onClick={() => setLang(l)}
+              title={`Saludo en ${NOMBRE_IDIOMA[l]}`}
+              aria-label={`Mostrar el saludo del asistente en ${NOMBRE_IDIOMA[l]}`}
+              aria-pressed={lang === l}
               className={cn(
                 "w-12 h-12 rounded-xl font-black text-[10px] uppercase shadow-lg transition-all",
                 lang === l ? "bg-purple-600 text-white ring-2 ring-purple-500/40" : "bg-slate-800 text-slate-500 hover:bg-slate-700"
@@ -866,6 +1017,10 @@ function IAView() {
               {l}
             </button>
           ))}
+        </div>
+        <p className="text-[10px] text-slate-600 text-right max-w-[16rem] leading-tight">
+          Selector de idioma para el saludo del asistente ({NOMBRE_IDIOMA[lang]}). La conversación y la voz siguen en español.
+        </p>
         </div>
       </div>
 
@@ -951,7 +1106,10 @@ function IAView() {
 
         <div className="space-y-8">
            <div className="bg-[#161920] border border-slate-800 rounded-[2.5rem] p-8 shadow-3xl">
-              <h4 className="text-[10px] font-black text-slate-500 mb-8 uppercase tracking-[0.3em] border-l-4 border-purple-500 pl-4">Eficacia del Sistema</h4>
+              <h4 className="text-[10px] font-black text-slate-500 mb-2 uppercase tracking-[0.3em] border-l-4 border-purple-500 pl-4">Eficacia del Sistema</h4>
+              <p className="text-[10px] text-amber-500/80 mb-8 pl-4 leading-relaxed">
+                Cifras ilustrativas de ejemplo — no son una medición del sistema. Aún no hay telemetría conectada a estos indicadores.
+              </p>
               <div className="space-y-10">
                  {[
                    { label: 'Indice de Recaudación Digital', val: 94.2, color: 'bg-emerald-500' },
@@ -975,22 +1133,35 @@ function IAView() {
                  ))}
               </div>
               <div className="mt-12 p-6 bg-purple-600/5 rounded-3xl border border-purple-600/20">
-                 <p className="text-[10px] text-purple-400 font-black uppercase tracking-widest mb-3">Reporte Algorítmico:</p>
+                 <p className="text-[10px] text-purple-400 font-black uppercase tracking-widest mb-3">Texto de ejemplo del reporte:</p>
                  <p className="text-sm text-slate-400 italic leading-relaxed font-medium">
-                   "La integración del módulo de recaudación digital en Tepic ha superado las proyecciones iniciales, eliminando el 100% de la opacidad en transferencias de ventanilla."
+                   "Así se vería el resumen narrativo que acompañaría a estos indicadores una vez que existan mediciones reales de recaudación digital."
                  </p>
               </div>
            </div>
-           
+
            <div className="bg-gradient-to-br from-purple-700 to-indigo-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden group shadow-3xl">
               <TrendingUp className="w-12 h-12 mb-6 text-white/40" />
-              <h4 className="text-2xl font-black mb-2 uppercase tracking-tighter italic">Vanguardia Digital</h4>
+              <h4 className="text-2xl font-black mb-2 uppercase tracking-tighter italic">Trazabilidad del Asistente</h4>
               <p className="text-sm text-white/60 leading-relaxed font-medium mb-8">
-                ConnectX es ahora el sistema operativo municipal más avanzado de México, diseñado para la trazabilidad absoluta.
+                ConnectX es una plataforma en construcción. Lo que hoy funciona de verdad en este módulo es la conversación con el asistente.
               </p>
-              <button className="w-full py-4 bg-white text-indigo-900 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl transition-all active:scale-95">
-                Consultar Auditoría Google Cloud
+              {/* Antes este botón no tenía onClick: prometía una "Auditoría Google
+                  Cloud" inexistente. Ahora despliega, dentro de la propia vista,
+                  qué queda registrado realmente y qué no. */}
+              <button
+                onClick={() => setMostrarNotaAuditoria((v) => !v)}
+                aria-expanded={mostrarNotaAuditoria}
+                className="w-full py-4 bg-white text-indigo-900 rounded-2xl font-black text-xs uppercase tracking-widest shadow-2xl transition-all active:scale-95"
+              >
+                {mostrarNotaAuditoria ? 'Ocultar qué se audita' : '¿Qué se audita de esta conversación?'}
               </button>
+              {mostrarNotaAuditoria && (
+                <div className="mt-4 p-4 rounded-2xl bg-black/25 border border-white/15 text-[11px] text-white/80 leading-relaxed space-y-2">
+                  <p>Cada mensaje viaja al backend propio (<span className="font-mono">/api/ai/chat</span>) y de ahí al modelo. La conversación vive en la memoria de esta pestaña: al recargar se pierde.</p>
+                  <p>No existe todavía una bitácora de auditoría persistente ni una integración con Cloud Logging para este asistente. Cuando exista, se enlazará desde aquí.</p>
+                </div>
+              )}
            </div>
         </div>
       </div>
@@ -998,15 +1169,50 @@ function IAView() {
   );
 }
 
+const MERCADO_AGRO = [
+  { product: 'Caña de Azúcar', price: '$820/t', trend: 'up' },
+  { product: 'Mango Barracuda', price: '$12/kg', trend: 'down' },
+  { product: 'Cacao Real', price: '$140/kg', trend: 'stable' },
+  { product: 'Maíz Híbrido', price: '$6,200/t', trend: 'up' },
+];
+
 function AgrovisionView() {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [certificados, setCertificados] = useState<{ folio: string; emitido: string }[]>([]);
 
+  // Antes esto era `setTimeout` + `alert()` afirmando que el certificado
+  // quedaba "disponible en la bitácora del productor" — no se generaba ni se
+  // guardaba nada. Ahora se arma el documento con los valores en pantalla y se
+  // descarga de verdad. Pendiente: sellarlo y persistirlo en un servicio real.
   const handleGenerate = () => {
     setIsGenerating(true);
-    setTimeout(() => {
+    try {
+      const emitido = new Date();
+      const folio = `AGRO-${emitido.getFullYear()}-${String(certificados.length + 1).padStart(4, '0')}`;
+      const contenido = [
+        'CERTIFICADO DE PRODUCCIÓN (BORRADOR NO OFICIAL)',
+        '',
+        `Folio: ${folio}`,
+        `Emitido: ${emitido.toLocaleString('es-MX')}`,
+        'Emisor: Agrovisión 3D — C5 Governance Hub (Nayarit Digital)',
+        '',
+        'Indicadores de la parcela mostrados en pantalla:',
+        '  NDVI promedio: 0.82',
+        '  Humedad de suelo: 12%',
+        '',
+        'Referencias de mercado al momento de la emisión:',
+        ...MERCADO_AGRO.map((m) => `  ${m.product}: ${m.price}`),
+        '',
+        'AVISO: los indicadores anteriores son datos de ejemplo de la maqueta;',
+        'este documento no tiene validez oficial ni sello electrónico, y no',
+        'queda registrado en ninguna bitácora institucional.',
+        ''
+      ].join('\n');
+      descargarArchivo(`${folio}.txt`, contenido);
+      setCertificados((prev) => [{ folio, emitido: emitido.toLocaleTimeString('es-MX') }, ...prev]);
+    } finally {
       setIsGenerating(false);
-      alert('Certificado de Producción generado exitosamente. Disponible en la bitácora del productor.');
-    }, 1500);
+    }
   };
 
   return (
@@ -1015,6 +1221,8 @@ function AgrovisionView() {
         <h3 className="text-2xl font-bold text-white tracking-tight">Agrovisión 3D</h3>
         <p className="text-slate-400 text-sm mt-1">Monitoreo satelital y modelado 3D de la producción agropecuaria en Nayarit.</p>
       </div>
+
+      <DemoDataBadge detail="Los valores NDVI, la humedad de suelo y los precios de mercado son datos de ejemplo escritos en el código; no hay imágenes satelitales ni un motor 3D detrás. El certificado que genera el botón sí se descarga de verdad, pero es un borrador sin validez oficial." />
 
       <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-6">
         <div className="bg-[#161920] border border-slate-800 rounded-xl p-6">
@@ -1048,12 +1256,7 @@ function AgrovisionView() {
         <div className="bg-[#161920] border border-slate-800 rounded-xl p-6">
           <h4 className="text-sm font-semibold text-slate-300 mb-6">Inteligencia de Mercado</h4>
           <div className="space-y-4">
-            {[
-              { product: 'Caña de Azúcar', price: '$820/t', trend: 'up' },
-              { product: 'Mango Barracuda', price: '$12/kg', trend: 'down' },
-              { product: 'Cacao Real', price: '$140/kg', trend: 'stable' },
-              { product: 'Maíz Híbrido', price: '$6,200/t', trend: 'up' },
-            ].map((item, i) => (
+            {MERCADO_AGRO.map((item, i) => (
               <div key={i} className="flex justify-between items-center p-3 bg-slate-800/20 border border-slate-800 rounded-lg">
                 <span className="text-sm text-slate-200">{item.product}</span>
                 <div className="text-right">
@@ -1076,14 +1279,37 @@ function AgrovisionView() {
             {isGenerating ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
             {isGenerating ? 'Generando...' : 'Generar Certificado de Producción'}
           </button>
+
+          {certificados.length > 0 && (
+            <div className="mt-4 space-y-2">
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Certificados descargados en esta sesión</p>
+              {certificados.map((c) => (
+                <div key={c.folio} className="flex justify-between items-center text-[11px] p-2 bg-emerald-500/5 border border-emerald-500/20 rounded-lg">
+                  <span className="font-mono text-emerald-400">{c.folio}.txt</span>
+                  <span className="text-slate-500">{c.emitido}</span>
+                </div>
+              ))}
+              <p className="text-[10px] text-slate-600 leading-relaxed">
+                Se descargan a este equipo. No se persisten en ningún servicio ni bitácora institucional todavía.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
+type ReporteObservatorio = {
+  folio: string;
+  titulo: string;
+  emitido: string;
+  archivo: string;
+};
+
 function ObservatorioView() {
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [isGenerating, setIsGenerating] = useState<string | null>(null);
+  const [reportes, setReportes] = useState<ReporteObservatorio[]>([]);
   const [activeStrategyTab, setActiveStrategyTab] = useState<'federal' | 'blueocean' | 'business'>('federal');
 
   const citizenData = [
@@ -1110,12 +1336,44 @@ function ObservatorioView() {
     { category: 'Health-Gov', potential: 91, stability: 85, color: '#f59e0b' },
   ];
 
-  const handleReport = () => {
-    setIsGenerating(true);
-    setTimeout(() => {
-      setIsGenerating(false);
-      alert('Informe de Gobernanza estratégica 2026 generado. El mapa prospectivo de Océanos Azules para Tepic está listo para visualización presidencial.');
-    }, 2000);
+  // Antes `handleReport` era `setTimeout` + `alert()`: no cambiaba ningún
+  // estado ni producía documento alguno. Ahora arma el reporte con los datos
+  // que están en pantalla, lo descarga y lo deja anotado en la lista de abajo,
+  // que es estado real de React. Pendiente: persistirlo en un servicio — no se
+  // conecta a Firestore aquí porque no hay esquema definido para reportes.
+  const handleReport = (titulo: string) => {
+    setIsGenerating(titulo);
+    try {
+      const emitido = new Date();
+      const folio = `OBS-${emitido.getFullYear()}-${String(reportes.length + 1).padStart(3, '0')}`;
+      const archivo = `${folio}.txt`;
+      const contenido = [
+        titulo.toUpperCase(),
+        `Folio: ${folio}`,
+        `Emitido: ${emitido.toLocaleString('es-MX')}`,
+        '',
+        'Adopción Nayarit ID (usuarios por mes):',
+        ...citizenData.map((d) => `  ${d.name}: ${d.total.toLocaleString('es-MX')}`),
+        '',
+        'Avance de infraestructura (% de cumplimiento):',
+        ...worksData.map((d) => `  ${d.name}: ${d.progress}%`),
+        '',
+        'Sectores prospectivos (potencial / estabilidad):',
+        ...oceanData.map((d) => `  ${d.category}: ${d.potential} / ${d.stability}`),
+        '',
+        'AVISO: las cifras anteriores son datos de ejemplo de la maqueta del',
+        'Observatorio. Este documento no proviene de ninguna fuente oficial ni',
+        'queda registrado en un sistema institucional.',
+        ''
+      ].join('\n');
+      descargarArchivo(archivo, contenido);
+      setReportes((prev) => [
+        { folio, titulo, emitido: emitido.toLocaleTimeString('es-MX'), archivo },
+        ...prev
+      ]);
+    } finally {
+      setIsGenerating(null);
+    }
   };
 
   return (
@@ -1124,6 +1382,8 @@ function ObservatorioView() {
         <h3 className="text-2xl font-bold text-white tracking-tight">Mando Estratégico & Proyección 2026</h3>
         <p className="text-slate-400 text-sm mt-1">Inteligencia territorial aplicada a la Ley de Gobierno Digital y Fondos Federales de Desarrollo.</p>
       </div>
+
+      <DemoDataBadge detail="Los KPIs, las gráficas de adopción y avance, y los sectores prospectivos de esta vista son datos de ejemplo escritos en el código: no hay servicio ni fuente oficial detrás. Los botones de generar reporte sí funcionan y descargan un archivo con esos mismos datos, marcado como no oficial." />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
@@ -1299,12 +1559,12 @@ function ObservatorioView() {
               </div>
            </div>
 
-           <button 
-             onClick={handleReport}
-             disabled={isGenerating}
+           <button
+             onClick={() => handleReport('Reporte Estratégico 2026')}
+             disabled={isGenerating !== null}
              className="w-full bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl py-4 flex items-center justify-center gap-3 transition-colors shadow-lg shadow-cyan-900/40 active:scale-[0.98] disabled:opacity-50"
            >
-             {isGenerating ? (
+             {isGenerating === 'Reporte Estratégico 2026' ? (
                <Loader2 className="w-4 h-4 animate-spin" />
              ) : (
                <>
@@ -1313,6 +1573,24 @@ function ObservatorioView() {
                </>
              )}
            </button>
+
+           {reportes.length > 0 && (
+             <div className="bg-[#161920] border border-slate-800 rounded-2xl p-6 space-y-3">
+               <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.25em]">Reportes generados en esta sesión</h4>
+               {reportes.map((r) => (
+                 <div key={r.folio} className="p-3 bg-cyan-500/5 border border-cyan-500/20 rounded-xl">
+                   <div className="flex justify-between items-center gap-2">
+                     <span className="text-[11px] font-bold text-white truncate">{r.titulo}</span>
+                     <span className="text-[10px] text-slate-500 shrink-0">{r.emitido}</span>
+                   </div>
+                   <p className="text-[10px] font-mono text-cyan-400 mt-1">{r.archivo}</p>
+                 </div>
+               ))}
+               <p className="text-[10px] text-slate-600 leading-relaxed">
+                 Los archivos se descargaron a este equipo. No se guardan en ningún servidor ni expediente institucional todavía.
+               </p>
+             </div>
+           )}
         </div>
       </div>
 
@@ -1326,7 +1604,7 @@ function ObservatorioView() {
             </div>
             <div className="flex items-center gap-2 text-purple-400 bg-purple-500/10 px-2 py-1 rounded text-[10px] font-bold">
               <Users className="w-3 h-3" />
-              LIVE
+              EJEMPLO
             </div>
           </div>
           <div className="h-[220px]">
@@ -1439,13 +1717,13 @@ function ObservatorioView() {
                </div>
              ))}
           </div>
-          <button 
-            onClick={handleReport}
-            disabled={isGenerating}
-            className="w-full mt-6 py-2.5 rounded-lg bg-cyan-500 text-white text-xs font-bold hover:bg-cyan-600 shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2"
+          <button
+            onClick={() => handleReport('Estrategia por Colonia')}
+            disabled={isGenerating !== null}
+            className="w-full mt-6 py-2.5 rounded-lg bg-cyan-500 text-white text-xs font-bold hover:bg-cyan-600 shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-            {isGenerating ? 'Generando...' : 'Desbloquear Estrategia Barrio'}
+            {isGenerating === 'Estrategia por Colonia' ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+            {isGenerating === 'Estrategia por Colonia' ? 'Generando...' : 'Descargar Estrategia por Colonia'}
           </button>
         </div>
       </div>
@@ -1465,11 +1743,16 @@ function BienestarView() {
         El padrón único alinea a los beneficiarios de Estado y Municipio mediante la IDN-U, eliminando duplicidad de apoyos sociales y correlacionando datos del triaje médico con despensas o subsidios.
       </p>
       
-      <div className="pt-8">
+      <div className="pt-8 space-y-6">
         <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800 border border-slate-700 text-sm text-slate-300">
-          <div className="w-2 h-2 rounded-full bg-pink-500"></div>
-          Sincronizando padrones...
+          <div className="w-2 h-2 rounded-full bg-amber-500"></div>
+          Integración pendiente — ningún padrón conectado
         </span>
+        {/* La pastilla decía "Sincronizando padrones..." de forma permanente:
+            sugería un proceso en curso que nunca existió. */}
+        <div className="max-w-xl mx-auto text-left">
+          <DemoDataBadge detail="Este módulo es solo la descripción del programa. No hay padrón, ni servicio, ni dato real detrás: no se está sincronizando nada en este momento." />
+        </div>
       </div>
     </div>
   );
@@ -1477,16 +1760,19 @@ function BienestarView() {
 
 function MetricView() {
   const data = [
-    { name: 'Jan', value: 400 },
+    { name: 'Ene', value: 400 },
     { name: 'Feb', value: 300 },
     { name: 'Mar', value: 600 },
-    { name: 'Apr', value: 800 },
+    { name: 'Abr', value: 800 },
     { name: 'May', value: 500 },
   ];
 
   return (
     <div className="space-y-6">
       <h3 className="text-2xl font-black text-white uppercase tracking-tighter">Métricas Integrales de Gobierno</h3>
+
+      <DemoDataBadge detail="La gráfica de adopción son cinco valores fijos escritos en el código, no una medición de uso. Este módulo todavía no lee ninguna métrica real de la plataforma." />
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-[#161920] border border-slate-800 p-6 rounded-2xl">
           <h4 className="text-sm font-semibold text-slate-400 mb-4">Adopción de Servicios Digitales</h4>
@@ -1515,7 +1801,22 @@ function MetricView() {
   );
 }
 
+/** Iniciales para el avatar, en lugar de una fotografía de banco de imágenes. */
+function iniciales(nombre: string) {
+  return nombre
+    .replace(/^(Mtra?\.|Lic\.|Ing\.|Dr[a]?\.)\s+/i, '')
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase() ?? '')
+    .join('');
+}
+
 function GabineteView() {
+  // Los nombres y cargos son de personas reales; los KPIs, tiempos de respuesta
+  // y número de proyectos son valores de ejemplo. Antes cada tarjeta usaba
+  // además una fotografía de banco de imágenes (Unsplash) como si fuera el
+  // retrato de la persona: se sustituyó por iniciales para no atribuir a nadie
+  // una cara que no es la suya.
   const officials = [
     {
       name: "Geraldine Ponce",
@@ -1524,7 +1825,6 @@ function GabineteView() {
       kpiName: "Aprobación Ciudadana",
       kpiValue: "84%",
       kpiStatus: "positive",
-      avatar: "https://images.unsplash.com/photo-1586996292898-71f4036c4e07?w=200&h=200&fit=crop&crop=faces",
       responseTime: "< 24h",
       projects: 12
     },
@@ -1535,7 +1835,6 @@ function GabineteView() {
       kpiName: "Eficiencia Operativa",
       kpiValue: "92%",
       kpiStatus: "positive",
-      avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop&crop=faces",
       responseTime: "< 12h",
       projects: 8
     },
@@ -1546,7 +1845,6 @@ function GabineteView() {
       kpiName: "Trámites Digitalizados",
       kpiValue: "80%",
       kpiStatus: "neutral",
-      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=faces",
       responseTime: "< 48h",
       projects: 5
     },
@@ -1557,39 +1855,42 @@ function GabineteView() {
       kpiName: "Obras en Tiempo",
       kpiValue: "88%",
       kpiStatus: "positive",
-      avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=200&h=200&fit=crop&crop=faces",
       responseTime: "< 72h",
       projects: 24
     }
   ];
 
+  const [auditando, setAuditando] = useState<string | null>(null);
+
   return (
     <div className="space-y-8">
       <div>
         <h2 className="text-2xl font-serif font-black text-white mb-2">Gabinete en Tiempo Real</h2>
-        <p className="text-slate-400">Adiós al directorio web tradicional. Aquí los ciudadanos evalúan el desempeño real, el tiempo de respuesta y la eficiencia de cada servidor público. Cuentas claras para construir confianza.</p>
+        <p className="text-slate-400">Adiós al directorio web tradicional. La meta es que los ciudadanos evalúen el desempeño real, el tiempo de respuesta y la eficiencia de cada servidor público. Cuentas claras para construir confianza.</p>
       </div>
+
+      <DemoDataBadge detail="Los nombres y cargos corresponden a personas reales, pero los indicadores de esta vista —aprobación, tiempos de respuesta, proyectos, evaluación ciudadana, declaraciones 3de3— son valores de ejemplo escritos en el código. Ninguno proviene de una evaluación ciudadana ni de un registro de auditoría real." />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-[#161920] rounded-xl p-6 border border-slate-800">
           <div className="text-slate-400 text-sm font-medium mb-1">Total Gabinete</div>
           <div className="text-3xl font-black text-white">42</div>
-          <div className="text-emerald-400 text-sm font-bold mt-2">100% Declaración 3de3</div>
+          <div className="text-slate-500 text-sm mt-2">Cifra de ejemplo</div>
         </div>
         <div className="bg-[#161920] rounded-xl p-6 border border-slate-800">
           <div className="text-slate-400 text-sm font-medium mb-1">Promedio Respuesta</div>
           <div className="text-3xl font-black text-white">18h</div>
-          <div className="text-emerald-400 text-sm font-bold mt-2">-40% vs Administración Anterior</div>
+          <div className="text-slate-500 text-sm mt-2">Cifra de ejemplo</div>
         </div>
         <div className="bg-[#161920] rounded-xl p-6 border border-slate-800">
           <div className="text-slate-400 text-sm font-medium mb-1">Evaluación Ciudadana</div>
           <div className="text-3xl font-black text-emerald-400">8.9/10</div>
-          <div className="text-slate-500 text-sm mt-2">Basado en NayaritID</div>
+          <div className="text-slate-500 text-sm mt-2">Cifra de ejemplo</div>
         </div>
         <div className="bg-[#161920] rounded-xl p-6 border border-slate-800">
           <div className="text-slate-400 text-sm font-medium mb-1">Iniciativas Cumplidas</div>
           <div className="text-3xl font-black text-white">142</div>
-          <div className="text-emerald-400 text-sm font-bold mt-2">Validadas por C5</div>
+          <div className="text-slate-500 text-sm mt-2">Cifra de ejemplo</div>
         </div>
       </div>
 
@@ -1597,8 +1898,11 @@ function GabineteView() {
         {officials.map((official, i) => (
           <div key={i} className="bg-[#161920] rounded-xl border border-slate-800 overflow-hidden group hover:border-emerald-500/50 transition-colors">
             <div className="p-6 text-center">
-              <div className="w-24 h-24 mx-auto rounded-full overflow-hidden mb-4 border-2 border-slate-800 group-hover:border-emerald-500/50 transition-colors">
-                <img src={official.avatar} alt={official.name} className="w-full h-full object-cover" />
+              <div
+                aria-hidden="true"
+                className="w-24 h-24 mx-auto rounded-full mb-4 border-2 border-slate-800 group-hover:border-emerald-500/50 transition-colors bg-slate-800/60 flex items-center justify-center text-2xl font-black text-slate-400"
+              >
+                {iniciales(official.name)}
               </div>
               <h3 className="font-bold text-white text-lg">{official.name}</h3>
               <p className="text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">{official.title}</p>
@@ -1618,9 +1922,32 @@ function GabineteView() {
                 <span className="text-slate-300 text-sm font-mono">{official.projects} Activos</span>
               </div>
             </div>
-            <div className="p-4 bg-emerald-500/10 border-t border-emerald-500/20 text-center cursor-pointer hover:bg-emerald-500/20 transition-colors">
-              <span className="text-emerald-400 text-xs font-bold uppercase tracking-widest">Auditar Funcionario</span>
-            </div>
+            {/* Antes esto era un <div> con estilos de botón y sin onClick: no
+                hacía nada y no era alcanzable por teclado. Ahora despliega la
+                ficha de lo que sí puede consultarse hoy. */}
+            <button
+              type="button"
+              onClick={() => setAuditando((actual) => (actual === official.name ? null : official.name))}
+              aria-expanded={auditando === official.name}
+              className="w-full p-4 bg-emerald-500/10 border-t border-emerald-500/20 text-center hover:bg-emerald-500/20 transition-colors"
+            >
+              <span className="text-emerald-400 text-xs font-bold uppercase tracking-widest">
+                {auditando === official.name ? 'Cerrar ficha' : 'Ver ficha de auditoría'}
+              </span>
+            </button>
+            {auditando === official.name && (
+              <div className="p-4 bg-[#0a0a0c] border-t border-slate-800 text-left space-y-2">
+                <p className="text-[11px] text-slate-300 leading-relaxed">
+                  <span className="font-bold text-white">{official.name}</span> · {official.title} ({official.department}).
+                </p>
+                <p className="text-[11px] text-amber-400 leading-relaxed">
+                  No hay expediente de auditoría conectado a esta persona. El {official.kpiName.toLowerCase()} de {official.kpiValue}, el tiempo de respuesta y el número de proyectos son valores de ejemplo, no mediciones.
+                </p>
+                <p className="text-[10px] text-slate-500 leading-relaxed">
+                  Para que este botón abra una auditoría real hace falta una fuente de declaraciones patrimoniales y de evaluación ciudadana; hoy no existe en la plataforma.
+                </p>
+              </div>
+            )}
           </div>
         ))}
       </div>
