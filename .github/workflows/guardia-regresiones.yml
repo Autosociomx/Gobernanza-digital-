@@ -10,6 +10,7 @@ name: Guardia de regresiones
     branches:
       - main
       - 'agent/**'
+      - 'claude/**'
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -35,6 +36,9 @@ jobs:
 
       - name: Instalar dependencias
         run: npm ci
+
+      - name: Preparar configuración de Firebase (placeholder de compilación)
+        run: node scripts/preparar-config.mjs
 
       - name: Verificar regresiones (config y archivos)
         run: node scripts/verificar-regresiones.mjs

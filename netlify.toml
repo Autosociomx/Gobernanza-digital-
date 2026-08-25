@@ -2,7 +2,7 @@
   # La Guardia corre antes del build: si detecta una regresión (llave en el
   # bundle, metadatos genéricos, archivos borrados), el deploy falla y el PR
   # queda marcado en rojo — protección independiente de GitHub Actions.
-  command = "node scripts/verificar-regresiones.mjs && npm run build"
+  command = "node scripts/preparar-config.mjs && node scripts/verificar-regresiones.mjs && npm run build"
   publish = "dist"
 
 [[redirects]]
