@@ -18,9 +18,11 @@ import { cn } from '../lib/utils';
 import { User } from 'firebase/auth';
 
 export function MysteryShopperView({ user, onBack }: { user: User | null, onBack: () => void }) {
-  const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  // Folio realmente guardado en Firestore. Se conserva en estado para mostrar
+  // ESE folio y no uno recalculado al renderizar (que no existiría en la base).
+  const [folioGuardado, setFolioGuardado] = useState<string | null>(null);
 
   // Form State
   const [dependencia, setDependencia] = useState('');
@@ -47,6 +49,7 @@ export function MysteryShopperView({ user, onBack }: { user: User | null, onBack
     }
 
     setLoading(true);
+    const folioAuditoria = `MS-${Date.now().toString(36).toUpperCase()}-TEP`;
     try {
       await addDoc(collection(db, 'auditorias_ciudadanas'), {
         uid: anonimo ? 'ANONIMO' : (user?.uid || 'NO_AUTH'),
@@ -58,8 +61,9 @@ export function MysteryShopperView({ user, onBack }: { user: User | null, onBack
         comentarios,
         timestamp: serverTimestamp(),
         estado: 'recibido',
-        folioAuditoria: `MS-${Date.now().toString(36).toUpperCase()}-TEP`
+        folioAuditoria
       });
+      setFolioGuardado(folioAuditoria);
       setSuccess(true);
     } catch (error) {
       console.error(error);
@@ -77,11 +81,14 @@ export function MysteryShopperView({ user, onBack }: { user: User | null, onBack
         </div>
         <h2 className="text-2xl font-black text-slate-900">Auditoría Registrada</h2>
         <p className="text-sm text-slate-500 leading-relaxed max-w-xs">
-          Tu reporte como <strong>Ciudadano Auditor (Mystery Shopper)</strong> ha sido registrado (demo — sin cifrado ni envío real al Órgano Interno de Control).
+          Tu reporte como <strong>Ciudadano Auditor (Mystery Shopper)</strong> quedó guardado en la base de datos del prototipo. No se remitió automáticamente al Órgano Interno de Control: esa integración aún no existe.
         </p>
         <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl w-full mt-4">
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Folio de Seguimiento Ciego</p>
-          <p className="text-lg font-mono font-black text-slate-700">MS-{Date.now().toString(36).toUpperCase().slice(-6)}-TEP</p>
+          <p className="text-lg font-mono font-black text-slate-700 break-all">{folioGuardado}</p>
+          <p className="text-[10px] text-slate-400 leading-snug mt-2">
+            Este es el folio guardado junto a tu reporte en la base de datos. Todavía no existe una pantalla de consulta por folio: guárdalo, pero por ahora no puedes rastrear el estado desde la app.
+          </p>
         </div>
         <button 
           onClick={onBack}
@@ -113,7 +120,7 @@ export function MysteryShopperView({ user, onBack }: { user: User | null, onBack
            </div>
            <h3 className="text-2xl font-serif font-black mb-2 leading-tight">Auditoría de Servicios Públicos</h3>
            <p className="text-xs text-slate-400 leading-relaxed">
-             Evalúa la calidad del servicio gubernamental. Tu reporte es <strong>estrictamente confidencial</strong> y activa protocolos de revisión del Órgano Interno de Control.
+             Evalúa la calidad del servicio gubernamental. Tu reporte se guarda en la base de datos del prototipo (colección <span className="font-mono">auditorias_ciudadanas</span>). Si activas la denuncia anónima no se guarda tu identificador de usuario. Todavía <strong>no</strong> existe un canal automático hacia el Órgano Interno de Control: esa remisión depende de un convenio pendiente.
            </p>
         </div>
       </div>
@@ -248,7 +255,7 @@ export function MysteryShopperView({ user, onBack }: { user: User | null, onBack
             disabled={loading}
             className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 shadow-xl shadow-indigo-500/20 transition-colors disabled:opacity-50"
           >
-            {loading ? 'Procesando...' : 'Enviar Auditoría Oficial'}
+            {loading ? 'Procesando...' : 'Enviar Auditoría Ciudadana'}
             <Send className="w-4 h-4" />
           </button>
         </div>

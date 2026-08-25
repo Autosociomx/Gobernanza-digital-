@@ -67,6 +67,47 @@ const TEMPLATES: LetterTemplate[] = [
   }
 ];
 
+/**
+ * Serialización determinística del contenido del documento.
+ * El mismo documento (mismo folio, tipo, solicitante, CURP, domicilio y fecha)
+ * produce siempre exactamente la misma cadena — y por tanto el mismo hash.
+ * No es un identificador aleatorio: es el insumo real del SHA-256.
+ */
+interface LetterPayloadFields {
+  folio: string;
+  tipo: string;
+  nombre: string;
+  curp: string;
+  domicilio: string;
+  colonia: string;
+  fecha: string; // ISO YYYY-MM-DD
+}
+
+function buildCanonicalPayload(f: LetterPayloadFields): string {
+  const norm = (v: string) => v.trim().replace(/\s+/g, ' ').toUpperCase();
+  return [
+    `folio=${norm(f.folio)}`,
+    `tipo=${norm(f.tipo)}`,
+    `nombre=${norm(f.nombre)}`,
+    `curp=${norm(f.curp)}`,
+    `domicilio=${norm(f.domicilio)}`,
+    `colonia=${norm(f.colonia)}`,
+    `fecha=${f.fecha}`
+  ].join('|');
+}
+
+/** SHA-256 real sobre la cadena canónica, vía Web Crypto (async). */
+async function sha256Hex(input: string): Promise<string> {
+  if (typeof crypto === 'undefined' || !crypto.subtle) {
+    throw new Error('crypto.subtle no disponible (requiere contexto seguro: HTTPS o localhost)');
+  }
+  const bytes = new TextEncoder().encode(input);
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
 export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, profile?: any }) {
   const [selectedTemplate, setSelectedTemplate] = useState<string>('residencia');
   const [fullName, setFullName] = useState(profile?.name || 'C. JUAN PÉREZ DEL REAL');
@@ -78,7 +119,9 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedLetter, setGeneratedLetter] = useState<any>(null);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [verifyResult, setVerifyResult] = useState<string | null>(null);
+  const [verifyInput, setVerifyInput] = useState('');
+  const [verifyResult, setVerifyResult] = useState<{ ok: boolean; message: string } | null>(null);
+  const [generationError, setGenerationError] = useState<string | null>(null);
 
   // Stress Test Simulation state
   const [isStressTesting, setIsStressTesting] = useState(false);
@@ -103,20 +146,51 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
 
   const activeTemplate = TEMPLATES.find(t => t.id === selectedTemplate) || TEMPLATES[0];
 
-  const handleGenerate = () => {
+  /** Campos del documento tal como están en el formulario en este momento. */
+  const currentPayloadFields = (folio: string, isoDate: string): LetterPayloadFields => ({
+    folio,
+    tipo: activeTemplate.id,
+    nombre: fullName,
+    curp,
+    domicilio: address,
+    colonia: neighborhood,
+    fecha: isoDate
+  });
+
+  const handleGenerate = async () => {
     setIsGenerating(true);
     setGeneratedLetter(null);
-    setTimeout(() => {
-      const docId = `MX-TEP-2026-${Math.floor(100000 + Math.random() * 900000)}`;
-      const shaHash = Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
+    setGenerationError(null);
+    setVerifyResult(null);
+    setVerifyInput('');
+
+    // El folio es un consecutivo simulado: no existe un libro de gobierno real
+    // detrás de este prototipo. El hash, en cambio, sí se calcula del contenido.
+    const docId = `MX-TEP-2026-${Math.floor(100000 + Math.random() * 900000)}`;
+    const now = new Date();
+    const isoDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const canonical = buildCanonicalPayload(currentPayloadFields(docId, isoDate));
+
+    try {
+      const shaHash = await sha256Hex(canonical);
       setGeneratedLetter({
         id: docId,
-        date: new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' }),
+        date: now.toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' }),
+        isoDate,
+        canonical,
         hash: shaHash,
-        qrValue: `https://nayarit.gob.mx/verify/letter/${docId}?hash=${shaHash}`
+        // Carga autoverificable en texto plano. NO es una URL: en este entorno
+        // de demostración no existe ningún endpoint de verificación.
+        qrValue: `NAYARIT-DEMO|${docId}|${shaHash}`
       });
+    } catch (e: any) {
+      setGenerationError(
+        `No fue posible calcular el hash SHA-256 del documento (${e?.message || 'error desconocido'}). ` +
+        `No se emite documento: este prototipo no fabrica hashes falsos.`
+      );
+    } finally {
       setIsGenerating(false);
-    }, 1200);
+    }
   };
 
   const handleDownloadPDF = () => {
@@ -168,24 +242,84 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
     doc.text('Presidencia Municipal de Tepic', 105, 174, { align: 'center' });
     doc.text('Gobierno Digital · ConnectX Nayarit', 105, 178, { align: 'center' });
 
+    // Hash real del contenido (el mismo que se muestra en pantalla y en el QR)
+    doc.setFontSize(7);
+    doc.setTextColor(60, 60, 60);
+    doc.text('HASH SHA-256 DEL CONTENIDO (calculado localmente sobre folio, tipo, nombre, CURP, domicilio y fecha):', 20, 188);
+    doc.text(doc.splitTextToSize(generatedLetter.hash, 170), 20, 192);
+    doc.text(doc.splitTextToSize(`CADENA DEL QR: ${generatedLetter.qrValue}`, 170), 20, 198);
+    doc.text('No es una URL. En este entorno de demostración no existe portal de verificación en línea.', 20, 202);
+
     // Legal disclaimer
     doc.setFontSize(8);
     doc.setTextColor(150, 0, 0);
-    doc.text('DOCUMENTO DE DEMOSTRACIÓN — SIN VALIDEZ OFICIAL. Prototipo de laboratorio.', 20, 205);
-    doc.text('No constituye acto administrativo ni certifica hechos. No incorpora firma electrónica.', 20, 210);
+    doc.text('DOCUMENTO DE DEMOSTRACIÓN — SIN VALIDEZ OFICIAL. Prototipo de laboratorio.', 20, 210);
+    doc.text('No constituye acto administrativo ni certifica hechos. No incorpora firma electrónica.', 20, 215);
     doc.setTextColor(0, 0, 0);
 
     // Save the PDF
     doc.save(`Carta_Municipal_${selectedTemplate}_Tepic.pdf`);
   };
 
-  const handleVerifyOnScreen = () => {
+  /**
+   * Verificación local real: recalcula el SHA-256 del contenido que hoy está en
+   * el formulario y lo compara contra el hash que pega la persona (o contra la
+   * cadena completa del QR `NAYARIT-DEMO|folio|hash`). Si no coincide, falla.
+   * NO consulta ningún registro oficial — no existe tal endpoint aquí.
+   */
+  const handleVerifyOnScreen = async () => {
+    if (!generatedLetter) return;
     setIsVerifying(true);
     setVerifyResult(null);
-    setTimeout(() => {
-      setVerifyResult(`Verificación de demostración. Este prototipo NO está conectado a ningún registro oficial; la verificación real dependerá del sistema que autorice el Ayuntamiento.`);
+
+    const raw = verifyInput.trim();
+    if (!raw) {
+      setVerifyResult({
+        ok: false,
+        message: 'Pega el hash SHA-256 o la cadena completa del QR (NAYARIT-DEMO|folio|hash) para comparar. Sin dato de entrada no hay nada que verificar.'
+      });
       setIsVerifying(false);
-    }, 1000);
+      return;
+    }
+
+    try {
+      const recomputed = await sha256Hex(
+        buildCanonicalPayload(currentPayloadFields(generatedLetter.id, generatedLetter.isoDate))
+      );
+
+      const parts = raw.split('|').map(p => p.trim());
+      const candidateHash = (parts.length > 1 ? parts[parts.length - 1] : parts[0]).toLowerCase();
+      const candidateFolio = parts.length >= 3 ? parts[parts.length - 2].toUpperCase() : null;
+
+      if (candidateFolio && candidateFolio !== generatedLetter.id.toUpperCase()) {
+        setVerifyResult({
+          ok: false,
+          message: `NO COINCIDE. El folio de la cadena (${candidateFolio}) no corresponde al documento en pantalla (${generatedLetter.id}).`
+        });
+      } else if (!/^[0-9a-f]{64}$/.test(candidateHash)) {
+        setVerifyResult({
+          ok: false,
+          message: 'NO COINCIDE. El valor recibido no tiene la forma de un SHA-256 (64 caracteres hexadecimales).'
+        });
+      } else if (candidateHash === recomputed) {
+        setVerifyResult({
+          ok: true,
+          message: `Coincide: el SHA-256 recalculado del contenido actual del documento es idéntico al hash recibido. Esto sólo comprueba integridad local del texto — NO acredita validez oficial ni consulta registro alguno.`
+        });
+      } else {
+        setVerifyResult({
+          ok: false,
+          message: `NO COINCIDE. El hash recalculado del contenido actual es ${recomputed.slice(0, 16)}… y el recibido es ${candidateHash.slice(0, 16)}…. El documento fue alterado o el hash pertenece a otro documento.`
+        });
+      }
+    } catch (e: any) {
+      setVerifyResult({
+        ok: false,
+        message: `No fue posible recalcular el hash (${e?.message || 'error desconocido'}). Sin cálculo no se declara ningún resultado.`
+      });
+    } finally {
+      setIsVerifying(false);
+    }
   };
 
   const startStressTest = async () => {
@@ -217,7 +351,7 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
       await new Promise(r => setTimeout(r, 400));
     }
 
-    setStressLogs(prev => [...prev, `[SUCCESS] Test completado con éxito. 15,000 firmas generadas sin sobrecarga de base de datos.`]);
+    setStressLogs(prev => [...prev, `[FIN] Simulación terminada. Las cifras mostradas son valores generados en el navegador: no se emitió ninguna petición ni se firmó ningún documento.`]);
     setIsStressTesting(false);
   };
 
@@ -395,6 +529,13 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
                 </>
               )}
             </button>
+
+            {generationError && (
+              <div className="flex items-start gap-2 p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl">
+                <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                <p className="text-[10px] text-rose-300 leading-relaxed">{generationError}</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -419,7 +560,7 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
                   <div className="text-right">
                     <p className="text-xs font-black text-slate-900 tracking-wider">OFICIO: {generatedLetter.id}</p>
                     <p className="text-[9px] text-slate-500 font-bold">EMISIÓN: {generatedLetter.date}</p>
-                    <p className="text-[9px] text-slate-500 font-bold">ESTADO: VÁLIDO & FIRMADO</p>
+                    <p className="text-[9px] text-amber-600 font-bold">ESTADO: DEMOSTRACIÓN — SIN FIRMA</p>
                   </div>
                 </div>
 
@@ -471,9 +612,12 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
                 <div className="pt-8 flex justify-between items-end border-t border-slate-200">
                   <div className="space-y-4 w-1/2">
                     <p className="text-[9px] font-black uppercase text-indigo-600 tracking-wider">DEMOSTRACIÓN — SIN FIRMA REAL</p>
-                    <div className="p-3 bg-indigo-50 border border-indigo-100 rounded-xl font-mono text-[8px] text-indigo-700 break-all leading-tight">
-                      <span className="font-bold">ID DE TRAZABILIDAD (simulado):</span><br/>
-                      {generatedLetter.hash}
+                    <div className="p-3 bg-indigo-50 border border-indigo-100 rounded-xl font-mono text-[8px] text-indigo-700 break-all leading-tight space-y-1">
+                      <p className="font-bold">HASH SHA-256 DEL CONTENIDO:</p>
+                      <p>{generatedLetter.hash}</p>
+                      <p className="font-sans text-[7px] text-slate-500 leading-tight">
+                        Calculado localmente en el navegador (Web Crypto) sobre folio, tipo de constancia, nombre, CURP, domicilio, colonia y fecha. El mismo contenido produce siempre el mismo hash. Acredita integridad del texto, no validez oficial.
+                      </p>
                     </div>
                   </div>
 
@@ -492,7 +636,10 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
                 <div className="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 mt-6 text-[8px] text-slate-400 leading-snug">
                   <div>
                     <p className="font-bold text-slate-600 uppercase">Verificación de Integridad Documental</p>
-                    <p>En el prototipo el QR es una referencia de maqueta; no existe portal de verificación ni folio oficial. La verificación real dependerá del sistema que autorice el Ayuntamiento.</p>
+                    <p>
+                      El QR NO contiene una URL: codifica la cadena en texto plano <span className="font-mono text-slate-600">NAYARIT-DEMO|folio|hash</span>. En este entorno de demostración no existe ningún portal ni endpoint de verificación en línea, y el folio no es oficial.
+                    </p>
+                    <p className="mt-1">La única comprobación disponible es local: recalcular el SHA-256 del contenido y compararlo con este hash (botón "Verificar integridad"). La verificación oficial dependerá del sistema que autorice el Ayuntamiento.</p>
                   </div>
                   <div className="shrink-0 bg-white p-1 border border-slate-200 rounded-lg">
                     <QRCodeSVG value={generatedLetter.qrValue} size={50} />
@@ -523,7 +670,23 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
                       Descargar PDF (Demostración)
                     </button>
 
-                    <button 
+                    <div className="space-y-2 pt-2">
+                      <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
+                        Hash o cadena del QR a comparar
+                      </label>
+                      <input
+                        type="text"
+                        value={verifyInput}
+                        onChange={(e) => setVerifyInput(e.target.value)}
+                        placeholder="NAYARIT-DEMO|folio|hash  ·  o sólo el SHA-256"
+                        className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-2.5 text-[10px] font-mono text-white focus:outline-none focus:border-indigo-500"
+                      />
+                      <p className="text-[9px] text-slate-500 leading-snug">
+                        Se recalcula el SHA-256 del contenido que está ahora en el formulario y se compara contra lo que pegues. Si editas cualquier campo después de emitir, la comparación falla — así se detecta la alteración.
+                      </p>
+                    </div>
+
+                    <button
                       onClick={handleVerifyOnScreen}
                       disabled={isVerifying}
                       className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 py-4 rounded-xl text-xs font-black uppercase tracking-widest border border-white/5 transition-all flex items-center justify-center gap-2"
@@ -531,26 +694,43 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
                       {isVerifying ? (
                         <>
                           <RefreshCw className="w-4 h-4 animate-spin" />
-                          Consultando Ledger...
+                          Recalculando SHA-256...
                         </>
                       ) : (
                         <>
                           <QrCode className="w-4 h-4" />
-                          Verificar (Demostración)
+                          Verificar integridad (local)
                         </>
                       )}
                     </button>
                   </div>
 
                   {verifyResult && (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl space-y-2 text-center"
+                      className={cn(
+                        "p-4 rounded-xl space-y-2 text-center border",
+                        verifyResult.ok
+                          ? "bg-emerald-500/10 border-emerald-500/20"
+                          : "bg-rose-500/10 border-rose-500/20"
+                      )}
                     >
-                      <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto" />
-                      <p className="text-[10px] text-amber-400 font-bold uppercase tracking-wider">Demostración (sin validez)</p>
-                      <p className="text-[9px] text-slate-400 leading-relaxed">{verifyResult}</p>
+                      {verifyResult.ok ? (
+                        <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto" />
+                      ) : (
+                        <AlertCircle className="w-6 h-6 text-rose-500 mx-auto" />
+                      )}
+                      <p className={cn(
+                        "text-[10px] font-bold uppercase tracking-wider",
+                        verifyResult.ok ? "text-emerald-400" : "text-rose-400"
+                      )}>
+                        {verifyResult.ok ? 'Integridad local: coincide' : 'Integridad local: no coincide'}
+                      </p>
+                      <p className="text-[9px] text-slate-400 leading-relaxed break-words">{verifyResult.message}</p>
+                      <p className="text-[9px] text-amber-400 leading-relaxed">
+                        Comprobación local de integridad únicamente. No acredita validez oficial ni consulta registro público alguno.
+                      </p>
                     </motion.div>
                   )}
                 </div>
@@ -598,7 +778,7 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
             <div className="space-y-1">
               <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.4em]">Simulador de Carga e Integridad</span>
               <h3 className="text-3xl font-serif font-black text-white tracking-tight">Simulación de Estrés de Emisión Masiva</h3>
-              <p className="text-xs text-slate-500">Demuestra la resiliencia de la plataforma ConnectX emitiendo y firmando miles de cartas concurrentes.</p>
+              <p className="text-xs text-slate-500">Animación ilustrativa. Todas las cifras se generan en el navegador: no se envía ninguna petición, no se emite ninguna carta y no se firma nada. No es una prueba de carga.</p>
             </div>
             <button 
               onClick={startStressTest}
@@ -702,11 +882,11 @@ export function MunicipalLettersView({ onBack, profile }: { onBack: () => void, 
               <ul className="space-y-3.5 text-xs text-slate-400">
                 <li className="flex items-start gap-2.5">
                   <div className="w-1 h-1 rounded-full bg-magenta-500 mt-2 shrink-0" />
-                  <span><strong>Escalabilidad Serverless:</strong> Capacidad probada de soportar picos masivos de solicitudes concurrentes de estudiantes y desempleados sin caídas.</span>
+                  <span><strong>Escalabilidad Serverless (objetivo):</strong> Meta de soportar picos de solicitudes concurrentes. No hay prueba de carga real: el simulador de esta pantalla genera cifras en el navegador, sin peticiones a ningún servidor.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <div className="w-1 h-1 rounded-full bg-magenta-500 mt-2 shrink-0" />
-                  <span><strong>Inmutabilidad por Blockchain:</strong> Cada carta cuenta con una firma SHA-256 única y trazable, impidiendo falsificaciones de firmas físicas.</span>
+                  <span><strong>Huella SHA-256 del contenido:</strong> cada carta lleva un hash SHA-256 real, calculado en el navegador sobre su contenido, que permite detectar alteraciones del texto. No hay blockchain ni ledger inmutable: sin un registro publicado por la autoridad, el hash comprueba integridad, no autenticidad ni no repudio.</span>
                 </li>
                 <li className="flex items-start gap-2.5">
                   <div className="w-1 h-1 rounded-full bg-magenta-500 mt-2 shrink-0" />
