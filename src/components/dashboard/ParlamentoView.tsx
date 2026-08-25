@@ -89,7 +89,7 @@ export function ParlamentoView({ onBack }: { onBack?: () => void }) {
         content: newContent,
         category: newCategory,
         authorId: auth.currentUser?.uid || 'anonymous',
-        authorName: auth.currentUser?.displayName || 'Juan Pérez',
+        authorName: auth.currentUser?.displayName || 'Ciudadano sin nombre registrado',
         createdAt: serverTimestamp(),
         commentCount: 0
       });
@@ -244,7 +244,8 @@ export function ParlamentoView({ onBack }: { onBack?: () => void }) {
               <div className="bg-amber-50 rounded-xl p-4 flex gap-3 border border-amber-100 mb-4">
                  <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
                  <p className="text-[10px] text-amber-700 leading-tight">
-                    Recuerda mantener un ambiente constructivo y respetuoso. Este foro es moderado por la Alianza Nayarit.
+                    Mantén un ambiente constructivo y respetuoso. Tu hilo se publica de inmediato: no hay
+                    revisión previa. Solo su autor o un administrador pueden eliminarlo.
                  </p>
               </div>
 
@@ -271,7 +272,10 @@ export function ParlamentoView({ onBack }: { onBack?: () => void }) {
 }
 
 function ThreadCard({ thread, onClick }: { thread: Thread, onClick: () => void }) {
-  const isStamnay = thread.authorId === 'MODERATOR' || thread.authorName.includes('STAMNAY') || thread.isVerified;
+  const isStamnay =
+    thread.authorId === 'MODERATOR' ||
+    (thread.authorName ?? '').includes('STAMNAY') ||
+    !!thread.isVerified;
 
   return (
     <div 
@@ -348,7 +352,7 @@ function ThreadDetail({ thread, onBack }: { thread: Thread, onBack: () => void }
         threadId: thread.id,
         content: newComment,
         authorId: auth.currentUser?.uid || 'anonymous',
-        authorName: auth.currentUser?.displayName || 'Juan Pérez',
+        authorName: auth.currentUser?.displayName || 'Ciudadano sin nombre registrado',
         createdAt: serverTimestamp()
       });
       
@@ -375,7 +379,10 @@ function ThreadDetail({ thread, onBack }: { thread: Thread, onBack: () => void }
     }
   };
 
-  const isAuthor = auth.currentUser?.uid === thread.authorId || thread.authorId === 'anonymous'; // anonymous for demo
+  // Solo el autor real ve el borrado: las reglas de Firestore
+  // (`firestore.rules`, forum_threads) exigen isOwner(authorId) o isAdmin,
+  // así que mostrarlo a cualquiera producía un botón que siempre fallaba.
+  const isAuthor = !!auth.currentUser?.uid && auth.currentUser.uid === thread.authorId;
 
   return (
     <motion.div 
@@ -516,8 +523,13 @@ function ThreadContent({ content }: { content: string }) {
 }
 
 function formatDate(timestamp: any) {
+  // `createdAt` llega como Timestamp de Firestore, pero es null mientras
+  // `serverTimestamp()` no ha sido confirmado, y puede ser string/número en
+  // documentos sembrados fuera de la app: sin esta guarda, la vista truena.
   if (!timestamp) return 'Hace un momento';
-  const date = timestamp.toDate();
+  const date =
+    typeof timestamp?.toDate === 'function' ? timestamp.toDate() : new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return 'Fecha no disponible';
   return date.toLocaleDateString('es-MX', {
     day: 'numeric',
     month: 'short',

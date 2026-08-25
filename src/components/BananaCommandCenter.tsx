@@ -6,6 +6,8 @@ import { AuraCertificationSeal } from './AuraCertificationSeal';
 
 export function BananaCommandCenter({ onBack }: { onBack: () => void }) {
   const [copied, setCopied] = useState<string | null>(null);
+  const [sugerencia, setSugerencia] = useState('');
+  const [borradores, setBorradores] = useState<string[]>([]);
 
   const prompts = [
     {
@@ -61,7 +63,7 @@ export function BananaCommandCenter({ onBack }: { onBack: () => void }) {
             <p className="text-[10px] font-black text-yellow-400 uppercase tracking-[0.4em]">Advanced Prompt Engineering</p>
             <h2 className="text-4xl font-serif font-black text-white tracking-tighter">La Lógica Detrás<br/>del Sistema</h2>
             <p className="text-slate-500 text-xs max-w-lg leading-relaxed">
-               Accede a la arquitectura de comunicación que rige el ecosistema **ConnectX**. Aquí reside el "Cómo" de nuestra inteligencia soberana.
+               Biblioteca abierta de los prompts que rigen al asistente del ecosistema ConnectX. Es documentación consultable y copiable: mostrar el "cómo" es parte de la transparencia, no un panel de control del modelo.
             </p>
          </div>
 
@@ -96,16 +98,55 @@ export function BananaCommandCenter({ onBack }: { onBack: () => void }) {
 
          <div className="bg-yellow-400/10 border border-yellow-400/20 rounded-[2.5rem] p-6 flex flex-col items-center text-center space-y-4">
             <Zap className="w-10 h-10 text-yellow-400" />
-            <h4 className="text-xl font-serif font-black text-white tracking-tight">¿Deseas Inyectar Nuevas Lógicas?</h4>
+            <h4 className="text-xl font-serif font-black text-white tracking-tight">¿Deseas Proponer Nuevas Lógicas?</h4>
             <p className="text-slate-400 text-xs max-w-sm">
-               La arquitectura "Banana" permite actualizaciones en caliente de los protocolos de comunicación. Contacta al equipo de ConnectX para expansiones de red.
+               Los prompts de arriba son texto versionado en el repositorio: cambiarlos requiere un cambio de código revisado, no hay actualización en caliente ni canal de envío conectado. Aquí puedes redactar tu propuesta y copiarla para llevarla a esa revisión.
             </p>
-            <button 
-              onClick={() => alert('Sugerencia de Optimización Banana enviada al centro de datos.')}
-              className="mt-4 w-full py-4 bg-yellow-400 text-black rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-yellow-300 transition-all"
+
+            <textarea
+              value={sugerencia}
+              onChange={e => setSugerencia(e.target.value)}
+              rows={4}
+              placeholder="Describe el prompt o la regla de comunicación que propones…"
+              className="w-full bg-black/40 border border-white/10 rounded-2xl px-4 py-3 text-xs text-slate-200 text-left placeholder:text-slate-600 focus:outline-none focus:border-yellow-400/40"
+            />
+
+            <button
+              onClick={() => {
+                const texto = sugerencia.trim();
+                if (!texto) return;
+                setBorradores(prev => [texto, ...prev]);
+                setSugerencia('');
+              }}
+              disabled={!sugerencia.trim()}
+              className="mt-2 w-full py-4 bg-yellow-400 text-black rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-yellow-300 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
-               Sugerir Optimización
+               Guardar borrador en esta sesión
             </button>
+
+            {borradores.length > 0 && (
+              <div className="w-full space-y-3 text-left pt-2">
+                 <p className="text-[10px] font-black text-yellow-400 uppercase tracking-widest">
+                    Borradores locales ({borradores.length}) · no se envían a ningún servidor
+                 </p>
+                 {borradores.map((b, i) => (
+                   <div key={i} className="bg-black/50 border border-white/5 rounded-2xl p-4 flex items-start gap-3">
+                      <MessageSquare className="w-4 h-4 text-slate-600 shrink-0 mt-0.5" />
+                      <p className="text-xs text-slate-300 leading-relaxed flex-1 whitespace-pre-wrap">{b}</p>
+                      <button
+                        onClick={() => handleCopy(b, `draft-${i}`)}
+                        aria-label="Copiar borrador"
+                        className={cn(
+                          "w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all",
+                          copied === `draft-${i}` ? "bg-emerald-500 text-white" : "bg-white/10 text-white hover:bg-white/20"
+                        )}
+                      >
+                        {copied === `draft-${i}` ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                      </button>
+                   </div>
+                 ))}
+              </div>
+            )}
          </div>
       </main>
     </motion.div>
