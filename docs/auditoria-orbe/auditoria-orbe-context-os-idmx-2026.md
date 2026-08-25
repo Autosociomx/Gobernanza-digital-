@@ -170,7 +170,7 @@ Se creó `scripts/test-firestore-rules.mjs` que ejecuta `@firebase/rules-unit-te
 | ORBE (interfaz) | 🟡 prototipo | `CitizenApp.tsx` | corregido |
 | AURA (agente) | 🟢 | `useAuraChat.ts` + `server.ts` | verificado |
 | Voz español | 🟢 | `useAuraVoice.ts` | verificado |
-| Context.OS | 🔵 arquitectura | solo COP 1.0 + string | pendiente |
+| Context.OS | 🟡 vertical slice de laboratorio (actualizado 2026-08-25) | `contextos/`+`shared/semantic/`, 1194 líneas, `LAB_MOCK`, apagado por defecto — ver `docs/auditoria-orbe/ESTADO_MADUREZ_TECNOLOGICA.md` | en laboratorio, no productivo |
 | ID.mx | 🔵 arquitectura | solo Google OAuth + CURP | pendiente |
 | Seguridad (reglas) | 🟢 | 11/11 tests | **verificado (nuevo)** |
 | Módulo Salud/CURP | 🟡 | `SaludNayaritID.tsx` | prototipo |

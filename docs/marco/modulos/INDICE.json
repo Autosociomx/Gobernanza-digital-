@@ -1,8 +1,9 @@
 {
   "$schema_nota": "Índice canónico de los 29 módulos reales del código (C5Dashboard + CitizenApp), verificado contra origin/main. Complementa (no reemplaza) docs/orbe/modulos.json, que cubre 9 módulos conceptuales del Orbe. Nota de vocabulario: 'estado' aquí mide completitud de código/UI (¿tiene servicio real detrás?), no cumplimiento legal — es un eje distinto del 'Operativo / Operativo en demo / Preparado / Hoja de ruta' de docs/plataforma/ y MARCO_CUMPLIMIENTO_LNETB.md; ambos vocabularios son intencionalmente distintos, no una contradicción.",
-  "version": 1,
+  "version": 2,
   "verificado_contra": "origin/main",
   "commit_verificacion": "f6536a6",
+  "auditoria_2026_08_25": "Auditoría exhaustiva de coherencia y optimización (29 módulos + 9 conceptuales + 11 renglones LNETB), con corrección de código donde el hallazgo era puramente técnico. Rangos de línea re-derivados tras la edición — ver campo 'nota' en cada módulo tocado. Detalle completo en cada ficha, sección 'Bitácora de auditoría'.",
   "estados_validos": [
     "real",
     "parcial",
@@ -15,180 +16,200 @@
       "nombre": "Nodo de Transparencia (Interoperabilidad)",
       "superficie": "c5",
       "archivo": "src/components/C5Dashboard.tsx",
-      "lineas": "209-296",
+      "lineas": "243-332",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/interoperabilidad.md"
+      "ficha": "docs/marco/modulos/interoperabilidad.md",
+      "nota": "Telemetría 100% inventada (endpoints y hashes decorativos); ahora lleva DemoDataBadge explícito. Rango de línea corregido."
     },
     {
       "id": "tesoreria",
       "nombre": "Tesorería Digital",
       "superficie": "c5",
       "archivo": "src/components/C5Dashboard.tsx",
-      "lineas": "297-364",
+      "lineas": "333-425",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/tesoreria.md"
+      "ficha": "docs/marco/modulos/tesoreria.md",
+      "nota": "Rango de línea corregido; sin cambio de estado."
     },
     {
       "id": "obras",
       "nombre": "Trazabilidad de Obras",
       "superficie": "c5",
       "archivo": "src/components/C5Dashboard.tsx",
-      "lineas": "365-417",
-      "estado": "maqueta",
-      "ficha": "docs/marco/modulos/obras.md"
+      "lineas": "426-539",
+      "estado": "real",
+      "ficha": "docs/marco/modulos/obras.md",
+      "nota": "Estado cambia de maqueta a real: conectado a infrastructureService.ts (Firestore), el mismo servicio ya usado por Salud y CitizenApp. Única mejora funcional de la auditoría (no solo honestidad de etiquetas)."
     },
     {
       "id": "servicios",
       "nombre": "Servicios Públicos",
       "superficie": "c5",
       "archivo": "src/components/C5Dashboard.tsx",
-      "lineas": "418-513",
+      "lineas": "544-649",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/servicios.md"
+      "ficha": "docs/marco/modulos/servicios.md",
+      "nota": "KPIs y tickets siguen siendo de ejemplo (con DemoDataBadge), pero la exportación a CSV ahora es una función real que descarga las filas mostradas. Rango de línea corregido."
     },
     {
       "id": "salud",
       "nombre": "Salud Inteligente — Nayarit ID",
       "superficie": "c5",
       "archivo": "src/components/C5Dashboard.tsx",
-      "lineas": "514-773",
+      "lineas": "650-909",
       "estado": "real",
-      "ficha": "docs/marco/modulos/salud.md"
+      "ficha": "docs/marco/modulos/salud.md",
+      "nota": "Sin cambios de código en esta auditoría; solo rango de línea corregido. La ficha ya documentaba que el Mapa de Calor dentro de esta vista es decorativo."
     },
     {
       "id": "ia",
       "nombre": "Asistente IA (Aura, vista de gobierno)",
       "superficie": "c5",
       "archivo": "src/components/C5Dashboard.tsx",
-      "lineas": "774-1000",
+      "lineas": "910-1178",
       "estado": "real",
-      "ficha": "docs/marco/modulos/ia.md"
+      "ficha": "docs/marco/modulos/ia.md",
+      "nota": "Botón muerto 'Consultar Auditoría Google Cloud' reparado; selector de idioma reetiquetado como saludo del asistente, no plataforma trilingüe. Rango de línea corregido."
     },
     {
       "id": "agrovision",
       "nombre": "Agrovisión 3D",
       "superficie": "c5",
       "archivo": "src/components/C5Dashboard.tsx",
-      "lineas": "1001-1084",
+      "lineas": "1179-1309",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/agrovision.md"
+      "ficha": "docs/marco/modulos/agrovision.md",
+      "nota": "El botón de certificado pasó de éxito simulado sin efecto a descargar un archivo real (sin validez oficial ni persistencia todavía). Rango de línea corregido."
     },
     {
       "id": "observatorio",
       "nombre": "Observatorio Digital",
       "superficie": "c5",
       "archivo": "src/components/C5Dashboard.tsx",
-      "lineas": "1085-1455",
+      "lineas": "1310-1733",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/observatorio.md"
+      "ficha": "docs/marco/modulos/observatorio.md",
+      "nota": "handleReport() era setTimeout+alert() sin efecto; ahora descarga un reporte real con los datos en pantalla y lo anota en una lista de estado real — el hallazgo insignia de 'acción no-funcional' de esta ronda. Rango de línea corregido (creció significativamente)."
     },
     {
       "id": "bienestar",
       "nombre": "Bienestar Social",
       "superficie": "c5",
       "archivo": "src/components/C5Dashboard.tsx",
-      "lineas": "1456-1477",
+      "lineas": "1734-1760",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/bienestar.md"
+      "ficha": "docs/marco/modulos/bienestar.md",
+      "nota": "Se retiró la afirmación falsa de sincronización de padrones en curso. Rango de línea corregido."
     },
     {
       "id": "metricas",
       "nombre": "Métricas Integrales",
       "superficie": "c5",
       "archivo": "src/components/C5Dashboard.tsx",
-      "lineas": "1478-1517",
+      "lineas": "1761-1804",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/metricas.md"
+      "ficha": "docs/marco/modulos/metricas.md",
+      "nota": "Rango de línea corregido; DemoDataBadge agregado."
     },
     {
       "id": "gabinete",
       "nombre": "Gabinete en Tiempo Real",
       "superficie": "c5",
       "archivo": "src/components/C5Dashboard.tsx",
-      "lineas": "1518-1629",
+      "lineas": "1814-1956",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/gabinete.md"
+      "ficha": "docs/marco/modulos/gabinete.md",
+      "nota": "Fotografías de banco de imágenes atribuidas a 4 funcionarios reales, retiradas (cambio confirmado explícitamente con el propietario del repositorio). Botón 'Auditar Funcionario' reparado con panel de honestidad. Rango de línea corregido."
     },
     {
       "id": "parlamento",
       "nombre": "Parlamento Municipal",
       "superficie": "c5",
       "archivo": "src/components/dashboard/ParlamentoView.tsx",
-      "lineas": "1-527",
+      "lineas": "1-539",
       "estado": "real",
-      "ficha": "docs/marco/modulos/parlamento.md"
+      "ficha": "docs/marco/modulos/parlamento.md",
+      "nota": "Corregido un permiso fantasma (botón de borrar visible para hilos anónimos, la escritura siempre fallaba), un autor ficticio ('Juan Pérez') horneado en datos reales de producción, y guardas de robustez en parseo de fecha. Rango de línea corregido (creció por las correcciones)."
     },
     {
       "id": "analisis_politico",
       "nombre": "Análisis Estratégico y Gobernanza Digital",
       "superficie": "c5",
       "archivo": "src/components/dashboard/AnalisisPoliticoView.tsx",
-      "lineas": "1-22",
+      "lineas": "1-26",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/analisis_politico.md"
+      "ficha": "docs/marco/modulos/analisis_politico.md",
+      "nota": "Reescrito para declarar explícitamente 'propuesta' en vez de describir capacidades de NLP/predicción como si ya operaran."
     },
     {
       "id": "home",
       "nombre": "Inicio ciudadano",
       "superficie": "citizen_app",
       "archivo": "src/components/CitizenApp.tsx",
-      "lineas": "1029-1378",
+      "lineas": "1047-1400",
       "estado": "parcial",
-      "ficha": "docs/marco/modulos/home.md"
+      "ficha": "docs/marco/modulos/home.md",
+      "nota": "Afordancia engañosa corregida (cursor-pointer en contenedor sin acción); cifra de soberanía marcada como ilustrativa. Rango de línea corregido."
     },
     {
       "id": "forum",
       "nombre": "Parlamento (tab ciudadano)",
       "superficie": "citizen_app",
       "archivo": "src/components/dashboard/ParlamentoView.tsx",
-      "lineas": "1-527",
+      "lineas": "1-539",
       "estado": "real",
-      "ficha": "docs/marco/modulos/forum.md"
+      "ficha": "docs/marco/modulos/forum.md",
+      "nota": "Mismo componente que parlamento; mismas correcciones aplicadas. Rango de línea corregido."
     },
     {
       "id": "networks",
       "nombre": "Redes Ciudadanas",
       "superficie": "citizen_app",
       "archivo": "src/components/CitizenApp.tsx",
-      "lineas": "1410-1552",
+      "lineas": "1432-1792",
       "estado": "parcial",
-      "ficha": "docs/marco/modulos/networks.md"
+      "ficha": "docs/marco/modulos/networks.md",
+      "nota": "'Ver Mapa' y 'Comenzar Registro Externo' eran CTAs muertas; ahora abren un mapa real y un formulario que escribe en Firestore. Rango de línea corregido (creció significativamente)."
     },
     {
       "id": "payments",
       "nombre": "Tesorería y Trámites (ciudadano)",
       "superficie": "citizen_app",
       "archivo": "src/components/CitizenApp.tsx",
-      "lineas": "1553-1624",
+      "lineas": "84-1037 (flujo de pago, dentro del cuerpo principal de CitizenApp) + 1793-1992 (TesoreriaYTramitesView, Ventanilla Única)",
       "estado": "riesgo",
-      "ficha": "docs/marco/modulos/payments.md"
+      "ficha": "docs/marco/modulos/payments.md",
+      "nota": "Corrección de rango: el flujo de pago con el código de autorización simulado vive en el cuerpo principal de CitizenApp, no dentro de TesoreriaYTramitesView como indicaba la versión anterior de este índice. El código de autorización inventado ('889210-XC') se sustituyó por una etiqueta explícita de SIMULADO — ya no podría confundirse con un cargo real. Los 4 botones de Ventanilla Única, antes muertos, ahora registran solicitudes reales en Firestore (colección tramites). Sigue en 'riesgo' porque el pago con tarjeta sigue sin conectarse a ningún backend real (el endpoint de Stripe existe y funciona pero nadie lo llama) — ver docs/marco/PENDIENTES_AUDITORIA_2026-08.md."
     },
     {
       "id": "services",
       "nombre": "Servicios y Reportes (ciudadano)",
       "superficie": "citizen_app",
       "archivo": "src/components/CitizenApp.tsx",
-      "lineas": "1625-1741",
+      "lineas": "1993-2265",
       "estado": "parcial",
-      "ficha": "docs/marco/modulos/services.md"
+      "ficha": "docs/marco/modulos/services.md",
+      "nota": "Los 3 botones de reporte manual (luminaria/bacheo/agua) eran CTAs muertas; ahora escriben reportes reales en Firestore con ubicación opcional. RoutePro sigue sin GPS real, ahora declarado como tal. Rango de línea corregido (creció significativamente)."
     },
     {
       "id": "profile",
       "nombre": "Perfil",
       "superficie": "citizen_app",
       "archivo": "src/components/CitizenApp.tsx",
-      "lineas": "1742-1908",
+      "lineas": "2266-2474",
       "estado": "parcial",
-      "ficha": "docs/marco/modulos/profile.md"
+      "ficha": "docs/marco/modulos/profile.md",
+      "nota": "El OCR de credencial solo hacía console.log; ahora alimenta el perfil de verdad. Métricas del panel (antes fijas) ahora leen Firestore real. Rango de línea corregido."
     },
     {
       "id": "security",
       "nombre": "Centro de Seguridad",
       "superficie": "citizen_app",
       "archivo": "src/components/CitizenApp.tsx",
-      "lineas": "1909-2126",
+      "lineas": "2475-2733",
       "estado": "real",
-      "ficha": "docs/marco/modulos/security.md"
+      "ficha": "docs/marco/modulos/security.md",
+      "nota": "Toggle de biometría, antes decorativo, ahora persiste una preferencia real en Firestore. Afirmaciones falsas ('2FA: Configurado', 'Privacidad: Máximo') corregidas a 'no implementado'. Rango de línea corregido."
     },
     {
       "id": "canjes",
@@ -197,34 +218,38 @@
       "archivo": "src/components/CanjesView.tsx",
       "lineas": "1-130",
       "estado": "real",
-      "ficha": "docs/marco/modulos/canjes.md"
+      "ficha": "docs/marco/modulos/canjes.md",
+      "nota": "Confirmado real, sin cambios de código. Pendiente documentado: el descuento de puntos no es atómico respecto al canje (ver ficha)."
     },
     {
       "id": "auditoria",
       "nombre": "Mystery Shopper",
       "superficie": "citizen_app",
       "archivo": "src/components/MysteryShopperView.tsx",
-      "lineas": "1-259",
+      "lineas": "1-266",
       "estado": "real",
-      "ficha": "docs/marco/modulos/auditoria.md"
+      "ficha": "docs/marco/modulos/auditoria.md",
+      "nota": "Bug corregido: el folio mostrado en pantalla no era el guardado en Firestore. Afirmaciones falsas sobre remisión automática al Órgano Interno de Control, corregidas. Rango de línea corregido."
     },
     {
       "id": "notifications",
       "nombre": "Notificaciones",
       "superficie": "citizen_app",
       "archivo": "src/components/NotificationView.tsx",
-      "lineas": "1-36",
+      "lineas": "1-37",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/notifications.md"
+      "ficha": "docs/marco/modulos/notifications.md",
+      "nota": "DemoDataBadge agregado; sin botones muertos que reparar."
     },
     {
       "id": "academy",
       "nombre": "ConnectX Academy",
       "superficie": "citizen_app",
       "archivo": "src/components/ConnectXAcademy.tsx",
-      "lineas": "1-161",
+      "lineas": "1-214",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/academy.md"
+      "ficha": "docs/marco/modulos/academy.md",
+      "nota": "Botones de nivel sin onClick, reparados (despliegan temario). 'Certificación avalada por tu organización' corregida a propuesta sujeta a convenio. Rango de línea corregido."
     },
     {
       "id": "system_audit",
@@ -233,43 +258,48 @@
       "archivo": "src/components/SystemAuditView.tsx",
       "lineas": "1-291",
       "estado": "real",
-      "ficha": "docs/marco/modulos/system_audit.md"
+      "ficha": "docs/marco/modulos/system_audit.md",
+      "nota": "Confirmado real, sin cambios de código."
     },
     {
       "id": "banana_command",
       "nombre": "Banana Command Center",
       "superficie": "citizen_app",
       "archivo": "src/components/BananaCommandCenter.tsx",
-      "lineas": "1-113",
-      "estado": "maqueta",
-      "ficha": "docs/marco/modulos/banana_command.md"
+      "lineas": "1-154",
+      "estado": "parcial",
+      "ficha": "docs/marco/modulos/banana_command.md",
+      "nota": "Estado cambia de maqueta a parcial: copiar al portapapeles sí funciona, aunque el contenido sigue siendo estático. 'Sugerir Optimización' era un alert() de éxito falso; ahora guarda borradores locales reales y aclara que no se envían a ningún servidor."
     },
     {
       "id": "strategic_academy",
       "nombre": "Academia Estratégica",
       "superficie": "citizen_app",
       "archivo": "src/components/StrategicAcademyView.tsx",
-      "lineas": "1-223",
+      "lineas": "1-250",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/strategic_academy.md"
+      "ficha": "docs/marco/modulos/strategic_academy.md",
+      "nota": "Sobreventa de FAISPIAM corregida (cero código en tesorería lo respalda). CTA 'Iniciar Alianza Estratégica', antes alert() falso, ahora declara cómo se inicia la alianza de verdad. Rango de línea corregido."
     },
     {
       "id": "strategic_plan",
       "nombre": "Plan Maestro Estratégico",
       "superficie": "citizen_app",
       "archivo": "src/components/MasterStrategicPlan.tsx",
-      "lineas": "1-314",
+      "lineas": "1-345",
       "estado": "maqueta",
-      "ficha": "docs/marco/modulos/strategic_plan.md"
+      "ficha": "docs/marco/modulos/strategic_plan.md",
+      "nota": "'Aprobar Plan de Operaciones' era un alert() de aprobación falsa; corregido a un estado real de sesión sin fingir aprobación institucional. Bug de bitácora corregido (todas las líneas mostraban la hora actual en vez de la del evento). Rango de línea corregido."
     },
     {
       "id": "municipal_letters",
       "nombre": "Cartas Municipales",
       "superficie": "citizen_app",
       "archivo": "src/components/MunicipalLettersView.tsx",
-      "lineas": "1-759",
+      "lineas": "1-940",
       "estado": "riesgo",
-      "ficha": "docs/marco/modulos/municipal_letters.md"
+      "ficha": "docs/marco/modulos/municipal_letters.md",
+      "nota": "El hallazgo más grave de la auditoría anterior: hash SHA-256 fabricado con Math.random() y QR a una URL de verificación inexistente. Ambos corregidos (hash real, QR autoverificable sin URL falsa; verificación en pantalla compara de verdad). Sigue en 'riesgo' por el membrete oficial del PDF, que fuera de contexto puede seguir confundiéndose con un documento real pese a los disclaimers. Rango de línea corregido (creció significativamente)."
     }
   ]
 }

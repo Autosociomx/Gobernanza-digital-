@@ -62,6 +62,7 @@
       "nombre": "Pulso Nayarit (auditoría cívica)",
       "archivo": "modulos/PULSO_NAYARIT.md",
       "estado": "desplegado",
+      "nota_2026_08_25": "'Desplegado' es preciso solo para el backend (proyecto Supabase real y verificado, 42/42 hashes válidos en pulso-nayarit/supabase/README.md), no para el módulo completo: cero integración con la app principal (src/App.tsx no lo importa, grep 'pulso' en src/ = cero resultados, no está en el pipeline de Netlify) y sin URL pública del frontend (su propia ficha PULSO_NAYARIT.md lo marca como pendiente).",
       "conexiones": ["orbe-nucleo"]
     },
     {
