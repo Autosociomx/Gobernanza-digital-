@@ -22,6 +22,7 @@ Todo documento de gobernanza vive aquí — es público y forma parte del produc
 - [`PROTOCOLO_SEGURIDAD.md`](./docs/marco/PROTOCOLO_SEGURIDAD.md), [`NOTA_DE_CONTEXTO_PARA_CLAUDE.md`](./docs/marco/NOTA_DE_CONTEXTO_PARA_CLAUDE.md), [`OCEANOS_AZULES.md`](./docs/marco/OCEANOS_AZULES.md), [`PLAN_TRABAJO_MUNICIPAL.md`](./docs/marco/PLAN_TRABAJO_MUNICIPAL.md), [`ESTRATEGIA_ESTANDAR_ABIERTO.md`](./docs/marco/ESTRATEGIA_ESTANDAR_ABIERTO.md).
 - [`docs/marco/modulos/`](./docs/marco/modulos/INDICE.json) — una ficha por módulo con estado, ley que lo sustenta y qué parte opera con datos reales.
 - [`PENDIENTES_AUDITORIA_2026-08.md`](./docs/marco/PENDIENTES_AUDITORIA_2026-08.md) — pendientes de negocio/legal encontrados en la auditoría de código, cada uno con qué falta y dónde retomarlo.
+- [`GOVERNMENT_EVIDENCE_OS.md`](./docs/marco/GOVERNMENT_EVIDENCE_OS.md) — 🔵 propuesta (sin código todavía): quinta capa de la arquitectura, memoria institucional verificable a través de administraciones (grafo temporal de evidencia, no un índice de honestidad política).
 
 ## Expediente de presentación institucional (Tepic)
 
