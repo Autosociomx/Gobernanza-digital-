@@ -76,3 +76,14 @@ node scripts/verificar-regresiones.mjs
 ```
 
 Reglas de honestidad, ramas y commits: `docs/marco/ESTRUCTURA_REPOSITORIO.md` y `docs/marco/GLOSARIO_OFICIAL.md`.
+
+### Conectar Firebase de verdad (importante)
+
+Hasta 2026-08-27, `scripts/preparar-config.mjs` solo generaba un `firebase-applet-config.json` de **placeholders** — no existía ningún paso que metiera credenciales reales en el deploy de Netlify. Resultado: el sitio en producción corría contra un proyecto de Firebase que no existe, y cada llamada a Auth/Firestore/Storage fallaba en la consola del navegador (login, guardar un trámite, reportar un bache, etc.).
+
+Para que el sitio conecte de verdad, definir en Netlify → **Site configuration → Environment variables** (nunca en el repositorio):
+
+- `FIREBASE_PROJECT_ID`, `FIREBASE_APP_ID`, `FIREBASE_API_KEY` — obligatorias.
+- `FIREBASE_AUTH_DOMAIN`, `FIREBASE_STORAGE_BUCKET`, `FIREBASE_MESSAGING_SENDER_ID`, `FIREBASE_MEASUREMENT_ID`, `FIREBASE_DATABASE_ID` — opcionales, se derivan o quedan vacías si faltan.
+
+Con esas variables presentes, `preparar-config.mjs` escribe el archivo real en cada build; sin ellas, sigue cayendo al placeholder (compila, pero no conecta).
