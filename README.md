@@ -23,6 +23,7 @@ Todo documento de gobernanza vive aquí — es público y forma parte del produc
 - [`docs/marco/modulos/`](./docs/marco/modulos/INDICE.json) — una ficha por módulo con estado, ley que lo sustenta y qué parte opera con datos reales.
 - [`PENDIENTES_AUDITORIA_2026-08.md`](./docs/marco/PENDIENTES_AUDITORIA_2026-08.md) — pendientes de negocio/legal encontrados en la auditoría de código, cada uno con qué falta y dónde retomarlo.
 - [`GOVERNMENT_EVIDENCE_OS.md`](./docs/marco/GOVERNMENT_EVIDENCE_OS.md) — 🔵 propuesta (sin código todavía): quinta capa de la arquitectura, memoria institucional verificable a través de administraciones (grafo temporal de evidencia, no un índice de honestidad política).
+- [`ESTUDIO_CONNECTX.md`](./docs/marco/ESTUDIO_CONNECTX.md) — 🔵 propuesta: carta de aprendizaje compartido para formar ciudadanos y trabajadores burocráticos en gobernanza digital, IA y programación, usando el SOATM como terreno de práctica.
 
 ## Expediente de presentación institucional (Tepic)
 
