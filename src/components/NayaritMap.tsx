@@ -45,7 +45,7 @@ export function NayaritMap({
       >
         {markers.map((marker, i) => (
           <AdvancedMarker key={i} position={{ lat: marker.lat, lng: marker.lng }} title={marker.title}>
-            <Pin background={marker.color || "#E5007A"} glyphColor="#fff" borderColor="#fff" />
+            <Pin background={marker.color || "#D81E5B"} glyphColor="#fff" borderColor="#fff" />
           </AdvancedMarker>
         ))}
       </Map>

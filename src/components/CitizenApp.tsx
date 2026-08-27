@@ -138,7 +138,7 @@ export function CitizenApp({
                 lat: work.location.lat,
                 lng: work.location.lng,
                 title: work.name,
-                color: work.status === 'CRITICAL' ? '#EF4444' : work.status === 'RISK' ? '#F59E0B' : '#E5007A'
+                color: work.status === 'CRITICAL' ? '#EF4444' : work.status === 'RISK' ? '#F59E0B' : '#D81E5B'
             }));
             setPublicWorks(markers);
         } catch (err) {
@@ -355,7 +355,7 @@ export function CitizenApp({
 
   const barcodeRef = React.useRef<SVGSVGElement>(null);
   const mapMarkers = React.useMemo(() => [
-    { lat: 21.5090, lng: -104.8947, title: "Obra Reencarpetamiento San Juan", color: "#E5007A" },
+    { lat: 21.5090, lng: -104.8947, title: "Obra Reencarpetamiento San Juan", color: "#D81E5B" },
     { lat: 21.5120, lng: -104.8970, title: "Luminaria Reportada", color: "#FACC15" }
   ], []);
 
@@ -1499,7 +1499,7 @@ function RedesCiudadanasView({ profile, onBack, user }: { profile: any, onBack: 
   const mapaMarkers = React.useMemo(
     () => networks
       .filter((n: any) => typeof n.lat === 'number' && typeof n.lng === 'number')
-      .map((n: any) => ({ lat: n.lat, lng: n.lng, title: n.name, color: '#E5007A' })),
+      .map((n: any) => ({ lat: n.lat, lng: n.lng, title: n.name, color: '#D81E5B' })),
     [networks]
   );
 

@@ -133,7 +133,7 @@ export function C5Dashboard({ onLogout, initialModule }: { onLogout: () => void;
           >
             <div className="p-6 border-b border-slate-800">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded bg-gradient-to-br from-purple-500 to-rose-500 flex items-center justify-center font-bold text-white shadow-lg">
+                <div className="w-8 h-8 rounded bg-gradient-to-br from-[#D81E5B] to-[#0FA3B1] flex items-center justify-center font-bold text-white shadow-lg">
                   N
                 </div>
                 <div>
@@ -200,8 +200,12 @@ export function C5Dashboard({ onLogout, initialModule }: { onLogout: () => void;
               <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse"></div>
               <span className="text-xs font-mono text-emerald-400">STATE: ONLINE</span>
             </div>
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-rose-400 to-orange-400 border-2 border-slate-800 overflow-hidden">
-               <img src="/geraldine-perfil.jpg" alt="Profile" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1586996292898-71f4036c4e07?w=100&h=100&fit=crop&crop=faces" }}/>
+            {/* /geraldine-perfil.jpg no existe en public/: siempre fallaba y mostraba
+                una foto de banco de Unsplash como si fuera el retrato de la
+                presidenta municipal. Mismo criterio que GabineteView: iniciales,
+                no una cara ajena atribuida a una persona real. */}
+            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#D81E5B] to-[#F5A623] border-2 border-slate-800 flex items-center justify-center text-white text-xs font-bold">
+              GP
             </div>
           </div>
         </header>
@@ -445,7 +449,7 @@ function ObrasView() {
       lat: a.location.lat,
       lng: a.location.lng,
       title: `${a.name} · ${ETIQUETA_ESTADO[a.status] ?? a.status}`,
-      color: COLOR_POR_ESTADO[a.status] ?? '#E5007A'
+      color: COLOR_POR_ESTADO[a.status] ?? '#D81E5B'
     }));
 
   const enProceso = activos.filter((a) => a.status === 'UNDER_MAINTENANCE' || a.status === 'PLANNED').length;
