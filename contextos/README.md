@@ -35,6 +35,14 @@ Caso: reporte ciudadano de **bache o luminaria** en Tepic.
 - no sustituye Context.OS Observatory;
 - no expone un conector institucional real.
 
+## CodeLens — compuerta de calidad
+
+`contextos/codelens/` evalúa *candidatos* a conocimiento (procedencia,
+reproducibilidad, contradicción, riesgo y utilidad) y devuelve un veredicto.
+No promueve, no borra, no ejecuta y no guarda nada: el estado canónico, la
+evidencia y la decisión humana siguen siendo de Context.OS. Toda promoción exige
+`HUMAN_SIGNATURE_REQUIRED`. Detalle y límites: `contextos/codelens/README.md`.
+
 ## Servidor de laboratorio
 
 Ejecutar:
