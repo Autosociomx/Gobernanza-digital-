@@ -1,0 +1,151 @@
+{
+  "$schema_nota": "Hallazgos de la investigacion Radar MCP / Context.OS en el esquema pedido por el encargo (finding, evidence, confidence, counter_signal, implication_for_connectx, next_test). Documento legible por humanos: INVESTIGACION.md. Marca de acceso: verificacion_directa=true significa que el texto fuente se leyo desde este entorno; false significa cita indirecta porque el dominio esta bloqueado por el proxy de egreso.",
+  "version": "radar-investigacion.v0.1",
+  "fecha": "2026-08-28",
+  "hallazgos": [
+    {
+      "id": "H-01",
+      "finding": "MCP no resuelve identidad ni autorizacion: la especificacion declara que no puede imponer los principios de consentimiento a nivel de protocolo y que la autorizacion es OPCIONAL.",
+      "evidence": [
+        { "source": "https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/main/docs/specification/2026-07-28/index.mdx", "date": "2026-07-28", "source_type": "estándar", "verificacion_directa": true },
+        { "source": "https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/main/docs/specification/2025-11-25/basic/authorization.mdx", "date": "2025-11-25", "source_type": "estándar", "verificacion_directa": true }
+      ],
+      "confidence": "alta",
+      "counter_signal": "Cuando se implementa sobre HTTP la especificacion es exigente (OAuth 2.1, RFC 9728, RFC 8707, PKCE, validacion de audiencia): es un vacio opcional, no una ausencia de guia.",
+      "implication_for_connectx": "La autorizacion vive en Context.OS (PDP propio). El servidor MCP es un PEP tonto y sustituible.",
+      "next_test": "Arrancar el Radar sin configuracion de autenticacion y verificar que toda consulta restringida devuelve DENY por politica, no por transporte."
+    },
+    {
+      "id": "H-02",
+      "finding": "El protocolo rompio compatibilidad dos veces en doce meses; 2026-07-28 elimina el handshake initialize, el encabezado Mcp-Session-Id y la resumibilidad SSE, y vuelve obligatorio server/discover.",
+      "evidence": [
+        { "source": "https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/main/docs/specification/2026-07-28/changelog.mdx", "date": "2026-07-28", "source_type": "estándar", "verificacion_directa": true },
+        { "source": "https://github.com/modelcontextprotocol/modelcontextprotocol/releases", "date": "2026-07-28", "source_type": "repositorio", "verificacion_directa": true }
+      ],
+      "confidence": "alta",
+      "counter_signal": "La revision documenta compatibilidad dual-era y negociacion por UnsupportedProtocolVersionError; hay changelog formal y proceso SEP, senal de gobernanza madura.",
+      "implication_for_connectx": "Presupuestar una migracion de protocolo por ano. El adaptador MCP no debe exceder ~500 lineas ni contener reglas de negocio.",
+      "next_test": "Implementar contra 2025-11-25 y portar a 2026-07-28 midiendo horas y lineas. Umbral: menos de 16 h y menos de 300 lineas."
+    },
+    {
+      "id": "H-03",
+      "finding": "La portabilidad entre clientes es de contrato, no de comportamiento: en 2026-07-28 la unica capacidad de cliente es elicitation y roots, sampling y logging quedan depreciados.",
+      "evidence": [
+        { "source": "https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/main/docs/specification/2026-07-28/changelog.mdx", "date": "2026-07-28", "source_type": "estándar", "verificacion_directa": true },
+        { "source": "https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/main/docs/specification/2026-07-28/index.mdx", "date": "2026-07-28", "source_type": "estándar", "verificacion_directa": true },
+        { "source": "https://mcp-availability.com/", "date": "desconocida", "source_type": "otro", "verificacion_directa": false }
+      ],
+      "confidence": "alta",
+      "counter_signal": "Las capacidades depreciadas son las que un diseno prudente no deberia usar; su retiro favorece la arquitectura propuesta.",
+      "implication_for_connectx": "Radar MCP debe usar solo tools (y opcionalmente resources); ningun flujo institucional puede depender de capacidades opcionales del cliente.",
+      "next_test": "Suite de conformidad contra tres clientes distintos que verifique payload identico byte a byte en las tres herramientas."
+    },
+    {
+      "id": "H-04",
+      "finding": "El formato de Skills (SKILL.md) es abierto y portable, pero portabilidad de formato no implica equivalencia de comportamiento, y los scripts empaquetados son ejecucion de codigo.",
+      "evidence": [
+        { "source": "https://raw.githubusercontent.com/anthropics/skills/main/README.md", "date": "desconocida", "source_type": "repositorio", "verificacion_directa": true },
+        { "source": "https://agentskills.io/home", "date": "desconocida", "source_type": "otro", "verificacion_directa": false }
+      ],
+      "confidence": "media",
+      "counter_signal": "El rendimiento depende del modelo, del harness y de las herramientas permitidas; ademas scripts/ es un vector de cadena de suministro.",
+      "implication_for_connectx": "Las skills son el activo mas portable de la fabrica: texto versionado en git, con evaluacion como criterio de aceptacion.",
+      "next_test": "Ejecutar una skill de ConnectX en dos productos distintos sobre el mismo caso y calificar con rubrica de 10 puntos; aceptacion 8/10 en ambos."
+    },
+    {
+      "id": "H-05",
+      "finding": "El registro publico de servidores MCP esta en preview, con congelamiento de API v0.1, y verifica propiedad de dominio, no seguridad del codigo.",
+      "evidence": [
+        { "source": "https://raw.githubusercontent.com/modelcontextprotocol/registry/main/README.md", "date": "desconocida", "source_type": "repositorio", "verificacion_directa": true }
+      ],
+      "confidence": "alta",
+      "counter_signal": "La falta de revision de seguridad es la norma en registros de paquetes (npm, PyPI), no una anomalia de MCP.",
+      "implication_for_connectx": "Catalogo propio de servidores con version fijada y hash verificado; no consumir del registro publico en flujos institucionales.",
+      "next_test": "Publicar el catalogo con sha256 por servidor y un verificador que falle si un hash no coincide."
+    },
+    {
+      "id": "H-06",
+      "finding": "Los incidentes graves documentados del ecosistema estan en el cliente y la cadena de suministro, no en el servidor expuesto.",
+      "evidence": [
+        { "source": "https://github.com/advisories/GHSA-6xpm-ggf7-wc3p", "date": "2025-07-09", "source_type": "oficial", "verificacion_directa": true },
+        { "source": "https://nvd.nist.gov/vuln/detail/CVE-2025-49596", "date": "desconocida", "source_type": "oficial", "verificacion_directa": false }
+      ],
+      "confidence": "alta",
+      "counter_signal": "Ambas fallas son de herramientas auxiliares, ya parchadas; un servidor de solo lectura enlazado a 127.0.0.1 no comparte esa superficie.",
+      "implication_for_connectx": "El riesgo dominante es que un funcionario conecte su cliente a un servidor ajeno: pesa mas la politica de estacion de trabajo que el endurecimiento del Radar.",
+      "next_test": "Inventario mensual firmado de servidores MCP configurados en equipos que tocan el repositorio; metrica: cero fuera de catalogo."
+    },
+    {
+      "id": "H-07",
+      "finding": "El texto de un nodo es entrada no confiable: puede intentar dirigir al agente (inyeccion indirecta), y la especificacion trata las herramientas como ejecucion arbitraria que exige consentimiento explicito.",
+      "evidence": [
+        { "source": "https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/main/docs/specification/2026-07-28/index.mdx", "date": "2026-07-28", "source_type": "estándar", "verificacion_directa": true },
+        { "source": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/", "date": "2025", "source_type": "estudio", "verificacion_directa": false }
+      ],
+      "confidence": "alta",
+      "counter_signal": "Con el Radar en solo lectura, una inyeccion exitosa produce una respuesta equivocada, no un acto administrativo.",
+      "implication_for_connectx": "Todo texto que sale del Radar viaja etiquetado como dato no confiable, con provenance y sin capacidad de disparar herramientas.",
+      "next_test": "Sembrar tres nodos adversariales y fallar el build si un cliente con herramientas de escritura simuladas ejecuta algo."
+    },
+    {
+      "id": "H-08",
+      "finding": "Las exigencias de transporte de MCP (validar Origin con 403, enlazar a 127.0.0.1, autenticar) coinciden con lo que el laboratorio Context.OS ya hace parcialmente.",
+      "evidence": [
+        { "source": "https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/main/docs/specification/2026-07-28/basic/transports/streamable-http.mdx", "date": "2026-07-28", "source_type": "estándar", "verificacion_directa": true },
+        { "source": "contextos/README.md", "date": "2026", "source_type": "repositorio", "verificacion_directa": true }
+      ],
+      "confidence": "alta",
+      "counter_signal": "Falta la validacion explicita de Origin y toda autenticacion servicio-a-servicio: el propio README lo declara.",
+      "implication_for_connectx": "Anadir validacion de Origin con 403 al servidor de laboratorio alinea el prototipo con el estandar en horas de trabajo.",
+      "next_test": "Prueba con Origin ajeno que exija HTTP 403, incorporada a npm run test:orbe-contextos."
+    },
+    {
+      "id": "H-09",
+      "finding": "Context.OS ya implementa lo que MCP deja fuera (politica determinista, consentimiento ligado, evidencia con checksum, LAB_MOCK) y declara sus propios limites.",
+      "evidence": [
+        { "source": "contextos/README.md", "date": "2026", "source_type": "repositorio", "verificacion_directa": true },
+        { "source": "contextos/contracts.ts", "date": "2026", "source_type": "repositorio", "verificacion_directa": true }
+      ],
+      "confidence": "alta",
+      "counter_signal": "Es un vertical slice de un solo caso de uso con ~1,700 lineas; la distancia a un plano de control institucional es de anos-persona.",
+      "implication_for_connectx": "El activo defendible ya existe y no es MCP: exponer el nucleo por MCP, jamas reimplementarlo en MCP.",
+      "next_test": "Separar PDP y PEP y demostrar que el Radar MCP puede sustituirse por curl sin tocar el nucleo."
+    },
+    {
+      "id": "H-10",
+      "finding": "Exponer nodos a un cliente de un proveedor externo entra en el terreno de la ley de datos personales: consentimiento y formalizacion de transferencias.",
+      "evidence": [
+        { "source": "https://www.dof.gob.mx/nota_detalle.php?codigo=5752569&fecha=20/03/2025", "date": "2025-03-20", "source_type": "oficial", "verificacion_directa": false },
+        { "source": "docs/marco/BIBLIOTECA_LEGAL.md", "date": "2026-08-01", "source_type": "repositorio", "verificacion_directa": true }
+      ],
+      "confidence": "media",
+      "counter_signal": "El prototipo declara sin datos personales: hoy no hay transferencia que formalizar. El riesgo aparece cuando un nodo cite un expediente.",
+      "implication_for_connectx": "Convertir 'sin datos personales' en control tecnico: validador que rechace CURP, RFC, telefono, correo o domicilio en un nodo.",
+      "next_test": "npm run radar:validar con deteccion de patrones que falle el build ante cualquier coincidencia, con 20 casos sembrados."
+    },
+    {
+      "id": "H-11",
+      "finding": "La demanda municipal no esta demostrada: de 242 sistemas integrados a Llave MX solo 8 son municipales (datos a junio de 2026).",
+      "evidence": [
+        { "source": "https://www.gob.mx/atdt/comunicacion/llave-mx-el-sistema-de-autentificacion-digital-mas-utilizado-en-mexico-con-28-millones-de-cuentas", "date": "desconocida", "source_type": "oficial", "verificacion_directa": false },
+        { "source": "docs/marco/BIBLIOTECA_LEGAL.md", "date": "2026-08-01", "source_type": "repositorio", "verificacion_directa": true }
+      ],
+      "confidence": "media",
+      "counter_signal": "El dato admite dos lecturas opuestas (mercado virgen con mandato legal, o municipios sin presupuesto ni incentivo) y la evidencia disponible no permite elegir.",
+      "implication_for_connectx": "La obligacion legal es argumento de venta, no evidencia de demanda: prohibido afirmar demanda en materiales publicos.",
+      "next_test": "Documentar tres de los ocho municipios ya integrados: quien pago, cuanto tardaron, que los movio."
+    },
+    {
+      "id": "H-12",
+      "finding": "MCP no define identidad de agente, quorum, voto ni delegacion: un Parlamento de IAs no puede autoautorizarse por diseno del protocolo, pero si de facto por credenciales compartidas.",
+      "evidence": [
+        { "source": "https://raw.githubusercontent.com/modelcontextprotocol/modelcontextprotocol/main/docs/specification/2026-07-28/index.mdx", "date": "2026-07-28", "source_type": "estándar", "verificacion_directa": true },
+        { "source": "docs/PARLAMENTO_PROMPT.md", "date": "2026", "source_type": "repositorio", "verificacion_directa": true }
+      ],
+      "confidence": "alta",
+      "counter_signal": "Si las cinco sillas comparten un token con permisos de escritura, el Parlamento es un solo actor con cinco mascaras: el control lo da la separacion de credenciales, no el protocolo.",
+      "implication_for_connectx": "Una credencial por silla, todas de solo lectura, con traza propia; la ejecucion solo tras firma humana registrada como evidencia.",
+      "next_test": "Prueba adversarial: dos sillas acuerdan ejecutar sin firma; el sistema registra el intento y devuelve DENY con razon HUMAN_SIGNATURE_REQUIRED."
+    }
+  ]
+}
