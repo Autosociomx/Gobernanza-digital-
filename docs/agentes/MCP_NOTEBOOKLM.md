@@ -101,3 +101,8 @@ Code (contenedor efímero, sin navegador interactivo) el servidor arranca pero
 
 Con `NOTEBOOKLM_PROFILE=minimal` o `=standard` se reduce la superficie a
 consulta y biblioteca.
+
+---
+
+El otro servidor MCP registrado en `.mcp.json` es `soatm-docs`, propio de este
+repositorio y de solo lectura sobre `docs/` — ver `docs/agentes/MCP_SOATM_DOCS.md`.

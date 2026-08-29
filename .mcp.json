@@ -6,6 +6,10 @@
       "env": {
         "NOTEBOOKLM_AI_MARKER": "true"
       }
+    },
+    "soatm-docs": {
+      "command": "npx",
+      "args": ["tsx", "mcp/soatm-docs.ts"]
     }
   }
 }
