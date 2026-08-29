@@ -104,3 +104,5 @@ export function buildEvidenceIndex(
 }
 
 export * from './contracts';
+export * from './allowlist';
+export * from './repositoryAdapter';
