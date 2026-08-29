@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { AuraCertificationSeal } from './AuraCertificationSeal';
+import { DemoDataBadge } from './DemoDataBadge';
 
 interface ProposalCardProps {
   title: string;
@@ -55,7 +56,8 @@ const ProposalCard = ({ title, subtitle, icon: Icon, points, color }: ProposalCa
 export function MasterStrategicPlan({ onBack }: { onBack: () => void }) {
   const [stressLevel, setStressLevel] = useState(0);
   const [isRunningTest, setIsRunningTest] = useState(false);
-  const [testLogs, setTestLogs] = useState<string[]>([]);
+  const [testLogs, setTestLogs] = useState<{ hora: string; texto: string }[]>([]);
+  const [planRevisado, setPlanRevisado] = useState(false);
   const [metrics, setMetrics] = useState({
     latency: '12ms',
     concurrency: '0',
@@ -63,17 +65,26 @@ export function MasterStrategicPlan({ onBack }: { onBack: () => void }) {
     sync: 'Standby'
   });
 
+  const registrarLogs = (...textos: string[]) => {
+    const hora = new Date().toLocaleTimeString([], { hour12: false });
+    setTestLogs(prev => [...prev, ...textos.map(texto => ({ hora, texto }))]);
+  };
+
   const runStressTest = async () => {
     setIsRunningTest(true);
-    setTestLogs(['[SYS] Iniciando simulación de carga masiva...', '[SYS] Escalando clusters de Firestore Nayarit-Cluster-A...']);
-    
+    const horaInicio = new Date().toLocaleTimeString([], { hour12: false });
+    setTestLogs([
+      { hora: horaInicio, texto: '[SIM] Animación de carga — ningún sistema real es consultado.' },
+      { hora: horaInicio, texto: '[SIM] Escalado de clusters (narrativa de demostración).' }
+    ]);
+
     // Simulate ramp up
     for (let i = 0; i <= 100; i += 5) {
       setStressLevel(i);
-      if (i === 20) setTestLogs(prev => [...prev, '[NET] 10,000 peticiones concurrentes detectadas.', '[SEC] Cifrado AES-256 (simulado — demo, no implementado).']);
-      if (i === 50) setTestLogs(prev => [...prev, '[DB] Replicación multi-región exitosa.', '[SYS] CPU Load: 42% - Memoria estable.']);
-      if (i === 80) setTestLogs(prev => [...prev, '[LAW] Verificación de alineación LNETB (demo, sin cumplimiento verificado).', '[AUDIT] Trazabilidad (demo, no forense).']);
-      
+      if (i === 20) registrarLogs('[SIM] 10,000 peticiones concurrentes (cifra inventada para la animación).', '[SIM] Cifrado AES-256 — no implementado en el sistema.');
+      if (i === 50) registrarLogs('[SIM] Replicación multi-región — no configurada hoy.', '[SIM] CPU Load: 42% (valor decorativo).');
+      if (i === 80) registrarLogs('[SIM] Alineación LNETB: propuesta, sin cumplimiento verificado.', '[SIM] Trazabilidad: demo, no forense.');
+
       setMetrics({
         latency: `${Math.floor(Math.random() * 20 + 5)}ms`,
         concurrency: `${i * 250}`,
@@ -83,7 +94,7 @@ export function MasterStrategicPlan({ onBack }: { onBack: () => void }) {
       await new Promise(r => setTimeout(r, 200));
     }
     
-    setTestLogs(prev => [...prev, '[SUCCESS] Test de Resiliencia completado. Sistema Robusto.']);
+    registrarLogs('[SIM] Fin de la animación. No se ejecutó ninguna prueba de resiliencia real.');
     setIsRunningTest(false);
   };
 
@@ -132,8 +143,9 @@ export function MasterStrategicPlan({ onBack }: { onBack: () => void }) {
             <div className="flex flex-col  items-start  justify-between gap-4">
                <div className="flex items-center gap-3">
                   <Activity className="w-5 h-5 text-magenta-500" />
-                  <h3 className="text-xs font-black text-white uppercase tracking-widest">Simulador de Estrés</h3>
+                  <h3 className="text-xs font-black text-white uppercase tracking-widest">Simulador de Estrés (animación)</h3>
                </div>
+               <DemoDataBadge detail="El simulador no ejecuta ninguna prueba de carga: latencia, concurrencia y bitácora se generan en el navegador con números aleatorios y temporizadores. Sirve para ilustrar el plan, no para medir el sistema." />
                <button 
                  onClick={runStressTest}
                  disabled={isRunningTest}
@@ -177,8 +189,8 @@ export function MasterStrategicPlan({ onBack }: { onBack: () => void }) {
             <div className="bg-black p-4 rounded-xl border border-white/5 font-mono text-[10px] h-32 overflow-y-auto space-y-1">
                {testLogs.map((log, i) => (
                  <div key={i} className="flex gap-2">
-                    <span className="text-magenta-500">[{new Date().toLocaleTimeString([], { hour12: false })}]</span>
-                    <span className="text-slate-400">{log}</span>
+                    <span className="text-magenta-500">[{log.hora}]</span>
+                    <span className="text-slate-400">{log.texto}</span>
                  </div>
                ))}
             </div>
@@ -301,12 +313,31 @@ export function MasterStrategicPlan({ onBack }: { onBack: () => void }) {
            <p className="text-xl font-serif italic text-slate-400 max-w-2xl mx-auto">
              "La improvisación es el enemigo de la gobernanza. Con ConnectX, la estructura es el destino."
            </p>
-           <button 
-             onClick={() => alert('Plan de Operaciones 2026 Aprobado y sincronizado con el Nodo de Gobernanza.')}
-             className="bg-white text-black w-full py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.4em] shadow-2xl hover:scale-105 transition-all"
+           <button
+             onClick={() => setPlanRevisado(v => !v)}
+             aria-expanded={planRevisado}
+             className={cn(
+               "w-full py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.4em] shadow-2xl hover:scale-105 transition-all",
+               planRevisado ? "bg-emerald-500 text-black" : "bg-white text-black"
+             )}
            >
-              Aprobar Plan de Operaciones
+              {planRevisado ? 'Marcado como revisado en esta sesión' : 'Marcar plan como revisado'}
            </button>
+
+           {planRevisado && (
+             <div className="max-w-2xl mx-auto bg-white/5 border border-white/10 rounded-2xl p-6 space-y-3 text-left">
+                <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Marca local, sin valor jurídico</p>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                   Esta marca vive solo en tu navegador durante esta sesión: no se guarda, no notifica a
+                   nadie y no aprueba nada. La plataforma no tiene todavía un flujo de aprobación.
+                </p>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                   La aprobación real de un plan de operaciones ocurre fuera del sistema —
+                   sesión de Cabildo o convenio firmado— y se documenta en un acta del repositorio
+                   (<span className="font-mono text-slate-300">docs/actas/</span>).
+                </p>
+             </div>
+           )}
         </div>
       </main>
     </motion.div>

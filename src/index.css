@@ -4,6 +4,23 @@
   --font-sans: "Space Grotesk", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Playfair Display", serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* "magenta" no era un color registrado en Tailwind: CitizenApp.tsx usa
+     bg-magenta-500/text-magenta-400/etc. en más de 60 lugares (burbuja de
+     Aura, método de pago, progreso de obras, puntos de recompensa...) pero
+     sin esta escala esas clases no generaban ningún CSS — el acento de
+     media app ciudadana no se pintaba. Anclada al rosa institucional
+     (#D81E5B, el mismo de PlatformLanding.tsx) en el 500. */
+  --color-magenta-50: #fdf1f4;
+  --color-magenta-100: #fbe0e8;
+  --color-magenta-200: #f7c2d3;
+  --color-magenta-300: #f193b0;
+  --color-magenta-400: #e85a89;
+  --color-magenta-500: #D81E5B;
+  --color-magenta-600: #b91650;
+  --color-magenta-700: #941044;
+  --color-magenta-800: #710d38;
+  --color-magenta-900: #4f0926;
 }
 
 html {
@@ -32,18 +49,24 @@ html {
 }
 
 :root {
-  --magenta:  #1a73e8; /* Vibrant Gemini Blue */
-  --turq:     #188038; /* Subtle Teal/Green */
-  --solar:    #4285f4; /* Primary Blue */
-  --verde:    #34a853; /* Success/Green */
-  --coral:    #d93025; /* Alert/Red */
-  --morado:   #5e35b1; /* Deep Purple accent */
+  /* Paleta institucional Nayarit Digital — la misma que PlatformLanding.tsx.
+     Antes estas variables tenían colores de marca de Google ("Vibrant Gemini
+     Blue", "Primary Blue") con nombres en español que no correspondían
+     (--magenta era azul). Unificadas 2026-08-27 para que CitizenApp,
+     C5Dashboard y ExecutiveFolder compartan la misma identidad visual que
+     la landing en vez de tres paletas distintas. */
+  --magenta:  #D81E5B; /* Rosa institucional Nayarit */
+  --turq:     #0FA3B1; /* Teal institucional */
+  --solar:    #F5A623; /* Ámbar institucional */
+  --verde:    #4C9F70; /* Verde institucional */
+  --coral:    #E85D04; /* Naranja de alerta institucional */
+  --morado:   #5e35b1; /* Acento morado (sin equivalente en la landing, se conserva) */
 
-  --tinta:    #001d3d; /* Darkest Navy */
-  --crema:    #f1f7fe; /* Pale blue-white */
-  --hueso:    #d1e2f3; /* Bone/Border Blue */
+  --tinta:    #14213D; /* Navy institucional */
+  --crema:    #F8F6F1; /* Crema institucional */
+  --hueso:    #d4ccc2; /* Borde institucional */
   --blanco:   #ffffff;
-  --gris:     #486581; /* Steel gray text */
+  --gris:     #4a5568; /* Gris de texto institucional */
 
   --frau: 'Fraunces', serif;
   --inst: 'Instrument Sans', sans-serif;

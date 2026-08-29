@@ -270,25 +270,28 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
              <div className="bg-white border border-[#d4ccc2] p-8 rounded-xl relative overflow-hidden shadow-sm">
                <div className="absolute top-0 left-0 right-0 h-1 bg-[#4C9F70]"></div>
                <Globe className="w-8 h-8 text-[#4C9F70] mb-5" />
-               <h3 className="font-bold text-lg mb-3 text-[#1a2438]">En su lengua, no solo en español</h3>
+               <h3 className="font-bold text-lg mb-3 text-[#1a2438]">En su lengua: lo que hay y lo que falta</h3>
                <p className="text-[14px] text-[#4a5568] leading-relaxed mb-5">
-                  La plataforma opera en español, náayeri (cora) y wixárika. Un trámite que no se
-                  entiende es una fila disfrazada: aquí el ciudadano de la sierra lee su gobierno
-                  en su propia lengua.
+                  Hoy lo comprobable es un selector de idioma en el asistente de IA del panel de
+                  gobierno (C5): cambia el saludo entre español, náayeri (cora) y wixárika. El resto
+                  de la conversación, la voz (siempre es-MX) y la app ciudadana siguen en español.
+                  Llevar los trámites a las tres lenguas es la meta declarada, no algo ya resuelto.
                </p>
-               <p className="text-[10px] uppercase tracking-widest font-bold text-[#35704E]">3 lenguas · Selector integrado en el C5</p>
+               <p className="text-[10px] uppercase tracking-widest font-bold text-[#35704E]">3 saludos · Selector en el asistente IA del C5</p>
              </div>
 
              <div className="bg-white border border-[#d4ccc2] p-8 rounded-xl relative overflow-hidden shadow-sm">
                <div className="absolute top-0 left-0 right-0 h-1 bg-[#E85D04]"></div>
                <Smartphone className="w-8 h-8 text-[#E85D04] mb-5" />
-               <h3 className="font-bold text-lg mb-3 text-[#1a2438]">Infraestructura con fondo propio</h3>
+               <h3 className="font-bold text-lg mb-3 text-[#1a2438]">FAISPIAM: la trazabilidad que proponemos</h3>
                <p className="text-[14px] text-[#4a5568] leading-relaxed mb-5">
                   El FAISPIAM — el fondo federal de infraestructura para pueblos indígenas y
-                  afromexicanos — está integrado en la tesorería del sistema: cada peso destinado
-                  a la sierra queda trazado y auditable.
+                  afromexicanos — es la fuente de financiamiento que este proyecto propone trazar
+                  peso por peso desde la tesorería digital. Hoy el módulo de tesorería no tiene
+                  ninguna integración con ese fondo: es la meta que sostiene el caso de la sierra,
+                  no una función ya operando.
                </p>
-               <p className="text-[10px] uppercase tracking-widest font-bold text-[#B54903]">Trazabilidad ASF · Bienestar social</p>
+               <p className="text-[10px] uppercase tracking-widest font-bold text-[#B54903]">Propuesta · Trazabilidad tipo ASF por construir</p>
              </div>
           </div>
         </div>

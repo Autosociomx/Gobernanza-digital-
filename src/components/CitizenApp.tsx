@@ -40,7 +40,11 @@ import {
   WifiOff,
   Mic,
   Volume2,
-  VolumeX
+  VolumeX,
+  FlaskConical,
+  MapPin,
+  Trash,
+  CheckCircle2
 } from 'lucide-react';
   import { motion, AnimatePresence } from 'motion/react';
   import { cn } from '../lib/utils';
@@ -49,6 +53,7 @@ import { SaludNayaritID } from './SaludNayaritID';
 import { ParlamentoView } from './dashboard/ParlamentoView';
 import { NotificationView } from './NotificationView';
 import { LegalComplianceDisclaimer } from './LegalComplianceDisclaimer';
+import { DemoDataBadge } from './DemoDataBadge';
 import { LoginView } from './LoginView';
 import { CompleteProfileView } from './CompleteProfileView';
 import { CredentialScannerView } from './CredentialScannerView';
@@ -133,7 +138,7 @@ export function CitizenApp({
                 lat: work.location.lat,
                 lng: work.location.lng,
                 title: work.name,
-                color: work.status === 'CRITICAL' ? '#EF4444' : work.status === 'RISK' ? '#F59E0B' : '#E5007A'
+                color: work.status === 'CRITICAL' ? '#EF4444' : work.status === 'RISK' ? '#F59E0B' : '#D81E5B'
             }));
             setPublicWorks(markers);
         } catch (err) {
@@ -331,8 +336,10 @@ export function CitizenApp({
     });
   };
 
+  // Referencia de DEMOSTRACIÓN: el hash se calcula íntegramente en el navegador
+  // y nunca se envía a un backend, banco ni cadena comercial. No es cobrable.
   const generatePaymentRef = async () => {
-    const curp = "PEGJ900101HNT";
+    const curp = profile.documentId || "SIN-ID-REGISTRADA";
     const servicio = payingItem?.title || "SERVICIO";
     const seed = `${curp}|${servicio}|${Date.now()}|${Math.random()}`;
     const encoder = new TextEncoder();
@@ -348,7 +355,7 @@ export function CitizenApp({
 
   const barcodeRef = React.useRef<SVGSVGElement>(null);
   const mapMarkers = React.useMemo(() => [
-    { lat: 21.5090, lng: -104.8947, title: "Obra Reencarpetamiento San Juan", color: "#E5007A" },
+    { lat: 21.5090, lng: -104.8947, title: "Obra Reencarpetamiento San Juan", color: "#D81E5B" },
     { lat: 21.5120, lng: -104.8970, title: "Luminaria Reportada", color: "#FACC15" }
   ], []);
 
@@ -375,10 +382,10 @@ export function CitizenApp({
             onGoToLetters={handleGoToLetters}
           />
         );
-      case 'networks': return <RedesCiudadanasView profile={profile} onBack={handleGoToHome} />;
+      case 'networks': return <RedesCiudadanasView profile={profile} onBack={handleGoToHome} user={user} />;
       case 'forum': return <ParlamentoView onBack={handleGoToHome} />;
-      case 'payments': return <TesoreriaYTramitesView onPay={(item: any) => setPayingItem(item)} onBack={handleGoToHome} />;
-      case 'services': return <ServiciosYReportesView onShowTriage={handleShowTriage} onGoToAuditoria={handleGoToAuditoria} onBack={handleGoToHome} />;
+      case 'payments': return <TesoreriaYTramitesView onPay={(item: any) => setPayingItem(item)} onBack={handleGoToHome} user={user} />;
+      case 'services': return <ServiciosYReportesView onShowTriage={handleShowTriage} onGoToAuditoria={handleGoToAuditoria} onBack={handleGoToHome} user={user} />;
       case 'profile': return <ProfileView profile={profile} onUpdate={updateProfile} onLogout={onLogout} onBack={handleGoToHome} onGoToSecurity={handleGoToSecurity} onGoToCanjes={handleGoToCanjes} />;
       case 'security': return <SecurityCenterView user={user} onBack={handleGoToProfile} />;
       case 'canjes': return <CanjesView user={user!} onBack={handleGoToProfile} />;
@@ -782,7 +789,7 @@ export function CitizenApp({
                       </div>
                       <div className="space-y-4 mb-8">
                          <div>
-                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Avance Real</p>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Avance declarado (dato de ejemplo)</p>
                             <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
                                <div className="bg-magenta-500 h-full transition-all duration-1000" style={{ width: `${selectedWork.progress}%`, backgroundColor:'var(--magenta)' }}></div>
                             </div>
@@ -816,7 +823,7 @@ export function CitizenApp({
                className="absolute inset-x-0 bottom-0 top-0 z-[100] bg-white flex flex-col"
              >
                 <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
-                   <h3 className="font-serif font-black text-lg">Finalizar Pago</h3>
+                   <h3 className="font-serif font-black text-lg">Pago — simulación</h3>
                    <button onClick={() => { setPayingItem(null); setPaymentStep('idle'); }} className="p-2 bg-slate-100 rounded-full">
                       <ChevronRight className="w-5 h-5 rotate-90" />
                    </button>
@@ -825,6 +832,7 @@ export function CitizenApp({
                 <div className="flex-1 p-6 overflow-y-auto">
                    {paymentStep === 'idle' && (
                       <div className="space-y-8">
+                         <DemoDataBadge detail="Flujo de pago en modo demostración: ninguna de las dos opciones genera un cargo, una referencia bancaria ni un comprobante válido." />
                          <div className="text-center">
                             <div className="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center mx-auto mb-4 text-white">
                                <CreditCard className="w-8 h-8" />
@@ -858,7 +866,10 @@ export function CitizenApp({
                             >
                                <div className="flex items-center gap-4">
                                   <div className="w-8 h-5 bg-slate-100 rounded"></div>
-                                  <span className="font-bold text-sm">VISA •••• 4412</span>
+                                  <div>
+                                     <span className="font-bold text-sm block">VISA •••• 4412</span>
+                                     <span className="text-[10px] text-amber-600 font-bold uppercase block">Tarjeta ficticia de ejemplo</span>
+                                  </div>
                                </div>
                                <div className={cn(
                                  "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all",
@@ -897,20 +908,23 @@ export function CitizenApp({
 
                    {paymentStep === 'cash_instructions' && (
                       <div className="flex flex-col items-center">
+                         <div className="w-full mb-4">
+                            <DemoDataBadge detail="Esta referencia se calcula en tu navegador (SHA-256) y no viaja a ningún backend, banco ni cadena comercial. Ninguna caja de OXXO, Casino o Telecomm puede cobrarla." />
+                         </div>
                          <div className="bg-slate-50 w-full rounded-3xl p-6 border border-slate-100 shadow-sm space-y-6">
                             <div className="text-center space-y-1">
-                               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Referencia de Pago</p>
+                               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Referencia simulada (no cobrable)</p>
                                <h1 className="text-xl font-mono font-black text-slate-900 tracking-tighter">{paymentRef}</h1>
                             </div>
-                            
+
                             <div className="bg-white p-4 rounded-xl flex items-center justify-center border border-slate-100 shadow-sm overflow-hidden">
                                <svg ref={barcodeRef} className="w-full h-auto"></svg>
                             </div>
 
                             <div className="flex justify-center py-2">
                                <div className="p-4 bg-white rounded-2xl shadow-lg border border-slate-100">
-                                  <QRCodeSVG 
-                                    value={`https://gobernanza.digital/pago?ref=${paymentRef}&monto=204&curp=PEGJ900101HNT`}
+                                  <QRCodeSVG
+                                    value={`SIMULACION-NO-COBRABLE|ref=${paymentRef}|monto=204.00 MXN|emisor=ninguno|nota=generado en el navegador, sin registro en backend`}
                                     size={140}
                                     level="H"
                                     includeMargin={true}
@@ -920,23 +934,23 @@ export function CitizenApp({
 
                             <div className="space-y-3">
                                <div className="flex justify-between items-center text-sm">
-                                  <span className="text-slate-500">Monto:</span>
+                                  <span className="text-slate-500">Monto simulado:</span>
                                   <span className="font-bold text-slate-900">$204.00 MXN</span>
                                </div>
                                <div className="flex justify-between items-center text-sm">
-                                  <span className="text-slate-500">Vence:</span>
-                                  <span className="font-bold text-slate-900">15 JUN 2026</span>
+                                  <span className="text-slate-500">Emisor:</span>
+                                  <span className="font-bold text-amber-700">Ninguno — generada localmente</span>
                                </div>
                             </div>
                          </div>
-                         
+
                          <div className="mt-8 text-center space-y-4">
-                            <div className="flex items-center justify-center gap-2 text-magenta-500 font-bold text-xs" style={{color:'var(--magenta)'}}>
-                               <div className="w-2 h-2 rounded-full bg-magenta-500 animate-pulse"></div>
-                               ESPERANDO PAGO EN CAJA
+                            <div className="flex items-center justify-center gap-2 text-amber-600 font-bold text-xs">
+                               <div className="w-2 h-2 rounded-full bg-amber-500"></div>
+                               SIN CONCILIACIÓN — NINGÚN SISTEMA ESPERA ESTE PAGO
                             </div>
                             <p className="text-xs text-slate-400 italic px-4 leading-relaxed">
-                               Muestra este código en cualquier OXXO, Casino o Telecomm. El cajero escaneará el código de barras y recibirás tu ticket de confirmación.
+                               Este código de barras y este QR son artefactos de demostración. No están dados de alta en ninguna cadena comercial ni en la Tesorería, así que un cajero no podría cobrarlos ni emitir un ticket de confirmación.
                             </p>
                          </div>
                       </div>
@@ -948,26 +962,30 @@ export function CitizenApp({
                             <div className="w-24 h-24 border-4 border-slate-100 rounded-full"></div>
                             <div className="absolute inset-0 border-4 border-magenta-500 border-t-transparent rounded-full animate-spin"></div>
                          </div>
-                         <p className="mt-8 font-serif font-black text-2xl">Procesando Pago...</p>
-                         <p className="text-slate-500 text-sm mt-2">Seguridad Bancaria ConnectX</p>
+                         <p className="mt-8 font-serif font-black text-2xl">Simulando pago...</p>
+                         <p className="text-slate-500 text-sm mt-2">Animación local. No se está contactando ninguna pasarela de pago ni banco.</p>
                       </div>
                    )}
 
                    {paymentStep === 'success' && (
                       <div className="h-full flex flex-col items-center justify-center text-center">
-                         <motion.div 
+                         <motion.div
                            initial={{ scale: 0.5, opacity: 0 }}
                            animate={{ scale: 1, opacity: 1 }}
-                           className="w-24 h-24 bg-emerald-500 rounded-full flex items-center justify-center text-white mb-8"
+                           className="w-24 h-24 bg-amber-500 rounded-full flex items-center justify-center text-white mb-8"
                          >
-                            <Plus className="w-12 h-12 rotate-45 scale-125" />
+                            <FlaskConical className="w-12 h-12" />
                          </motion.div>
-                         <h4 className="font-serif font-black text-3xl mb-2">¡Pago Exitoso!</h4>
-                         <p className="text-slate-500 text-sm mb-8">El comprobante ha sido enviado a tu correo y guardado en tu perfil.</p>
-                         <div className="w-full bg-slate-50 p-6 rounded-2xl border border-dashed border-slate-300 text-left font-mono">
-                            <p className="text-[10px] text-slate-400 flex justify-between">AUT: <span>889210-XC</span></p>
-                            <p className="text-[10px] text-slate-400 flex justify-between">FECHA: <span>13 JUN 2026</span></p>
-                            <p className="text-sm font-bold mt-4 flex justify-between font-sans">TOTAL: <span>$204.00 MXN</span></p>
+                         <h4 className="font-serif font-black text-3xl mb-2">Simulación completada</h4>
+                         <p className="text-slate-500 text-sm mb-6 px-2 leading-relaxed">
+                            No se generó ningún cargo real. No se envió comprobante a tu correo ni se guardó recibo alguno en tu perfil: esta pantalla solo demuestra cómo se vería el flujo.
+                         </p>
+                         <DemoDataBadge detail="El pago con tarjeta de esta demo no llama a ninguna pasarela. El endpoint real /api/create-payment-intent existe en server.ts pero no está conectado a esta pantalla." />
+                         <div className="w-full mt-6 bg-slate-50 p-6 rounded-2xl border border-dashed border-slate-300 text-left font-mono">
+                            <p className="text-[10px] text-slate-400 flex justify-between gap-3">AUT: <span className="text-right font-sans font-bold text-amber-700">SIMULADO — no se generó ningún cargo real</span></p>
+                            <p className="text-[10px] text-slate-400 flex justify-between gap-3">FECHA: <span>{new Date().toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })}</span></p>
+                            <p className="text-[10px] text-slate-400 flex justify-between gap-3 mt-2">REFERENCIA BANCARIA: <span className="text-right font-sans">ninguna (no se emitió)</span></p>
+                            <p className="text-sm font-bold mt-4 flex justify-between font-sans">MONTO SIMULADO: <span>$204.00 MXN</span></p>
                          </div>
                       </div>
                    )}
@@ -987,7 +1005,7 @@ export function CitizenApp({
                         }}
                         className="w-full py-4 bg-slate-900 text-white rounded-full font-black shadow-xl transition-transform active:scale-95"
                       >
-                         {paymentMethod === 'card' ? 'Pagar $204.00 MNX' : 'Generar Código de Pago'}
+                         {paymentMethod === 'card' ? 'Simular pago de $204.00 MXN' : 'Generar referencia simulada'}
                       </button>
                    )}
                    {paymentStep === 'cash_instructions' && (
@@ -1066,7 +1084,8 @@ const HomeView = React.memo(function HomeView({
 
       {/* Visual Hero ConnectX - Neuro-Experience */}
       <div className="px-1 mb-2">
-        <div className="relative h-64 w-full rounded-3xl overflow-hidden shadow-2xl group cursor-pointer border border-white/5">
+        {/* Sin cursor-pointer en el contenedor: la única acción real es el botón "Ver Manifiesto". */}
+        <div className="relative h-64 w-full rounded-3xl overflow-hidden shadow-2xl group border border-white/5">
           {/* Animated Background Simulation */}
           <div className="absolute inset-0 bg-slate-950">
              {(!reducedMotion && isOnline) && (
@@ -1129,7 +1148,7 @@ const HomeView = React.memo(function HomeView({
              </div>
              <div className={cn("px-3 py-1.5 border border-white/10 rounded-xl flex items-center gap-2", (!reducedMotion && isOnline) ? "bg-black/40 backdrop-blur-md" : "bg-black/80")}>
                 <Zap className="w-3 h-3 text-yellow-400" />
-                <span className="text-[9px] font-black text-white uppercase tracking-widest">Soberanía: 98.4%</span>
+                <span className="text-[9px] font-black text-white uppercase tracking-widest">Soberanía: 98.4% · cifra ilustrativa</span>
              </div>
           </div>
         </div>
@@ -1365,7 +1384,10 @@ const HomeView = React.memo(function HomeView({
             <Bell className="w-4 h-4 text-slate-300" />
          </div>
          <p className="text-sm font-bold text-slate-900 leading-tight">Reencarpetamiento San Juan: 65% de avance.</p>
-         <button 
+         <div className="mt-3">
+            <DemoDataBadge detail="Obra, porcentaje y presupuesto son de ejemplo: no provienen de un sistema de seguimiento de obra en operación." />
+         </div>
+         <button
            onClick={onShowMap}
            className="mt-5 w-full py-3 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-900 flex items-center justify-center gap-2 transition-all hover:bg-slate-100"
          >
@@ -1407,40 +1429,133 @@ function ViewHeader({ title, onBack }: { title: string, onBack?: () => void }) {
   );
 }
 
-function RedesCiudadanasView({ profile, onBack }: { profile: any, onBack: () => void }) {
+function RedesCiudadanasView({ profile, onBack, user }: { profile: any, onBack: () => void, user: FirebaseUser | null }) {
   const [networks, setNetworks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [joinedIds, setJoinedIds] = useState<string[]>([]);
+  const [joiningId, setJoiningId] = useState<string | null>(null);
+  const [showMapaComites, setShowMapaComites] = useState(false);
+  const [showRegistroExterno, setShowRegistroExterno] = useState(false);
+  const [nuevoRegistro, setNuevoRegistro] = useState({ nombre: '', telefono: '', colonia: '' });
+  const [registrando, setRegistrando] = useState(false);
+  const [avisoRed, setAvisoRed] = useState<string | null>(null);
+  const [misRegistros, setMisRegistros] = useState<any[]>([]);
 
   useEffect(() => {
     const q = collection(db, 'neighborhood_networks');
     const unsub = onSnapshot(q, (snap) => {
       const docs = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setNetworks(docs);
-      
+
       // Auto-seed if empty
       if (snap.empty && !loading) {
         const seedData = [
-          { name: 'Comité San Juan Unido', colony: 'Col. San Juan', memberCount: 156, leaderName: 'M. Lozano', createdAt: new Date() },
-          { name: 'Red Vecinal Centro', colony: 'Centro Tepic', memberCount: 89, leaderName: 'R. Garcia', createdAt: new Date() },
-          { name: 'Comité Ciudad del Valle', colony: 'Cd. del Valle', memberCount: 210, leaderName: 'S. Peña', createdAt: new Date() }
+          { name: 'Comité San Juan Unido', colony: 'Col. San Juan', memberCount: 156, leaderName: 'M. Lozano', lat: 21.4977, lng: -104.8828, createdAt: new Date() },
+          { name: 'Red Vecinal Centro', colony: 'Centro Tepic', memberCount: 89, leaderName: 'R. Garcia', lat: 21.5041, lng: -104.8946, createdAt: new Date() },
+          { name: 'Comité Ciudad del Valle', colony: 'Cd. del Valle', memberCount: 210, leaderName: 'S. Peña', lat: 21.5183, lng: -104.9128, createdAt: new Date() }
         ];
         seedData.forEach(async (d) => {
           await addDoc(collection(db, 'neighborhood_networks'), d);
         });
       }
-      
+
       setLoading(false);
     });
     return () => unsub();
   }, [loading]);
 
-  const joinNetwork = async (networkId: string) => {
-    if (!auth.currentUser) return;
+  // Membresías reales del ciudadano: subcolección `members` de cada comité.
+  useEffect(() => {
+    if (!user || networks.length === 0) { setJoinedIds([]); return; }
+    let cancelled = false;
+    (async () => {
+      try {
+        const checks = await Promise.all(
+          networks.map(async (net: any) => {
+            const snap = await getDoc(doc(db, 'neighborhood_networks', net.id, 'members', user.uid));
+            return snap.exists() ? net.id : null;
+          })
+        );
+        if (!cancelled) setJoinedIds(checks.filter((v): v is string => Boolean(v)));
+      } catch (err) {
+        console.error('Error leyendo membresías:', err);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user, networks]);
+
+  // Registros externos (referidos) creados por este ciudadano.
+  useEffect(() => {
+    if (!user) { setMisRegistros([]); return; }
+    const q = query(collection(db, 'registros_externos'), where('referidoPor', '==', user.uid));
+    const unsub = onSnapshot(
+      q,
+      (snap) => setMisRegistros(snap.docs.map(d => ({ id: d.id, ...(d.data() as any) }))),
+      (err) => console.error('Error leyendo registros externos:', err)
+    );
+    return () => unsub();
+  }, [user]);
+
+  const mapaMarkers = React.useMemo(
+    () => networks
+      .filter((n: any) => typeof n.lat === 'number' && typeof n.lng === 'number')
+      .map((n: any) => ({ lat: n.lat, lng: n.lng, title: n.name, color: '#D81E5B' })),
+    [networks]
+  );
+
+  // Acción real: alta/baja de membresía en Firestore.
+  const toggleNetwork = async (networkId: string) => {
+    if (!user) { setAvisoRed('Necesitas una sesión activa para unirte a un comité.'); return; }
+    setJoiningId(networkId);
+    setAvisoRed(null);
+    const memberRef = doc(db, 'neighborhood_networks', networkId, 'members', user.uid);
     try {
-      // In a real app we'd update a members subcollection
-      // For now we just link the user's profile neighborhood if they want
+      if (joinedIds.includes(networkId)) {
+        await deleteDoc(memberRef);
+        setJoinedIds(prev => prev.filter(id => id !== networkId));
+        setAvisoRed('Saliste del comité.');
+      } else {
+        await setDoc(memberRef, {
+          uid: user.uid,
+          name: profile.name || 'Ciudadano',
+          neighborhood: profile.neighborhood || '',
+          joinedAt: new Date().toISOString()
+        });
+        setJoinedIds(prev => [...prev, networkId]);
+        setAvisoRed('Te uniste al comité. Tu membresía quedó registrada.');
+      }
     } catch (err) {
-      console.error(err);
+      console.error('Error actualizando membresía:', err);
+      setAvisoRed('No fue posible actualizar tu membresía en Firestore.');
+    } finally {
+      setJoiningId(null);
+    }
+  };
+
+  // Acción real: alta del referido en Firestore.
+  const registrarExterno = async () => {
+    if (!user) { setAvisoRed('Necesitas una sesión activa para registrar a alguien.'); return; }
+    if (!nuevoRegistro.nombre.trim()) { setAvisoRed('El nombre es obligatorio.'); return; }
+    setRegistrando(true);
+    setAvisoRed(null);
+    try {
+      await addDoc(collection(db, 'registros_externos'), {
+        ...nuevoRegistro,
+        nombre: nuevoRegistro.nombre.trim(),
+        referidoPor: user.uid,
+        referidoPorNombre: profile.name || '',
+        estado: 'PENDIENTE_CONTACTO',
+        oficial: false,
+        createdAt: new Date().toISOString()
+      });
+      setNuevoRegistro({ nombre: '', telefono: '', colonia: '' });
+      setShowRegistroExterno(false);
+      setAvisoRed('Registro guardado. Aparece abajo en "Personas que registraste".');
+    } catch (err) {
+      console.error('Error registrando externo:', err);
+      setAvisoRed('No fue posible guardar el registro en Firestore.');
+    } finally {
+      setRegistrando(false);
     }
   };
 
@@ -1459,22 +1574,46 @@ function RedesCiudadanasView({ profile, onBack }: { profile: any, onBack: () => 
          </div>
          <div className="grid grid-cols-2 gap-4">
             <div>
-               <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Miembros en {profile.neighborhood || 'Tepic'}</p>
-               <p className="text-xl font-black">2,410</p>
+               <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Miembros declarados por los comités</p>
+               <p className="text-xl font-black">{networks.reduce((acc: number, n: any) => acc + (n.memberCount || 0), 0).toLocaleString('es-MX')}</p>
             </div>
             <div>
-               <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Metas Alcanzadas</p>
-               <p className="text-xl font-black">94%</p>
+               <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Comités registrados</p>
+               <p className="text-xl font-black">{networks.length}</p>
             </div>
          </div>
+         <p className="text-[9px] text-white/40 mt-4 leading-relaxed">
+            Cifras sumadas de los comités en Firestore. Los comités semilla se crean con conteos de ejemplo, no con un padrón verificado.
+         </p>
       </div>
+
+      {avisoRed && (
+        <p className="text-xs font-bold text-slate-700 bg-slate-100 border border-slate-200 rounded-2xl px-4 py-3">{avisoRed}</p>
+      )}
 
       {/* Neighborhood List */}
       <div className="space-y-4">
         <div className="flex justify-between items-center px-4">
            <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Comités en Tepic</h3>
-           <button className="text-[10px] font-black text-magenta-500 uppercase tracking-widest">Ver Mapa</button>
+           <button
+             onClick={() => setShowMapaComites(v => !v)}
+             aria-pressed={showMapaComites}
+             className="text-[10px] font-black text-magenta-500 uppercase tracking-widest flex items-center gap-1"
+           >
+              <MapPin className="w-3 h-3" /> {showMapaComites ? 'Ocultar mapa' : 'Ver mapa'}
+           </button>
         </div>
+
+        {showMapaComites && (
+          <div className="space-y-2">
+             <div className="h-64 w-full rounded-3xl overflow-hidden border border-slate-200 shadow-sm">
+                <NayaritMap center={{ lat: 21.5090, lng: -104.8947 }} zoom={12} markers={mapaMarkers} />
+             </div>
+             <p className="text-[10px] text-slate-400 px-4 leading-relaxed">
+                {mapaMarkers.length} de {networks.length} comités tienen coordenadas guardadas en Firestore; el resto no aparece en el mapa. Las coordenadas de los comités semilla son de ejemplo.
+             </p>
+          </div>
+        )}
 
         <div className="space-y-3">
            {loading ? (
@@ -1516,8 +1655,19 @@ function RedesCiudadanasView({ profile, onBack }: { profile: any, onBack: () => 
                              +
                           </div>
                        </div>
-                       <button onClick={() => joinNetwork(net.id)} className="px-5 py-2 bg-slate-900 border border-slate-900 rounded-full text-[10px] font-black text-white uppercase tracking-widest hover:bg-slate-800 transition-colors">
-                          Unirme al Comité
+                       <button
+                         onClick={() => toggleNetwork(net.id)}
+                         disabled={joiningId === net.id}
+                         className={cn(
+                           "px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-colors border disabled:opacity-50",
+                           joinedIds.includes(net.id)
+                             ? "bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100"
+                             : "bg-slate-900 border-slate-900 text-white hover:bg-slate-800"
+                         )}
+                       >
+                          {joiningId === net.id
+                            ? 'Guardando…'
+                            : joinedIds.includes(net.id) ? '✓ Miembro · Salir' : 'Unirme al Comité'}
                        </button>
                     </div>
                  </div>
@@ -1541,16 +1691,161 @@ function RedesCiudadanasView({ profile, onBack }: { profile: any, onBack: () => 
          <p className="text-xs text-emerald-700 leading-relaxed mb-5">
             ¿Tienes familiares o vecinos que aún no tienen su Nayarit ID? Ayúdalos a registrarse y intégralos a la red ciudadana.
          </p>
-         <button className="w-full py-4 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg hover:bg-emerald-700 transition-colors active:scale-95">
-            Comenzar Registro Externo
+         <button
+           onClick={() => { setAvisoRed(null); setShowRegistroExterno(v => !v); }}
+           aria-expanded={showRegistroExterno}
+           className="w-full py-4 bg-emerald-600 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg hover:bg-emerald-700 transition-colors active:scale-95"
+         >
+            {showRegistroExterno ? 'Cerrar formulario' : 'Comenzar Registro Externo'}
          </button>
+
+         {showRegistroExterno && (
+           <div className="mt-5 space-y-3 bg-white rounded-2xl p-4 border border-emerald-100">
+              <div>
+                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Nombre completo</label>
+                 <input
+                   type="text"
+                   value={nuevoRegistro.nombre}
+                   onChange={e => setNuevoRegistro({ ...nuevoRegistro, nombre: e.target.value })}
+                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold mt-1"
+                 />
+              </div>
+              <div>
+                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Teléfono de contacto</label>
+                 <input
+                   type="tel"
+                   value={nuevoRegistro.telefono}
+                   onChange={e => setNuevoRegistro({ ...nuevoRegistro, telefono: e.target.value })}
+                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold mt-1"
+                 />
+              </div>
+              <div>
+                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Colonia</label>
+                 <input
+                   type="text"
+                   value={nuevoRegistro.colonia}
+                   onChange={e => setNuevoRegistro({ ...nuevoRegistro, colonia: e.target.value })}
+                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold mt-1"
+                 />
+              </div>
+              <p className="text-[10px] text-slate-500 leading-relaxed">
+                 El registro se guarda en Firestore como una invitación pendiente de contacto. No crea una Nayarit ID ni da de alta a la persona ante ninguna autoridad.
+              </p>
+              <button
+                onClick={registrarExterno}
+                disabled={registrando || !user}
+                className="w-full py-3 bg-slate-900 text-white rounded-xl text-xs font-black uppercase tracking-widest disabled:opacity-50"
+              >
+                 {registrando ? 'Guardando…' : 'Guardar registro'}
+              </button>
+           </div>
+         )}
+
+         {misRegistros.length > 0 && (
+           <div className="mt-5 space-y-2">
+              <p className="text-[10px] font-bold text-emerald-700 uppercase tracking-widest">Personas que registraste ({misRegistros.length})</p>
+              {misRegistros.map(r => (
+                <div key={r.id} className="flex items-center justify-between bg-white rounded-xl px-4 py-3 border border-emerald-100">
+                   <div className="min-w-0">
+                      <p className="text-xs font-bold text-slate-900 truncate">{r.nombre}</p>
+                      <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">{r.colonia || 'sin colonia'} · {r.estado || 'PENDIENTE_CONTACTO'}</p>
+                   </div>
+                   <button
+                     onClick={() => deleteDoc(doc(db, 'registros_externos', r.id)).catch(err => { console.error(err); setAvisoRed('No fue posible eliminar el registro.'); })}
+                     aria-label={`Eliminar registro de ${r.nombre}`}
+                     className="p-2 rounded-full bg-red-50 text-red-500 hover:bg-red-100 transition-colors shrink-0"
+                   >
+                      <Trash className="w-4 h-4" />
+                   </button>
+                </div>
+              ))}
+           </div>
+         )}
       </div>
     </div>
   );
 }
 
 
-function TesoreriaYTramitesView({ onPay, onBack }: { onPay: (item: any) => void, onBack: () => void }) {
+const TRAMITES_VENTANILLA = [
+  {
+    id: 'licencia_funcionamiento',
+    label: 'Licencia de Funcionamiento Criptográfica',
+    requisitos: ['Identificación oficial vigente', 'Comprobante de domicilio del establecimiento', 'RFC del titular']
+  },
+  {
+    id: 'permiso_construccion',
+    label: 'Permiso de Construcción Georreferenciado',
+    requisitos: ['Escritura o contrato del predio', 'Planos firmados por perito responsable', 'Coordenadas del predio']
+  },
+  {
+    id: 'uso_suelo',
+    label: 'Uso de Suelo Digital',
+    requisitos: ['Croquis de ubicación', 'Comprobante de pago predial al corriente', 'Descripción del giro solicitado']
+  },
+  {
+    id: 'acta_registro_civil',
+    label: 'Actas del Registro Civil (Firma Avanzada)',
+    requisitos: ['CURP del titular del acta', 'Identificación del solicitante', 'Parentesco declarado']
+  }
+];
+
+function TesoreriaYTramitesView({ onPay, onBack, user }: { onPay: (item: any) => void, onBack: () => void, user: FirebaseUser | null }) {
+  const [selectedTramite, setSelectedTramite] = useState<typeof TRAMITES_VENTANILLA[number] | null>(null);
+  const [solicitudes, setSolicitudes] = useState<any[]>([]);
+  const [enviando, setEnviando] = useState(false);
+  const [avisoTramite, setAvisoTramite] = useState<string | null>(null);
+
+  // Lectura real: las solicitudes de este ciudadano viven en Firestore
+  // (colección `tramites`), la misma que lee y borra el Centro de Seguridad.
+  useEffect(() => {
+    if (!user) { setSolicitudes([]); return; }
+    const q = query(collection(db, 'tramites'), where('uid', '==', user.uid));
+    const unsub = onSnapshot(
+      q,
+      (snap) => setSolicitudes(snap.docs.map(d => ({ id: d.id, ...(d.data() as any) }))),
+      (err) => {
+        console.error('Error leyendo trámites:', err);
+        setAvisoTramite('No fue posible leer tus solicitudes desde Firestore.');
+      }
+    );
+    return () => unsub();
+  }, [user]);
+
+  const solicitarTramite = async () => {
+    if (!selectedTramite) return;
+    if (!user) { setAvisoTramite('Necesitas una sesión activa para registrar la solicitud.'); return; }
+    setEnviando(true);
+    setAvisoTramite(null);
+    try {
+      await addDoc(collection(db, 'tramites'), {
+        uid: user.uid,
+        tipo: selectedTramite.id,
+        titulo: selectedTramite.label,
+        estado: 'SOLICITADA',
+        origen: 'ventanilla_unica_demo',
+        oficial: false,
+        createdAt: new Date().toISOString()
+      });
+      setAvisoTramite(`Solicitud de "${selectedTramite.label}" registrada en tu expediente de demostración.`);
+      setSelectedTramite(null);
+    } catch (err) {
+      console.error('Error registrando trámite:', err);
+      setAvisoTramite('No fue posible registrar la solicitud en Firestore.');
+    } finally {
+      setEnviando(false);
+    }
+  };
+
+  const cancelarSolicitud = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'tramites', id));
+    } catch (err) {
+      console.error('Error cancelando trámite:', err);
+      setAvisoTramite('No fue posible cancelar la solicitud.');
+    }
+  };
+
   return (
     <div className="pt-2 space-y-6 pb-20">
       <ViewHeader title="Tesorería Digital" onBack={onBack} />
@@ -1607,13 +1902,80 @@ function TesoreriaYTramitesView({ onPay, onBack }: { onPay: (item: any) => void,
            Módulo 03 — Ventanilla Única y Actas
         </h3>
         <div className="bg-white rounded-3xl border border-slate-200 divide-y divide-slate-100 overflow-hidden shadow-sm">
-           {['Licencia de Funcionamiento Criptográfica', 'Permiso de Construcción Georreferenciado', 'Uso de Suelo Digital', 'Actas del Registro Civil (Firma Avanzada)'].map(s => (
-             <button key={s} className="w-full px-8 py-6 flex justify-between items-center hover:bg-slate-50 active:bg-slate-100 transition-colors text-left group">
-                <span className="text-sm font-bold text-slate-700 group-hover:text-emerald-700 transition-colors">{s}</span>
-                <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-emerald-500 transition-colors" />
+           {TRAMITES_VENTANILLA.map(t => (
+             <button
+                key={t.id}
+                onClick={() => { setAvisoTramite(null); setSelectedTramite(selectedTramite?.id === t.id ? null : t); }}
+                aria-expanded={selectedTramite?.id === t.id}
+                className={cn(
+                  "w-full px-8 py-6 flex justify-between items-center hover:bg-slate-50 active:bg-slate-100 transition-colors text-left group",
+                  selectedTramite?.id === t.id && "bg-emerald-50/60"
+                )}
+             >
+                <span className="text-sm font-bold text-slate-700 group-hover:text-emerald-700 transition-colors">{t.label}</span>
+                <ChevronRight className={cn("w-4 h-4 text-slate-300 group-hover:text-emerald-500 transition-all", selectedTramite?.id === t.id && "rotate-90 text-emerald-500")} />
              </button>
            ))}
         </div>
+
+        {/* Panel del trámite seleccionado — acción real: registra la solicitud en Firestore */}
+        {selectedTramite && (
+          <div className="bg-white rounded-3xl border border-emerald-200 p-6 shadow-sm space-y-4">
+             <div>
+                <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">Trámite seleccionado</p>
+                <p className="text-sm font-black text-slate-900">{selectedTramite.label}</p>
+             </div>
+             <div>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Requisitos declarados</p>
+                <ul className="space-y-1">
+                   {selectedTramite.requisitos.map(r => (
+                     <li key={r} className="text-xs text-slate-600 flex items-start gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1.5 shrink-0"></span>{r}
+                     </li>
+                   ))}
+                </ul>
+             </div>
+             <DemoDataBadge detail="Al solicitar se crea un registro real en tu expediente de Firestore (colección tramites), pero NO es un trámite oficial ante el municipio: no hay firma electrónica avanzada ni validez ante autoridades." />
+             <button
+                onClick={solicitarTramite}
+                disabled={enviando || !user}
+                className="w-full py-4 bg-slate-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg active:scale-[0.98] transition-transform disabled:opacity-50"
+             >
+                {enviando ? 'Registrando…' : 'Registrar solicitud en mi expediente'}
+             </button>
+          </div>
+        )}
+
+        {avisoTramite && (
+          <p className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-2xl px-4 py-3">{avisoTramite}</p>
+        )}
+
+        {/* Solicitudes reales del ciudadano */}
+        {solicitudes.length > 0 && (
+          <div className="space-y-3">
+             <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Mis solicitudes registradas ({solicitudes.length})</h4>
+             <div className="bg-white rounded-3xl border border-slate-200 divide-y divide-slate-100 overflow-hidden shadow-sm">
+                {solicitudes.map(s => (
+                  <div key={s.id} className="px-6 py-4 flex items-center justify-between gap-4">
+                     <div className="min-w-0">
+                        <p className="text-xs font-bold text-slate-900 truncate">{s.titulo || s.tipo || 'Solicitud'}</p>
+                        <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">
+                           {s.estado || 'SOLICITADA'} · {s.createdAt ? new Date(s.createdAt).toLocaleDateString('es-MX') : 'sin fecha'} · folio {s.id.slice(0, 6)}
+                        </p>
+                     </div>
+                     <button
+                       onClick={() => cancelarSolicitud(s.id)}
+                       aria-label={`Cancelar solicitud ${s.titulo || s.id}`}
+                       className="p-2 rounded-full bg-red-50 text-red-500 hover:bg-red-100 transition-colors shrink-0"
+                     >
+                        <Trash className="w-4 h-4" />
+                     </button>
+                  </div>
+                ))}
+             </div>
+          </div>
+        )}
+
         <p className="text-[10px] text-slate-400 text-center px-6 leading-relaxed">
            Documentos de demostración. La firma electrónica avanzada y la validez ante autoridades son propuestas de integración, no capacidades implementadas.
         </p>
@@ -1622,7 +1984,73 @@ function TesoreriaYTramitesView({ onPay, onBack }: { onPay: (item: any) => void,
   );
 }
 
-function ServiciosYReportesView({ onShowTriage, onGoToAuditoria, onBack }: { onShowTriage: () => void, onGoToAuditoria: () => void, onBack: () => void }) {
+const TIPOS_REPORTE = [
+  { id: 'LUMINARIA', label: 'Auditoría de Luminaria', desc: 'Evidencia Fotográfica Geolocalizada', icon: Lightbulb, color: 'text-amber-500', bg: 'bg-amber-50' },
+  { id: 'BACHE', label: 'Auditoría de Bacheo', desc: 'Evidencia Fotográfica Geolocalizada', icon: ShieldCheck, color: 'text-blue-500', bg: 'bg-blue-50' },
+  { id: 'AGUA', label: 'Falla Hídrica Estratégica', desc: 'Evidencia Fotográfica Geolocalizada', icon: Droplets, color: 'text-sky-500', bg: 'bg-sky-50' }
+];
+
+function ServiciosYReportesView({ onShowTriage, onGoToAuditoria, onBack, user }: { onShowTriage: () => void, onGoToAuditoria: () => void, onBack: () => void, user: FirebaseUser | null }) {
+  const [tipoActivo, setTipoActivo] = useState<typeof TIPOS_REPORTE[number] | null>(null);
+  const [descripcion, setDescripcion] = useState('');
+  const [ubicacion, setUbicacion] = useState<{ lat: number, lng: number } | null>(null);
+  const [ubicando, setUbicando] = useState(false);
+  const [enviandoReporte, setEnviandoReporte] = useState(false);
+  const [avisoReporte, setAvisoReporte] = useState<string | null>(null);
+  const [misReportes, setMisReportes] = useState<any[]>([]);
+  const [showRuta, setShowRuta] = useState(false);
+
+  // Lectura real de los reportes que este ciudadano ha levantado.
+  useEffect(() => {
+    if (!user) { setMisReportes([]); return; }
+    const q = query(collection(db, 'reportes_ciudadanos'), where('uid', '==', user.uid));
+    const unsub = onSnapshot(
+      q,
+      (snap) => setMisReportes(snap.docs.map(d => ({ id: d.id, ...(d.data() as any) }))),
+      (err) => { console.error('Error leyendo reportes:', err); setAvisoReporte('No fue posible leer tus reportes desde Firestore.'); }
+    );
+    return () => unsub();
+  }, [user]);
+
+  const capturarUbicacion = () => {
+    if (!navigator.geolocation) { setAvisoReporte('Este dispositivo no expone geolocalización.'); return; }
+    setUbicando(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => { setUbicacion({ lat: pos.coords.latitude, lng: pos.coords.longitude }); setUbicando(false); },
+      (err) => { console.error(err); setAvisoReporte('No se pudo obtener tu ubicación; puedes enviar el reporte sin coordenadas.'); setUbicando(false); },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
+
+  const enviarReporte = async () => {
+    if (!tipoActivo) return;
+    if (!user) { setAvisoReporte('Necesitas una sesión activa para levantar un reporte.'); return; }
+    if (!descripcion.trim()) { setAvisoReporte('Describe la incidencia antes de enviarla.'); return; }
+    setEnviandoReporte(true);
+    setAvisoReporte(null);
+    try {
+      await addDoc(collection(db, 'reportes_ciudadanos'), {
+        uid: user.uid,
+        tipo: tipoActivo.id,
+        titulo: tipoActivo.label,
+        descripcion: descripcion.trim(),
+        lat: ubicacion?.lat ?? null,
+        lng: ubicacion?.lng ?? null,
+        estado: 'PENDIENTE',
+        createdAt: new Date().toISOString()
+      });
+      setDescripcion('');
+      setUbicacion(null);
+      setTipoActivo(null);
+      setAvisoReporte('Reporte registrado. Aparece abajo en "Mis reportes".');
+    } catch (err) {
+      console.error('Error enviando reporte:', err);
+      setAvisoReporte('No fue posible registrar el reporte en Firestore.');
+    } finally {
+      setEnviandoReporte(false);
+    }
+  };
+
   return (
     <div className="pt-2 space-y-8 pb-20">
       <ViewHeader title="Centro de Operaciones" onBack={onBack} />
@@ -1665,12 +2093,16 @@ function ServiciosYReportesView({ onShowTriage, onGoToAuditoria, onBack }: { onS
                Módulo 02 — Reportar Incidencias
             </h3>
             <div className="grid grid-cols-1 gap-3">
-               {[
-                 { label: 'Auditoría de Luminaria', desc: 'Evidencia Fotográfica Geolocalizada', icon: Lightbulb, color: 'text-amber-500', bg: 'bg-amber-50' },
-                 { label: 'Auditoría de Bacheo', desc: 'Evidencia Fotográfica Geolocalizada', icon: ShieldCheck, color: 'text-blue-500', bg: 'bg-blue-50' },
-                 { label: 'Falla Hídrica Estratégica', desc: 'Evidencia Fotográfica Geolocalizada', icon: Droplets, color: 'text-sky-500', bg: 'bg-sky-50' }
-               ].map((s, i) => (
-                 <button key={i} className="w-full flex justify-between items-center p-5 bg-white border border-slate-200 rounded-[1.5rem] hover:border-slate-400 active:bg-slate-50 transition-all group text-left shadow-sm">
+               {TIPOS_REPORTE.map((s) => (
+                 <button
+                   key={s.id}
+                   onClick={() => { setAvisoReporte(null); setTipoActivo(tipoActivo?.id === s.id ? null : s); }}
+                   aria-expanded={tipoActivo?.id === s.id}
+                   className={cn(
+                     "w-full flex justify-between items-center p-5 bg-white border rounded-[1.5rem] hover:border-slate-400 active:bg-slate-50 transition-all group text-left shadow-sm",
+                     tipoActivo?.id === s.id ? "border-slate-900" : "border-slate-200"
+                   )}
+                 >
                     <div className="flex items-center gap-4">
                        <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", s.bg, s.color)}>
                           <s.icon className="w-6 h-6" />
@@ -1682,30 +2114,122 @@ function ServiciosYReportesView({ onShowTriage, onGoToAuditoria, onBack }: { onS
                           </p>
                        </div>
                     </div>
-                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-slate-900 transition-colors">
-                       <Plus className="w-4 h-4 text-slate-400 group-hover:text-white transition-colors" />
+                    <div className={cn("w-8 h-8 rounded-full flex items-center justify-center transition-colors", tipoActivo?.id === s.id ? "bg-slate-900" : "bg-slate-50 group-hover:bg-slate-900")}>
+                       <Plus className={cn("w-4 h-4 transition-all", tipoActivo?.id === s.id ? "text-white rotate-45" : "text-slate-400 group-hover:text-white")} />
                     </div>
                  </button>
                ))}
             </div>
+
+            {/* Formulario real de reporte */}
+            {tipoActivo && (
+              <div className="bg-white rounded-[1.5rem] border border-slate-900 p-5 space-y-3 shadow-sm">
+                 <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Nuevo reporte · {tipoActivo.label}</p>
+                 <textarea
+                   value={descripcion}
+                   onChange={e => setDescripcion(e.target.value)}
+                   rows={3}
+                   placeholder="Describe la incidencia y su ubicación aproximada…"
+                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium"
+                 />
+                 <div className="flex items-center gap-3">
+                    <button
+                      onClick={capturarUbicacion}
+                      disabled={ubicando}
+                      className="px-4 py-2 bg-slate-100 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-700 flex items-center gap-1.5 disabled:opacity-50"
+                    >
+                       <MapPin className="w-3 h-3" /> {ubicando ? 'Ubicando…' : 'Adjuntar mi ubicación'}
+                    </button>
+                    {ubicacion && (
+                      <span className="text-[10px] font-mono text-emerald-600 flex items-center gap-1">
+                         <CheckCircle2 className="w-3 h-3" /> {ubicacion.lat.toFixed(4)}, {ubicacion.lng.toFixed(4)}
+                      </span>
+                    )}
+                 </div>
+                 <p className="text-[10px] text-slate-400 leading-relaxed">
+                    El reporte se guarda en Firestore (colección <code>reportes_ciudadanos</code>) y queda en tu expediente. Aún no existe un despacho automático a una cuadrilla municipal ni carga de fotografía.
+                 </p>
+                 <button
+                   onClick={enviarReporte}
+                   disabled={enviandoReporte || !user}
+                   className="w-full py-3 bg-slate-900 text-white rounded-xl text-xs font-black uppercase tracking-widest disabled:opacity-50"
+                 >
+                    {enviandoReporte ? 'Enviando…' : 'Levantar reporte'}
+                 </button>
+              </div>
+            )}
+
+            {avisoReporte && (
+              <p className="text-xs font-bold text-slate-700 bg-slate-100 border border-slate-200 rounded-2xl px-4 py-3">{avisoReporte}</p>
+            )}
+
+            {misReportes.length > 0 && (
+              <div className="space-y-2">
+                 <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Mis reportes ({misReportes.length})</h4>
+                 <div className="bg-white rounded-[1.5rem] border border-slate-200 divide-y divide-slate-100 overflow-hidden shadow-sm">
+                    {misReportes.map(r => (
+                      <div key={r.id} className="px-5 py-4 flex items-center justify-between gap-4">
+                         <div className="min-w-0">
+                            <p className="text-xs font-bold text-slate-900 truncate">{r.titulo || r.tipo}</p>
+                            <p className="text-[9px] text-slate-400 font-bold uppercase tracking-widest truncate">
+                               {r.estado || 'PENDIENTE'} · {r.createdAt ? new Date(r.createdAt).toLocaleDateString('es-MX') : 'sin fecha'}
+                               {typeof r.lat === 'number' ? ` · ${r.lat.toFixed(3)}, ${r.lng.toFixed(3)}` : ' · sin GPS'}
+                            </p>
+                            <p className="text-[10px] text-slate-500 truncate">{r.descripcion}</p>
+                         </div>
+                         <button
+                           onClick={() => deleteDoc(doc(db, 'reportes_ciudadanos', r.id)).catch(err => { console.error(err); setAvisoReporte('No fue posible eliminar el reporte.'); })}
+                           aria-label={`Eliminar reporte ${r.titulo || r.id}`}
+                           className="p-2 rounded-full bg-red-50 text-red-500 hover:bg-red-100 transition-colors shrink-0"
+                         >
+                            <Trash className="w-4 h-4" />
+                         </button>
+                      </div>
+                    ))}
+                 </div>
+              </div>
+            )}
          </div>
 
          {/* RoutePro */}
          <div className="space-y-3">
             <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Módulo 06 — Logística Municipal (RoutePro)</h3>
             <div className="grid grid-cols-1 gap-3">
-               <button className="w-full flex justify-between items-center p-5 bg-emerald-50 border border-emerald-100 rounded-[1.5rem] hover:bg-emerald-100 active:scale-[0.99] transition-all group text-left">
+               <button
+                 onClick={() => setShowRuta(v => !v)}
+                 aria-expanded={showRuta}
+                 className="w-full flex justify-between items-center p-5 bg-emerald-50 border border-emerald-100 rounded-[1.5rem] hover:bg-emerald-100 active:scale-[0.99] transition-all group text-left"
+               >
                   <div className="flex items-center gap-4">
                      <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-500/30">
                         <MapIcon className="w-6 h-6" />
                      </div>
                      <div>
                         <p className="text-sm font-black text-emerald-900 mb-1">Seguimiento Recolección Basura</p>
-                        <p className="text-[9px] text-emerald-700 font-bold uppercase tracking-widest">Visibilidad GPS en tiempo real</p>
+                        <p className="text-[9px] text-emerald-700 font-bold uppercase tracking-widest">Horario publicado · sin GPS en vivo</p>
                      </div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-emerald-400 group-hover:text-emerald-700 transition-colors" />
+                  <ChevronRight className={cn("w-5 h-5 text-emerald-400 group-hover:text-emerald-700 transition-all", showRuta && "rotate-90 text-emerald-700")} />
                </button>
+
+               {showRuta && (
+                 <div className="p-5 bg-white border border-emerald-100 rounded-[1.5rem] space-y-3 shadow-sm">
+                    <DemoDataBadge detail="Horario de ejemplo. RoutePro no está conectado a los GPS de las unidades, así que esta vista no refleja la posición real de ningún camión." />
+                    {[
+                      { dia: 'Lunes / Jueves', ruta: 'Ruta 03 — Centro y San Juan', hora: '06:30 – 09:00' },
+                      { dia: 'Martes / Viernes', ruta: 'Ruta 07 — Cd. del Valle', hora: '07:00 – 10:30' },
+                      { dia: 'Miércoles / Sábado', ruta: 'Ruta 11 — Zona Norte', hora: '06:00 – 08:30' }
+                    ].map(r => (
+                      <div key={r.ruta} className="flex justify-between items-center py-2 border-b border-emerald-50 last:border-0">
+                         <div>
+                            <p className="text-xs font-bold text-emerald-900">{r.ruta}</p>
+                            <p className="text-[9px] text-emerald-600 font-bold uppercase tracking-widest">{r.dia}</p>
+                         </div>
+                         <span className="text-[10px] font-mono text-emerald-700">{r.hora}</span>
+                      </div>
+                    ))}
+                 </div>
+               )}
             </div>
          </div>
 
@@ -1757,26 +2281,59 @@ function ProfileView({
   const [isEditing, setIsEditing] = useState(false);
   const [localProfile, setLocalProfile] = useState(profile);
   const [showScanner, setShowScanner] = useState(false);
+  const [ocrTexto, setOcrTexto] = useState<string | null>(null);
+  const [avisoPerfil, setAvisoPerfil] = useState<string | null>(null);
+  const [reportesCount, setReportesCount] = useState<number | null>(null);
+  const [puntos, setPuntos] = useState<number | null>(null);
 
   useEffect(() => {
     setLocalProfile(profile);
   }, [profile]);
+
+  // Métricas reales del ciudadano en Firestore (antes eran números fijos).
+  useEffect(() => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+    const q = query(collection(db, 'reportes_ciudadanos'), where('uid', '==', uid));
+    const unsub = onSnapshot(
+      q,
+      (snap) => setReportesCount(snap.size),
+      (err) => { console.error('Error contando reportes:', err); setReportesCount(null); }
+    );
+    getDoc(doc(db, 'puntos', uid))
+      .then(snap => setPuntos(snap.exists() ? ((snap.data() as any).balance ?? (snap.data() as any).total ?? 0) : 0))
+      .catch(err => { console.error('Error leyendo puntos:', err); setPuntos(null); });
+    return () => unsub();
+  }, []);
 
   const handleSave = () => {
     onUpdate(localProfile);
     setIsEditing(false);
   };
 
+  // Acción real: el OCR de la credencial ahora sí alimenta el perfil.
+  const handleScanComplete = (data: any) => {
+    const texto: string = (data?.ocr || '').toString();
+    setOcrTexto(texto);
+    const plano = texto.toUpperCase().replace(/\s+/g, ' ');
+    const curp = plano.replace(/ /g, '').match(/[A-Z]{4}\d{6}[HM][A-Z]{5}[0-9A-Z]\d/)?.[0];
+    const claveElector = plano.replace(/ /g, '').match(/[A-Z]{6}\d{8}[HM]\d{3}/)?.[0];
+    const detectado = curp || claveElector;
+    if (detectado) {
+      setLocalProfile((prev: any) => ({ ...prev, documentId: detectado }));
+      setAvisoPerfil(`Detectamos "${detectado}" en la credencial. Revísalo y guarda con "Confirmar Datos Nayarit ID".`);
+    } else {
+      setAvisoPerfil('No se detectó una CURP ni una clave de elector legible. Puedes capturar el dato a mano; abajo queda el texto leído.');
+    }
+    setShowScanner(false);
+  };
+
   return (
     <div className="pt-2 pb-10 space-y-6">
       {showScanner && (
-         <CredentialScannerView 
+         <CredentialScannerView
             onBack={() => setShowScanner(false)}
-            onScanComplete={(data) => {
-               console.log("Scan Data:", data);
-               setShowScanner(false);
-               // Here we could update the profile
-            }}
+            onScanComplete={handleScanComplete}
          />
       )}
       <ViewHeader title="Mi Perfil Nayarit ID" onBack={onBack} />
@@ -1802,8 +2359,17 @@ function ProfileView({
                 </div>
                 <div>
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Documento de Identidad (INE/CURP)</label>
-                    <button onClick={() => setShowScanner(true)} className="w-full bg-magenta-100 text-magenta-700 py-3 rounded-xl text-xs font-bold my-2">Escanear INE / OCR</button>
+                    <button onClick={() => { setAvisoPerfil(null); setShowScanner(true); }} className="w-full bg-magenta-100 text-magenta-700 py-3 rounded-xl text-xs font-bold my-2">Escanear INE / OCR</button>
                     <input type="text" value={localProfile.documentId} onChange={e => setLocalProfile({...localProfile, documentId: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm font-bold mt-1" />
+                    {avisoPerfil && (
+                      <p className="text-[10px] font-bold text-slate-700 bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 mt-2 leading-relaxed">{avisoPerfil}</p>
+                    )}
+                    {ocrTexto && (
+                      <details className="mt-2">
+                         <summary className="text-[10px] font-bold text-slate-400 uppercase tracking-widest cursor-pointer">Texto leído por el OCR</summary>
+                         <pre className="text-[9px] text-slate-500 whitespace-pre-wrap bg-slate-50 border border-slate-200 rounded-xl p-3 mt-1 max-h-32 overflow-y-auto">{ocrTexto}</pre>
+                      </details>
+                    )}
                 </div>
                 <div>
                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Teléfono</label>
@@ -1847,11 +2413,11 @@ function ProfileView({
            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1 mb-3 text-left">Panel de Métricas Ciudadanas</p>
            <div className="grid grid-cols-2 gap-4 w-full">
               <div className="p-6 bg-slate-50/50 rounded-3xl text-center border border-slate-100">
-                <p className="text-3xl font-black text-slate-900 mb-1">12</p>
-                <p className="text-[9px] text-slate-400 uppercase font-black tracking-widest leading-tight">Reportes Urbanos Resueltos</p>
+                <p className="text-3xl font-black text-slate-900 mb-1">{reportesCount ?? '—'}</p>
+                <p className="text-[9px] text-slate-400 uppercase font-black tracking-widest leading-tight">Reportes Urbanos Levantados</p>
               </div>
               <div className="p-6 bg-magenta-50/50 rounded-3xl text-center border border-magenta-100 cursor-pointer group hover:bg-magenta-50 transition-colors" onClick={onGoToCanjes}>
-                 <p className="text-3xl font-black text-magenta-500 mb-1">450</p>
+                 <p className="text-3xl font-black text-magenta-500 mb-1">{puntos ?? '—'}</p>
                  <p className="text-[9px] text-magenta-400 uppercase font-black tracking-widest leading-tight">Puntos Recompensa Conecta</p>
                  <button className="mt-3 px-3 py-1 bg-magenta-500 text-white rounded-full text-[8px] uppercase tracking-widest font-black shadow-lg shadow-magenta-500/20 opacity-90 group-hover:opacity-100 transition-opacity">Canjear &rarr;</button>
               </div>
@@ -1909,7 +2475,36 @@ function ProfileView({
 function SecurityCenterView({ user, onBack }: { user: FirebaseUser | null, onBack: () => void }) {
   const [deleting, setDeleting] = useState(false);
   const [deleteStep, setDeleteStep] = useState(0);
-  const [isBiometricEnabled, setIsBiometricEnabled] = useState(true);
+  const [isBiometricEnabled, setIsBiometricEnabled] = useState(false);
+  const [savingPref, setSavingPref] = useState(false);
+  const [avisoSeguridad, setAvisoSeguridad] = useState<string | null>(null);
+
+  // La preferencia se lee y se escribe de verdad en users/{uid}.
+  useEffect(() => {
+    if (!user) return;
+    getDoc(doc(db, 'users', user.uid))
+      .then(snap => {
+        if (snap.exists()) setIsBiometricEnabled(Boolean((snap.data() as any).biometricPreferred));
+      })
+      .catch(err => console.error('Error leyendo preferencias:', err));
+  }, [user]);
+
+  const toggleBiometric = async () => {
+    if (!user) return;
+    const next = !isBiometricEnabled;
+    setIsBiometricEnabled(next);
+    setSavingPref(true);
+    setAvisoSeguridad(null);
+    try {
+      await setDoc(doc(db, 'users', user.uid), { biometricPreferred: next, updatedAt: new Date().toISOString() }, { merge: true });
+    } catch (err) {
+      console.error('Error guardando preferencia:', err);
+      setIsBiometricEnabled(!next);
+      setAvisoSeguridad('No fue posible guardar la preferencia en Firestore.');
+    } finally {
+      setSavingPref(false);
+    }
+  };
 
   const handleDownloadData = async () => {
     if (!user) return;
@@ -2078,18 +2673,24 @@ function SecurityCenterView({ user, onBack }: { user: FirebaseUser | null, onBac
          <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Configuración de Acceso</h4>
          <div className="bg-white rounded-3xl border border-slate-100 divide-y divide-slate-50 overflow-hidden shadow-sm">
             {[
-              { label: 'Autenticación Biométrica', isToggle: true, enabled: isBiometricEnabled, onToggle: () => setIsBiometricEnabled(!isBiometricEnabled) },
+              { label: 'Preferir biometría al iniciar sesión', hint: 'Preferencia guardada en tu perfil · WebAuthn aún no implementado', isToggle: true, enabled: isBiometricEnabled, onToggle: toggleBiometric },
               { label: 'Cifrado de Extremo a Extremo', status: 'No implementado (demo)', color: 'text-amber-500' },
-              { label: 'Verificación en Dos Pasos', status: 'Configurado', color: 'text-emerald-500' },
-              { label: 'Nivel de Privacidad', status: 'Máximo', color: 'text-blue-500' }
-            ].map((item, i) => (
-              <div key={i} className="px-8 py-6 flex justify-between items-center">
-                 <span className="font-bold text-slate-700">{item.label}</span>
+              { label: 'Verificación en Dos Pasos', status: 'No implementado (demo)', color: 'text-amber-500' },
+              { label: 'Nivel de Privacidad', status: 'Sin política publicada', color: 'text-amber-500' }
+            ].map((item: any, i) => (
+              <div key={i} className="px-8 py-6 flex justify-between items-center gap-4">
+                 <div className="min-w-0">
+                    <span className="font-bold text-slate-700 block">{item.label}</span>
+                    {item.hint && <span className="text-[9px] text-slate-400 font-bold uppercase tracking-widest block leading-tight mt-1">{item.hint}</span>}
+                 </div>
                  {item.isToggle ? (
-                   <button 
+                   <button
                      onClick={item.onToggle}
+                     disabled={savingPref || !user}
+                     aria-pressed={item.enabled}
+                     aria-label="Preferir biometría al iniciar sesión"
                      className={cn(
-                       "w-12 h-6 rounded-full p-1 transition-colors duration-200 ease-in-out",
+                       "w-12 h-6 rounded-full p-1 transition-colors duration-200 ease-in-out shrink-0 disabled:opacity-50",
                        item.enabled ? "bg-emerald-500" : "bg-slate-300"
                      )}
                    >
@@ -2099,26 +2700,32 @@ function SecurityCenterView({ user, onBack }: { user: FirebaseUser | null, onBac
                      )} />
                    </button>
                  ) : (
-                   <span className={cn("text-[10px] font-black uppercase tracking-widest", item.color)}>{item.status}</span>
+                   <span className={cn("text-[10px] font-black uppercase tracking-widest text-right shrink-0", item.color)}>{item.status}</span>
                  )}
               </div>
             ))}
          </div>
+         {avisoSeguridad && (
+           <p className="text-xs font-bold text-red-600 bg-red-50 border border-red-100 rounded-2xl px-4 py-3">{avisoSeguridad}</p>
+         )}
       </div>
 
       <div className="space-y-4">
-         <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Sesiones Activas</h4>
+         <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-4">Sesión Actual</h4>
          <div className="bg-slate-50 rounded-3xl p-6 space-y-4">
             <div className="flex justify-between items-center">
                <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm">📱</div>
                   <div>
-                     <p className="text-sm font-bold text-slate-900">Este Dispositivo (Tepic)</p>
-                     <p className="text-[10px] text-slate-400">Hace un momento</p>
+                     <p className="text-sm font-bold text-slate-900">Este dispositivo</p>
+                     <p className="text-[10px] text-slate-400 break-all">{user?.email || user?.uid || 'sesión anónima'}</p>
                   </div>
                </div>
                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
             </div>
+            <p className="text-[10px] text-slate-400 leading-relaxed">
+               Solo se muestra la sesión abierta en este navegador. Todavía no existe un inventario de sesiones activas en otros dispositivos ni la posibilidad de cerrarlas de forma remota.
+            </p>
          </div>
       </div>
     </div>

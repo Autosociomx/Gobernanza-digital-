@@ -65,6 +65,43 @@ async function startServer() {
   }
 
   // API routes
+  //
+  // ⚠️ DUPLICACIÓN DE ALMACÉN — "departments" vive en DOS lugares distintos:
+  //
+  //   A) SQLite, aquí mismo: la tabla `departments` de `government_data.db`
+  //      (ver el `CREATE TABLE IF NOT EXISTS` arriba) expuesta por las cuatro
+  //      rutas `/api/departments*` de este bloque. Esquema: id INTEGER
+  //      autoincremental, name, description, contact_email.
+  //
+  //   B) Firestore, en el cliente: `src/services/departmentService.ts`, que
+  //      lee/escribe la colección de dependencias directamente desde el
+  //      navegador con el SDK de firebase/firestore, con id string, auditoría
+  //      (`getAuditLogs`) y manejo de errores vía `handleFirestoreError`.
+  //
+  // Los dos almacenes NO están sincronizados entre sí: escribir por una vía no
+  // se refleja en la otra.
+  //
+  // ¿Qué superficie de la UI lee cuál? DETERMINADO, y la respuesta es que hoy
+  // NINGUNA lee ninguno de los dos:
+  //   - Vía (A) SQLite: cero llamadores. Un grep de "api/departments" sobre
+  //     todo el repo (excluyendo node_modules y este archivo) no devuelve
+  //     ninguna coincidencia: ningún componente, hook ni servicio de `src/`
+  //     hace fetch a estas rutas. Son endpoints muertos.
+  //   - Vía (B) Firestore: sus únicos consumidores eran los componentes
+  //     `src/components/DepartmentManager.tsx` y `src/components/MandoCentral.tsx`,
+  //     ambos código muerto (sin referencias externas) eliminados en esta misma
+  //     auditoría. Tras esa limpieza, el único import que sobrevive de
+  //     `departmentService` es de TIPOS (`Department`, `AuditLog`) desde
+  //     `src/services/aiRiskService.ts`, no de datos.
+  //
+  // Es decir: la duplicación no está causando divergencia visible al usuario
+  // porque ambas ramas están desconectadas de la UI viva. Lo que SÍ requiere
+  // decisión de arquitectura es cuál de las dos se conserva cuando se vuelva a
+  // exponer la gestión de dependencias: SQLite server-side (autoritativo,
+  // consultable en SQL, pero sin reglas de acceso por usuario) o Firestore
+  // client-side (con auth y auditoría ya cableadas). NO agregar consumidores
+  // nuevos a ninguna de las dos hasta resolver eso, o la divergencia se vuelve
+  // real y con datos de por medio.
   app.get("/api/departments", (req, res) => {
     const stmt = db.prepare("SELECT * FROM departments");
     res.json(stmt.all());

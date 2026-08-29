@@ -1,7 +1,6 @@
-import { useState } from 'react';
-import { Bell, ChevronLeft } from 'lucide-react';
-import { motion } from 'motion/react';
+import { ChevronLeft } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { DemoDataBadge } from './DemoDataBadge';
 
 export function NotificationView({ onBack }: { onBack: () => void }) {
   return (
@@ -12,6 +11,8 @@ export function NotificationView({ onBack }: { onBack: () => void }) {
         </button>
         <h2 className="text-2xl font-serif font-black text-slate-900 tracking-tight">Notificaciones</h2>
       </div>
+
+      <DemoDataBadge detail="Las tres notificaciones de abajo están escritas en el código; son las mismas para cualquier persona y no cambian. Todavía no existe una colección de notificaciones por usuario." />
 
       <div className="space-y-4">
         {[

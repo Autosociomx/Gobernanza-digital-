@@ -4,23 +4,20 @@
 Reporte manual de incidencias (luminaria, bacheo, falla hídrica), seguimiento de recolección de basura, y acceso a Mystery Shopper.
 
 ## Estado
-**Parcial — parte de la vista es real, parte es maqueta o tiene botones sin acción**
+**Parcial — el reporte manual ya es real (Firestore); RoutePro sigue siendo horario de ejemplo, ahora declarado como tal**
 
 ## Conexiones
 | Con | Qué fluye |
 |---|---|
-| reportesCiudadanosService.ts | Ya usado por el chat de Aura — estos botones deberían llamar al mismo servicio |
-| MysteryShopperView | Ya está correctamente enlazado desde aquí |
+| Firestore: colección `reportes_ciudadanos` | Escritura y lectura reales de reportes ciudadanos |
+| MysteryShopperView | Ya estaba correctamente enlazado desde aquí |
 
 ## Dónde vive
-- Código: `src/components/CitizenApp.tsx` — función/componente `ServiciosYReportesView()`, líneas 1625-1741
+- Código: `src/components/CitizenApp.tsx` — función/componente `ServiciosYReportesView()`, líneas 1625-1741 (rango creció tras la auditoría de 2026-08-25)
 
-
-## Cómo editarlo
-- Los 3 botones de reporte manual (Auditoría de Luminaria / Bacheo / Falla Hídrica) no tienen `onClick` — deberían invocar `crearReporte()` de `reportesCiudadanosService.ts`, igual que ya hace el chat de Aura.
-- "Seguimiento Recolección Basura" (RoutePro) tampoco tiene `onClick`.
-- El botón "Programa Mystery Shopper" sí navega correctamente — no tocar ese patrón, es la referencia correcta.
+## Auditoría 2026-08-25 — corregido
+- Los 3 botones de reporte manual (Auditoría de Luminaria / Bacheo / Falla Hídrica) no tenían `onClick`. Ahora cada uno abre un formulario real (descripción + ubicación GPS opcional) que escribe en Firestore (`reportes_ciudadanos`), con lista de "mis reportes" y opción de eliminar. El texto aclara que aún no hay despacho automático a una cuadrilla municipal ni carga de fotografía.
+- "Seguimiento Recolección Basura" (RoutePro) no tenía `onClick`. Ahora despliega un horario de ejemplo con `<DemoDataBadge />` explícito de que no hay GPS en vivo conectado a ninguna unidad — antes decía "Visibilidad GPS en tiempo real" sin que existiera.
 
 ## Pendientes
-- 3 CTAs muertas de reporte manual — la forma más barata de arreglarlas es reutilizar `crearReporte()`, ya probado por el chat.
-- 1 CTA muerta de seguimiento de RoutePro.
+- RoutePro sigue sin conexión real a GPS de unidades — el horario mostrado es de ejemplo, ya declarado como tal.

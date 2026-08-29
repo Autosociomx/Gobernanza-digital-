@@ -15,9 +15,12 @@ _Sin conexiones registradas todavía._
 - Alias de equipo: "AgroVisión 3D" (`docs/plataforma/03-DOCUMENTACION-FUNCIONAL.md` — marcado hoja de ruta, "Octane 3D Engine" es texto decorativo, no un motor 3D real)
 
 ## Cómo editarlo
-- Todos los valores NDVI y de mercado (líneas 1071-1076) son estáticos.
-- El botón "Generar Certificado de Producción" hace `setTimeout` y muestra éxito simulado — nada se genera ni se guarda.
+- Todos los valores NDVI y de mercado siguen siendo estáticos (ahora en la constante `MERCADO_AGRO`). Lleva `<DemoDataBadge />` visible explicando esto.
+- "Generar Certificado de Producción" dejó de ser un éxito simulado sin efecto: ahora arma un archivo real con los datos en pantalla, lo descarga, y lo anota en una lista de "certificados descargados en esta sesión" (estado real de React). El propio texto aclara que no se persiste en ningún servicio ni bitácora institucional todavía.
+
+## Auditoría 2026-08-25 — corregido
+- El botón de certificado pasó de "no hace nada real" a "produce un archivo real, aunque sin validez oficial ni persistencia" — mismo criterio aplicado en Observatorio.
 
 ## Pendientes
 - Conectar a una fuente real de datos satelitales/NDVI.
-- "Generar Certificado de Producción" no genera ni persiste ningún documento — es el botón más engañoso de este módulo.
+- Persistir el certificado generado en un servicio real en vez de solo descargarlo al dispositivo.

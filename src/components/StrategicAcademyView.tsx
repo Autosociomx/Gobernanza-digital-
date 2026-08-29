@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { AuraCertificationSeal } from './AuraCertificationSeal';
+import { DemoDataBadge } from './DemoDataBadge';
 
 const FlowStep = ({ title, subtitle, icon: Icon, color }: { title: string, subtitle: string, icon: any, color: string }) => (
   <motion.div 
@@ -47,6 +48,8 @@ const MonetizationCard = ({ title, desc, benefit }: { title: string, desc: strin
 );
 
 export function StrategicAcademyView({ onBack }: { onBack: () => void }) {
+  const [alianzaRegistrada, setAlianzaRegistrada] = React.useState(false);
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -81,6 +84,9 @@ export function StrategicAcademyView({ onBack }: { onBack: () => void }) {
             >
               Academia ConnectX 2026
             </motion.p>
+            <div className="max-w-2xl mx-auto text-left">
+              <DemoDataBadge detail="Esta vista es un blueprint estratégico: todo su contenido (niveles, modelo de sostenibilidad, cifras) es una propuesta escrita a mano, no hay servicio ni base de datos detrás de ninguna tarjeta." />
+            </div>
             <motion.h2 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -165,10 +171,10 @@ export function StrategicAcademyView({ onBack }: { onBack: () => void }) {
                  desc="Graduados nivel Oro actúan como instructores locales, monetizando su conocimiento dentro de la red."
                  benefit="Fortalecimiento de la estructura orgánica y técnica del sindicato."
                />
-               <MonetizationCard 
-                 title="Gestión Federal"
-                 desc="Captación de recursos federales (FAISPIAM) mediante consultoría técnica ConnectX para modernización."
-                 benefit="Demostración de gestión inteligente y proactiva de recursos públicos."
+               <MonetizationCard
+                 title="Gestión Federal (propuesta)"
+                 desc="Servicio de consultoría técnica propuesto: acompañar al municipio en la captación de recursos federales (FAISPIAM) para modernización. No existe hoy ninguna integración de código con ese fondo — es una línea de servicio por contratar, no una función del sistema."
+                 benefit="Si se contrata, permitiría demostrar gestión proactiva de recursos públicos."
                />
             </div>
          </div>
@@ -208,13 +214,34 @@ export function StrategicAcademyView({ onBack }: { onBack: () => void }) {
 
          {/* CTA Section */}
          <div className="flex flex-col items-center space-y-6">
-            <button 
-              onClick={() => alert('Propuesta de Alianza Estratégica enviada al Nodo de Gobernanza. Un consultor ConnectX se pondrá en contacto.')}
-              className="bg-white text-black w-full py-4 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-4"
+            <button
+              onClick={() => setAlianzaRegistrada(v => !v)}
+              aria-expanded={alianzaRegistrada}
+              className={cn(
+                "w-full py-4 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-4",
+                alianzaRegistrada ? "bg-emerald-500 text-black" : "bg-white text-black"
+              )}
             >
-               Iniciar Alianza Estratégica
-               <ArrowRight className="w-4 h-4" />
+               {alianzaRegistrada ? 'Cómo se inicia la alianza' : 'Iniciar Alianza Estratégica'}
+               <ArrowRight className={cn("w-4 h-4 transition-transform", alianzaRegistrada && "rotate-90")} />
             </button>
+
+            {alianzaRegistrada && (
+              <div className="w-full bg-white/5 border border-white/10 rounded-[2rem] p-6 space-y-3 text-left">
+                 <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Sin envío automático</p>
+                 <p className="text-xs text-slate-400 leading-relaxed">
+                    Este botón no manda ninguna solicitud: la plataforma no tiene todavía un canal de
+                    contacto conectado. La alianza se inicia fuera del sistema, con una sesión de
+                    trabajo entre el Ayuntamiento, el sindicato y el equipo técnico, y queda asentada
+                    en un acta del repositorio (<span className="font-mono text-slate-300">docs/actas/</span>).
+                 </p>
+                 <p className="text-xs text-slate-400 leading-relaxed">
+                    Lo que sí puedes hacer hoy dentro de la app: revisar el Plan Maestro Estratégico y
+                    la Academia para entender el alcance propuesto antes de comprometer nada.
+                 </p>
+              </div>
+            )}
+
             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Protocolo ConnectX v2.6.0</p>
          </div>
       </main>

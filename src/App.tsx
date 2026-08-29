@@ -1,5 +1,6 @@
 import React, { useState, lazy, Suspense } from 'react';
 import { PlatformLanding } from './components/PlatformLanding';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Las vistas pesadas se cargan bajo demanda: el visitante de la landing
 // no descarga el dashboard, la app ciudadana ni sus librerías (recharts,
@@ -49,7 +50,7 @@ function getInitialStateFromUrl() {
 }
 const initialUrlState = getInitialStateFromUrl();
 
-function App() {
+function AppRoutes() {
   const [currentView, setCurrentView] = useState<ViewType>(initialUrlState.view);
   const [citizenTab, setCitizenTab] = useState<any>(initialUrlState.tab);
   const [citizenAction, setCitizenAction] = useState<any>(null);
@@ -97,6 +98,22 @@ function App() {
         setCurrentView(view);
       }} />
     </div>
+  );
+}
+
+// El ErrorBoundary envuelve TODO el árbol de vistas, por fuera de cada
+// <Suspense>. Así atrapa dos familias de fallo que antes tumbaban la
+// pantalla a blanco:
+//   1. Errores de render/Firestore dentro de una vista ya cargada.
+//   2. Fallos al descargar un chunk de React.lazy (red caída, deploy nuevo),
+//      que Suspense no maneja: se propagan como error, no como "pending".
+// Va por fuera y no por dentro para no duplicar el boundary en cada rama;
+// el code-splitting (lazy + Suspense por vista) queda intacto.
+function App() {
+  return (
+    <ErrorBoundary>
+      <AppRoutes />
+    </ErrorBoundary>
   );
 }
 
