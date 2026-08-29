@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildEvidenceIndex } from '../evidenceIndex';
+import { buildEvidenceIndex, loadAllowlistedRepositoryEvidence, REPOSITORY_EVIDENCE_ALLOWLIST } from '../evidenceIndex';
 
 describe('Evidence Index v0.1 — fuente reproducible para CodeLens', () => {
   const source = {
@@ -57,5 +57,28 @@ describe('Evidence Index v0.1 — fuente reproducible para CodeLens', () => {
     expect(result.records).toHaveLength(1);
     expect(result.rejected.map((item) => item.reasonCode)).toContain('SOURCE_REF_DUPLICATE');
     expect(result.index.canonicalClaims).toEqual([{ claim_id: 'nodo:uno', statement: 'La fuente requiere revisión humana.' }]);
+  });
+
+  it('ingiere únicamente los documentos declarados y entrega una versión inmutable al índice', async () => {
+    const reads: string[] = [];
+    const sources = await loadAllowlistedRepositoryEvidence('/checkout', 'commit:abc123', {
+      realPath: async (path) => path,
+      readText: async (path) => {
+        reads.push(path);
+        return `contenido:${path}`;
+      },
+    });
+
+    expect(reads).toEqual(REPOSITORY_EVIDENCE_ALLOWLIST.map((entry) => `/checkout/${entry.path}`));
+    expect(sources.map((item) => item.ref)).toEqual(REPOSITORY_EVIDENCE_ALLOWLIST.map((entry) => entry.ref));
+    expect(sources.every((item) => item.sourceVersion === 'commit:abc123')).toBe(true);
+    expect(buildEvidenceIndex(sources).rejected).toEqual([]);
+  });
+
+  it('rechaza una ruta real fuera del checkout aunque una entrada permitida sea enlace simbólico', async () => {
+    await expect(loadAllowlistedRepositoryEvidence('/checkout', 'commit:abc123', {
+      realPath: async (path) => path.endsWith('BIBLIOTECA_LEGAL.md') ? '/outside/secreto.md' : path,
+      readText: async () => 'no debe leerse',
+    })).rejects.toThrow('ALLOWLIST_SYMLINK_OUTSIDE_ROOT');
   });
 });
