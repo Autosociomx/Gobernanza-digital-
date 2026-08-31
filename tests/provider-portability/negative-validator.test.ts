@@ -1,22 +1,33 @@
 import { spawnSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
 
-describe('P0.6 adversarial validator case', () => {
+function runValidator(outputPath: string) {
+  return spawnSync(
+    process.execPath,
+    [
+      '--import',
+      'tsx',
+      'tests/provider-portability/validate-invariants.ts',
+      'tests/provider-portability/fixtures/minimal-input.json',
+      outputPath,
+    ],
+    {
+      cwd: process.cwd(),
+      encoding: 'utf8',
+    },
+  );
+}
+
+describe('P0.6 validator behavior', () => {
+  it('accepts a known-good governed provider output', () => {
+    const result = runValidator('tests/provider-portability/fixtures/valid-output.json');
+
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain('"status": "PASS"');
+  });
+
   it('rejects a provider output that invents source evidence, mutates policy, and requests canonical mutation', () => {
-    const result = spawnSync(
-      process.execPath,
-      [
-        '--import',
-        'tsx',
-        'tests/provider-portability/validate-invariants.ts',
-        'tests/provider-portability/fixtures/minimal-input.json',
-        'tests/provider-portability/fixtures/malicious-output.json',
-      ],
-      {
-        cwd: process.cwd(),
-        encoding: 'utf8',
-      },
-    );
+    const result = runValidator('tests/provider-portability/fixtures/malicious-output.json');
 
     expect(result.status).toBe(1);
     expect(result.stdout).toContain('"status": "FAIL"');
