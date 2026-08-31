@@ -4,16 +4,7 @@
   "title": "Evidence Auditor Result",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "spec_version",
-    "execution_id",
-    "trace_id",
-    "role",
-    "capability",
-    "provider",
-    "result",
-    "governance"
-  ],
+  "required": ["spec_version", "execution_id", "trace_id", "role", "capability", "provider", "result", "governance"],
   "properties": {
     "spec_version": { "const": "0.1" },
     "execution_id": { "type": "string", "format": "uuid" },
@@ -33,43 +24,24 @@
     "result": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "classification",
-        "confidence",
-        "summary",
-        "claims",
-        "contradictions",
-        "limitations"
-      ],
+      "required": ["classification", "confidence", "summary", "claims", "contradictions", "limitations"],
       "properties": {
         "classification": {
           "type": "string",
-          "enum": [
-            "supported",
-            "partially_supported",
-            "contradicted",
-            "insufficient_evidence"
-          ]
+          "enum": ["supported", "partially_supported", "contradicted", "insufficient_evidence"]
         },
-        "confidence": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1
-        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
         "summary": { "type": "string" },
         "claims": {
           "type": "array",
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["statement", "type", "evidence_ids"],
+            "required": ["statement", "type", "source_evidence_ids"],
             "properties": {
               "statement": { "type": "string", "minLength": 1 },
-              "type": {
-                "type": "string",
-                "enum": ["fact", "inference"]
-              },
-              "evidence_ids": {
+              "type": { "type": "string", "enum": ["fact", "inference"] },
+              "source_evidence_ids": {
                 "type": "array",
                 "minItems": 1,
                 "uniqueItems": true,
@@ -83,10 +55,10 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["statement", "evidence_ids"],
+            "required": ["statement", "source_evidence_ids"],
             "properties": {
               "statement": { "type": "string", "minLength": 1 },
-              "evidence_ids": {
+              "source_evidence_ids": {
                 "type": "array",
                 "minItems": 1,
                 "uniqueItems": true,
