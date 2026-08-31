@@ -14,7 +14,7 @@
     "test:contextos": "vitest run contextos/__tests__/runtime.test.ts",
     "test:semantic-registry": "vitest run shared/semantic/__tests__/registry.test.ts",
     "test:orbe-contextos": "vitest run contextos/__tests__/runtime.test.ts src/orbe/__tests__/contextosBridge.test.ts shared/semantic/__tests__/registry.test.ts",
-    "test:provider-portability": "vitest run tests/provider-portability/runtime-boundary.test.ts tests/provider-portability/negative-validator.test.ts tests/provider-portability/evidence-auditor-policy.test.ts",
+    "test:provider-portability": "vitest run tests/provider-portability/schema-validator.test.ts tests/provider-portability/runtime-boundary.test.ts tests/provider-portability/negative-validator.test.ts tests/provider-portability/evidence-auditor-policy.test.ts",
     "contextos:lab": "tsx contextos/labServer.ts",
     "test:firestore-rules": "JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64 npx firebase emulators:exec --only firestore \"node scripts/test-firestore-rules.mjs\""
   },
@@ -32,7 +32,7 @@
     "express": "^4.21.2",
     "firebase": "^12.11.0",
     "html5-qrcode": "^2.3.8",
-    "jsbarcode": "^3.12.3",
+    "jsbarcode": "^4.2.0",
     "jspdf": "^4.2.0",
     "lucide-react": "^0.546.0",
     "motion": "^12.38.0",
