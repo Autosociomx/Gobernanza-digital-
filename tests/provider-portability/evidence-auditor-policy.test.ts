@@ -3,9 +3,10 @@ import {
   EVIDENCE_AUDITOR_POLICY_VERSION,
   evaluateEvidenceAuditorPolicy,
   evaluateEvidenceAuditorPostResultGate,
+  type EvidenceAuditorPolicyInput,
 } from '../../contextos/policies/evidenceAuditorPolicy';
 
-function validInput() {
+function validInput(): EvidenceAuditorPolicyInput {
   return {
     roleId: 'evidence.auditor',
     capabilityId: 'gov.mx.evidence.verify_claim',
@@ -23,8 +24,8 @@ function validInput() {
     evidence: [
       {
         sourceEvidenceId: 'PUE-COL-001:SRC-001:0123456789abcdef',
-        state: 'FROZEN' as const,
-        dataClassification: 'PUBLIC_ONLY' as const,
+        state: 'FROZEN',
+        dataClassification: 'PUBLIC_ONLY',
       },
     ],
     canonicalMutationRequested: false,
@@ -42,7 +43,7 @@ describe('Evidence Auditor policy v0.1', () => {
 
   it('rejects evidence that is not FROZEN', () => {
     const input = validInput();
-    input.evidence[0].state = 'APPROVED_PENDING_SNAPSHOT' as never;
+    input.evidence[0].state = 'APPROVED_PENDING_SNAPSHOT';
     const decision = evaluateEvidenceAuditorPolicy(input);
     expect(decision.decision).toBe('DENY');
     expect(decision.reasonCodes).toContain('SOURCE_NOT_FROZEN');
@@ -59,7 +60,7 @@ describe('Evidence Auditor policy v0.1', () => {
 
   it('rejects personal or unknown data instead of improvising consent in v0.1', () => {
     const input = validInput();
-    input.evidence[0].dataClassification = 'CONTAINS_PERSONAL_DATA' as never;
+    input.evidence[0].dataClassification = 'CONTAINS_PERSONAL_DATA';
     const decision = evaluateEvidenceAuditorPolicy(input);
     expect(decision.decision).toBe('DENY');
     expect(decision.reasonCodes).toContain('PERSONAL_OR_UNKNOWN_DATA_NOT_SUPPORTED_V0_1');
