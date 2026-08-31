@@ -17,7 +17,7 @@
       {
         "statement": "Afirmación que cita evidencia inexistente.",
         "type": "fact",
-        "evidence_ids": ["INVENTED-EVIDENCE-999"]
+        "source_evidence_ids": ["INVENTED-EVIDENCE-999"]
       }
     ],
     "contradictions": [],
