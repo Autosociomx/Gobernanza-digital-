@@ -95,6 +95,7 @@
         "required": [
           "source_evidence_id",
           "source_id",
+          "data_classification",
           "snapshot_sha256",
           "analysis_content_sha256",
           "content_derivation",
@@ -107,6 +108,10 @@
             "description": "Identity of frozen source evidence. It is intentionally distinct from Context.OS EvidenceRecord.evidenceId."
           },
           "source_id": { "type": "string", "minLength": 1 },
+          "data_classification": {
+            "const": "PUBLIC_ONLY",
+            "description": "P0.6 admits only public institutional or publicly disseminated evidence. Personal or unknown data is rejected before canonical input creation."
+          },
           "snapshot_sha256": {
             "type": "string",
             "pattern": "^[a-fA-F0-9]{64}$",
