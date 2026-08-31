@@ -95,6 +95,7 @@
         "required": [
           "source_evidence_id",
           "source_id",
+          "freeze_state",
           "data_classification",
           "snapshot_sha256",
           "analysis_content_sha256",
@@ -108,6 +109,10 @@
             "description": "Identity of frozen source evidence. It is intentionally distinct from Context.OS EvidenceRecord.evidenceId."
           },
           "source_id": { "type": "string", "minLength": 1 },
+          "freeze_state": {
+            "const": "FROZEN",
+            "description": "Only evidence that completed the deterministic Evidence Freeze Protocol may enter a provider-facing canonical input."
+          },
           "data_classification": {
             "const": "PUBLIC_ONLY",
             "description": "P0.6 admits only public institutional or publicly disseminated evidence. Personal or unknown data is rejected before canonical input creation."
