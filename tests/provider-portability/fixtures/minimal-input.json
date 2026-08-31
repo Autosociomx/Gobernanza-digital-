@@ -22,7 +22,7 @@
       "state": "NAY",
       "municipality": "Tepic"
     },
-    "purpose": "provider-portability-negative-test"
+    "purpose": "public_works_audit"
   },
   "policy": {
     "policy_version": "contextos.policy.evidence-auditor.v0.1"
