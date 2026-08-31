@@ -1,0 +1,37 @@
+{
+  "spec_version": "0.1",
+  "execution": {
+    "execution_id": "not-a-uuid",
+    "trace_id": "",
+    "timestamp": "not-a-date"
+  },
+  "role": {
+    "role_id": "evidence.auditor",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "capability_id": "gov.mx.evidence.verify_claim",
+    "version": "0.1.0",
+    "authority_scope": "advisory"
+  },
+  "context": {
+    "case_id": "TEST-SCHEMA-INVALID-001",
+    "jurisdiction": {
+      "country": "MX",
+      "state": "NAY",
+      "municipality": "Tepic"
+    },
+    "purpose": "public_works_audit"
+  },
+  "policy": {
+    "policy_version": "contextos.policy.evidence-auditor.v0.1"
+  },
+  "request": {
+    "task": "verify_claim",
+    "claim": {
+      "claim_id": "",
+      "text": ""
+    }
+  },
+  "evidence": []
+}

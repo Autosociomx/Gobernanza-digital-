@@ -45,6 +45,9 @@ jobs:
       - name: Probar integración ORBE–Context.OS
         run: npm run test:orbe-contextos
 
+      - name: Probar boundary y rechazo adversarial P0.6
+        run: npm run test:provider-portability
+
       - name: Compilar y verificar que la llave no esté en el bundle
         run: |
           npx vite build

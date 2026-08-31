@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://connectx.mx/schemas/evidence-auditor-result.v0.1.schema.json",
+  "title": "Evidence Auditor Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["spec_version", "execution_id", "trace_id", "role", "capability", "provider", "result", "governance"],
+  "properties": {
+    "spec_version": { "const": "0.1" },
+    "execution_id": { "type": "string", "format": "uuid" },
+    "trace_id": { "type": "string", "minLength": 1 },
+    "role": { "const": "evidence.auditor" },
+    "capability": { "const": "gov.mx.evidence.verify_claim" },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider_id", "model_id", "adapter_version"],
+      "properties": {
+        "provider_id": { "type": "string", "minLength": 1 },
+        "model_id": { "type": "string", "minLength": 1 },
+        "adapter_version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["classification", "confidence", "summary", "claims", "contradictions", "limitations"],
+      "properties": {
+        "classification": {
+          "type": "string",
+          "enum": ["supported", "partially_supported", "contradicted", "insufficient_evidence"]
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "summary": { "type": "string", "minLength": 1 },
+        "claims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["statement", "type", "source_evidence_ids"],
+            "properties": {
+              "statement": { "type": "string", "minLength": 1 },
+              "type": { "type": "string", "enum": ["fact", "inference"] },
+              "source_evidence_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        },
+        "contradictions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["statement", "source_evidence_ids"],
+            "properties": {
+              "statement": { "type": "string", "minLength": 1 },
+              "source_evidence_ids": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        },
+        "limitations": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "classification": { "const": "supported" } },
+            "required": ["classification"]
+          },
+          "then": {
+            "properties": { "claims": { "minItems": 1 } }
+          }
+        },
+        {
+          "if": {
+            "properties": { "classification": { "const": "partially_supported" } },
+            "required": ["classification"]
+          },
+          "then": {
+            "properties": { "claims": { "minItems": 1 } }
+          }
+        },
+        {
+          "if": {
+            "properties": { "classification": { "const": "contradicted" } },
+            "required": ["classification"]
+          },
+          "then": {
+            "properties": { "contradictions": { "minItems": 1 } }
+          }
+        },
+        {
+          "if": {
+            "properties": { "classification": { "const": "insufficient_evidence" } },
+            "required": ["classification"]
+          },
+          "then": {
+            "properties": { "limitations": { "minItems": 1 } }
+          }
+        }
+      ]
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority_scope", "policy_version", "canonical_mutation"],
+      "properties": {
+        "authority_scope": { "const": "advisory" },
+        "policy_version": { "const": "contextos.policy.evidence-auditor.v0.1" },
+        "canonical_mutation": { "const": false }
+      }
+    }
+  }
+}
