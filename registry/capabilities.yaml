@@ -10,6 +10,13 @@ capabilities:
 
     authority_scope: advisory
 
+    policy:
+      version: contextos.policy.evidence-auditor.v0.1
+      implementation: ../contextos/policies/evidenceAuditorPolicy.ts
+      required_freeze_state: FROZEN
+      supported_data_classification: PUBLIC_ONLY
+      contradicted_result_requires_human_review: true
+
     input_contract:
       schema: ../contracts/evidence-auditor-envelope.v0.1.schema.json
 
