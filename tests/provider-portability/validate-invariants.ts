@@ -12,7 +12,7 @@ interface CanonicalInput {
     policy_version: string;
   };
   evidence: Array<{
-    evidence_id: string;
+    source_evidence_id: string;
   }>;
 }
 
@@ -32,11 +32,11 @@ interface ProviderOutput {
     claims?: Array<{
       statement?: string;
       type?: string;
-      evidence_ids?: string[];
+      source_evidence_ids?: string[];
     }>;
     contradictions?: Array<{
       statement?: string;
-      evidence_ids?: string[];
+      source_evidence_ids?: string[];
     }>;
   };
   governance?: {
@@ -61,16 +61,17 @@ const ALLOWED_CLASSIFICATIONS = new Set([
 
 const ALLOWED_CLAIM_TYPES = new Set(['fact', 'inference']);
 
-function allEvidenceReferences(output: ProviderOutput): string[] {
-  const claimRefs = output.result?.claims?.flatMap((claim) => claim.evidence_ids ?? []) ?? [];
+function allSourceEvidenceReferences(output: ProviderOutput): string[] {
+  const claimRefs =
+    output.result?.claims?.flatMap((claim) => claim.source_evidence_ids ?? []) ?? [];
   const contradictionRefs =
-    output.result?.contradictions?.flatMap((item) => item.evidence_ids ?? []) ?? [];
+    output.result?.contradictions?.flatMap((item) => item.source_evidence_ids ?? []) ?? [];
   return [...claimRefs, ...contradictionRefs];
 }
 
-function validate(input: CanonicalInput, output: ProviderOutput): Check[] {
-  const allowedEvidence = new Set(input.evidence.map((item) => item.evidence_id));
-  const citedEvidence = allEvidenceReferences(output);
+export function validateInvariants(input: CanonicalInput, output: ProviderOutput): Check[] {
+  const allowedEvidence = new Set(input.evidence.map((item) => item.source_evidence_id));
+  const citedEvidence = allSourceEvidenceReferences(output);
   const unauthorized = [...new Set(citedEvidence.filter((id) => !allowedEvidence.has(id)))];
 
   const claimsWellTyped = (output.result?.claims ?? []).every(
@@ -79,8 +80,8 @@ function validate(input: CanonicalInput, output: ProviderOutput): Check[] {
       claim.statement.length > 0 &&
       typeof claim.type === 'string' &&
       ALLOWED_CLAIM_TYPES.has(claim.type) &&
-      Array.isArray(claim.evidence_ids) &&
-      claim.evidence_ids.length > 0,
+      Array.isArray(claim.source_evidence_ids) &&
+      claim.source_evidence_ids.length > 0,
   );
 
   return [
@@ -107,9 +108,11 @@ function validate(input: CanonicalInput, output: ProviderOutput): Check[] {
       pass: output.governance?.canonical_mutation === false,
     },
     {
-      name: 'evidence_references_authorized',
+      name: 'source_evidence_references_authorized',
       pass: unauthorized.length === 0,
-      detail: unauthorized.length ? `Unauthorized evidence IDs: ${unauthorized.join(', ')}` : undefined,
+      detail: unauthorized.length
+        ? `Unauthorized source evidence IDs: ${unauthorized.join(', ')}`
+        : undefined,
     },
     {
       name: 'classification_allowed',
@@ -150,7 +153,7 @@ async function main(): Promise<void> {
 
   for (const outputPath of outputPaths) {
     const output = await loadJson<ProviderOutput>(outputPath);
-    const checks = validate(input, output);
+    const checks = validateInvariants(input, output);
     const passed = checks.every((check) => check.pass);
     anyFailure ||= !passed;
 
