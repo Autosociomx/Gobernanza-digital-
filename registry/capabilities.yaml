@@ -1,0 +1,33 @@
+spec_version: "0.1"
+
+capabilities:
+  - capability_id: gov.mx.evidence.verify_claim
+    version: 0.1.0
+
+    role:
+      role_id: evidence.auditor
+      version: 0.1.0
+
+    authority_scope: advisory
+
+    input_contract:
+      schema: ../contracts/role-execution-envelope.v0.1.schema.json
+
+    output_contract:
+      schema: ../contracts/evidence-auditor-result.v0.1.schema.json
+
+    execution:
+      native_required: true
+      reasoning_optional: false
+
+    invariants:
+      evidence_ids_mutable: false
+      policy_version_mutable: false
+      execution_identity_mutable: false
+      canonical_state_mutation: false
+
+    supported_providers:
+      - anthropic
+      - openai
+      - google
+      - local
