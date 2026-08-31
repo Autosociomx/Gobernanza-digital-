@@ -40,11 +40,24 @@
     "context": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["context_handle", "case_id", "purpose"],
+      "required": ["context_handle", "case_id", "jurisdiction", "purpose"],
       "properties": {
-        "context_handle": { "type": "string", "minLength": 1 },
+        "context_handle": {
+          "type": "string",
+          "minLength": 1,
+          "description": "P0.6 portability-context identifier. It is not asserted to be a current ContextOSRuntime field."
+        },
         "case_id": { "type": "string", "minLength": 1 },
-        "jurisdiction": { "type": "string" },
+        "jurisdiction": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["country", "state", "municipality"],
+          "properties": {
+            "country": { "const": "MX" },
+            "state": { "type": "string", "minLength": 1 },
+            "municipality": { "type": "string", "minLength": 1 }
+          }
+        },
         "purpose": { "type": "string", "minLength": 1 }
       }
     },
@@ -80,7 +93,14 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["source_evidence_id", "source_id", "checksum_sha256", "content"],
+        "required": [
+          "source_evidence_id",
+          "source_id",
+          "snapshot_sha256",
+          "analysis_content_sha256",
+          "content_derivation",
+          "content"
+        ],
         "properties": {
           "source_evidence_id": {
             "type": "string",
@@ -88,10 +108,24 @@
             "description": "Identity of frozen source evidence. It is intentionally distinct from Context.OS EvidenceRecord.evidenceId."
           },
           "source_id": { "type": "string", "minLength": 1 },
-          "checksum_sha256": {
+          "snapshot_sha256": {
             "type": "string",
             "pattern": "^[a-fA-F0-9]{64}$",
-            "description": "SHA-256 of the exact frozen source snapshot bytes, not the Context.OS EvidenceRecord hash."
+            "description": "SHA-256 of the exact captured source snapshot bytes."
+          },
+          "analysis_content_sha256": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{64}$",
+            "description": "SHA-256 of the exact UTF-8 content string supplied to the reasoning provider."
+          },
+          "content_derivation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["method", "version"],
+            "properties": {
+              "method": { "type": "string", "minLength": 1 },
+              "version": { "type": "string", "minLength": 1 }
+            }
           },
           "locator": { "type": "string" },
           "content": { "type": "string", "minLength": 1 }
