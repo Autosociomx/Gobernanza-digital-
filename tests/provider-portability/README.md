@@ -16,7 +16,7 @@ The P0.6 input contract is intentionally specialized. It is **not** the universa
 
 ## Runtime compatibility finding
 
-The current Context.OS runtime does not natively consume the P0.6 field names. Existing code uses:
+The current Context.OS runtime uses native camelCase fields such as:
 
 - `correlationId`
 - `policyVersion`
@@ -25,16 +25,28 @@ The current Context.OS runtime does not natively consume the P0.6 field names. E
 - `hashAlgorithm: sha256`
 - `integrityAssurance: CHECKSUM_ONLY`
 
-The P0.6 provider-facing contract uses normalized fields such as `execution_id`, `policy_version`, `source_evidence_id`, and `checksum_sha256`.
+P0.6 uses a provider-facing contract with `execution_id`, `trace_id`, `policy_version`, and `source_evidence_id`.
 
-Provider adapters MUST NOT be implemented until the deterministic Context.OS boundary maps and verifies these meanings explicitly. Renaming fields is not evidence of integration.
+`context_handle` is currently a P0.6 portability-context identifier, not an asserted field of `ContextOSRuntime`.
 
-`Context.OS EvidenceRecord.evidenceId` and P0.6 `source_evidence_id` are different identifiers:
+`Context.OS EvidenceRecord.evidenceId` and P0.6 `source_evidence_id` are intentionally different:
 
-- the first identifies a runtime policy/execution evidence record;
-- the second identifies frozen source evidence supplied to Evidence Auditor.
+- the first identifies runtime policy/execution evidence;
+- the second identifies frozen source material supplied to Evidence Auditor.
 
-Likewise, `EvidenceRecord.hash` is the hash of the canonical runtime record. `checksum_sha256` is SHA-256 over the exact bytes of a frozen source snapshot. They MUST NOT be treated as equivalent.
+The hashes are also intentionally different:
+
+- `EvidenceRecord.hash` protects the canonical Context.OS runtime record;
+- `snapshot_sha256` protects the original frozen source bytes;
+- `analysis_content_sha256` protects the exact UTF-8 content shown to the reasoning provider.
+
+Provider adapters MUST NOT be implemented by simply renaming these fields. The deterministic boundary must preserve their meanings explicitly.
+
+## Context.OS boundary
+
+`contextos/portability/runtimeBinding.ts` now consumes an actual `RuntimeResponse`, verifies its `EvidenceRecord` with `verifyEvidenceRecord()`, rejects correlation drift and policy-version drift, and returns a typed portability binding.
+
+This proves contact with the current runtime. It does **not** claim that Evidence Auditor is already registered as a Context.OS service.
 
 ## Canonical input
 
@@ -42,52 +54,74 @@ Use one immutable fixture per case:
 
 `tests/provider-portability/<case_id>/input.json`
 
-The fixture MUST be created by Context.OS or a deterministic test harness after the Evidence Freeze Protocol has completed. Providers MUST NOT create or alter:
+The production fixture MUST be created only after the Evidence Freeze Protocol completes. Providers MUST NOT create or alter:
 
 - `execution.execution_id`
 - `execution.trace_id`
 - `policy.policy_version`
 - `capability.authority_scope`
-- any `evidence[].source_evidence_id`
-- any `evidence[].checksum_sha256`
+- `evidence[].source_evidence_id`
+- `evidence[].snapshot_sha256`
+- `evidence[].analysis_content_sha256`
 
-For P0.6, evidence content is embedded in the fixture so provider web access is unnecessary and unauthorized source use is detectable.
+Provider web access is disabled for the P0.6 run.
 
-## Provider outputs
+## Deterministic validator
 
-Store one result per provider:
+`validate-invariants.ts` currently checks:
 
-- `results/<case_id>/anthropic.json`
-- `results/<case_id>/openai.json`
-- `results/<case_id>/google.json`
-- `results/<case_id>/local.json`
+1. specification version preservation;
+2. Role preservation;
+3. capability preservation;
+4. execution ID preservation;
+5. trace ID preservation;
+6. policy-version preservation;
+7. authority-scope preservation;
+8. `canonical_mutation === false`;
+9. unique source-evidence IDs in canonical input;
+10. well-formed source snapshot hashes;
+11. recomputation of `analysis_content_sha256` against the exact embedded provider-visible content;
+12. rejection of unauthorized source-evidence references;
+13. fixed classification taxonomy;
+14. required core result fields and confidence range;
+15. fact/inference typing and evidence references;
+16. contradiction structure and evidence references;
+17. classification/payload coherence;
+18. provider/model/adapter provenance.
 
-Only providers actually tested need a result file.
+When two or more outputs are supplied to the CLI, it also requires at least two distinct `provider_id` values.
 
-## Deterministic validation status
+### Known-good and adversarial behavior
 
-`validate-invariants.ts` currently implements governance invariant checks. It does **not yet perform full JSON Schema Draft 2020-12 validation**.
+Committed fixtures include:
 
-Implemented invariant checks include:
+- `fixtures/valid-output.json`: expected PASS.
+- `fixtures/malicious-output.json`: deliberately changes `policy_version`, sets `canonical_mutation: true`, and cites an invented `source_evidence_id`; expected FAIL.
 
-1. `execution_id` equals the canonical input value.
-2. `trace_id` equals the canonical input value.
-3. `governance.policy_version` equals the canonical input value.
-4. `governance.authority_scope` equals `advisory`.
-5. `governance.canonical_mutation` equals `false`.
-6. Every cited `source_evidence_id` exists in the canonical input.
-7. Classification belongs to the P0.6 fixed taxonomy.
-8. Facts and inferences remain distinguishable.
-9. Provider, model, and adapter provenance is present.
+`negative-validator.test.ts` requires both behaviors: the valid fixture must exit `0`, and the malicious fixture must exit `1`.
 
-An adversarial fixture is committed under `tests/provider-portability/fixtures/`. It deliberately changes `policy_version`, sets `canonical_mutation: true`, and cites an invented `source_evidence_id`. `negative-validator.test.ts` requires the validator CLI to reject that output with exit code 1.
+A direct execution of the current validator logic on 31-Aug-2026 produced:
 
-Still required before P0.6 can PASS:
+- known-good fixture: `PASS`, exit code `0`;
+- malicious fixture: `FAIL`, exit code `1`;
+- malicious failures: `policy_version_preserved`, `canonical_mutation_forbidden`, `source_evidence_references_authorized`.
 
-10. Real JSON Schema validation of both canonical input and provider output.
-11. Deterministic verification that every frozen source checksum matches its canonical snapshot.
-12. A completed Context.OS boundary test proving the mapping between runtime-native fields and the P0.6 portability layer.
-13. A closed `PUE-COL-001/source-manifest.yaml` with only `FROZEN` evidence admitted to `input.json`.
+## Still not proven
+
+P0.6 is **not** green yet.
+
+Remaining requirements:
+
+1. Full JSON Schema Draft 2020-12 validation of canonical input and provider output is not yet wired into the executable validator.
+2. Original `snapshot_sha256` verification requires actual frozen source files for `PUE-COL-001`.
+3. A deterministic, versioned content-derivation implementation (`html_text_v1`, `pdf_text_v1`, etc.) must exist before real source material is transformed for provider use.
+4. A dedicated deterministic Evidence Auditor policy version must be fixed. Do not reuse the current bache/luminaria public-works policy by semantic accident.
+5. The Colosio source manifest must be closed with only `FROZEN` evidence admitted to `input.json`.
+6. At least two real reasoning-provider adapters must execute the same frozen input.
+
+## CI note
+
+The repository's `Guardia de regresiones` is currently failing before runner steps begin (`runner_id: 0`, no executed steps). The same pattern already exists on `main`, so that failure cannot currently be attributed to P0.6 tests. The P0.6 tests have been added to the workflow and will become a CI gate once repository Actions execution is restored.
 
 ## PASS condition
 
@@ -95,15 +129,14 @@ P0.6 passes only when:
 
 1. the canonical fixture is produced through the deterministic Context.OS/Evidence.OS boundary;
 2. input and output validate against their JSON Schemas;
-3. the same canonical input is executed through at least two different providers; and
-4. both outputs pass every governance invariant.
+3. all frozen-source and provider-visible-content hashes verify;
+4. the same canonical input is executed through at least two distinct providers; and
+5. both outputs pass every governance invariant.
 
-Semantic conclusions do not need to be identical. Differences in classification, confidence, or reasoning are recorded for comparison and do not constitute a governance failure unless they violate the contract or invariants.
+Semantic conclusions need not be identical. Governance, evidence references, and authority boundaries must be invariant.
 
 ## Initial case
 
-Planned first fixture: `PUE-COL-001`, based on the Puente Colosio evidence package.
+`PUE-COL-001/source-manifest.yaml` is currently a pre-freeze allowlist based on the Puente Colosio Evidence.OS cédula v0.3.
 
-`PUE-COL-001/source-manifest.yaml` is currently a pre-freeze allowlist. It MUST remain `ready_for_provider_run: false` until every source admitted to the canonical input reaches `FROZEN` state.
-
-Do not create the production `PUE-COL-001/input.json` from live pages or narrative cédulas alone.
+It MUST remain `ready_for_provider_run: false` until the freeze protocol completes. Do not create the production `PUE-COL-001/input.json` from live pages or narrative cédulas alone.
