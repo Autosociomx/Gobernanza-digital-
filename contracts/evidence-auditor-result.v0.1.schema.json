@@ -79,7 +79,7 @@
       "required": ["authority_scope", "policy_version", "canonical_mutation"],
       "properties": {
         "authority_scope": { "const": "advisory" },
-        "policy_version": { "type": "string", "minLength": 1 },
+        "policy_version": { "const": "contextos.policy.evidence-auditor.v0.1" },
         "canonical_mutation": { "const": false }
       }
     }
