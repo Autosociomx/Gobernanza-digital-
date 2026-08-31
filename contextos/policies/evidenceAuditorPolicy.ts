@@ -8,7 +8,6 @@ export const EVIDENCE_AUDITOR_ALLOWED_PURPOSES = [
   'institutional_evidence_verification',
 ] as const;
 
-type AllowedPurpose = (typeof EVIDENCE_AUDITOR_ALLOWED_PURPOSES)[number];
 export type EvidenceFreezeState =
   | 'CANDIDATE'
   | 'APPROVED_PENDING_SNAPSHOT'
