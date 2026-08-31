@@ -2,7 +2,7 @@
 
 ## Objective
 
-Demonstrate that `evidence.auditor` can execute the same governed request through at least two reasoning providers without transferring control of execution identity, policy, evidence identity, authority scope, or canonical state to the provider.
+Demonstrate that `evidence.auditor` can execute the same governed request through at least two reasoning providers without transferring control of execution identity, policy, source-evidence identity, authority scope, or canonical state to the provider.
 
 ## Capability
 
@@ -10,6 +10,7 @@ Demonstrate that `evidence.auditor` can execute the same governed request throug
 - Capability: `gov.mx.evidence.verify_claim`
 - Authority: `advisory`
 - Input contract: `contracts/evidence-auditor-envelope.v0.1.schema.json`
+- Freeze protocol: `docs/evidence-os/EVIDENCE_FREEZE_PROTOCOL_v0.1.md`
 
 The P0.6 input contract is intentionally specialized. It is **not** the universal Role envelope yet.
 
@@ -19,16 +20,21 @@ The current Context.OS runtime does not natively consume the P0.6 field names. E
 
 - `correlationId`
 - `policyVersion`
-- `evidenceId`
-- `hash`
+- `EvidenceRecord.evidenceId`
+- `EvidenceRecord.hash`
 - `hashAlgorithm: sha256`
 - `integrityAssurance: CHECKSUM_ONLY`
 
-The P0.6 provider-facing contract currently uses normalized snake_case fields such as `execution_id`, `policy_version`, `evidence_id`, and `checksum_sha256`.
+The P0.6 provider-facing contract uses normalized fields such as `execution_id`, `policy_version`, `source_evidence_id`, and `checksum_sha256`.
 
-Therefore provider adapters MUST NOT be implemented until a deterministic Context.OS boundary maps and verifies those fields explicitly. Renaming fields is not evidence of integration.
+Provider adapters MUST NOT be implemented until the deterministic Context.OS boundary maps and verifies these meanings explicitly. Renaming fields is not evidence of integration.
 
-A further semantic distinction is required: the current Context.OS `EvidenceRecord.evidenceId` identifies a runtime policy/execution evidence record, while P0.6 `evidence[].evidence_id` is intended to identify frozen source evidence supplied to Evidence Auditor. These identifiers MUST NOT be conflated.
+`Context.OS EvidenceRecord.evidenceId` and P0.6 `source_evidence_id` are different identifiers:
+
+- the first identifies a runtime policy/execution evidence record;
+- the second identifies frozen source evidence supplied to Evidence Auditor.
+
+Likewise, `EvidenceRecord.hash` is the hash of the canonical runtime record. `checksum_sha256` is SHA-256 over the exact bytes of a frozen source snapshot. They MUST NOT be treated as equivalent.
 
 ## Canonical input
 
@@ -36,13 +42,13 @@ Use one immutable fixture per case:
 
 `tests/provider-portability/<case_id>/input.json`
 
-The fixture MUST be created by Context.OS or a deterministic test harness before any provider is called. Providers MUST NOT create or alter:
+The fixture MUST be created by Context.OS or a deterministic test harness after the Evidence Freeze Protocol has completed. Providers MUST NOT create or alter:
 
 - `execution.execution_id`
 - `execution.trace_id`
 - `policy.policy_version`
 - `capability.authority_scope`
-- any `evidence[].evidence_id`
+- any `evidence[].source_evidence_id`
 - any `evidence[].checksum_sha256`
 
 For P0.6, evidence content is embedded in the fixture so provider web access is unnecessary and unauthorized source use is detectable.
@@ -69,16 +75,19 @@ Implemented invariant checks include:
 3. `governance.policy_version` equals the canonical input value.
 4. `governance.authority_scope` equals `advisory`.
 5. `governance.canonical_mutation` equals `false`.
-6. Every cited `evidence_id` exists in the canonical input.
+6. Every cited `source_evidence_id` exists in the canonical input.
 7. Classification belongs to the P0.6 fixed taxonomy.
 8. Facts and inferences remain distinguishable.
 9. Provider, model, and adapter provenance is present.
+
+An adversarial fixture is committed under `tests/provider-portability/fixtures/`. It deliberately changes `policy_version`, sets `canonical_mutation: true`, and cites an invented `source_evidence_id`. `negative-validator.test.ts` requires the validator CLI to reject that output with exit code 1.
 
 Still required before P0.6 can PASS:
 
 10. Real JSON Schema validation of both canonical input and provider output.
 11. Deterministic verification that every frozen source checksum matches its canonical snapshot.
-12. A Context.OS boundary test proving the mapping between runtime-native fields and the P0.6 contract.
+12. A completed Context.OS boundary test proving the mapping between runtime-native fields and the P0.6 portability layer.
+13. A closed `PUE-COL-001/source-manifest.yaml` with only `FROZEN` evidence admitted to `input.json`.
 
 ## PASS condition
 
@@ -95,8 +104,6 @@ Semantic conclusions do not need to be identical. Differences in classification,
 
 Planned first fixture: `PUE-COL-001`, based on the Puente Colosio evidence package.
 
-Do not add that fixture until its source snapshots, checksums, and evidence identifiers are frozen by the deterministic evidence layer.
+`PUE-COL-001/source-manifest.yaml` is currently a pre-freeze allowlist. It MUST remain `ready_for_provider_run: false` until every source admitted to the canonical input reaches `FROZEN` state.
 
-## Immediate next engineering task
-
-Before the first provider adapter, implement and test the deterministic boundary between current Context.OS types (`RuntimeResponse`, `PolicyDecision`, `EvidenceRecord`) and the Evidence Auditor portability contract. The boundary must preserve names and meanings explicitly rather than assuming equivalence.
+Do not create the production `PUE-COL-001/input.json` from live pages or narrative cédulas alone.
