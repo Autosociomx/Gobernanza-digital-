@@ -25,7 +25,7 @@
   },
   "governance": {
     "authority_scope": "advisory",
-    "policy_version": "contextos.policy.test.v0.1",
+    "policy_version": "contextos.policy.evidence-auditor.v0.1",
     "canonical_mutation": false
   }
 }
