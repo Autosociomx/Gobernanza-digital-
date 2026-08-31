@@ -3,11 +3,13 @@ freeze_protocol: docs/evidence-os/EVIDENCE_FREEZE_PROTOCOL_v0.1.md
 freeze_version: "0.1-draft"
 closed_for_provider_run: false
 ready_for_provider_run: false
+policy_version: null
 
 notes:
-  - "This manifest is a pre-freeze allowlist derived from Evidence.OS cédula v0.3."
-  - "No source_evidence_id or checksum is assigned until exact bytes are captured and re-verified."
+  - "Pre-freeze allowlist derived from Evidence.OS cédula v0.3."
+  - "No source_evidence_id or hash is assigned until exact bytes and provider-visible content are captured and re-verified."
   - "Only entries that reach FROZEN may be copied into input.json."
+  - "A dedicated deterministic Evidence Auditor policy version is still required before a real provider run."
 
 sources:
   - source_id: PUE-COL-001-SRC-001
@@ -20,8 +22,12 @@ sources:
     captured_at_utc: null
     media_type: null
     byte_length: null
-    checksum_sha256: null
+    capture_method: null
+    snapshot_sha256: null
     snapshot_path: null
+    analysis_content_path: null
+    analysis_content_sha256: null
+    content_derivation: { method: null, version: null }
     provenance_note: "Cronología municipal, monto, adjudicatario y rutas alternas."
     admission_reason: "Primary municipal representation of the project chronology and local role."
 
@@ -35,8 +41,12 @@ sources:
     captured_at_utc: null
     media_type: null
     byte_length: null
-    checksum_sha256: null
+    capture_method: null
+    snapshot_sha256: null
     snapshot_path: null
+    analysis_content_path: null
+    analysis_content_sha256: null
+    content_derivation: { method: null, version: null }
     provenance_note: "Contemporaneous 2022 reporting of municipal proposal and initial 120 MDP estimate."
     admission_reason: "Supports chronology and distinguishes preliminary estimate from later contracted amount."
 
@@ -50,9 +60,13 @@ sources:
     captured_at_utc: null
     media_type: null
     byte_length: null
-    checksum_sha256: null
+    capture_method: null
+    snapshot_sha256: null
     snapshot_path: null
-    provenance_note: "Contains a direct statement attributed to Geraldine Ponce about the earlier 110–120 MDP estimate and later federal figure."
+    analysis_content_path: null
+    analysis_content_sha256: null
+    content_derivation: { method: null, version: null }
+    provenance_note: "Direct statement attributed to Geraldine Ponce about the earlier 110–120 MDP estimate and later federal figure."
     admission_reason: "Useful for provenance of the cost narrative, not a substitute for primary budget documents."
 
   - source_id: PUE-COL-001-SRC-004
@@ -65,8 +79,12 @@ sources:
     captured_at_utc: null
     media_type: null
     byte_length: null
-    checksum_sha256: null
+    capture_method: null
+    snapshot_sha256: null
     snapshot_path: null
+    analysis_content_path: null
+    analysis_content_sha256: null
+    content_derivation: { method: null, version: null }
     provenance_note: "Cédula v0.3 identifies a federal program reference around Mar–Jun 2025, including a ~250 MDP figure, but the exact primary locator is not frozen in the cédula."
     admission_reason: "High-value primary source once exact official document URL is resolved."
 
@@ -80,8 +98,12 @@ sources:
     captured_at_utc: null
     media_type: null
     byte_length: null
-    checksum_sha256: null
+    capture_method: null
+    snapshot_sha256: null
     snapshot_path: null
+    analysis_content_path: null
+    analysis_content_sha256: null
+    content_derivation: { method: null, version: null }
     provenance_note: "Cédula stores a truncated URL only."
     admission_reason: "Relevant to procurement chronology and reported dimensions, but exact locator is required before capture."
 
@@ -95,8 +117,12 @@ sources:
     captured_at_utc: null
     media_type: null
     byte_length: null
-    checksum_sha256: null
+    capture_method: null
+    snapshot_sha256: null
     snapshot_path: null
+    analysis_content_path: null
+    analysis_content_sha256: null
+    content_derivation: { method: null, version: null }
     provenance_note: "Cédula stores a truncated URL only."
     admission_reason: "Relevant to start-of-works chronology; exact locator must be resolved."
 
@@ -110,8 +136,12 @@ sources:
     captured_at_utc: null
     media_type: null
     byte_length: null
-    checksum_sha256: null
+    capture_method: null
+    snapshot_sha256: null
     snapshot_path: null
+    analysis_content_path: null
+    analysis_content_sha256: null
+    content_derivation: { method: null, version: null }
     provenance_note: "Reports traffic closure associated with start of construction."
     admission_reason: "Supports observable start-of-works chronology."
 
@@ -125,8 +155,12 @@ sources:
     captured_at_utc: null
     media_type: null
     byte_length: null
-    checksum_sha256: null
+    capture_method: null
+    snapshot_sha256: null
     snapshot_path: null
+    analysis_content_path: null
+    analysis_content_sha256: null
+    content_derivation: { method: null, version: null }
     provenance_note: "Near-identical reports may share a single agency origin; exact URLs were not preserved in the cédula."
     admission_reason: "Potential corroboration only after exact locators are resolved and shared-origin risk is recorded."
 
@@ -140,8 +174,12 @@ sources:
     captured_at_utc: null
     media_type: null
     byte_length: null
-    checksum_sha256: null
+    capture_method: null
+    snapshot_sha256: null
     snapshot_path: null
+    analysis_content_path: null
+    analysis_content_sha256: null
+    content_derivation: { method: null, version: null }
     provenance_note: "Contains the isolated 924 m figure and chronology language that conflicts with other sources."
     admission_reason: "Admitted specifically as contradiction evidence, not because its disputed claims are accepted."
 
@@ -155,8 +193,12 @@ sources:
     captured_at_utc: null
     media_type: null
     byte_length: null
-    checksum_sha256: null
+    capture_method: null
+    snapshot_sha256: null
     snapshot_path: null
+    analysis_content_path: null
+    analysis_content_sha256: null
+    content_derivation: { method: null, version: null }
     provenance_note: "Verified in the cédula as unrelated to Puente Colosio; concerns Ixtapa–Miramar road conservation."
     admission_reason: "Negative/control evidence documenting rejection of a prior false-positive search result."
 
@@ -170,7 +212,11 @@ sources:
     captured_at_utc: null
     media_type: null
     byte_length: null
-    checksum_sha256: null
+    capture_method: null
+    snapshot_sha256: null
     snapshot_path: null
+    analysis_content_path: null
+    analysis_content_sha256: null
+    content_derivation: { method: null, version: null }
     provenance_note: "Generic portal only. Exact procedure resource, signed award, contract, bases and technical annexes are not yet individually resolved."
     admission_reason: "Highest-value procurement evidence once exact primary resources are identified; generic portal is not freezeable evidence."
