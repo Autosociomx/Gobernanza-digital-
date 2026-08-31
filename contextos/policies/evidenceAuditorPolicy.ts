@@ -72,8 +72,10 @@ function deny(reasonCode: string): EvidenceAuditorPolicyDecision {
 
 function requiredFields(input: EvidenceAuditorPolicyInput): string[] {
   const missing: string[] = [];
+  if (!input.purpose?.trim()) missing.push('purpose');
   if (!input.context.caseId?.trim()) missing.push('context.case_id');
   if (!input.context.contextHandle?.trim()) missing.push('context.context_handle');
+  if (!input.context.jurisdiction?.country?.trim()) missing.push('context.jurisdiction.country');
   if (!input.context.jurisdiction?.state?.trim()) missing.push('context.jurisdiction.state');
   if (!input.context.jurisdiction?.municipality?.trim()) {
     missing.push('context.jurisdiction.municipality');
@@ -84,6 +86,11 @@ function requiredFields(input: EvidenceAuditorPolicyInput): string[] {
   return missing;
 }
 
+function sourceEvidenceIdsUnique(input: EvidenceAuditorPolicyInput): boolean {
+  const ids = input.evidence.map((item) => item.sourceEvidenceId?.trim()).filter(Boolean) as string[];
+  return new Set(ids).size === ids.length;
+}
+
 export function evaluateEvidenceAuditorPolicy(
   input: EvidenceAuditorPolicyInput,
 ): EvidenceAuditorPolicyDecision {
@@ -92,10 +99,6 @@ export function evaluateEvidenceAuditorPolicy(
   if (input.authorityScope !== EVIDENCE_AUDITOR_AUTHORITY_SCOPE) {
     return deny('AUTHORITY_SCOPE_ESCALATION_FORBIDDEN');
   }
-  if (!(EVIDENCE_AUDITOR_ALLOWED_PURPOSES as readonly string[]).includes(input.purpose)) {
-    return deny('PURPOSE_NOT_ALLOWED');
-  }
-  if (input.context.jurisdiction?.country !== 'MX') return deny('COUNTRY_NOT_ALLOWED');
   if (input.canonicalMutationRequested === true) return deny('CANONICAL_MUTATION_FORBIDDEN');
 
   const missing = requiredFields(input);
@@ -110,12 +113,17 @@ export function evaluateEvidenceAuditorPolicy(
     };
   }
 
+  if (!(EVIDENCE_AUDITOR_ALLOWED_PURPOSES as readonly string[]).includes(input.purpose)) {
+    return deny('PURPOSE_NOT_ALLOWED');
+  }
+  if (input.context.jurisdiction?.country !== 'MX') return deny('COUNTRY_NOT_ALLOWED');
   if (input.evidence.some((item) => item.state !== 'FROZEN')) {
     return deny('SOURCE_NOT_FROZEN');
   }
   if (input.evidence.some((item) => !item.sourceEvidenceId?.trim())) {
     return deny('SOURCE_EVIDENCE_ID_REQUIRED');
   }
+  if (!sourceEvidenceIdsUnique(input)) return deny('SOURCE_EVIDENCE_IDS_DUPLICATED');
   if (input.evidence.some((item) => item.dataClassification !== 'PUBLIC_ONLY')) {
     return deny('PERSONAL_OR_UNKNOWN_DATA_NOT_SUPPORTED_V0_1');
   }
@@ -131,6 +139,7 @@ export function evaluateEvidenceAuditorPolicy(
       'PURPOSE_ALLOWED',
       'MX_JURISDICTION_BOUND',
       'ALL_SOURCES_FROZEN',
+      'SOURCE_EVIDENCE_IDS_UNIQUE',
       'PUBLIC_ONLY_EVIDENCE',
       'ADVISORY_ONLY',
       'CANONICAL_MUTATION_FORBIDDEN',
