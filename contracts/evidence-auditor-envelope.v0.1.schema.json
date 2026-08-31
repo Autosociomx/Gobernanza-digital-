@@ -66,8 +66,7 @@
       "additionalProperties": false,
       "required": ["policy_version"],
       "properties": {
-        "policy_version": { "type": "string", "minLength": 1 },
-        "human_approval_required": { "type": "boolean" }
+        "policy_version": { "const": "contextos.policy.evidence-auditor.v0.1" }
       }
     },
     "request": {
