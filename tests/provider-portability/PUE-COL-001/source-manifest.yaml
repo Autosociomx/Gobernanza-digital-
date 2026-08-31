@@ -3,18 +3,19 @@ freeze_protocol: docs/evidence-os/EVIDENCE_FREEZE_PROTOCOL_v0.1.md
 freeze_version: "0.1-draft"
 closed_for_provider_run: false
 ready_for_provider_run: false
-policy_version: null
+policy_version: contextos.policy.evidence-auditor.v0.1
 
 notes:
   - "Pre-freeze allowlist derived from Evidence.OS cédula v0.3."
   - "No source_evidence_id or hash is assigned until exact bytes and provider-visible content are captured and re-verified."
-  - "Only entries that reach FROZEN may be copied into input.json."
-  - "A dedicated deterministic Evidence Auditor policy version is still required before a real provider run."
+  - "Only entries that reach FROZEN and data_classification PUBLIC_ONLY may be copied into input.json."
+  - "UNKNOWN classification must be resolved before a source can be admitted to the provider-facing canonical input."
 
 sources:
   - source_id: PUE-COL-001-SRC-001
     source_evidence_id: null
     state: APPROVED_PENDING_SNAPSHOT
+    data_classification: PUBLIC_ONLY
     title: "Ayuntamiento de Tepic — Nuevo Puente en las Vías del Tren"
     source_type: institutional_municipal
     requested_locator: "https://www.tepic.gob.mx/rutas_alternas/"
@@ -34,6 +35,7 @@ sources:
   - source_id: PUE-COL-001-SRC-002
     source_evidence_id: null
     state: APPROVED_PENDING_SNAPSHOT
+    data_classification: PUBLIC_ONLY
     title: "Nayarit Noticias — Puente en Colosio y Guadalajara costaría 120 MDP"
     source_type: contemporaneous_news
     requested_locator: "https://nayaritnoticias.com/2022/10/19/puente-en-colosio-y-guadalajara-costaria-120-mdp/"
@@ -53,6 +55,7 @@ sources:
   - source_id: PUE-COL-001-SRC-003
     source_evidence_id: null
     state: APPROVED_PENDING_SNAPSHOT
+    data_classification: PUBLIC_ONLY
     title: "Meganoticias Tepic — Confirmado: construcción de puente en Boulevard Colosio inicia este 2025"
     source_type: news_direct_statement
     requested_locator: "https://www.meganoticias.mx/tepic/noticia/confirmado-construccion-de-puente-en-boulevard-colosio-inicia-este-2025/627390"
@@ -72,6 +75,7 @@ sources:
   - source_id: PUE-COL-001-SRC-004
     source_evidence_id: null
     state: BLOCKED
+    data_classification: UNKNOWN
     title: "SICT / Gobierno de México — federal bridge program 2025"
     source_type: institutional_federal
     requested_locator: null
@@ -91,6 +95,7 @@ sources:
   - source_id: PUE-COL-001-SRC-005
     source_evidence_id: null
     state: BLOCKED
+    data_classification: UNKNOWN
     title: "La Crónica de Hoy — licitación / dimensions, 30-Jun-2026"
     source_type: news
     requested_locator: null
@@ -110,6 +115,7 @@ sources:
   - source_id: PUE-COL-001-SRC-006
     source_evidence_id: null
     state: BLOCKED
+    data_classification: UNKNOWN
     title: "La Crónica de Hoy — inicio de obra, 21-Aug-2026"
     source_type: news
     requested_locator: null
@@ -129,6 +135,7 @@ sources:
   - source_id: PUE-COL-001-SRC-007
     source_evidence_id: null
     state: APPROVED_PENDING_SNAPSHOT
+    data_classification: PUBLIC_ONLY
     title: "Meridiano.mx — Cierran bulevar Colosio por obras de paso a desnivel"
     source_type: news
     requested_locator: "https://meridiano.mx/2026/08/19/cierran-bulevar-colosio-por-obras-de-paso-a-desnivel/"
@@ -148,6 +155,7 @@ sources:
   - source_id: PUE-COL-001-SRC-008
     source_evidence_id: null
     state: BLOCKED
+    data_classification: UNKNOWN
     title: "24-Horas / Mexican Times / Impacto Informativo / Maya Comunicación cluster, 19-Aug-2026"
     source_type: syndicated_news_cluster
     requested_locator: null
@@ -167,6 +175,7 @@ sources:
   - source_id: PUE-COL-001-SRC-009
     source_evidence_id: null
     state: APPROVED_PENDING_SNAPSHOT
+    data_classification: PUBLIC_ONLY
     title: "NNC.mx — Geraldine Ponce acelera construcción del puente en bulevar Colosio"
     source_type: news_contradiction_source
     requested_locator: "https://nnc.mx/articulo/geraldine-ponce-acelera-construccion-del-puente-en-bulevar-colosio-obra-entra-a-licitacion-en-2026"
@@ -186,6 +195,7 @@ sources:
   - source_id: PUE-COL-001-SRC-010
     source_evidence_id: null
     state: APPROVED_PENDING_SNAPSHOT
+    data_classification: PUBLIC_ONLY
     title: "SIDOF / Segob — Convocatoria 015, Centro SICT Nayarit, Sep-2022"
     source_type: institutional_false_positive_control
     requested_locator: "https://sidof.segob.gob.mx/notas/docFuente/5664900"
@@ -205,6 +215,7 @@ sources:
   - source_id: PUE-COL-001-SRC-011
     source_evidence_id: null
     state: BLOCKED
+    data_classification: UNKNOWN
     title: "ComprasMX / SICT procurement expediente"
     source_type: institutional_primary_procurement
     requested_locator: "https://comprasmx.buengobierno.gob.mx/sitiopublico/"
