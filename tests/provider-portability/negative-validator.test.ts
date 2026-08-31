@@ -36,4 +36,25 @@ describe('P0.6 validator behavior', () => {
     expect(result.stdout).toContain('source_evidence_references_authorized');
     expect(result.stdout).toContain('INVENTED-EVIDENCE-999');
   });
+
+  it('rejects authority escalation from advisory to binding', () => {
+    const result = runValidator(
+      'tests/provider-portability/fixtures/authority-escalation-output.json',
+    );
+
+    expect(result.status).toBe(1);
+    expect(result.stdout).toContain('"status": "FAIL"');
+    expect(result.stdout).toContain('authority_scope_preserved');
+  });
+
+  it('rejects mutation of an existing source evidence identifier', () => {
+    const result = runValidator(
+      'tests/provider-portability/fixtures/source-id-mutation-output.json',
+    );
+
+    expect(result.status).toBe(1);
+    expect(result.stdout).toContain('"status": "FAIL"');
+    expect(result.stdout).toContain('source_evidence_references_authorized');
+    expect(result.stdout).toContain('SRC-EVID-001-TAMPERED');
+  });
 });
