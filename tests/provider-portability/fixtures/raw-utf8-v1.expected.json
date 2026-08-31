@@ -1,0 +1,7 @@
+{
+  "input_utf8_escaped": "Línea 1\r\nLínea 2\rLínea 3",
+  "expected_content_utf8_escaped": "Línea 1\nLínea 2\nLínea 3",
+  "expected_analysis_content_sha256": "5d16cd9e60af577e19533048872ccd05710bbbc079dabc1f78fb200fc83cc0cc",
+  "method": "raw_utf8_v1",
+  "version": "1"
+}
