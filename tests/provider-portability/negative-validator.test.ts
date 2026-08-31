@@ -57,4 +57,14 @@ describe('P0.6 validator behavior', () => {
     expect(result.stdout).toContain('source_evidence_references_authorized');
     expect(result.stdout).toContain('SRC-EVID-001-TAMPERED');
   });
+
+  it('rejects contradicted classification when contradiction details are omitted', () => {
+    const result = runValidator(
+      'tests/provider-portability/fixtures/contradiction-omission-output.json',
+    );
+
+    expect(result.status).toBe(1);
+    expect(result.stdout).toContain('"status": "FAIL"');
+    expect(result.stdout).toContain('classification_payload_coherent');
+  });
 });
