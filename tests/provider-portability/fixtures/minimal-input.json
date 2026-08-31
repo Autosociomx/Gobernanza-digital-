@@ -17,7 +17,11 @@
   "context": {
     "context_handle": "ctx-p06-negative-001",
     "case_id": "TEST-NEG-001",
-    "jurisdiction": "MX-NAY-TEPIC",
+    "jurisdiction": {
+      "country": "MX",
+      "state": "NAY",
+      "municipality": "Tepic"
+    },
     "purpose": "provider-portability-negative-test"
   },
   "policy": {
@@ -35,7 +39,12 @@
     {
       "source_evidence_id": "SRC-EVID-001",
       "source_id": "SRC-001",
-      "checksum_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "snapshot_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "analysis_content_sha256": "f461e666ae93f91eebe52c71083380a735cdc551d21b240a2fd9a940b6a0634b",
+      "content_derivation": {
+        "method": "raw_utf8",
+        "version": "test-v1"
+      },
       "locator": "fixture://source-001",
       "content": "Contenido sintético autorizado exclusivamente para probar el validador."
     }
