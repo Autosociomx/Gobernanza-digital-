@@ -1,0 +1,43 @@
+{
+  "spec_version": "0.1",
+  "execution": {
+    "execution_id": "11111111-1111-4111-8111-111111111111",
+    "trace_id": "trace-p06-negative-001",
+    "timestamp": "2026-08-31T18:40:00.000Z"
+  },
+  "role": {
+    "role_id": "evidence.auditor",
+    "version": "0.1.0"
+  },
+  "capability": {
+    "capability_id": "gov.mx.evidence.verify_claim",
+    "version": "0.1.0",
+    "authority_scope": "advisory"
+  },
+  "context": {
+    "context_handle": "ctx-p06-negative-001",
+    "case_id": "TEST-NEG-001",
+    "jurisdiction": "MX-NAY-TEPIC",
+    "purpose": "provider-portability-negative-test"
+  },
+  "policy": {
+    "policy_version": "contextos.policy.test.v0.1",
+    "human_approval_required": false
+  },
+  "request": {
+    "task": "verify_claim",
+    "claim": {
+      "claim_id": "CLAIM-NEG-001",
+      "text": "Fixture deliberadamente sintético para probar rechazo de una salida adversarial."
+    }
+  },
+  "evidence": [
+    {
+      "evidence_id": "SRC-EVID-001",
+      "source_id": "SRC-001",
+      "checksum_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "locator": "fixture://source-001",
+      "content": "Contenido sintético autorizado exclusivamente para probar el validador."
+    }
+  ]
+}
