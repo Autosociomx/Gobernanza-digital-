@@ -66,4 +66,15 @@ describe('P0.6 JSON Schema Draft 2020-12 validation', () => {
     expect(result.stdout).toContain('const');
     expect(result.stdout).toContain('enum');
   });
+
+  it('rejects contradicted classification with an empty contradictions array', () => {
+    const result = runSchemaValidator(
+      OUTPUT_SCHEMA,
+      'tests/provider-portability/fixtures/contradiction-omission-output.json',
+    );
+
+    expect(result.status).toBe(1);
+    expect(result.stdout).toContain('"status": "FAIL"');
+    expect(result.stdout).toContain('minItems');
+  });
 });
