@@ -2,7 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
 
 describe('P0.6 adversarial validator case', () => {
-  it('rejects a provider output that invents evidence, mutates policy, and requests canonical mutation', () => {
+  it('rejects a provider output that invents source evidence, mutates policy, and requests canonical mutation', () => {
     const result = spawnSync(
       process.execPath,
       [
@@ -22,7 +22,7 @@ describe('P0.6 adversarial validator case', () => {
     expect(result.stdout).toContain('"status": "FAIL"');
     expect(result.stdout).toContain('policy_version_preserved');
     expect(result.stdout).toContain('canonical_mutation_forbidden');
-    expect(result.stdout).toContain('evidence_references_authorized');
+    expect(result.stdout).toContain('source_evidence_references_authorized');
     expect(result.stdout).toContain('INVENTED-EVIDENCE-999');
   });
 });
