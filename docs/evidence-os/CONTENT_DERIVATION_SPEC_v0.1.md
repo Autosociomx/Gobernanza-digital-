@@ -68,7 +68,7 @@ Determinism is scoped to a frozen snapshot. It does not promise that two separat
 
 - the captured representation is HTML;
 - decoding as UTF-8 succeeds without replacement caused by invalid byte sequences;
-- a version-pinned HTML parser implementation is used;
+- the parser is exactly `parse5@5.1.1` for `html_text_v1`;
 - a deterministic content root can be selected by the rules below.
 
 If any precondition fails, derivation MUST fail closed. No LLM extraction, browser summarization, manual copy/paste, readability service, or site-specific cleanup is an allowed fallback.
@@ -80,13 +80,13 @@ If any precondition fails, derivation MUST fail closed. No LLM extraction, brows
 3. Normalize parser input line endings to `LF`.
 4. Do not apply Unicode compatibility normalization such as NFKC.
 
-The implementation MUST record the exact parser package and version used. A parser upgrade requires a new derivation implementation version or an explicit reproducibility review.
+The implementation MUST record the exact parser package and version used. `html_text_v1` is bound to `parse5@5.1.1`. A parser upgrade requires a new derivation implementation version or an explicit reproducibility review proving no observable output change across the complete frozen fixture corpus.
 
 ## 2. Parse
 
-Parse the complete HTML document using the pinned WHATWG-compatible parser.
+Parse the complete HTML document using `parse5@5.1.1`.
 
-Parsing errors that the selected parser deterministically recovers from are acceptable. Fatal decoding or parser failures are not.
+Parsing errors that this parser deterministically recovers from are acceptable. Fatal decoding or parser failures are not.
 
 ## 3. Select one content root
 
@@ -204,11 +204,11 @@ Method metadata:
 method: html_text_v1
 version: "1"
 parser:
-  package: PIN_BEFORE_IMPLEMENTATION
-  version: PIN_BEFORE_IMPLEMENTATION
+  package: parse5
+  version: "5.1.1"
 ```
 
-A source MUST NOT be marked `FROZEN` with `html_text_v1` until the implementation replaces both parser placeholders with an exact package/version and passes reproducibility tests.
+A source MUST NOT be marked `FROZEN` with `html_text_v1` until `parse5@5.1.1` is promoted to an explicit direct development dependency and the implementation passes the reproducibility tests below.
 
 ## 9. Required reproducibility tests
 
