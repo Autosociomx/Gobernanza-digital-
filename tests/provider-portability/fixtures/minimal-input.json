@@ -33,7 +33,7 @@
   },
   "evidence": [
     {
-      "evidence_id": "SRC-EVID-001",
+      "source_evidence_id": "SRC-EVID-001",
       "source_id": "SRC-001",
       "checksum_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "locator": "fixture://source-001",
