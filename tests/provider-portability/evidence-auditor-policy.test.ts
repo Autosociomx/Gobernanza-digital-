@@ -41,12 +41,28 @@ describe('Evidence Auditor policy v0.1', () => {
     expect(decision.consentRequired).toBe(false);
   });
 
+  it('requires clarification for missing deterministic context', () => {
+    const input = validInput();
+    input.context.jurisdiction = { country: '', state: 'NAY', municipality: 'Tepic' };
+    const decision = evaluateEvidenceAuditorPolicy(input);
+    expect(decision.decision).toBe('REQUIRE_CLARIFICATION');
+    expect(decision.requiredFields).toContain('context.jurisdiction.country');
+  });
+
   it('rejects evidence that is not FROZEN', () => {
     const input = validInput();
     input.evidence[0].state = 'APPROVED_PENDING_SNAPSHOT';
     const decision = evaluateEvidenceAuditorPolicy(input);
     expect(decision.decision).toBe('DENY');
     expect(decision.reasonCodes).toContain('SOURCE_NOT_FROZEN');
+  });
+
+  it('rejects duplicate source evidence identifiers', () => {
+    const input = validInput();
+    input.evidence.push({ ...input.evidence[0] });
+    const decision = evaluateEvidenceAuditorPolicy(input);
+    expect(decision.decision).toBe('DENY');
+    expect(decision.reasonCodes).toContain('SOURCE_EVIDENCE_IDS_DUPLICATED');
   });
 
   it('rejects authority escalation', () => {
