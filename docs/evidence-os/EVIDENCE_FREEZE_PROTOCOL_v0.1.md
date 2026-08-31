@@ -2,13 +2,13 @@
 
 ## Purpose
 
-Freeze a closed, auditable set of source evidence before any reasoning provider is allowed to analyze a case. The protocol prevents a portability test from passing on mutable, unverifiable, retrospectively edited, or differently transformed source material.
+Freeze a closed, auditable set of source evidence before any reasoning provider is allowed to analyze a case. The protocol prevents a portability test from passing on mutable, unverifiable, retrospectively edited, differently transformed, or improperly classified source material.
 
 ## Governing rule
 
-No LLM may create, alter, replace, re-hash, silently expand, or silently transform the authorized evidence set.
+No LLM may create, alter, replace, re-hash, silently expand, silently transform, or silently reclassify the authorized evidence set.
 
-A source is usable by Evidence Auditor only after the deterministic freeze layer has captured the source, verified the original snapshot hash, derived the provider-visible content through a recorded method, and verified the hash of that exact provider-visible content.
+A source is usable by Evidence Auditor only after the deterministic freeze layer has captured the source, verified the original snapshot hash, derived the provider-visible content through a recorded method, verified the hash of that exact provider-visible content, and assigned an admissible data classification.
 
 ## Evidence identities
 
@@ -28,21 +28,35 @@ Every admitted source has two independent SHA-256 values:
 
 This distinction is mandatory. A valid hash of a PDF or HTML response does not prove that the extracted text shown to a model is unchanged.
 
+## Data classification
+
+Every source must carry exactly one `data_classification` value:
+
+- `PUBLIC_ONLY`: public institutional material or publicly disseminated information admitted for P0.6. Public officials, contractors, public acts and other information already present in the authorized public source may appear; this classification does not authorize unrelated private citizen data.
+- `CONTAINS_PERSONAL_DATA`: the source contains personal information outside the P0.6 public-only boundary.
+- `UNKNOWN`: the source has not yet been captured or classified with sufficient certainty.
+
+P0.6 Evidence Auditor only admits `PUBLIC_ONLY` into the canonical provider input.
+
+`CONTAINS_PERSONAL_DATA` and `UNKNOWN` are blocked by `contextos.policy.evidence-auditor.v0.1`. The v0.1 policy does not improvise a consent workflow for them.
+
+Classification is assigned by the deterministic freeze process or approved human review before provider execution. A reasoning provider cannot promote a source from `UNKNOWN` or `CONTAINS_PERSONAL_DATA` to `PUBLIC_ONLY`.
+
 ## Freeze states
 
 Each candidate source has exactly one state:
 
 - `CANDIDATE`: relevant source identified, not yet approved for capture.
 - `APPROVED_PENDING_SNAPSHOT`: exact locator approved, snapshot not yet frozen.
-- `FROZEN`: snapshot and provider-visible content both captured and verified; eligible for canonical provider input.
-- `BLOCKED`: relevant source cannot yet be frozen because the exact resource, authenticated access, primary document, or approved storage is unavailable.
+- `FROZEN`: snapshot and provider-visible content both captured and verified; eligible for canonical provider input only when `data_classification` is `PUBLIC_ONLY`.
+- `BLOCKED`: relevant source cannot yet be frozen because the exact resource, authenticated access, primary document, approved storage, or admissible classification is unavailable.
 - `EXCLUDED`: duplicate, unrelated, superseded, unverifiable, or outside the authorized evidence set.
 
-Only `FROZEN` sources may appear in a provider-facing canonical input.
+Only `FROZEN` + `PUBLIC_ONLY` sources may appear in a provider-facing canonical input.
 
 ## Closed-source rule
 
-Before a provider run, close and version `source-manifest.yaml`. Once the run begins, no source may be added, replaced, re-derived, or re-hashed.
+Before a provider run, close and version `source-manifest.yaml`. Once the run begins, no source may be added, replaced, re-derived, re-hashed, or reclassified.
 
 If new evidence appears, create a new freeze version and a new provider run. Never mutate the prior run's manifest or snapshots.
 
@@ -56,11 +70,12 @@ For each approved source:
 4. Compute `snapshot_sha256` over the exact captured bytes.
 5. Store the original snapshot.
 6. Re-read the stored snapshot and recompute SHA-256. Require an exact match.
-7. Derive provider-visible content using a deterministic, named, versioned method.
-8. Store the exact provider-visible UTF-8 content separately.
-9. Compute `analysis_content_sha256` over the exact UTF-8 bytes of that stored content.
-10. Re-read the stored provider-visible content and recompute its SHA-256.
-11. Only after both hashes verify may the source change to `FROZEN`.
+7. Assign or verify `data_classification`.
+8. Derive provider-visible content using a deterministic, named, versioned method.
+9. Store the exact provider-visible UTF-8 content separately.
+10. Compute `analysis_content_sha256` over the exact UTF-8 bytes of that stored content.
+11. Re-read the stored provider-visible content and recompute its SHA-256.
+12. Only after both hashes and classification verify may the source change to `FROZEN`.
 
 ## Hashing rule
 
@@ -108,6 +123,7 @@ Every source entry must contain:
 - `source_id`
 - `source_evidence_id`
 - `state`
+- `data_classification`
 - `title`
 - `source_type`
 - `requested_locator`
@@ -125,7 +141,7 @@ Every source entry must contain:
 - `provenance_note`
 - `admission_reason`
 
-Unknown values remain `null`; they MUST NOT be fabricated.
+Unknown values remain `null` or the explicit `UNKNOWN` classification; they MUST NOT be fabricated.
 
 ## Source evidence ID assignment
 
@@ -139,19 +155,22 @@ The full hash remains in `snapshot_sha256`. The identifier is a stable reference
 
 ## Admission checks
 
-A source becomes `FROZEN` only if all are true:
+A source becomes provider-eligible only if all are true:
 
 - exact resource locator is known;
 - capture succeeded without truncation;
 - stored snapshot bytes can be re-read;
 - `snapshot_sha256` is valid and recomputes exactly;
+- `data_classification` is explicitly resolved;
 - provider-visible content was derived by a recorded deterministic method;
 - stored provider-visible content can be re-read;
 - `analysis_content_sha256` is valid and recomputes exactly;
 - source is relevant to at least one auditable claim or documented contradiction/control;
 - source is not counted as independent corroboration when it is a duplicate or syndicated copy;
 - provenance is recorded;
-- no LLM generated or edited frozen source bytes or provider-visible analysis content.
+- no LLM generated or edited frozen source bytes, classification, or provider-visible analysis content.
+
+A `FROZEN` source with a classification other than `PUBLIC_ONLY` remains ineligible for P0.6 provider input.
 
 ## Duplicates and syndicated reporting
 
@@ -171,17 +190,22 @@ A missing primary source is not silently upgraded by repetition across secondary
 
 ## Policy requirement for Evidence Auditor
 
-The production `PUE-COL-001` run MUST receive a deterministic Evidence Auditor policy version. It MUST NOT reuse `contextos.policy.public-works.v0.2` merely because that is the current policy version implemented for the bache/luminaria runtime slice.
+P0.6 is bound to `contextos.policy.evidence-auditor.v0.1`, implemented in `contextos/policies/evidenceAuditorPolicy.ts`.
 
-Until an Evidence Auditor policy is implemented or a deterministic P0.6 test policy is explicitly approved for the experiment, the real Colosio fixture remains `NOT_READY`.
+The policy MUST NOT reuse `contextos.policy.public-works.v0.2`, which belongs to the bache/luminaria runtime slice.
+
+The pre-execution policy permits only the intended Role/capability, approved purposes, MX jurisdiction context, `FROZEN` evidence, `PUBLIC_ONLY` classification, advisory authority, and no canonical mutation.
+
+The post-result gate requires human review when the provider classification is `contradicted` before external publication or institutional use. This gate never raises authority above `advisory` and never mutates canonical state.
 
 ## Provider boundary
 
 Providers receive only:
 
 - the canonical request;
-- the closed set of `FROZEN` provider-visible content;
+- the closed set of `FROZEN` + `PUBLIC_ONLY` provider-visible content;
 - immutable `source_evidence_id` values;
+- `data_classification` metadata;
 - `snapshot_sha256` and `analysis_content_sha256` metadata;
 - policy and authority constraints supplied by the deterministic layer.
 
@@ -193,15 +217,16 @@ A case is `READY_FOR_PROVIDER_RUN` only when:
 
 1. the source manifest is closed and versioned;
 2. every source included in canonical input is `FROZEN`;
-3. every snapshot hash has been recomputed successfully;
-4. every provider-visible content hash has been recomputed successfully;
-5. every provider-visible evidence item maps to exactly one frozen snapshot and one derived analysis artifact;
-6. blocked or excluded sources are absent from canonical input;
-7. the deterministic Evidence Auditor policy version is fixed;
-8. canonical input has not yet been sent to any provider.
+3. every included source is `PUBLIC_ONLY`;
+4. every snapshot hash has been recomputed successfully;
+5. every provider-visible content hash has been recomputed successfully;
+6. every provider-visible evidence item maps to exactly one frozen snapshot and one derived analysis artifact;
+7. blocked, excluded, personal-data, and unknown-classification sources are absent from canonical input;
+8. `contextos.policy.evidence-auditor.v0.1` is fixed for the run;
+9. canonical input has not yet been sent to any provider.
 
 ## Failure behavior
 
-Any checksum mismatch, missing snapshot, missing analysis artifact, ambiguous locator, unexpected redirect to unrelated content, truncated capture, non-versioned derivation, or untracked source addition causes freeze failure.
+Any checksum mismatch, missing snapshot, missing analysis artifact, ambiguous locator, unexpected redirect to unrelated content, truncated capture, non-versioned derivation, unresolved data classification, or untracked source addition causes freeze failure.
 
 The correct result is `NOT_READY`, not a best-effort provider run.
