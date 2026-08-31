@@ -1,0 +1,176 @@
+case_id: PUE-COL-001
+freeze_protocol: docs/evidence-os/EVIDENCE_FREEZE_PROTOCOL_v0.1.md
+freeze_version: "0.1-draft"
+closed_for_provider_run: false
+ready_for_provider_run: false
+
+notes:
+  - "This manifest is a pre-freeze allowlist derived from Evidence.OS cédula v0.3."
+  - "No source_evidence_id or checksum is assigned until exact bytes are captured and re-verified."
+  - "Only entries that reach FROZEN may be copied into input.json."
+
+sources:
+  - source_id: PUE-COL-001-SRC-001
+    source_evidence_id: null
+    state: APPROVED_PENDING_SNAPSHOT
+    title: "Ayuntamiento de Tepic — Nuevo Puente en las Vías del Tren"
+    source_type: institutional_municipal
+    requested_locator: "https://www.tepic.gob.mx/rutas_alternas/"
+    resolved_locator: null
+    captured_at_utc: null
+    media_type: null
+    byte_length: null
+    checksum_sha256: null
+    snapshot_path: null
+    provenance_note: "Cronología municipal, monto, adjudicatario y rutas alternas."
+    admission_reason: "Primary municipal representation of the project chronology and local role."
+
+  - source_id: PUE-COL-001-SRC-002
+    source_evidence_id: null
+    state: APPROVED_PENDING_SNAPSHOT
+    title: "Nayarit Noticias — Puente en Colosio y Guadalajara costaría 120 MDP"
+    source_type: contemporaneous_news
+    requested_locator: "https://nayaritnoticias.com/2022/10/19/puente-en-colosio-y-guadalajara-costaria-120-mdp/"
+    resolved_locator: null
+    captured_at_utc: null
+    media_type: null
+    byte_length: null
+    checksum_sha256: null
+    snapshot_path: null
+    provenance_note: "Contemporaneous 2022 reporting of municipal proposal and initial 120 MDP estimate."
+    admission_reason: "Supports chronology and distinguishes preliminary estimate from later contracted amount."
+
+  - source_id: PUE-COL-001-SRC-003
+    source_evidence_id: null
+    state: APPROVED_PENDING_SNAPSHOT
+    title: "Meganoticias Tepic — Confirmado: construcción de puente en Boulevard Colosio inicia este 2025"
+    source_type: news_direct_statement
+    requested_locator: "https://www.meganoticias.mx/tepic/noticia/confirmado-construccion-de-puente-en-boulevard-colosio-inicia-este-2025/627390"
+    resolved_locator: null
+    captured_at_utc: null
+    media_type: null
+    byte_length: null
+    checksum_sha256: null
+    snapshot_path: null
+    provenance_note: "Contains a direct statement attributed to Geraldine Ponce about the earlier 110–120 MDP estimate and later federal figure."
+    admission_reason: "Useful for provenance of the cost narrative, not a substitute for primary budget documents."
+
+  - source_id: PUE-COL-001-SRC-004
+    source_evidence_id: null
+    state: BLOCKED
+    title: "SICT / Gobierno de México — federal bridge program 2025"
+    source_type: institutional_federal
+    requested_locator: null
+    resolved_locator: null
+    captured_at_utc: null
+    media_type: null
+    byte_length: null
+    checksum_sha256: null
+    snapshot_path: null
+    provenance_note: "Cédula v0.3 identifies a federal program reference around Mar–Jun 2025, including a ~250 MDP figure, but the exact primary locator is not frozen in the cédula."
+    admission_reason: "High-value primary source once exact official document URL is resolved."
+
+  - source_id: PUE-COL-001-SRC-005
+    source_evidence_id: null
+    state: BLOCKED
+    title: "La Crónica de Hoy — licitación / dimensions, 30-Jun-2026"
+    source_type: news
+    requested_locator: null
+    resolved_locator: null
+    captured_at_utc: null
+    media_type: null
+    byte_length: null
+    checksum_sha256: null
+    snapshot_path: null
+    provenance_note: "Cédula stores a truncated URL only."
+    admission_reason: "Relevant to procurement chronology and reported dimensions, but exact locator is required before capture."
+
+  - source_id: PUE-COL-001-SRC-006
+    source_evidence_id: null
+    state: BLOCKED
+    title: "La Crónica de Hoy — inicio de obra, 21-Aug-2026"
+    source_type: news
+    requested_locator: null
+    resolved_locator: null
+    captured_at_utc: null
+    media_type: null
+    byte_length: null
+    checksum_sha256: null
+    snapshot_path: null
+    provenance_note: "Cédula stores a truncated URL only."
+    admission_reason: "Relevant to start-of-works chronology; exact locator must be resolved."
+
+  - source_id: PUE-COL-001-SRC-007
+    source_evidence_id: null
+    state: APPROVED_PENDING_SNAPSHOT
+    title: "Meridiano.mx — Cierran bulevar Colosio por obras de paso a desnivel"
+    source_type: news
+    requested_locator: "https://meridiano.mx/2026/08/19/cierran-bulevar-colosio-por-obras-de-paso-a-desnivel/"
+    resolved_locator: null
+    captured_at_utc: null
+    media_type: null
+    byte_length: null
+    checksum_sha256: null
+    snapshot_path: null
+    provenance_note: "Reports traffic closure associated with start of construction."
+    admission_reason: "Supports observable start-of-works chronology."
+
+  - source_id: PUE-COL-001-SRC-008
+    source_evidence_id: null
+    state: BLOCKED
+    title: "24-Horas / Mexican Times / Impacto Informativo / Maya Comunicación cluster, 19-Aug-2026"
+    source_type: syndicated_news_cluster
+    requested_locator: null
+    resolved_locator: null
+    captured_at_utc: null
+    media_type: null
+    byte_length: null
+    checksum_sha256: null
+    snapshot_path: null
+    provenance_note: "Near-identical reports may share a single agency origin; exact URLs were not preserved in the cédula."
+    admission_reason: "Potential corroboration only after exact locators are resolved and shared-origin risk is recorded."
+
+  - source_id: PUE-COL-001-SRC-009
+    source_evidence_id: null
+    state: APPROVED_PENDING_SNAPSHOT
+    title: "NNC.mx — Geraldine Ponce acelera construcción del puente en bulevar Colosio"
+    source_type: news_contradiction_source
+    requested_locator: "https://nnc.mx/articulo/geraldine-ponce-acelera-construccion-del-puente-en-bulevar-colosio-obra-entra-a-licitacion-en-2026"
+    resolved_locator: null
+    captured_at_utc: null
+    media_type: null
+    byte_length: null
+    checksum_sha256: null
+    snapshot_path: null
+    provenance_note: "Contains the isolated 924 m figure and chronology language that conflicts with other sources."
+    admission_reason: "Admitted specifically as contradiction evidence, not because its disputed claims are accepted."
+
+  - source_id: PUE-COL-001-SRC-010
+    source_evidence_id: null
+    state: APPROVED_PENDING_SNAPSHOT
+    title: "SIDOF / Segob — Convocatoria 015, Centro SICT Nayarit, Sep-2022"
+    source_type: institutional_false_positive_control
+    requested_locator: "https://sidof.segob.gob.mx/notas/docFuente/5664900"
+    resolved_locator: null
+    captured_at_utc: null
+    media_type: null
+    byte_length: null
+    checksum_sha256: null
+    snapshot_path: null
+    provenance_note: "Verified in the cédula as unrelated to Puente Colosio; concerns Ixtapa–Miramar road conservation."
+    admission_reason: "Negative/control evidence documenting rejection of a prior false-positive search result."
+
+  - source_id: PUE-COL-001-SRC-011
+    source_evidence_id: null
+    state: BLOCKED
+    title: "ComprasMX / SICT procurement expediente"
+    source_type: institutional_primary_procurement
+    requested_locator: "https://comprasmx.buengobierno.gob.mx/sitiopublico/"
+    resolved_locator: null
+    captured_at_utc: null
+    media_type: null
+    byte_length: null
+    checksum_sha256: null
+    snapshot_path: null
+    provenance_note: "Generic portal only. Exact procedure resource, signed award, contract, bases and technical annexes are not yet individually resolved."
+    admission_reason: "Highest-value procurement evidence once exact primary resources are identified; generic portal is not freezeable evidence."
