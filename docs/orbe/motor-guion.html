@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Motor de guión — Teleprompter · Nayarit Digital</title>
+<meta name="description" content="Teleprompter con marcas de respiración y generación de guion asistida. Herramienta interna de Nayarit Digital / ConnectX.">
+<meta name="robots" content="noindex">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Fuentes asíncronas: no bloquean el primer render (misma razón que la regla
+     de src/index.css en CLAUDE.md — un @import bloqueante cuesta ~780ms). -->
+<link rel="stylesheet" media="print" onload="this.media='all'"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800;900&family=DM+Sans:wght@400;500;600;700&display=swap">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap"></noscript>
+
+<style>
+:root {
+  --bg-primary: #0a0e1a;
+  --bg-secondary: #12172e;
+  --bg-tertiary: #1a2140;
+  --text-1: #f8fafc;
+  --text-2: #a8b5c0;
+  --text-3: #6b7684;
+  --border: rgba(255,255,255,0.06);
+  --accent-1: #2dd4bf;
+  --accent-2: #f59e0b;
+  --accent-3: #a78bfa;
+  --glow-1: rgba(45,212,191,0.15);
+  --glow-2: rgba(245,158,11,0.12);
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  background: linear-gradient(135deg, var(--bg-primary), #0f1229);
+  color: var(--text-1);
+  font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  letter-spacing: -0.3px;
+}
+
+a { color: var(--accent-1); text-decoration: none; transition: opacity 0.2s; }
+a:hover { opacity: 0.75; }
+
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+
+header { animation: fadeInDown 0.6s cubic-bezier(0.23, 1, 0.82, 1); }
+main   { animation: fadeInUp 0.7s cubic-bezier(0.23, 1, 0.82, 1) 0.15s both; }
+footer { animation: fadeInUp 0.7s cubic-bezier(0.23, 1, 0.82, 1) 0.3s both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+/* Píldoras de tema */
+.pill {
+  flex: 0 0 auto;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+  color: var(--text-2);
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: 0.15s ease;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.pill:hover { border-color: rgba(255,255,255,0.18); color: var(--text-1); }
+.pill[aria-pressed="true"] { border-color: var(--accent-1); background: var(--glow-1); color: #a8f5ed; }
+.pill-ia[aria-pressed="true"] { border-color: rgba(245,158,11,0.5); background: var(--glow-2); color: #fbbf24; }
+
+/* Botones del pie */
+.btn-aux {
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+  color: var(--text-2);
+  padding: 9px 14px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.15s ease;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: inherit;
+}
+.btn-aux:hover { border-color: rgba(255,255,255,0.18); color: var(--text-1); }
+.btn-aux[aria-pressed="true"] { border-color: var(--accent-1); background: var(--glow-1); color: #a8f5ed; }
+.btn-ia { border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.1); color: var(--accent-3); }
+.btn-config { border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.08); color: var(--accent-2); }
+
+.campo {
+  width: 100%;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-1);
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.campo:focus { border-color: var(--accent-1); }
+select.campo, input[type=password].campo { border-radius: 10px; padding: 10px; font-size: 13px; cursor: pointer; }
+
+.etiqueta {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-1);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+:focus-visible { outline: 2px solid var(--accent-1); outline-offset: 2px; }
+
+.modal-fondo {
+  position: fixed; inset: 0;
+  background: rgba(10,14,26,0.92);
+  display: none;
+  align-items: center; justify-content: center;
+  padding: 24px; z-index: 30;
+  opacity: 0;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(4px);
+}
+.modal-caja {
+  background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  width: 100%;
+  max-height: 82vh;
+  overflow-y: auto;
+  padding: 36px;
+  box-shadow: 0 25px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+  animation: fadeInUp 0.4s cubic-bezier(0.23, 1, 0.82, 1);
+}
+.modal-titulo {
+  margin: 0 0 6px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 24px; font-weight: 700;
+  color: var(--text-1); line-height: 1.2;
+}
+.modal-sub { margin: 0 0 24px; color: var(--text-2); font-size: 14px; line-height: 1.6; font-weight: 500; }
+
+.btn-primario {
+  flex: 1;
+  background: linear-gradient(135deg, var(--accent-1), #06b6d4);
+  border: 0; color: var(--bg-primary);
+  font-weight: 800; padding: 14px;
+  border-radius: 12px; font-size: 14px;
+  cursor: pointer; transition: 0.2s ease;
+  font-family: inherit;
+  box-shadow: 0 8px 24px rgba(45,212,191,0.2);
+}
+.btn-primario:disabled { opacity: 0.55; cursor: progress; }
+.btn-secundario {
+  border: 1px solid var(--border); background: transparent;
+  color: var(--text-2); padding: 14px 18px;
+  border-radius: 12px; font-size: 13px;
+  cursor: pointer; transition: 0.2s ease;
+  font-weight: 600; font-family: inherit;
+}
+
+.chip-aviso {
+  display: inline-block;
+  border: 1px solid rgba(245,158,11,0.35);
+  background: var(--glow-2);
+  color: #fbbf24;
+  font-size: 9px; font-weight: 800;
+  letter-spacing: 1px; text-transform: uppercase;
+  padding: 3px 7px; border-radius: 5px;
+  vertical-align: middle;
+}
+</style>
+</head>
+<body>
+
+<header role="banner" style="flex: 0 0 auto; padding: 20px 32px 16px; border-bottom: 1px solid var(--border); background: linear-gradient(180deg, rgba(18,23,46,0.8), transparent); backdrop-filter: blur(10px);">
+  <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 24px;">
+    <div>
+      <div style="display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px;">
+        <h1 style="margin: 0; font-family: 'Playfair Display', Georgia, serif; font-size: 20px; font-weight: 700; letter-spacing: 0.5px; color: var(--text-1);">NAYARIT</h1>
+        <span style="font-size: 12px; font-weight: 700; color: var(--accent-1); letter-spacing: 1.5px; text-transform: uppercase;">Digital</span>
+      </div>
+      <p style="margin: 0; font-size: 12px; color: var(--text-3); font-weight: 500; letter-spacing: 0.2px;">
+        Motor de guión inteligente
+        <span class="chip-aviso" title="Los guiones precargados son material de ensayo, no comunicación institucional verificada.">Simulado</span>
+      </p>
+    </div>
+    <div id="temas" role="group" aria-label="Guiones disponibles" style="display: flex; gap: 8px; overflow-x: auto; scrollbar-width: thin; flex: 1; justify-content: flex-start; max-width: 600px; padding-bottom: 2px;"></div>
+  </div>
+</header>
+
+<main style="flex: 1 1 auto; overflow: hidden; position: relative; display: flex; flex-direction: column;">
+  <div style="position: absolute; top: 0; left: 0; right: 0; height: 60%; background: radial-gradient(ellipse 800px 400px at 50% 0%, rgba(45,212,191,0.08), transparent); pointer-events: none; z-index: 0;" aria-hidden="true"></div>
+  <div style="position: absolute; bottom: 0; right: 0; width: 600px; height: 600px; background: radial-gradient(ellipse 400px 400px at 100% 100%, rgba(167,139,250,0.06), transparent); pointer-events: none; z-index: 0;" aria-hidden="true"></div>
+
+  <div id="scroller" style="flex: 1; overflow-y: scroll; scrollbar-width: thin; padding: 60px 12% 80px; position: relative; z-index: 1;">
+    <div id="prompter" style="max-width: 900px; margin: 0 auto; min-height: 200px;"></div>
+  </div>
+
+  <!-- Modal generador -->
+  <div id="overlay" class="modal-fondo" role="dialog" aria-labelledby="gen-title" aria-modal="true">
+    <div class="modal-caja" style="max-width: 540px;">
+      <h2 id="gen-title" class="modal-titulo">Generar guion</h2>
+      <p class="modal-sub">Texto, discurso o imagen • Estructura narrativa automática • Listo para teleprompter</p>
+
+      <div style="margin-bottom: 20px;">
+        <label class="etiqueta" for="iaTexto">Material de entrada</label>
+        <textarea id="iaTexto" class="campo" placeholder="Peguen aquí el texto, discurso, noticia o documento..." style="min-height: 100px; resize: vertical;"></textarea>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label class="etiqueta" for="iaArchivo">O adjunten imagen</label>
+        <input type="file" id="iaArchivo" accept="image/png,image/jpeg,image/gif,image/webp" style="width: 100%; font-size: 13px; color: var(--text-2); cursor: pointer; padding: 8px;">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+        <div>
+          <label class="etiqueta" for="iaDuracion">Duración</label>
+          <select id="iaDuracion" class="campo">
+            <option value="5">5 min</option>
+            <option value="10" selected>10 min</option>
+            <option value="15">15 min</option>
+          </select>
+        </div>
+        <div>
+          <label class="etiqueta" for="iaModo">Contexto</label>
+          <select id="iaModo" class="campo">
+            <option value="reunión de trabajo">Reunión</option>
+            <option value="foro público" selected>Foro público</option>
+            <option value="podcast">Podcast</option>
+            <option value="video corto para redes">Video</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-bottom: 14px;">
+        <button id="iaBtn" class="btn-primario" type="button">Generar</button>
+        <button id="iaCerrar" class="btn-secundario" type="button">Cerrar</button>
+      </div>
+      <div id="iaEstado" role="status" aria-live="polite" style="font-size: 12px; color: var(--text-2); min-height: 18px; line-height: 1.5; font-weight: 500;"></div>
+    </div>
+  </div>
+
+  <!-- Modal configuración -->
+  <div id="configOverlay" class="modal-fondo" role="dialog" aria-labelledby="config-title" aria-modal="true">
+    <div class="modal-caja" style="max-width: 420px;">
+      <h2 id="config-title" class="modal-titulo">Configuración</h2>
+      <p class="modal-sub">La clave se guarda solo en el <code>localStorage</code> de este navegador. Nunca se envía a Nayarit Digital ni se sube al repositorio.</p>
+
+      <div style="margin-bottom: 20px;">
+        <label class="etiqueta" for="apiKeyInput">Clave API de Anthropic</label>
+        <input type="password" id="apiKeyInput" class="campo" placeholder="sk-ant-..." autocomplete="off" spellcheck="false" style="font-family: ui-monospace, monospace;">
+      </div>
+
+      <p style="margin: 0 0 16px; color: var(--text-3); font-size: 12px; line-height: 1.5;">
+        Obtén tu clave en <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener noreferrer">console.anthropic.com</a>.
+        Usa una clave propia con límite de gasto: cualquier script de esta página podría leerla.
+      </p>
+
+      <div style="display: flex; gap: 10px;">
+        <button id="configSave" class="btn-primario" type="button" style="padding: 12px; box-shadow: none;">Guardar</button>
+        <button id="configBorrar" class="btn-secundario" type="button" style="padding: 12px 16px;">Borrar</button>
+        <button id="configClose" class="btn-secundario" type="button" style="padding: 12px 16px;">Cerrar</button>
+      </div>
+      <div id="configEstado" role="status" aria-live="polite" style="margin-top: 14px; font-size: 12px; color: var(--text-2); min-height: 18px; font-weight: 500;"></div>
+    </div>
+  </div>
+</main>
+
+<footer role="contentinfo" style="flex: 0 0 auto; border-top: 1px solid var(--border); background: linear-gradient(0deg, rgba(18,23,46,0.6), transparent); backdrop-filter: blur(10px); padding: 16px 32px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <button id="btnReset" type="button" title="Volver al inicio (Inicio)" aria-label="Volver al inicio" style="border: 1px solid var(--border); background: rgba(255,255,255,0.04); color: var(--text-1); width: 44px; height: 44px; border-radius: 10px; font-size: 16px; cursor: pointer; display: grid; place-items: center; transition: 0.15s ease; padding: 0; font-weight: 600;">⏮</button>
+    <button id="btnPlay" type="button" title="Reproducir / Pausar (Espacio)" aria-label="Reproducir o pausar" style="background: linear-gradient(135deg, var(--accent-1), #10b981); color: var(--bg-primary); border: 0; width: 52px; height: 52px; border-radius: 12px; font-size: 18px; cursor: pointer; display: grid; place-items: center; font-weight: 700; transition: 0.15s ease; padding: 0; box-shadow: 0 8px 24px rgba(45,212,191,0.25); animation: breathe 3s ease-in-out infinite;">▶</button>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 12px;">
+    <label for="velocidad" style="font-size: 11px; color: var(--text-3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; min-width: 60px;">Velocidad</label>
+    <input type="range" id="velocidad" min="6" max="60" value="22" style="width: 100px; cursor: pointer; accent-color: var(--accent-1);" aria-label="Velocidad de desplazamiento">
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 12px;">
+    <label for="tamano" style="font-size: 11px; color: var(--text-3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; min-width: 50px;">Letra</label>
+    <input type="range" id="tamano" min="24" max="64" value="40" style="width: 100px; cursor: pointer; accent-color: var(--accent-1);" aria-label="Tamaño de letra">
+  </div>
+
+  <button id="btnEspejo" class="btn-aux" type="button" aria-pressed="false">⟷ Espejo</button>
+  <button id="btnIA" class="btn-aux btn-ia" type="button">✦ IA</button>
+  <button id="btnConfig" class="btn-aux btn-config" type="button">⚙ Config</button>
+
+  <div style="margin-left: auto; font-variant-numeric: tabular-nums; color: var(--text-2); font-size: 13px; font-weight: 700; font-family: 'Playfair Display', Georgia, serif; letter-spacing: 0.5px;">
+    <span id="tiempo">00:00</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── Configuración de la llamada al modelo ────────────────────────────────
+  // Esta herramienta se abre suelta (file:// o GitHub), no la sirve server.ts,
+  // así que no puede usar /api/ai/chat. Sigue el mismo patrón que cop.html:
+  // la clave la pone la persona usuaria y vive solo en su navegador.
+  var ALMACEN_CLAVE = 'motorguion_anthropic_key';
+  var MODELO = 'claude-opus-5';
+  var MAX_TOKENS = 16000;
+
+  var estado = {
+    reproduciendo: false,
+    segundos: 0,
+    tamano: 40,
+    espejo: false,
+    temaActivo: null,
+    guionIA: null
+  };
+
+  var TEMAS = [
+    { id: 'tramites', nombre: 'Trámites', guion: 'Quiero contarles algo que le ha pasado a casi todos ustedes. //\n\nNecesitaron un trámite. /\nNo sabían a qué oficina ir. //\n\nFueron a la primera puerta y les dijeron que no era ahí. //\n\nFueron a la segunda y les pidieron un papel que nadie les había mencionado. //\n\n[Pausa reflexiva]\n\nVolvieron a su casa sin resolver nada y perdieron un día completo. //\n\n[Silencio estratégico]\n\nEso no es un accidente suyo. /\nEs un diseño roto. //\n\nEn México, cada persona hace en promedio 486 trámites a lo largo de su vida. //\n\nOcho de cada diez son con su municipio o su estado. //\n\nEl problema no está lejos. /\nEstá aquí, en la ventanilla de al lado. //\n\n[Cambio de tono]\n\nNosotros construimos algo simple. //\n\nCuando usted pregunta: "¿qué necesito para esto?" recibe una respuesta clara en su propio lenguaje. //\n\nLe llamamos ORBE. //\n\nImaginen a Doña María. /\nLe duele el pecho y no tiene señal en el celular. //\n\nEl sistema, sin internet, le dice a dónde ir. //\n\nCuando llega, el médico ya sabe lo que ella preguntó. //\n\n[Cierre narrativo]\n\nMuchos han pensado: "para qué reporto esto si nunca pasa nada." //\n\nPor eso construimos un lugar donde eso no puede pasar. //\n\nImaginen, dentro de un año, preguntar algo real y recibir evidencia, no una promesa. //\n\nEso ya empezó. //\n\nCompártanlo. //\n\nGracias. //' },
+    { id: 'salud', nombre: 'Salud', guion: 'Quiero contarles la historia de una señora que conozco. //\n\nSu papá se enfermó de noche en una colonia sin buena señal. //\n\nLe hicieron estudios que llegaron por WhatsApp, sueltos, sin ningún control. //\n\nUn mes después tuvo que contar la misma historia desde cero. //\n\n[Pausa reflexiva]\n\nPor eso construimos TepicTú Salud. //\n\nUn chat de orientación que funciona sin internet. //\n\nDoña María pregunta, sin señal, y el sistema le dice a dónde ir. //\n\nEl médico ya ve el triaje cuando ella llega. //\n\n[Cambio estructural]\n\nY construimos un expediente ligado a su CURP, no a una cuenta. //\n\nUsted decide quién lo puede ver. //\n\nCada consulta queda registrada para siempre. //\n\n[Cierre de autoridad]\n\nEste expediente es suyo. No es del centro de salud, no es nuestro. //\n\nImaginen, dentro de un año, que ningún estudio se pierda en un chat de WhatsApp. //\n\nEso ya empezó. //\n\nGracias. //' },
+    { id: 'obra', nombre: 'Obra', guion: '¿Cuántas veces han pasado frente a una obra que lleva años sin terminarse? //\n\nAquí en Tepic está el Puente Colosio. //\n\nMucha gente se pregunta: ¿qué pasó con esto? //\n\n[Silencio]\n\nPor eso construimos Evidence OS. //\n\nJunta lo que ya publican las autoridades y lo ordena en un solo lugar. //\n\nHoy pueden preguntar qué se prometió, qué se pagó, y qué evidencia existe de cada paso. //\n\nCada dato tiene su fuente y su fecha. //\n\n[Valor fundamental]\n\nLa evidencia no elige bando. //\n\nCuando algo se hizo bien, también queda documentado. //\n\nImaginen, dentro de un año, preguntar sobre cualquier obra y recibir evidencia. //\n\nEso ya empezó. //\n\nGracias. //' },
+    { id: 'pagos', nombre: 'Pagos', guion: '¿Alguna vez han hecho fila para pagar el predial sin saber cuánto debían? //\n\nPagan, reciben un papel, y ese papel es la única prueba. //\n\nSi se pierde, empiezan de cero. //\n\n[Presentación]\n\nCuando le preguntan a ORBE "quiero pagar el predial" el sistema pide su autorización antes de consultar su cuenta. //\n\nPreguntan cuánto deben y ven el monto exacto con su fuente. //\n\nEl comprobante queda ligado a su cuenta, no a un papel. //\n\nEsto responde a una ley federal que obliga a digitalizar los pagos de gobierno. //\n\nImaginen, dentro de un año, nunca más hacer fila sin saber cuánto deben. //\n\nEso ya empezó. //\n\nGracias. //' },
+    { id: 'reportes', nombre: 'Reportes', guion: '¿Cuántas veces han reportado el mismo bache más de una vez? //\n\nReportan, nadie confirma nada, y a las dos semanas reportan otra vez. //\n\n[Solución]\n\nCuando le dicen a ORBE "hay un bache en mi calle" reciben un número de seguimiento. //\n\nPueden preguntar después: "¿en qué va mi reporte?" y reciben una respuesta real, no un silencio. //\n\nEsto responde a una ley federal que obliga a simplificar los servicios de gobierno. //\n\nImaginen reportar algo una vez y saber exactamente qué pasó con eso. //\n\nEso ya empezó. //\n\nGracias. //' },
+    { id: 'negocio', nombre: 'Negocio', guion: '¿Conocen a alguien que quiso abrir un changarro y se topó con un laberinto de permisos? //\n\nUna oficina pide un papel, otra pide otro distinto para lo mismo. //\n\n[Solución]\n\nConstruimos un catálogo único de servicios municipales. //\n\nPreguntan una sola vez y reciben la ruta completa en el orden correcto. //\n\nUna ley federal obliga a compartir tecnología entre municipios. //\n\nImaginen abrir un negocio sabiendo exactamente qué falta desde el primer día. //\n\nEso ya empezó. //\n\nGracias. //' }
+  ];
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  // ── Guion: parseo y render ───────────────────────────────────────────────
+  // "/" = pausa breve · "//" = pausa larga · [corchetes] = indicación escénica
+  function parseLinea(bruta) {
+    var t = bruta.trim();
+    if (/^\[.*\]$/.test(t)) return { tipo: 'direccion', texto: t.slice(1, -1) };
+    var pausa = 'none';
+    if (t.slice(-2) === '//') { pausa = 'long'; t = t.slice(0, -2).trim(); }
+    else if (t.slice(-1) === '/') { pausa = 'short'; t = t.slice(0, -1).trim(); }
+    return { tipo: 'linea', texto: t, pausa: pausa };
+  }
+
+  function guionActivo() {
+    if (estado.temaActivo === 'ia') return estado.guionIA;
+    for (var i = 0; i < TEMAS.length; i++) {
+      if (TEMAS[i].id === estado.temaActivo) return TEMAS[i].guion;
+    }
+    return null;
+  }
+
+  function renderGuion() {
+    var cont = $('prompter');
+    cont.textContent = '';
+
+    var guion = guionActivo();
+    if (!guion || !guion.trim()) {
+      var vacio = document.createElement('div');
+      vacio.style.cssText = 'text-align: center; color: var(--text-3); font-size: 16px; line-height: 1.8; padding: 40px 20px; font-weight: 500;';
+      vacio.textContent = 'Aún no hay guion cargado. Toca "✦ IA" abajo para generar uno.';
+      cont.appendChild(vacio);
+      return;
+    }
+
+    var lineas = guion.split('\n');
+    for (var i = 0; i < lineas.length; i++) {
+      if (!lineas[i].trim()) continue;
+      var seg = parseLinea(lineas[i]);
+      var p = document.createElement('p');
+
+      if (seg.tipo === 'direccion') {
+        p.style.cssText = 'margin: 18px 0 12px; line-height: 1.5; color: var(--accent-3); font-style: italic; font-weight: 500; opacity: 0.68; letter-spacing: -0.02em;';
+        p.style.fontSize = Math.round(estado.tamano * 0.38) + 'px';
+      } else {
+        p.style.cssText = 'margin: 0; line-height: 1.5; font-weight: 650; letter-spacing: -0.02em;';
+        p.style.fontSize = estado.tamano + 'px';
+        p.style.marginBottom = seg.pausa === 'long' ? '48px' : seg.pausa === 'short' ? '16px' : '8px';
+      }
+      // textContent, nunca innerHTML: el guion puede venir del modelo.
+      p.textContent = seg.texto;
+      cont.appendChild(p);
+    }
+  }
+
+  function renderTemas() {
+    var barra = $('temas');
+    barra.textContent = '';
+
+    if (estado.guionIA) {
+      barra.appendChild(crearPill('ia', '✦ IA', true));
+    }
+    for (var i = 0; i < TEMAS.length; i++) {
+      barra.appendChild(crearPill(TEMAS[i].id, TEMAS[i].nombre, false));
+    }
+  }
+
+  function crearPill(id, nombre, esIA) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = esIA ? 'pill pill-ia' : 'pill';
+    b.textContent = nombre;
+    b.setAttribute('aria-pressed', estado.temaActivo === id ? 'true' : 'false');
+    b.addEventListener('click', function () {
+      pausar();
+      estado.temaActivo = id;
+      estado.segundos = 0;
+      $('scroller').scrollTop = 0;
+      pintarReloj();
+      renderTemas();
+      renderGuion();
+    });
+    return b;
+  }
+
+  // ── Reproducción ─────────────────────────────────────────────────────────
+  var ultimoTs = 0;
+  var restoScroll = 0;   // acumula fracciones de píxel: sin esto, a velocidad
+                         // baja scrollTop se redondea a 0 y no avanza nunca.
+
+  function pasoScroll(ts) {
+    if (!estado.reproduciendo) return;
+    if (!ultimoTs) ultimoTs = ts;
+    var dt = (ts - ultimoTs) / 1000;
+    ultimoTs = ts;
+
+    var scroller = $('scroller');
+    var vel = Number($('velocidad').value) || 22;
+
+    restoScroll += vel * dt;
+    var enteros = Math.floor(restoScroll);
+    if (enteros > 0) {
+      restoScroll -= enteros;
+      scroller.scrollTop += enteros;
+    }
+
+    estado.segundos += dt;
+    pintarReloj();
+
+    // Se detiene solo al llegar al final del guion.
+    if (scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 1) {
+      pausar();
+      return;
+    }
+    requestAnimationFrame(pasoScroll);
+  }
+
+  function reproducir() {
+    if (estado.reproduciendo) return;
+    estado.reproduciendo = true;
+    ultimoTs = 0;
+    restoScroll = 0;
+    $('btnPlay').textContent = '❚❚';
+    requestAnimationFrame(pasoScroll);
+  }
+
+  function pausar() {
+    estado.reproduciendo = false;
+    $('btnPlay').textContent = '▶';
+  }
+
+  function alternarReproduccion() {
+    if (estado.reproduciendo) pausar(); else reproducir();
+  }
+
+  function reiniciar() {
+    pausar();
+    $('scroller').scrollTop = 0;
+    estado.segundos = 0;
+    pintarReloj();
+  }
+
+  function pintarReloj() {
+    var m = String(Math.floor(estado.segundos / 60));
+    var s = String(Math.floor(estado.segundos % 60));
+    $('tiempo').textContent = (m.length < 2 ? '0' + m : m) + ':' + (s.length < 2 ? '0' + s : s);
+  }
+
+  function alternarEspejo() {
+    estado.espejo = !estado.espejo;
+    $('prompter').style.transform = estado.espejo ? 'scaleX(-1)' : 'scaleX(1)';
+    $('btnEspejo').setAttribute('aria-pressed', estado.espejo ? 'true' : 'false');
+  }
+
+  // ── Modales ──────────────────────────────────────────────────────────────
+  var focoPrevio = null;
+
+  function abrirModal(id) {
+    focoPrevio = document.activeElement;
+    var el = $(id);
+    el.style.display = 'flex';
+    requestAnimationFrame(function () { el.style.opacity = '1'; });
+    var primero = el.querySelector('textarea, input, button');
+    if (primero) primero.focus();
+  }
+
+  function cerrarModal(id) {
+    var el = $(id);
+    el.style.opacity = '0';
+    setTimeout(function () { el.style.display = 'none'; }, 300);
+    if (focoPrevio && focoPrevio.focus) focoPrevio.focus();
+  }
+
+  function modalAbierto() {
+    return $('overlay').style.display === 'flex' || $('configOverlay').style.display === 'flex';
+  }
+
+  // ── Configuración de la clave ────────────────────────────────────────────
+  function leerClave() {
+    try { return (localStorage.getItem(ALMACEN_CLAVE) || '').trim(); }
+    catch (e) { return ''; }
+  }
+
+  function avisoConfig(texto, color) {
+    var el = $('configEstado');
+    el.style.color = color || 'var(--text-2)';
+    el.textContent = texto;
+  }
+
+  function guardarClave() {
+    var clave = $('apiKeyInput').value.trim();
+    if (!clave) { avisoConfig('Escribe una clave antes de guardar.', 'var(--accent-2)'); return; }
+    try {
+      localStorage.setItem(ALMACEN_CLAVE, clave);
+      avisoConfig('Clave guardada en este navegador.', 'var(--accent-1)');
+      setTimeout(function () { cerrarModal('configOverlay'); avisoConfig(''); }, 900);
+    } catch (e) {
+      avisoConfig('Este navegador no permite guardar (¿modo privado?).', 'var(--accent-2)');
+    }
+  }
+
+  function borrarClave() {
+    try { localStorage.removeItem(ALMACEN_CLAVE); } catch (e) {}
+    $('apiKeyInput').value = '';
+    avisoConfig('Clave borrada de este navegador.', 'var(--accent-1)');
+  }
+
+  // ── Generación del guion ─────────────────────────────────────────────────
+  function avisoIA(texto, color) {
+    var el = $('iaEstado');
+    el.style.color = color || 'var(--text-2)';
+    el.textContent = texto;
+  }
+
+  function leerImagenBase64(archivo) {
+    return new Promise(function (resolver, rechazar) {
+      var lector = new FileReader();
+      lector.onload = function () { resolver(String(lector.result).split(',')[1]); };
+      lector.onerror = function () { rechazar(new Error('No se pudo leer la imagen.')); };
+      lector.readAsDataURL(archivo);
+    });
+  }
+
+  function construirInstrucciones(duracion, modo, material) {
+    return 'Eres experto en comunicación narrativa y oratoria persuasiva. ' +
+      'Transforma este material en un guion para teleprompter.\n\n' +
+      'ESTRUCTURA:\n' +
+      '1. Rapport: abre con un problema cercano, sensorial, concreto.\n' +
+      '2. Evidencia: hechos del material, datos, historias reales.\n' +
+      '3. Cierre: idea unificadora + acción mínima.\n\n' +
+      'FORMATO (OBLIGATORIO):\n' +
+      '- Cada línea es una frase de respiración.\n' +
+      '- "/" = pausa breve, "//" = pausa larga, sin marca = sigue.\n' +
+      '- [Entre corchetes] = indicaciones de tono, silencio o respiración.\n\n' +
+      'DURACIÓN: ~' + duracion + ' minutos a ritmo pausado (95–110 palabras por minuto).\n' +
+      'CONTEXTO: ' + modo + '\n' +
+      'LENGUAJE: Sensorial, sin jerga al inicio. Cercano. Memorable.\n' +
+      'HONESTIDAD: No inventes cifras, montos ni fechas que no estén en el material. ' +
+      'Si una afirmación necesita una fuente y el material no la trae, escríbela como pregunta abierta.\n\n' +
+      'Material:\n"""\n' + (material || '(Imagen adjunta)') + '\n"""\n\n' +
+      'GENERA SOLO EL GUION. Sin explicaciones ni preámbulos.';
+  }
+
+  function llamarModelo(contenido, clave) {
+    return fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': clave,
+        'anthropic-version': '2023-06-01',
+        // Necesario para llamar la API desde el navegador (CORS).
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: MODELO,
+        max_tokens: MAX_TOKENS,
+        messages: [{ role: 'user', content: contenido }]
+      })
+    }).then(function (resp) {
+      if (!resp.ok) {
+        return resp.text().then(function (cuerpo) {
+          var detalle = '';
+          try { detalle = (JSON.parse(cuerpo).error || {}).message || ''; } catch (e) {}
+          if (resp.status === 401) throw new Error('Clave rechazada. Revísala en ⚙ Config.');
+          if (resp.status === 429) throw new Error('Límite de uso alcanzado. Intenta en unos minutos.');
+          throw new Error('HTTP ' + resp.status + (detalle ? ' · ' + detalle : ''));
+        });
+      }
+      return resp.json();
+    }).then(function (datos) {
+      if (datos.stop_reason === 'refusal') {
+        throw new Error('El modelo declinó generar este guion.');
+      }
+      var partes = (datos.content || []).filter(function (b) { return b.type === 'text'; });
+      var texto = partes.map(function (b) { return b.text; }).join('\n').trim();
+      if (!texto) throw new Error('La respuesta llegó vacía.');
+      return texto;
+    });
+  }
+
+  function generarConIA() {
+    var texto = $('iaTexto').value.trim();
+    var archivo = $('iaArchivo').files[0];
+    var duracion = Number($('iaDuracion').value) || 10;
+    var modo = $('iaModo').value;
+    var btn = $('iaBtn');
+
+    if (!texto && !archivo) {
+      avisoIA('Peguen un texto o adjunten una imagen.', 'var(--accent-2)');
+      return;
+    }
+
+    var clave = leerClave();
+    if (!clave) {
+      avisoIA('Falta la clave API. Ábrela en ⚙ Config.', 'var(--accent-2)');
+      return;
+    }
+
+    btn.disabled = true;
+    avisoIA('Procesando…');
+
+    Promise.resolve()
+      .then(function () {
+        if (!archivo) return null;
+        if (archivo.size > 5 * 1024 * 1024) throw new Error('La imagen supera 5 MB.');
+        return leerImagenBase64(archivo);
+      })
+      .then(function (b64) {
+        var contenido = [{ type: 'text', text: construirInstrucciones(duracion, modo, texto) }];
+        if (b64) {
+          contenido.push({
+            type: 'image',
+            source: { type: 'base64', media_type: archivo.type, data: b64 }
+          });
+        }
+        avisoIA('Generando guion…');
+        return llamarModelo(contenido, clave);
+      })
+      .then(function (guion) {
+        estado.guionIA = guion;
+        estado.temaActivo = 'ia';
+        estado.segundos = 0;
+        pausar();
+        $('scroller').scrollTop = 0;
+        pintarReloj();
+        renderTemas();
+        renderGuion();
+        avisoIA('Listo. Cierren para leer.', 'var(--accent-1)');
+      })
+      .catch(function (err) {
+        avisoIA(err.message || 'Error al generar. Intenten de nuevo.', 'var(--accent-2)');
+      })
+      .then(function () { btn.disabled = false; });
+  }
+
+  // ── Cableado ─────────────────────────────────────────────────────────────
+  function iniciar() {
+    estado.temaActivo = TEMAS[0].id;
+    renderTemas();
+    renderGuion();
+    pintarReloj();
+
+    $('btnPlay').addEventListener('click', alternarReproduccion);
+    $('btnReset').addEventListener('click', reiniciar);
+    $('btnEspejo').addEventListener('click', alternarEspejo);
+    $('btnIA').addEventListener('click', function () { abrirModal('overlay'); });
+    $('btnConfig').addEventListener('click', function () {
+      $('apiKeyInput').value = leerClave();
+      avisoConfig('');
+      abrirModal('configOverlay');
+    });
+
+    $('iaCerrar').addEventListener('click', function () { cerrarModal('overlay'); });
+    $('iaBtn').addEventListener('click', generarConIA);
+    $('configSave').addEventListener('click', guardarClave);
+    $('configBorrar').addEventListener('click', borrarClave);
+    $('configClose').addEventListener('click', function () { cerrarModal('configOverlay'); });
+
+    $('overlay').addEventListener('click', function (e) {
+      if (e.target === this) cerrarModal('overlay');
+    });
+    $('configOverlay').addEventListener('click', function (e) {
+      if (e.target === this) cerrarModal('configOverlay');
+    });
+
+    $('tamano').addEventListener('input', function (e) {
+      estado.tamano = parseInt(e.target.value, 10);
+      renderGuion();
+    });
+
+    // El usuario puede desplazarse a mano: eso pausa el avance automático.
+    $('scroller').addEventListener('wheel', function () {
+      if (estado.reproduciendo) pausar();
+    }, { passive: true });
+
+    document.addEventListener('keydown', function (e) {
+      var t = e.target;
+      var escribiendo = t && (t.tagName === 'TEXTAREA' || t.tagName === 'INPUT' || t.tagName === 'SELECT');
+
+      if (e.code === 'Escape') {
+        if ($('overlay').style.display === 'flex') cerrarModal('overlay');
+        if ($('configOverlay').style.display === 'flex') cerrarModal('configOverlay');
+        return;
+      }
+      // Sin este guardia no se podría escribir un espacio en el textarea.
+      if (escribiendo || modalAbierto()) return;
+
+      if (e.code === 'Space') { e.preventDefault(); alternarReproduccion(); }
+      if (e.code === 'Home')  { e.preventDefault(); reiniciar(); }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', iniciar);
+  } else {
+    iniciar();
+  }
+})();
+</script>
+</body>
+</html>

@@ -17,6 +17,16 @@
 > destino que no existe. Los tres leen el mismo grafo que `modulos.json` —
 > si agregas o cambias un módulo ahí, actualiza también `cop.html` y
 > `orbe-3d.html`.
+> [`motor-guion.html`](./motor-guion.html) es el teleprompter de vocería:
+> guiones con marcas de respiración (`/` pausa breve, `//` pausa larga,
+> `[corchetes]` para indicaciones escénicas), control de velocidad y tamaño,
+> modo espejo para cristal, y un generador que convierte un texto o una
+> imagen en guion. No lee `modulos.json` — no es un módulo del grafo, es
+> herramienta de vocería — así que agregarlo no obliga a tocar `cop.html`
+> ni `orbe-3d.html`. Los guiones que trae precargados están etiquetados
+> **SIMULADO**: son material de ensayo, no comunicación institucional
+> verificada. Necesita una clave API propia, guardada solo en el navegador,
+> igual que `cop.html`.
 
 > Regla de oro de este directorio: **un círculo = un módulo = un archivo.**
 > Para editar un módulo (su alcance, su estado, sus integraciones) se edita
