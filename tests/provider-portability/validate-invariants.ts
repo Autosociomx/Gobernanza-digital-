@@ -19,6 +19,7 @@ interface CanonicalInput {
   };
   evidence: Array<{
     source_evidence_id: string;
+    data_classification: string;
     snapshot_sha256: string;
     analysis_content_sha256: string;
     content: string;
@@ -154,6 +155,10 @@ export function validateInvariants(input: CanonicalInput, output: ProviderOutput
       sha256Utf8(item.content) === item.analysis_content_sha256.toLowerCase(),
   );
 
+  const providerInputPublicOnly = input.evidence.every(
+    (item) => item.data_classification === 'PUBLIC_ONLY',
+  );
+
   return [
     {
       name: 'spec_version_preserved',
@@ -194,6 +199,10 @@ export function validateInvariants(input: CanonicalInput, output: ProviderOutput
     {
       name: 'source_evidence_ids_unique_in_input',
       pass: unique(sourceEvidenceIds),
+    },
+    {
+      name: 'provider_input_public_only',
+      pass: providerInputPublicOnly,
     },
     {
       name: 'source_snapshot_hashes_well_formed',
