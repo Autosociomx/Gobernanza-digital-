@@ -31,7 +31,7 @@
           "enum": ["supported", "partially_supported", "contradicted", "insufficient_evidence"]
         },
         "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
-        "summary": { "type": "string" },
+        "summary": { "type": "string", "minLength": 1 },
         "claims": {
           "type": "array",
           "items": {
@@ -71,7 +71,45 @@
           "type": "array",
           "items": { "type": "string", "minLength": 1 }
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "classification": { "const": "supported" } },
+            "required": ["classification"]
+          },
+          "then": {
+            "properties": { "claims": { "minItems": 1 } }
+          }
+        },
+        {
+          "if": {
+            "properties": { "classification": { "const": "partially_supported" } },
+            "required": ["classification"]
+          },
+          "then": {
+            "properties": { "claims": { "minItems": 1 } }
+          }
+        },
+        {
+          "if": {
+            "properties": { "classification": { "const": "contradicted" } },
+            "required": ["classification"]
+          },
+          "then": {
+            "properties": { "contradictions": { "minItems": 1 } }
+          }
+        },
+        {
+          "if": {
+            "properties": { "classification": { "const": "insufficient_evidence" } },
+            "required": ["classification"]
+          },
+          "then": {
+            "properties": { "limitations": { "minItems": 1 } }
+          }
+        }
+      ]
     },
     "governance": {
       "type": "object",
