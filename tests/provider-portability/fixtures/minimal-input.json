@@ -38,6 +38,7 @@
     {
       "source_evidence_id": "SRC-EVID-001",
       "source_id": "SRC-001",
+      "data_classification": "PUBLIC_ONLY",
       "snapshot_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "analysis_content_sha256": "f461e666ae93f91eebe52c71083380a735cdc551d21b240a2fd9a940b6a0634b",
       "content_derivation": {
