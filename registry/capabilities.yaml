@@ -11,7 +11,7 @@ capabilities:
     authority_scope: advisory
 
     input_contract:
-      schema: ../contracts/role-execution-envelope.v0.1.schema.json
+      schema: ../contracts/evidence-auditor-envelope.v0.1.schema.json
 
     output_contract:
       schema: ../contracts/evidence-auditor-result.v0.1.schema.json
