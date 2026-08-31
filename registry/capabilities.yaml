@@ -21,7 +21,7 @@ capabilities:
       reasoning_optional: false
 
     invariants:
-      evidence_ids_mutable: false
+      source_evidence_ids_mutable: false
       policy_version_mutable: false
       execution_identity_mutable: false
       canonical_state_mutation: false
