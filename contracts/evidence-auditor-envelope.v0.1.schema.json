@@ -5,16 +5,7 @@
   "description": "Specialized P0.6 input contract for evidence.auditor / gov.mx.evidence.verify_claim. This is not yet a universal Role envelope.",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "spec_version",
-    "execution",
-    "role",
-    "capability",
-    "context",
-    "policy",
-    "request",
-    "evidence"
-  ],
+  "required": ["spec_version", "execution", "role", "capability", "context", "policy", "request", "evidence"],
   "properties": {
     "spec_version": { "const": "0.1" },
     "execution": {
@@ -89,13 +80,18 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["evidence_id", "source_id", "checksum_sha256", "content"],
+        "required": ["source_evidence_id", "source_id", "checksum_sha256", "content"],
         "properties": {
-          "evidence_id": { "type": "string", "minLength": 1 },
+          "source_evidence_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Identity of frozen source evidence. It is intentionally distinct from Context.OS EvidenceRecord.evidenceId."
+          },
           "source_id": { "type": "string", "minLength": 1 },
           "checksum_sha256": {
             "type": "string",
-            "pattern": "^[a-fA-F0-9]{64}$"
+            "pattern": "^[a-fA-F0-9]{64}$",
+            "description": "SHA-256 of the exact frozen source snapshot bytes, not the Context.OS EvidenceRecord hash."
           },
           "locator": { "type": "string" },
           "content": { "type": "string", "minLength": 1 }
