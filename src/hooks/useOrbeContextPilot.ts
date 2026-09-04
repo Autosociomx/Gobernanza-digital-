@@ -3,6 +3,15 @@ import { processCitizenUtterance, INITIAL_BRIDGE_STATE, type BridgeState } from 
 import { executeContextOS } from '../services/contextosRuntimeClient';
 import { useAuraVoice } from './useAuraVoice';
 
+export interface OrbeLabReceipt {
+  evidenceId: string;
+  sha256: string;
+  policyVersion: string;
+  status: string;
+  executionMode?: string;
+  labReference?: string;
+}
+
 export function useOrbeContextPilot() {
   const voice = useAuraVoice();
   const [bridgeState, setBridgeState] = useState<BridgeState>(INITIAL_BRIDGE_STATE);
@@ -11,6 +20,7 @@ export function useOrbeContextPilot() {
   );
   const [isThinking, setIsThinking] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [lastReceipt, setLastReceipt] = useState<OrbeLabReceipt | null>(null);
   const inFlightRef = useRef(false);
 
   const submit = useCallback(
@@ -19,10 +29,21 @@ export function useOrbeContextPilot() {
       inFlightRef.current = true;
       setIsThinking(true);
       setHasError(false);
+      setLastReceipt(null);
       try {
         const result = await processCitizenUtterance(bridgeState, text, executeContextOS);
         setBridgeState(result.state);
         setStatusText(result.citizenMessage);
+        if (result.runtimeResponse?.evidence) {
+          setLastReceipt({
+            evidenceId: result.runtimeResponse.evidence.evidenceId,
+            sha256: result.runtimeResponse.evidence.hash,
+            policyVersion: result.runtimeResponse.policy.policyVersion,
+            status: result.runtimeResponse.status,
+            executionMode: result.runtimeResponse.execution?.executionMode,
+            labReference: result.runtimeResponse.execution?.externalReference,
+          });
+        }
         voice.speak(result.citizenMessage);
         return result;
       } catch (error) {
@@ -52,6 +73,7 @@ export function useOrbeContextPilot() {
   const reset = useCallback(() => {
     setBridgeState(INITIAL_BRIDGE_STATE);
     setHasError(false);
+    setLastReceipt(null);
     setStatusText('Laboratorio ORBE + Context.OS. Sin efectos administrativos.');
   }, []);
 
@@ -61,6 +83,7 @@ export function useOrbeContextPilot() {
     statusText,
     isThinking,
     hasError,
+    lastReceipt,
     submit,
     startListening,
     reset,
