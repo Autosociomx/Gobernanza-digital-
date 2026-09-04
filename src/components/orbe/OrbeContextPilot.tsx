@@ -31,6 +31,9 @@ function EnabledOrbeContextPilot() {
         <div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-cyan-300">
           ORBE · acción trazable · Context.OS
         </div>
+        <div className="mb-2 text-[11px] leading-relaxed text-slate-300">
+          Aura orienta y conversa. ORBE prepara solicitudes de acción de laboratorio y las entrega a Context.OS para policy, ejecución y evidencia.
+        </div>
         <div className="mb-2 rounded-xl border border-amber-300/30 bg-amber-300/10 px-3 py-2 text-[11px] leading-relaxed text-amber-100">
           LAB_MOCK · autoridad: NONE · sin efecto administrativo. Los folios y evidencias mostrados son exclusivamente de laboratorio y no constituyen resolución oficial.
         </div>
