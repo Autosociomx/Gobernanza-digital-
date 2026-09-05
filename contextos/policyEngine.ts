@@ -1,7 +1,7 @@
 import type { IntentEnvelope, PolicyDecision, ServiceDescriptor } from './contracts';
 import { jurisdictionCode, PUBLIC_WORKS_REPORT_SERVICE } from './serviceCatalog';
 
-export const POLICY_VERSION = 'contextos.policy.public-works.v0.2';
+export const POLICY_VERSION = PUBLIC_WORKS_REPORT_SERVICE.policyVersion;
 export const PUBLIC_WORKS_PURPOSE = PUBLIC_WORKS_REPORT_SERVICE.purpose;
 export const CONTACT_CONSENT_SCOPE = 'citizen-contact:share-for-followup';
 export const SUPPORTED_PUBLIC_WORKS_SUBJECTS = PUBLIC_WORKS_REPORT_SERVICE.allowedSubjects;
@@ -60,10 +60,10 @@ function requiredFieldPresent(intent: IntentEnvelope, path: string): boolean {
   return value !== undefined && value !== null;
 }
 
-function deny(reasonCode: string): PolicyDecision {
+function deny(reasonCode: string, policyVersion = POLICY_VERSION): PolicyDecision {
   return {
     decision: 'DENY',
-    policyVersion: POLICY_VERSION,
+    policyVersion,
     reasonCodes: [reasonCode],
   };
 }
@@ -96,32 +96,39 @@ function semanticBindingError(
   return undefined;
 }
 
+function baseAllowReason(service: ServiceDescriptor): string {
+  return service.policyProfile === 'PUBLIC_INFORMATION'
+    ? 'PUBLIC_INFORMATION'
+    : 'LOW_RISK_PUBLIC_REPORT';
+}
+
 export function evaluatePolicy(
   intent: IntentEnvelope,
   service?: ServiceDescriptor,
 ): PolicyDecision {
   if (!service) return deny('SERVICE_NOT_REGISTERED');
 
+  const policyVersion = service.policyVersion;
   const jurisdiction = jurisdictionCode(
     intent.jurisdiction.country,
     intent.jurisdiction.state,
     intent.jurisdiction.municipality,
   );
   if (!service.allowedJurisdictions.includes(jurisdiction)) {
-    return deny('JURISDICTION_NOT_ALLOWED');
+    return deny('JURISDICTION_NOT_ALLOWED', policyVersion);
   }
 
   if (intent.purpose !== service.purpose) {
-    return deny('PURPOSE_NOT_ALLOWED');
+    return deny('PURPOSE_NOT_ALLOWED', policyVersion);
   }
 
   const semanticError = semanticBindingError(intent, service);
-  if (semanticError) return deny(semanticError);
+  if (semanticError) return deny(semanticError, policyVersion);
 
   if (coordinatesPresent(intent) && !coordinatesValid(intent)) {
     return {
       decision: 'REQUIRE_CLARIFICATION',
-      policyVersion: POLICY_VERSION,
+      policyVersion,
       reasonCodes: ['LOCATION_COORDINATES_INVALID'],
       requiredFields: ['data.location'],
     };
@@ -133,7 +140,7 @@ export function evaluatePolicy(
   if (requiredFields.length > 0) {
     return {
       decision: 'REQUIRE_CLARIFICATION',
-      policyVersion: POLICY_VERSION,
+      policyVersion,
       reasonCodes: ['MINIMUM_DATA_MISSING'],
       requiredFields,
     };
@@ -141,23 +148,27 @@ export function evaluatePolicy(
 
   const subject = intent.intent.subject?.trim().toLowerCase();
   if (!subject || !service.allowedSubjects.includes(subject)) {
-    return deny('SUBJECT_NOT_SUPPORTED');
+    return deny('SUBJECT_NOT_SUPPORTED', policyVersion);
   }
 
-  if (hasContact(intent)) {
+  if (service.requiresContactConsent && hasContact(intent)) {
     return {
       decision: 'REQUIRE_CONSENT',
-      policyVersion: POLICY_VERSION,
+      policyVersion,
       reasonCodes: ['PERSONAL_CONTACT_PRESENT'],
       requiredConsentScopes: [CONTACT_CONSENT_SCOPE],
     };
   }
 
-  const reasonCodes = ['LOW_RISK_PUBLIC_REPORT', 'DATA_MINIMIZED'];
+  const reasonCodes = [baseAllowReason(service), 'DATA_MINIMIZED'];
   if (intent.intent.semanticContractId) reasonCodes.push('SEMANTIC_CONTRACT_BOUND');
   return {
     decision: 'ALLOW',
-    policyVersion: POLICY_VERSION,
+    policyVersion,
     reasonCodes,
   };
+}
+
+export function allowedPolicyReason(service: ServiceDescriptor): string {
+  return baseAllowReason(service);
 }

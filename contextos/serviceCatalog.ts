@@ -14,6 +14,11 @@ export const PUBLIC_WORKS_REPORT_SERVICE: ServiceDescriptor = {
   semanticContractVersion: SEMANTIC.version,
   semanticRegistryVersion: SEMANTIC.registryVersion,
   riskLevel: SEMANTIC.riskLevel,
+  policyVersion: 'contextos.policy.public-works.v0.2',
+  policyProfile: 'LOW_RISK_PUBLIC_REPORT',
+  capabilityKind: 'ACTION',
+  authorityLevel: 'LAB',
+  requiresContactConsent: true,
   adapterId: 'lab.public-works-report.v1',
   executionMode: 'LAB_MOCK',
   allowedJurisdictions: [
@@ -39,8 +44,9 @@ export function findServiceForIntent(intentName: string): ServiceDescriptor | un
   return SERVICES.find((service) => service.intentNames.includes(intentName));
 }
 
-export function jurisdictionCode(country: string, state: string, municipality: string): string {
+export function jurisdictionCode(country: string, state?: string, municipality?: string): string {
   return [country, state, municipality]
+    .filter((part): part is string => typeof part === 'string' && Boolean(part.trim()))
     .map((part) => part.trim().toUpperCase().replace(/\s+/g, '-'))
     .join('-');
 }

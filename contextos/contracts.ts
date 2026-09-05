@@ -4,11 +4,14 @@ export type Decision = 'ALLOW' | 'DENY' | 'REQUIRE_CLARIFICATION' | 'REQUIRE_CON
 export type RuntimeStatus = 'EXECUTED' | 'NEEDS_INPUT' | 'NEEDS_CONSENT' | 'DENIED' | 'ERROR';
 export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 export type ExecutionMode = 'LAB_MOCK' | 'SANDBOX' | 'INSTITUTIONAL';
+export type CapabilityKind = 'INFORMATION' | 'GUIDANCE' | 'ACTION';
+export type AuthorityLevel = 'NONE' | 'LAB' | 'INSTITUTIONAL';
+export type PolicyProfile = 'PUBLIC_INFORMATION' | 'LOW_RISK_PUBLIC_REPORT';
 
 export interface Jurisdiction {
   country: 'MX';
-  state: string;
-  municipality: string;
+  state?: string;
+  municipality?: string;
 }
 
 export interface IntentEnvelope {
@@ -86,6 +89,11 @@ export interface ServiceDescriptor {
   semanticContractVersion: string;
   semanticRegistryVersion: string;
   riskLevel: RiskLevel;
+  policyVersion: string;
+  policyProfile: PolicyProfile;
+  capabilityKind: CapabilityKind;
+  authorityLevel: AuthorityLevel;
+  requiresContactConsent: boolean;
   adapterId: string;
   executionMode: ExecutionMode;
   allowedJurisdictions: string[];

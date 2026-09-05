@@ -10,7 +10,12 @@ import { CONTEXTOS_SCHEMA_VERSION } from './contracts';
 import { validateConsent } from './consent';
 import { sha256 } from './canonical';
 import { createEvidenceRecord } from './evidence';
-import { CONTACT_CONSENT_SCOPE, evaluatePolicy, POLICY_VERSION } from './policyEngine';
+import {
+  allowedPolicyReason,
+  CONTACT_CONSENT_SCOPE,
+  evaluatePolicy,
+  POLICY_VERSION,
+} from './policyEngine';
 import { findServiceForIntent } from './serviceCatalog';
 import type { ServiceAdapter } from './adapters/types';
 
@@ -64,14 +69,21 @@ function basicEnvelopeValidation(intent: IntentEnvelope | undefined): string | u
   if (
     !intent.jurisdiction ||
     typeof intent.jurisdiction !== 'object' ||
-    intent.jurisdiction.country !== 'MX' ||
-    typeof intent.jurisdiction.state !== 'string' ||
-    !intent.jurisdiction.state.trim() ||
-    typeof intent.jurisdiction.municipality !== 'string' ||
-    !intent.jurisdiction.municipality.trim()
+    intent.jurisdiction.country !== 'MX'
   ) {
     return 'JURISDICTION_REQUIRED';
   }
+
+  const state = intent.jurisdiction.state;
+  const municipality = intent.jurisdiction.municipality;
+  if (
+    (state !== undefined && (typeof state !== 'string' || !state.trim())) ||
+    (municipality !== undefined && (typeof municipality !== 'string' || !municipality.trim())) ||
+    (municipality !== undefined && state === undefined)
+  ) {
+    return 'JURISDICTION_REQUIRED';
+  }
+
   if (!intent.data || typeof intent.data !== 'object' || Array.isArray(intent.data)) {
     return 'DATA_REQUIRED';
   }
@@ -230,7 +242,7 @@ export class ContextOSRuntime {
           request.intent,
         );
       }
-      const reasonCodes = ['LOW_RISK_PUBLIC_REPORT', 'CONSENT_VALIDATED'];
+      const reasonCodes = [allowedPolicyReason(service!), 'CONSENT_VALIDATED'];
       if (request.intent.intent.semanticContractId) {
         reasonCodes.push('SEMANTIC_CONTRACT_BOUND');
       }
