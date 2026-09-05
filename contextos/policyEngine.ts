@@ -109,6 +109,13 @@ export function evaluatePolicy(
   if (!service) return deny('SERVICE_NOT_REGISTERED');
 
   const policyVersion = service.policyVersion;
+  if (
+    intent.intent.requestedCapability &&
+    intent.intent.requestedCapability !== service.capabilityKind
+  ) {
+    return deny('CAPABILITY_NOT_ALLOWED', policyVersion);
+  }
+
   const jurisdiction = jurisdictionCode(
     intent.jurisdiction.country,
     intent.jurisdiction.state,

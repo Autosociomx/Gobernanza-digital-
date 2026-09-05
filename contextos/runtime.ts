@@ -65,6 +65,12 @@ function basicEnvelopeValidation(intent: IntentEnvelope | undefined): string | u
   if (!intent.intent || typeof intent.intent !== 'object') return 'INTENT_INVALID';
   if (typeof intent.intent.name !== 'string' || !intent.intent.name.trim()) return 'INTENT_NAME_REQUIRED';
   if (!validOptionalString(intent.intent.subject, 128)) return 'INTENT_SUBJECT_INVALID';
+  if (
+    intent.intent.requestedCapability !== undefined &&
+    !['INFORMATION', 'GUIDANCE', 'ACTION'].includes(intent.intent.requestedCapability)
+  ) {
+    return 'CAPABILITY_INVALID';
+  }
   if (typeof intent.purpose !== 'string' || !intent.purpose.trim()) return 'PURPOSE_REQUIRED';
   if (
     !intent.jurisdiction ||
@@ -213,7 +219,10 @@ export class ContextOSRuntime {
       return this.policyOnlyResponse('DENIED', correlationId, undefined, policy, request.intent);
     }
 
-    const service = findServiceForIntent(request.intent.intent.name);
+    const service = findServiceForIntent(
+      request.intent.intent.name,
+      request.intent.intent.requestedCapability,
+    );
     let policy = evaluatePolicy(request.intent, service);
     let authorizedConsentScopes: string[] = [];
 
@@ -261,7 +270,28 @@ export class ContextOSRuntime {
       return this.policyOnlyResponse('DENIED', correlationId, service, policy, request.intent);
     }
 
-    const adapter = this.adapters[service.adapterId];
+    if (service.capabilityKind !== 'ACTION') {
+      return this.policyOnlyResponse('RESOLVED', correlationId, service, policy, request.intent);
+    }
+
+    const adapterId = service.adapterId;
+    const executionMode = service.executionMode;
+    if (!adapterId || !executionMode) {
+      const invalidServicePolicy: PolicyDecision = {
+        decision: 'DENY',
+        policyVersion: policy.policyVersion,
+        reasonCodes: ['SERVICE_EXECUTION_CONFIG_INVALID'],
+      };
+      return this.policyOnlyResponse(
+        'ERROR',
+        correlationId,
+        service,
+        invalidServicePolicy,
+        request.intent,
+      );
+    }
+
+    const adapter = this.adapters[adapterId];
     if (!adapter) {
       const unavailablePolicy: PolicyDecision = {
         decision: 'DENY',
@@ -290,7 +320,7 @@ export class ContextOSRuntime {
         execution = {
           status: 'FAILED' as const,
           adapterId: adapter.id,
-          executionMode: service.executionMode,
+          executionMode,
           resultCode: 'ADAPTER_EXECUTION_FAILED',
           message: 'El adaptador no pudo completar la operación de laboratorio.',
         };

@@ -1,7 +1,7 @@
 export const CONTEXTOS_SCHEMA_VERSION = 'contextos.v0.1' as const;
 
 export type Decision = 'ALLOW' | 'DENY' | 'REQUIRE_CLARIFICATION' | 'REQUIRE_CONSENT';
-export type RuntimeStatus = 'EXECUTED' | 'NEEDS_INPUT' | 'NEEDS_CONSENT' | 'DENIED' | 'ERROR';
+export type RuntimeStatus = 'RESOLVED' | 'EXECUTED' | 'NEEDS_INPUT' | 'NEEDS_CONSENT' | 'DENIED' | 'ERROR';
 export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 export type ExecutionMode = 'LAB_MOCK' | 'SANDBOX' | 'INSTITUTIONAL';
 export type CapabilityKind = 'INFORMATION' | 'GUIDANCE' | 'ACTION';
@@ -29,6 +29,7 @@ export interface IntentEnvelope {
     name: string;
     subject?: string;
     confidence?: number;
+    requestedCapability?: CapabilityKind;
     semanticContractId?: string;
     semanticContractVersion?: string;
     semanticRegistryVersion?: string;
@@ -94,8 +95,8 @@ export interface ServiceDescriptor {
   capabilityKind: CapabilityKind;
   authorityLevel: AuthorityLevel;
   requiresContactConsent: boolean;
-  adapterId: string;
-  executionMode: ExecutionMode;
+  adapterId?: string;
+  executionMode?: ExecutionMode;
   allowedJurisdictions: string[];
   requiredFields: string[];
   allowedSubjects: string[];

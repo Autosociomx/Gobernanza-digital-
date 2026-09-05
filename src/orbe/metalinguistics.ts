@@ -1,4 +1,4 @@
-import type { IntentEnvelope, RuntimeResponse } from '../../contextos/contracts';
+import type { CapabilityKind, IntentEnvelope, RuntimeResponse } from '../../contextos/contracts';
 import { CONTEXTOS_SCHEMA_VERSION } from '../../contextos/contracts';
 import {
   findSemanticContractByIntent,
@@ -20,7 +20,7 @@ export interface MetalinguisticInterpretation {
   speechAct: OrbeSpeechAct;
   route: OrbeRoute;
   domain?: string;
-  subject?: PublicWorksSubject;
+  subject?: string;
   confidence: number;
   reasonCodes: string[];
   contractId?: string;
@@ -110,7 +110,7 @@ export function interpretCitizenUtterance(text: string): MetalinguisticInterpret
       speechAct: speechAct.act,
       route: speechAct.route,
       domain: contract.domain,
-      subject: subject.id as PublicWorksSubject,
+      subject: subject.id,
       confidence: speechAct.confidence,
       reasonCodes: [...speechAct.reasonCodes, 'SEMANTIC_CONTRACT_MATCHED'],
       contractId: contract.id,
@@ -123,7 +123,7 @@ export function interpretCitizenUtterance(text: string): MetalinguisticInterpret
     speechAct: 'AMBIGUOUS',
     route: 'ASK_INTENT',
     domain: contract.domain,
-    subject: subject.id as PublicWorksSubject,
+    subject: subject.id,
     confidence: 0.65,
     reasonCodes: ['SEMANTIC_CONTRACT_MATCHED', 'SPEECH_ACT_AMBIGUOUS'],
     contractId: contract.id,
@@ -159,7 +159,13 @@ function createRequestId(): string {
   return `orbe-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-export function buildPublicWorksIntentEnvelope(
+function capabilityForSpeechAct(speechAct: OrbeSpeechAct): CapabilityKind | undefined {
+  if (speechAct === 'INFORMATION_REQUEST') return 'INFORMATION';
+  if (speechAct === 'ACTION_REQUEST' || speechAct === 'INCIDENT_ASSERTION') return 'ACTION';
+  return undefined;
+}
+
+export function buildIntentEnvelope(
   text: string,
   interpretation: MetalinguisticInterpretation,
   context: IntentBuildContext = {},
@@ -168,9 +174,13 @@ export function buildPublicWorksIntentEnvelope(
   const subject = contract?.subjects.find(
     (candidate) => candidate.id === interpretation.subject,
   );
-  if (!contract || contract.domain !== 'public_works' || !subject) {
-    throw new Error('PUBLIC_WORKS_INTERPRETATION_REQUIRED');
+  if (!contract || !subject) {
+    throw new Error('SEMANTIC_INTERPRETATION_REQUIRED');
   }
+
+  const requiresLocation = contract.slots.some(
+    (slot) => slot.required && slot.path === 'data.location',
+  );
 
   return {
     schemaVersion: CONTEXTOS_SCHEMA_VERSION,
@@ -187,6 +197,7 @@ export function buildPublicWorksIntentEnvelope(
       name: contract.intentName,
       subject: subject.runtimeValue,
       confidence: interpretation.confidence,
+      requestedCapability: capabilityForSpeechAct(interpretation.speechAct),
       semanticContractId: contract.id,
       semanticContractVersion: contract.version,
       semanticRegistryVersion: contract.registryVersion,
@@ -194,7 +205,49 @@ export function buildPublicWorksIntentEnvelope(
     purpose: contract.purpose,
     data: {
       description: text.trim(),
-      location: extractLocation(text, contract),
+      location: requiresLocation ? extractLocation(text, contract) : undefined,
+    },
+  };
+}
+
+export function buildPublicWorksIntentEnvelope(
+  text: string,
+  interpretation: MetalinguisticInterpretation,
+  context: IntentBuildContext = {},
+): IntentEnvelope {
+  const contract = contractForInterpretation(interpretation);
+  if (!contract || contract.domain !== 'public_works') {
+    throw new Error('PUBLIC_WORKS_INTERPRETATION_REQUIRED');
+  }
+  return buildIntentEnvelope(text, interpretation, context);
+}
+
+export function isActionFollowUp(text: string): boolean {
+  const normalized = normalizeCitizenText(text);
+  return [
+    /\bpuedes\s+(?:sacar|obtener|tramitar|descargar)(?:la|lo|me)?\b/,
+    /\b(?:sacala|sacalo|sacame|obtenla|obtenlo|tramit[a-z]*|descarg[a-z]*)\b/,
+    /\bhazlo\b/,
+    /\bpuedes\s+hacerlo\b/,
+  ].some((pattern) => pattern.test(normalized));
+}
+
+export function buildCapabilityEscalationIntent(
+  previous: IntentEnvelope,
+  text: string,
+  context: Pick<IntentBuildContext, 'now' | 'requestId'> = {},
+): IntentEnvelope {
+  return {
+    ...previous,
+    requestId: context.requestId ?? createRequestId(),
+    occurredAt: (context.now ?? new Date()).toISOString(),
+    intent: {
+      ...previous.intent,
+      requestedCapability: 'ACTION',
+      confidence: Math.max(previous.intent.confidence ?? 0, 0.9),
+    },
+    data: {
+      description: text.trim(),
     },
   };
 }
@@ -225,7 +278,7 @@ export function semanticCitizenMessage(
       return 'Entendí el tema, pero no tu intención. ¿Quieres información o iniciar una acción de laboratorio?';
     }
     if (kind === 'confirmAction') {
-      return 'Detecté un posible incidente, pero no una solicitud explícita. ¿Quieres continuar en modo laboratorio?';
+      return 'Detecté una posible necesidad, pero no una solicitud explícita. ¿Quieres que revise qué acción está disponible?';
     }
     return 'Esto parece una consulta informativa. No ejecuté ninguna acción.';
   }
@@ -234,11 +287,15 @@ export function semanticCitizenMessage(
     (candidate) => candidate.id === interpretation.subject,
   );
   return interpolateCitizenMessage(contract.citizenMessages[kind], {
-    subject: subject?.label ?? 'incidente',
+    subject: subject?.label ?? 'servicio',
   });
 }
 
 export function runtimeResponseToCitizenMessage(response: RuntimeResponse): string {
+  if (response.status === 'RESOLVED') {
+    return 'Puedo orientarte con esta capacidad informativa. No ejecuté ninguna acción ni generé un acto administrativo.';
+  }
+
   if (response.status === 'EXECUTED') {
     const ref = response.execution?.externalReference
       ? ` Folio de laboratorio: ${response.execution.externalReference}.`

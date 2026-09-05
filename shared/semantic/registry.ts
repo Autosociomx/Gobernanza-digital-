@@ -1,7 +1,11 @@
+import { BIRTH_CERTIFICATE_SEMANTIC_CONTRACT } from './contracts/birthCertificate';
 import { PUBLIC_WORKS_REPORT_SEMANTIC_CONTRACT } from './contracts/publicWorksReport';
 import type { SemanticContract, SemanticSubjectDefinition } from './types';
 
-const CONTRACTS: readonly SemanticContract[] = [PUBLIC_WORKS_REPORT_SEMANTIC_CONTRACT];
+const CONTRACTS: readonly SemanticContract[] = [
+  PUBLIC_WORKS_REPORT_SEMANTIC_CONTRACT,
+  BIRTH_CERTIFICATE_SEMANTIC_CONTRACT,
+];
 const REGEX_CACHE = new Map<string, RegExp>();
 
 function compile(pattern: string): RegExp {
@@ -75,16 +79,16 @@ export function validateSemanticRegistry(
       }
     }
 
-    const requiredRoutes = {
-      INFORMATION_REQUEST: 'CHAT',
-      INCIDENT_ASSERTION: 'CONFIRM_ACTION',
-      ACTION_REQUEST: 'CONTEXTOS',
-    } as const;
     for (const definition of contract.speechActs) {
       if (definition.confidence < 0 || definition.confidence > 1) {
         errors.push(`INVALID_CONFIDENCE:${contract.id}:${definition.act}`);
       }
-      if (definition.route !== requiredRoutes[definition.act]) {
+      const routeValid =
+        (definition.act === 'INFORMATION_REQUEST' &&
+          (definition.route === 'CHAT' || definition.route === 'CONTEXTOS')) ||
+        (definition.act === 'INCIDENT_ASSERTION' && definition.route === 'CONFIRM_ACTION') ||
+        (definition.act === 'ACTION_REQUEST' && definition.route === 'CONTEXTOS');
+      if (!routeValid) {
         errors.push(`SPEECH_ACT_ROUTE_INVALID:${contract.id}:${definition.act}`);
       }
     }

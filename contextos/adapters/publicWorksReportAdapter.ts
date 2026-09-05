@@ -15,7 +15,7 @@ export function createPublicWorksReportAdapter(options: PublicWorksAdapterOption
         return {
           status: 'REJECTED',
           adapterId: this.id,
-          executionMode: request.service.executionMode,
+          executionMode: 'LAB_MOCK',
           resultCode: 'NON_LAB_MODE_BLOCKED',
           message: 'Este adapter sólo puede operar en modo de laboratorio.',
         };

@@ -1,7 +1,9 @@
 import type { IntentEnvelope, RuntimeRequest, RuntimeResponse } from '../../contextos/contracts';
 import {
-  buildPublicWorksIntentEnvelope,
+  buildCapabilityEscalationIntent,
+  buildIntentEnvelope,
   interpretCitizenUtterance,
+  isActionFollowUp,
   isAffirmative,
   isNegative,
   mergeLocationClarification,
@@ -17,6 +19,7 @@ export type BridgePendingState =
 
 export interface BridgeState {
   pending: BridgePendingState;
+  lastResolvedIntent?: IntentEnvelope;
 }
 
 export interface BridgeResult {
@@ -33,6 +36,7 @@ export const INITIAL_BRIDGE_STATE: BridgeState = { pending: null };
 async function sendToRuntime(
   intent: IntentEnvelope,
   executor: RuntimeExecutor,
+  previousState: BridgeState = INITIAL_BRIDGE_STATE,
 ): Promise<BridgeResult> {
   try {
     const runtimeResponse = await executor({ intent });
@@ -40,16 +44,23 @@ async function sendToRuntime(
     const needsLocation =
       runtimeResponse.status === 'NEEDS_INPUT' &&
       runtimeResponse.policy.requiredFields?.includes('data.location');
+    const lastResolvedIntent =
+      runtimeResponse.status === 'RESOLVED'
+        ? intent
+        : previousState.lastResolvedIntent;
 
     return {
-      state: { pending: needsLocation ? { kind: 'LOCATION', intent } : null },
+      state: {
+        pending: needsLocation ? { kind: 'LOCATION', intent } : null,
+        lastResolvedIntent,
+      },
       route: 'RUNTIME',
       citizenMessage,
       runtimeResponse,
     };
   } catch {
     return {
-      state: INITIAL_BRIDGE_STATE,
+      state: previousState,
       route: 'ERROR',
       citizenMessage: 'No pude contactar Context.OS. No se realizó ninguna acción.',
     };
@@ -73,41 +84,54 @@ export async function processCitizenUtterance(
   if (state.pending?.kind === 'CONFIRM_ACTION') {
     if (isNegative(text)) {
       return {
-        state: INITIAL_BRIDGE_STATE,
+        state: { pending: null, lastResolvedIntent: state.lastResolvedIntent },
         route: 'CANCELLED',
-        citizenMessage: 'De acuerdo. No preparé ningún reporte.',
+        citizenMessage: 'De acuerdo. No preparé ninguna acción.',
       };
     }
     if (!isAffirmative(text)) {
       return {
         state,
         route: 'CLARIFY',
-        citizenMessage: 'Necesito una confirmación clara: sí para preparar el reporte de laboratorio o no para cancelar.',
+        citizenMessage: 'Necesito una confirmación clara: sí para continuar o no para cancelar.',
       };
     }
 
-    const intent = buildPublicWorksIntentEnvelope(
+    const intent = buildIntentEnvelope(
       state.pending.originalText,
       state.pending.interpretation,
     );
-    return sendToRuntime(intent, executor);
+    return sendToRuntime(intent, executor, state);
   }
 
   if (state.pending?.kind === 'LOCATION') {
     if (isNegative(text)) {
       return {
-        state: INITIAL_BRIDGE_STATE,
+        state: { pending: null, lastResolvedIntent: state.lastResolvedIntent },
         route: 'CANCELLED',
         citizenMessage: 'De acuerdo. No completé ni envié el reporte de laboratorio.',
       };
     }
-    return sendToRuntime(mergeLocationClarification(state.pending.intent, text), executor);
+    return sendToRuntime(mergeLocationClarification(state.pending.intent, text), executor, state);
   }
 
   const interpretation = interpretCitizenUtterance(text);
 
+  if (
+    interpretation.route === 'CHAT' &&
+    interpretation.speechAct === 'OTHER' &&
+    state.lastResolvedIntent &&
+    isActionFollowUp(text)
+  ) {
+    return sendToRuntime(
+      buildCapabilityEscalationIntent(state.lastResolvedIntent, text),
+      executor,
+      state,
+    );
+  }
+
   if (interpretation.route === 'CONTEXTOS') {
-    return sendToRuntime(buildPublicWorksIntentEnvelope(text, interpretation), executor);
+    return sendToRuntime(buildIntentEnvelope(text, interpretation), executor, state);
   }
 
   if (interpretation.route === 'CONFIRM_ACTION') {
@@ -118,6 +142,7 @@ export async function processCitizenUtterance(
           originalText: text,
           interpretation,
         },
+        lastResolvedIntent: state.lastResolvedIntent,
       },
       route: 'CLARIFY',
       citizenMessage: semanticCitizenMessage(interpretation, 'confirmAction'),

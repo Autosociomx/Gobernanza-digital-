@@ -43,8 +43,8 @@ export interface SemanticContract {
   riskLevel: RiskLevel;
   jurisdiction: {
     country: 'MX';
-    state: string;
-    municipality: string;
+    state?: string;
+    municipality?: string;
   };
   subjects: SemanticSubjectDefinition[];
   speechActs: SemanticSpeechActDefinition[];
