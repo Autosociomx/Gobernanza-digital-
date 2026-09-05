@@ -57,6 +57,8 @@ Copia `firebase-applet-config.example.json` y llénalo, o pídeselo al usuario.
 | `npm run contextos:lab` | Servidor de laboratorio Context.OS en `127.0.0.1:3011` |
 | `npm run test:firestore-rules` | Reglas de Firestore contra el emulador (requiere Java 21) |
 | `node scripts/verificar-regresiones.mjs` | **La Guardia** — corre esto antes de entregar |
+| `npm run contexto` | Regenera el Contexto Portátil para ChatGPT y AI Studio (§11) |
+| `npm run contexto:verificar` | Falla si ese contexto quedó desfasado de las fuentes |
 
 > `npx tsc` instala un paquete distinto y falso. Usa `npm run lint` o
 > `./node_modules/.bin/tsc --noEmit`.
@@ -298,6 +300,8 @@ endpoints del servidor o el lazy loading: es una regresión, no una mejora.
 ├── storage.rules
 ├── scripts/
 │   ├── verificar-regresiones.mjs   La Guardia (R1–R8)
+│   ├── generar-contexto.mjs        Contexto Portátil para las otras dos IAs
+│   ├── auditar-export-chatgpt.mjs  Inventario de una exportación de ChatGPT
 │   └── test-firestore-rules.mjs    Pruebas de reglas contra el emulador
 ├── src/
 │   ├── App.tsx                 Ruteo por useState + enlaces profundos
@@ -321,6 +325,7 @@ endpoints del servidor o el lazy loading: es una regresión, no una mejora.
     ├── orbe/                   Grafo de módulos + herramientas HTML
     ├── agentes/                Gabinete de especialistas, inventario de skills
     ├── actas/                  Registro institucional (no se borran)
+    ├── sincronia/              Plano de sincronía Claude · ChatGPT · AI Studio
     ├── interno/                Material de uso interno — fuera del build público
     └── auditoria-orbe/, expediente-regulatorio/, investigacion/, …
 ```
@@ -368,3 +373,31 @@ interlocutor piensa en hechos, folios y trazabilidad. Si una propuesta no se
 sostiene con la ley, el código o la bitácora, no se propone. Cuando pida
 "estructura", entrega documentos en `docs/marco/` empujados por PR — no
 párrafos en el chat.
+
+---
+
+## 11. Las tres inteligencias (Claude · ChatGPT · AI Studio)
+
+Este proyecto se desarrolla en tres inteligencias a la vez y **ninguna puede leer
+la memoria de las otras**. El plano que las mantiene sobre el mismo estado de
+hechos vive en `docs/sincronia/` — empieza por `PROTOCOLO_TRI_IA.md`.
+
+Lo mínimo que debes saber para no romperlo:
+
+- **El repositorio es el único plano de contexto compartido.** Una decisión que
+  solo vive en un chat no es una decisión del proyecto.
+- **Tres carriles con jurisdicción declarada:** Claude Code = ingeniería, repo,
+  PRs y la Guardia (**el único que escribe en `main`**); ChatGPT = estrategia,
+  redacción y análisis normativo; Gemini/AI Studio = prototipado y UI.
+- **Ninguna entrega de ChatGPT o AI Studio llega a `main` sin pasar por el carril
+  de ingeniería y por la Guardia.** Es la causa raíz documentada de las cuatro
+  fugas de llave (§6, "Cuidado con AI Studio").
+- **`CONTEXTO_ID`.** `npm run contexto` genera el briefing que se entrega a las
+  otras dos, sellado con la huella de sus fuentes. Toda entrega externa cita el
+  `CONTEXTO_ID` con el que trabajó; si no coincide con el vigente, se reevalúa
+  antes de integrarla y se hace constar en `docs/sincronia/BITACORA_SINCRONIA.md`.
+- Si tocas `CLAUDE.md`, `docs/marco/` o los registros de módulos, corre
+  `npm run contexto` para que las otras dos no se queden con un estado viejo.
+
+`COP 1.0` (`docs/orbe/cop.html`) no se sustituye: es el bloque de intención **por
+módulo**; el Contexto Portátil es el bloque de estado **global**. Se usan juntos.

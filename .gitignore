@@ -12,3 +12,6 @@ firebase-applet-config.json
 
 # Carpeta de trabajo temporal de auditoría
 .openclaw/
+
+# Exportaciones de otras IAs para auditar (conversación personal, regla dura 9)
+docs/interno/importaciones/

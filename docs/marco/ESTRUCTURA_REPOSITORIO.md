@@ -17,7 +17,9 @@
 │   ├── services/               # citasSaludService, saludPerfilService (Firestore real)…
 │   └── lib/                    # Utilidades
 ├── scripts/
-│   └── verificar-regresiones.mjs   # La Guardia — se corre antes de cada entrega
+│   ├── verificar-regresiones.mjs   # La Guardia — se corre antes de cada entrega
+│   ├── generar-contexto.mjs        # Contexto Portátil para ChatGPT y AI Studio
+│   └── auditar-export-chatgpt.mjs  # Inventario de una exportación de ChatGPT
 └── docs/
     ├── marco/                  # GOBERNANZA (pública, parte del producto)
     │   ├── GLOSARIO_OFICIAL.md         # Vocabulario, etiquetas, regla de citación
@@ -26,6 +28,11 @@
     │   ├── ESTRUCTURA_REPOSITORIO.md   # Este documento
     │   ├── NOTA_DE_CONTEXTO_PARA_CLAUDE.md
     │   └── modulos/            # Una ficha técnica por módulo (estado, ley, datos reales/simulados)
+    ├── sincronia/              # Plano de sincronía Claude · ChatGPT · AI Studio
+    │   ├── PROTOCOLO_TRI_IA.md         # Carriles, ciclo y CONTEXTO_ID
+    │   ├── CONTEXTO_PORTATIL.md        # Briefing generado (no se edita a mano)
+    │   ├── BUZON/                      # Entregas de ChatGPT y AI Studio
+    │   └── BITACORA_SINCRONIA.md       # Qué se integró y con qué contexto
     ├── plataforma/             # Visión de producto
     └── orbe/                   # Herramientas del grafo de módulos (orbe.html, cop.html, orbe-3d.html)
 ```

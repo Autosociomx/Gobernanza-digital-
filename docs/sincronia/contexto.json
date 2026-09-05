@@ -1,0 +1,52 @@
+{
+  "$schema_nota": "Manifiesto del Contexto Portátil. Generado por scripts/generar-contexto.mjs — no se edita a mano. Las tres inteligencias (Claude Code, ChatGPT, Gemini/AI Studio) citan contexto_id para probar sobre qué estado del repositorio razonaron.",
+  "contexto_id": "CTX-20260905-d5a78aa-fc13ed81",
+  "huella": "fc13ed81",
+  "generado": "2026-09-05",
+  "commit": "d5a78aa",
+  "rama": "claude/unify-claude-chatgpt-google-q19n5s",
+  "fecha_commit": "2026-09-04",
+  "guardia": "verde",
+  "fuentes": [
+    "CLAUDE.md",
+    "docs/marco/GLOSARIO_OFICIAL.md",
+    "docs/marco/NOTA_DE_CONTEXTO_PARA_CLAUDE.md",
+    "docs/marco/PROTOCOLO_SEGURIDAD.md",
+    "docs/marco/GOBERNANZA_REPOSITORIO.md",
+    "docs/marco/BIBLIOTECA_LEGAL.md",
+    "docs/marco/modulos/INDICE.json",
+    "docs/orbe/modulos.json",
+    "docs/sincronia/PROTOCOLO_TRI_IA.md"
+  ],
+  "modulos_codigo": {
+    "total": 29,
+    "por_estado": {
+      "maqueta": 15,
+      "real": 8,
+      "parcial": 4,
+      "riesgo": 2
+    },
+    "por_superficie": {
+      "c5": 13,
+      "citizen_app": 16
+    }
+  },
+  "modulos_orbe": {
+    "total": 9,
+    "por_estado": {
+      "propuesta": 2,
+      "piloto": 1,
+      "disenado": 5,
+      "desplegado": 1
+    }
+  },
+  "biblioteca_legal": {
+    "verificado": 35,
+    "verificadoConReserva": 4,
+    "porVerificar": 5
+  },
+  "salidas": {
+    "completo": "docs/sincronia/CONTEXTO_PORTATIL.md",
+    "breve": "docs/sincronia/CONTEXTO_BREVE.md"
+  }
+}
