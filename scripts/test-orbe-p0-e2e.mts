@@ -83,13 +83,34 @@ function killProcessTree(child: ChildProcess, signal: NodeJS.Signals) {
   child.kill(signal);
 }
 
-async function waitForPortClosed(timeoutMs = 5_000) {
+// Exportadas para prueba de regresion directa (scripts/__tests__/waitForPortClosed.test.ts):
+// ORBE-P0-E2E-008 / hallazgo P2 de la revision del PR #63.
+export function isRealConnectionRefusal(error: unknown): boolean {
+  // fetch() lanza dos errores muy distintos aqui y hay que distinguirlos:
+  // - Nadie escucha en el puerto: TypeError con cause.code === 'ECONNREFUSED'.
+  //   Esa es la unica prueba real de que el puerto esta cerrado.
+  // - AbortSignal.timeout(500) se cumplio: TimeoutError. Esto NO prueba que
+  //   el puerto este cerrado, solo que el servidor tardo en responder -sigue
+  //   vivo y aceptando conexiones-. Tratarlo como cierre fue el defecto P2
+  //   encontrado en la revision del PR #63: con un servidor vivo que
+  //   respondia en ~750ms, waitForPortClosed lo declaraba cerrado a los
+  //   ~517ms y una peticion inmediata despues seguia obteniendo HTTP 200.
+  const code = (error as { cause?: { code?: string } } | undefined)?.cause?.code;
+  return code === 'ECONNREFUSED' || code === 'ECONNRESET';
+}
+
+export async function waitForPortClosed(timeoutMs = 5_000, targetBaseUrl: string = baseUrl) {
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
     try {
-      await fetch(`${baseUrl}/api/contextos/v0.1/health`, { signal: AbortSignal.timeout(500) });
-    } catch {
-      return; // La conexion fallo: el puerto ya esta cerrado de verdad.
+      await fetch(`${targetBaseUrl}/api/contextos/v0.1/health`, { signal: AbortSignal.timeout(500) });
+      // Respondio (aunque tarde): el proceso sigue vivo. Seguir esperando.
+    } catch (error) {
+      if (isRealConnectionRefusal(error)) {
+        return; // La conexion fue rechazada de verdad: el puerto ya esta cerrado.
+      }
+      // TimeoutError (u otro error que no sea un rechazo de conexion): la
+      // corrida es inconclusa, no una prueba de cierre. Seguir esperando.
     }
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
@@ -325,4 +346,9 @@ async function main() {
   }
 }
 
-void main();
+// Solo correr la suite E2E completa cuando este archivo se ejecuta
+// directamente (`npm run test:orbe-p0-e2e`), no cuando otra prueba lo
+// importa por sus funciones exportadas (ver scripts/__tests__/waitForPortClosed.test.ts).
+if (import.meta.url === `file://${process.argv[1]}`) {
+  void main();
+}
