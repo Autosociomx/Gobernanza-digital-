@@ -57,9 +57,45 @@ function startLabServer() {
       CONTEXTOS_ALLOWED_ORIGINS: 'http://localhost:3000',
     },
     stdio: ['ignore', 'pipe', 'pipe'],
+    // ORBE-P0-E2E-008: "npx tsx <archivo>" crea un proceso nieto (el node/tsx
+    // real que escucha el puerto) distinto del handle que spawn() devuelve.
+    // Sin detached:true, matar solo ese handle puede dejar vivo el proceso
+    // real -reparentado a init- respondiendo HTTP incluso despues de que
+    // stopLabServer() se da por completado. detached:true convierte este
+    // proceso en lider de su propio grupo para poder matar el grupo entero.
+    detached: process.platform !== 'win32',
   });
   server.stdout?.on('data', (chunk) => process.stdout.write(`[LAB] ${chunk}`));
   server.stderr?.on('data', (chunk) => process.stderr.write(`[LAB] ${chunk}`));
+}
+
+function killProcessTree(child: ChildProcess, signal: NodeJS.Signals) {
+  if (process.platform !== 'win32' && typeof child.pid === 'number') {
+    try {
+      // pid negativo = señal a todo el grupo de procesos (npx + su hijo
+      // real node/tsx), no solo al handle inmediato.
+      process.kill(-child.pid, signal);
+      return;
+    } catch {
+      // El grupo ya pudo haber desaparecido: intentar con el pid directo.
+    }
+  }
+  child.kill(signal);
+}
+
+async function waitForPortClosed(timeoutMs = 5_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    try {
+      await fetch(`${baseUrl}/api/contextos/v0.1/health`, { signal: AbortSignal.timeout(500) });
+    } catch {
+      return; // La conexion fallo: el puerto ya esta cerrado de verdad.
+    }
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  throw new Error(
+    `labServer sigue respondiendo en ${baseUrl} ${timeoutMs}ms despues de intentar apagarlo (ver ORBE-P0-E2E-008).`,
+  );
 }
 
 async function stopLabServer() {
@@ -68,15 +104,20 @@ async function stopLabServer() {
   if (!child || child.killed || child.exitCode !== null) return;
   await new Promise<void>((resolve) => {
     const timer = setTimeout(() => {
-      child.kill('SIGKILL');
+      killProcessTree(child, 'SIGKILL');
       resolve();
     }, 3_000);
     child.once('exit', () => {
       clearTimeout(timer);
       resolve();
     });
-    child.kill('SIGTERM');
+    killProcessTree(child, 'SIGTERM');
   });
+  // No confiar solo en el evento 'exit' del handle que devolvio spawn(): con
+  // "npx tsx <archivo>" ese handle puede no ser el proceso que realmente
+  // escucha el puerto. Verificar el cierre real del puerto evita declarar el
+  // runtime apagado cuando en realidad sigue respondiendo (ORBE-P0-E2E-008).
+  await waitForPortClosed();
 }
 
 const httpExecutor: RuntimeExecutor = async (request: RuntimeRequest): Promise<RuntimeResponse> => {
