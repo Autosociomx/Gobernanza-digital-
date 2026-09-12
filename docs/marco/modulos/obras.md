@@ -12,13 +12,13 @@ Mapa de obras públicas y alertas de infraestructura del municipio.
 | infrastructureService.ts | Existe el servicio real (usado por C5Dashboard en el módulo Salud y por CitizenApp), pero esta vista todavía no lo consume |
 
 ## Dónde vive
-- Código: `src/components/C5Dashboard.tsx` — función/componente `ObrasView()`, líneas 365-417
+- Código: `src/components/C5Dashboard.tsx` — función/componente `ObrasView()`, líneas 372-424
 
 - `docs/orbe/modulos/OBRAS.md` (alias de equipo: "Carreteras Inteligentes")
 - `src/services/infrastructureService.ts` — servicio real ya construido, preparado pero no conectado aquí
 
 ## Cómo editarlo
-- Las coordenadas de obras (líneas 383-387) y la lista de alertas (395-398) son arreglos estáticos.
+- Las coordenadas de obras (líneas 390-394) y la lista de alertas (402-405) son arreglos estáticos.
 - Para hacerlo real: importar `infrastructureService.ts` (ya existe y funciona en otras vistas) y sustituir los arreglos por `getMasterRegistry()` filtrado por tipo de activo relevante a obras.
 
 ## Pendientes

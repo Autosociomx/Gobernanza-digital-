@@ -50,9 +50,10 @@ Copia `firebase-applet-config.example.json` y llénalo, o pídeselo al usuario.
 | `npm run dev` | Servidor de desarrollo (Express + Vite en modo middleware) |
 | `npm run lint` | `tsc --noEmit` — **solo chequeo de tipos, no hay linter de estilo** |
 | `npm test` | Vitest, toda la suite |
-| `npm run test:orbe-contextos` | Los 3 archivos que corre CI (runtime + bridge + registry) |
+| `npm run test:orbe-contextos` | Los 4 archivos que corre CI (runtime + bridge + registry + traducción) |
 | `npm run test:contextos` | Solo `contextos/__tests__/runtime.test.ts` |
 | `npm run test:semantic-registry` | Solo `shared/semantic/__tests__/registry.test.ts` |
+| `npm run test:traduccion` | Solo `shared/traduccion/__tests__/traduccion.test.ts` |
 | `npm run build` | `vite build` + esbuild bundle de `server.ts` → `dist/server.cjs` |
 | `npm run contextos:lab` | Servidor de laboratorio Context.OS en `127.0.0.1:3011` |
 | `npm run test:firestore-rules` | Reglas de Firestore contra el emulador (requiere Java 21) |
@@ -71,8 +72,8 @@ npm run lint
 npx vite build
 ```
 
-Si tocaste `contextos/`, `shared/semantic/` o `src/orbe/`, añade
-`npm run test:orbe-contextos`.
+Si tocaste `contextos/`, `shared/semantic/`, `shared/traduccion/` o `src/orbe/`,
+añade `npm run test:orbe-contextos`.
 
 ---
 
@@ -105,6 +106,12 @@ Referencia normativa: `docs/marco/PROTOCOLO_SEGURIDAD.md`.
    positivo). El navegador nunca decide cuánto se cobra.
 9. **Ningún dato personal real** en el repositorio, ni en semillas de demo, ni
    en actas.
+10. **Ninguna cadena en lengua originaria incrustada en un componente.** Náayeri
+    y wixárika viven solo en `shared/traduccion/lexico.ts`, con estado, origen,
+    fuente y fecha, y se resuelven con `resolverTexto()`. Lo que ningún hablante
+    ha revisado se muestra etiquetado como `SIN VERIFICAR` o se repliega a
+    español; nunca se presenta como traducción validada. Ver
+    `docs/marco/PROTOCOLO_LENGUAS_ORIGINARIAS.md`.
 
 ### Archivos protegidos
 
@@ -311,6 +318,7 @@ endpoints del servidor o el lazy loading: es una regresión, no una mejora.
 │   └── lib/utils.ts            cn()
 ├── contextos/                  Context.OS Runtime v0.1 (servidor, LAB_MOCK)
 ├── shared/semantic/            Registro de contratos semánticos versionados
+├── shared/traduccion/          Léxico en lenguas originarias + guardia pre-envío
 ├── pulso-nayarit/              Módulo con backend propio (Supabase/Postgres)
 ├── data/municipality/tepic/    services.json, intents.json
 ├── demo/                       Demos HTML autocontenidas
@@ -339,6 +347,8 @@ En este orden:
 6. `docs/plataforma/05-MANUAL-DESARROLLADORES.md` — qué APIs existen hoy.
 7. `contextos/README.md` — alcance exacto del runtime y, sobre todo, **lo que
    no hace**.
+8. `docs/marco/PROTOCOLO_LENGUAS_ORIGINARIAS.md` — qué se puede afirmar en
+   náayeri y wixárika, y con qué respaldo.
 
 Las actas de `docs/actas/` son el registro institucional: no se borran, se
 corrigen con actas posteriores.

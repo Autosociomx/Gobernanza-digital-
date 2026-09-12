@@ -10,7 +10,7 @@ Vista de integración de padrones de bienestar social.
 _Sin conexiones registradas todavía._
 
 ## Dónde vive
-- Código: `src/components/C5Dashboard.tsx` — función/componente `BienestarView()`, líneas 1456-1477
+- Código: `src/components/C5Dashboard.tsx` — función/componente `BienestarView()`, líneas 1467-1488
 
 - `docs/orbe/modulos/BIENESTAR.md`
 

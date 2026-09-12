@@ -14,7 +14,7 @@ Cola de citas en tiempo real y búsqueda de expediente de urgencias por CURP, co
 | Aura / Asistente IA | Puede citarse desde el chat |
 
 ## Dónde vive
-- Código: `src/components/C5Dashboard.tsx` — función/componente `SaludView()`, líneas 514-773
+- Código: `src/components/C5Dashboard.tsx` — función/componente `SaludView()`, líneas 521-780
 
 - `docs/marco/MODULO_SALUD_CURP.md`
 - `docs/orbe/modulos/EXPEDIENTE_FAMILIAR.md`
@@ -22,7 +22,7 @@ Cola de citas en tiempo real y búsqueda de expediente de urgencias por CURP, co
 
 ## Cómo editarlo
 - Es el único módulo del panel C5 con servicios reales de por medio — cualquier cambio de datos debe pasar por `citasSaludService.ts`/`saludPerfilService.ts`, nunca por un arreglo local nuevo.
-- El "Mapa de Calor" de alertas de salud pública (líneas 746-783, dentro de esta misma vista) sí es decorativo/estático — no confundirlo con el resto del módulo, que es real.
+- El "Mapa de Calor" de alertas de salud pública (líneas 740-756, dentro de esta misma vista) sí es decorativo/estático — no confundirlo con el resto del módulo, que es real.
 
 ## Pendientes
 - Separar visualmente el "Mapa de Calor" (maqueta) del resto de la vista (real) para no prestarle credibilidad que no tiene.

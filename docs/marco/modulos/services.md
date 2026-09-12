@@ -13,7 +13,7 @@ Reporte manual de incidencias (luminaria, bacheo, falla hídrica), seguimiento d
 | MysteryShopperView | Ya está correctamente enlazado desde aquí |
 
 ## Dónde vive
-- Código: `src/components/CitizenApp.tsx` — función/componente `ServiciosYReportesView()`, líneas 1625-1741
+- Código: `src/components/CitizenApp.tsx` — función/componente `ServiciosYReportesView()`, líneas 1614-1730
 
 
 ## Cómo editarlo

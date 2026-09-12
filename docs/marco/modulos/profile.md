@@ -10,7 +10,7 @@ Perfil del ciudadano, incluye el escáner de credencial (CredentialScannerView).
 _Sin conexiones registradas todavía._
 
 ## Dónde vive
-- Código: `src/components/CitizenApp.tsx` — función/componente `ProfileView()`, líneas 1742-1908
+- Código: `src/components/CitizenApp.tsx` — función/componente `ProfileView()`, líneas 1731-1897
 
 
 ## Cómo editarlo

@@ -10,7 +10,7 @@ Comités y redes ciudadanas, con mapa de comités y registro externo.
 _Sin conexiones registradas todavía._
 
 ## Dónde vive
-- Código: `src/components/CitizenApp.tsx` — función/componente `RedesCiudadanasView()`, líneas 1410-1552
+- Código: `src/components/CitizenApp.tsx` — función/componente `RedesCiudadanasView()`, líneas 1399-1541
 
 
 ## Cómo editarlo

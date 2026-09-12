@@ -10,11 +10,11 @@ Gráfica de barras de métricas integrales de gobierno.
 _Sin conexiones registradas todavía._
 
 ## Dónde vive
-- Código: `src/components/C5Dashboard.tsx` — función/componente `MetricView()`, líneas 1478-1517
+- Código: `src/components/C5Dashboard.tsx` — función/componente `MetricView()`, líneas 1489-1528
 
 
 ## Cómo editarlo
-- Los datos de la gráfica (líneas 1499-1505) son un arreglo estático — no hay servicio ni interacción.
+- Los datos de la gráfica (líneas 1510-1516) son un arreglo estático — no hay servicio ni interacción.
 
 ## Pendientes
 - Conectar a métricas de uso reales — hoy es una sola gráfica decorativa.

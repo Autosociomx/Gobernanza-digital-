@@ -12,11 +12,11 @@ Pantalla principal del portal ciudadano: chat de Aura, hero de "Soberanía Digit
 | useAuraChat con onAccion | El chat real puede registrar un reporte ciudadano (`reportesCiudadanosService.crearReporte`) durante la conversación misma |
 
 ## Dónde vive
-- Código: `src/components/CitizenApp.tsx` — función/componente `HomeView()`, líneas 1029-1378
+- Código: `src/components/CitizenApp.tsx` — función/componente `HomeView()`, líneas 1018-1367
 
 
 ## Cómo editarlo
-- El chat de Aura (líneas ~275-293 del archivo completo) es real y es la integración de IA más sólida del repositorio — no tocar su lógica de `onAccion` sin revisar `reportesCiudadanosService.ts`.
+- El chat de Aura (líneas ~241-257 del archivo completo) es real y es la integración de IA más sólida del repositorio — no tocar su lógica de `onAccion` sin revisar `reportesCiudadanosService.ts`.
 - La tarjeta hero "Soberanía Digital" tiene `cursor-pointer` en el `div` exterior, pero solo el botón interior "Ver Manifiesto" tiene `onClick` real — afordancia engañosa a corregir.
 
 ## Pendientes

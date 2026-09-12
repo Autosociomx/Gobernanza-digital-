@@ -10,7 +10,7 @@ KPIs estratégicos, pestañas de estrategia, gráficas, mapa de calor, y generac
 _Sin conexiones registradas todavía._
 
 ## Dónde vive
-- Código: `src/components/C5Dashboard.tsx` — función/componente `ObservatorioView()`, líneas 1085-1455
+- Código: `src/components/C5Dashboard.tsx` — función/componente `ObservatorioView()`, líneas 1096-1466
 
 
 ## Cómo editarlo

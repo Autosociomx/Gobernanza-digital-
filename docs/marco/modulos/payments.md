@@ -13,7 +13,7 @@ Flujo de pago "QR Mágico" y Ventanilla Única de trámites (licencias, permisos
 | be_pay /api/create-payment-intent | Endpoint real de Stripe, pero el flujo de referencia es simulado del lado del cliente |
 
 ## Dónde vive
-- Código: `src/components/CitizenApp.tsx` — función/componente `TesoreriaYTramitesView()`, líneas 1553-1624
+- Código: `src/components/CitizenApp.tsx` — función/componente `TesoreriaYTramitesView()`, líneas 1542-1613
 
 
 ## Cómo editarlo

@@ -10,12 +10,12 @@ Visualización NDVI, precios de mercado agrícola, y generación de certificado 
 _Sin conexiones registradas todavía._
 
 ## Dónde vive
-- Código: `src/components/C5Dashboard.tsx` — función/componente `AgrovisionView()`, líneas 1001-1084
+- Código: `src/components/C5Dashboard.tsx` — función/componente `AgrovisionView()`, líneas 1012-1095
 
 - Alias de equipo: "AgroVisión 3D" (`docs/plataforma/03-DOCUMENTACION-FUNCIONAL.md` — marcado hoja de ruta, "Octane 3D Engine" es texto decorativo, no un motor 3D real)
 
 ## Cómo editarlo
-- Todos los valores NDVI y de mercado (líneas 1071-1076) son estáticos.
+- Todos los valores NDVI y de mercado (líneas 1082-1087) son estáticos.
 - El botón "Generar Certificado de Producción" hace `setTimeout` y muestra éxito simulado — nada se genera ni se guarda.
 
 ## Pendientes

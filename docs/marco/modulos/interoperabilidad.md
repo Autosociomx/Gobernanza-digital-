@@ -12,12 +12,12 @@ Panel del C5 que muestra endpoints de transparencia, trazabilidad inter-instituc
 | Gabinete | Referencia cruzada de auditoría institucional (visual, no conectada) |
 
 ## Dónde vive
-- Código: `src/components/C5Dashboard.tsx` — función/componente `InteroperabilidadView()`, líneas 209-296
+- Código: `src/components/C5Dashboard.tsx` — función/componente `InteroperabilidadView()`, líneas 216-303
 
 
 ## Cómo editarlo
 - Todo el contenido son arreglos estáticos declarados dentro de la función — no hay servicio que tocar todavía.
-- Para hacerlo real: crear un servicio en `src/services/` que lea un log de auditoría real y sustituir los arreglos de las líneas 243-248 y 275-280.
+- Para hacerlo real: crear un servicio en `src/services/` que lea un log de auditoría real y sustituir los arreglos de las líneas 250-255 y 282-287.
 
 ## Pendientes
 - Conectar a una fuente real de trazabilidad institucional — hoy es 100% maqueta visual.

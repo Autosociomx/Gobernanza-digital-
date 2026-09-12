@@ -13,7 +13,7 @@ Descargar mis datos y eliminar mi cuenta — con borrado real en Firestore.
 | Firebase Auth | `user.delete()` real |
 
 ## Dónde vive
-- Código: `src/components/CitizenApp.tsx` — función/componente `SecurityCenterView()`, líneas 1909-2126
+- Código: `src/components/CitizenApp.tsx` — función/componente `SecurityCenterView()`, líneas 1898-2115
 
 
 ## Cómo editarlo
