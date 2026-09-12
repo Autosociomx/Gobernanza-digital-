@@ -70,11 +70,18 @@ import { MasterStrategicPlan } from './MasterStrategicPlan';
 import { MunicipalLettersView } from './MunicipalLettersView';
 
 import { AuraCertificationSeal } from './AuraCertificationSeal';
+import { AvisoLenguaOriginaria } from './AvisoLenguaOriginaria';
+import {
+  descriptorLengua,
+  LENGUAS_CLAVES,
+  type LenguaClave,
+} from '../../shared/traduccion/lenguas';
+import { resolverTexto } from '../../shared/traduccion/registro';
 import { useAuraChat } from '../hooks/useAuraChat';
 import { useAuraVoice } from '../hooks/useAuraVoice';
 
 type TabType = 'home' | 'forum' | 'networks' | 'payments' | 'services' | 'profile' | 'security' | 'canjes' | 'notifications' | 'auditoria' | 'academy' | 'system_audit' | 'banana_command' | 'strategic_academy' | 'strategic_plan' | 'municipal_letters';
-type Language = 'es' | 'cora' | 'wixarika';
+type Language = LenguaClave;
 
 export function CitizenApp({ 
   onLogout, 
@@ -217,41 +224,19 @@ export function CitizenApp({
   const [paymentRef, setPaymentRef] = useState<string>('');
   const [lang, setLang] = useState<Language>('es');
   
-  const translations = {
-    es: {
-      welcome: `Hola, ${profile.name.split(' ')[0]}`,
-      ai_greet: `¡Hola ${profile.name.split(' ')[0]}! Soy tu Asistente de Nayarit Digital (prototipo). Puedo ayudarte con reportes, salud preventiva o dudas sobre Comités Ciudadanos. ¿En qué te puedo apoyar hoy?`,
-      home: "Inicio",
-      forum: "Campaña",
-      networks: "Redes",
-      payments: "Tesorería",
-      services: "Gobierno",
-      profile: "Mi NayaritID",
-      assistant_online: "Online · Soporte Regional",
-    },
-    cora: {
-      welcome: "Tyu'un, Juan Pérez",
-      ai_greet: "Pue'en Juan! Ne'ij tyu'iti'in Nayarit Digital. Ne'ij amu'u ne'itye tyu'uti'in...",
-      home: "Tyu'un",
-      forum: "Tyu'uchal",
-      networks: "Tyu'uredes",
-      payments: "Tyu'upay",
-      services: "Tyu'useve",
-      profile: "Pēfi'i",
-      assistant_online: "Online · Cora Support",
-    },
-    wixarika: {
-      welcome: "Haux Juan Pérez",
-      ai_greet: "¡Ke tsi' kaniu Juan! Ne keniu Asistente Nayarit Digital. ¿Kewa pikanetsi'iwau?",
-      home: "Haux",
-      forum: "Chime",
-      networks: "Tyu'uredes",
-      payments: "Paka",
-      services: "Yereta",
-      profile: "Kewita",
-      assistant_online: "Online · Wixárika Support",
-    }
-  };
+  // Las cadenas en náayeri y wixárika ya no viven aquí: viven en
+  // shared/traduccion/lexico.ts con estatus, fuente y fecha, y pasan por
+  // GuardiaPreEnvio antes de pintarse. La Guardia de regresiones (R9)
+  // impide que vuelvan a incrustarse en este archivo.
+  const nombreCorto = profile.name ? profile.name.split(' ')[0] : '';
+  const t = React.useCallback(
+    (clave: string) => resolverTexto(clave, lang, { valores: { nombre: nombreCorto } }).texto,
+    [lang, nombreCorto],
+  );
+  // El encabezado pinta el nombre resaltado aparte, así que parte la plantilla
+  // por el marcador {nombre}: no todas las lenguas separan el saludo con coma.
+  const [saludoAntes, saludoDespues = ''] = resolverTexto('app.saludo', lang)
+    .texto.split('{nombre}');
 
   // AI Chat State — motor compartido useAuraChat: arma el contexto real de
   // la página (pestaña activa + datos del perfil) en vez del truco anterior
@@ -266,14 +251,14 @@ export function CitizenApp({
   }, [activeTab, profile.name, lang, isOnline]);
 
   const { messages, isTyping, isOnlineMode: isAiMode, sendMessage, resetGreeting } = useAuraChat({
-    initialGreeting: translations[lang].ai_greet,
+    initialGreeting: t('app.aura.saludo'),
     getPageContext,
     onReply: (respuesta) => { if (autoSpeak) auraVoice.speak(respuesta); },
   });
 
   useEffect(() => {
-    resetGreeting(translations[lang].ai_greet);
-  }, [lang, resetGreeting]);
+    resetGreeting(t('app.aura.saludo'));
+  }, [t, resetGreeting]);
 
   const updateProfile = async (updatedData: any) => {
     if (!user) return;
@@ -307,11 +292,12 @@ export function CitizenApp({
   const handleGoToSecurity = React.useCallback(() => setActiveTab('security'), []);
   const handleGoToCanjes = React.useCallback(() => setActiveTab('canjes'), []);
 
-  const quickActions = {
-    es: ["Pagar Predial", "Reportar Bache", "Mapa de Obras", "Ayuda"],
-    cora: ["Tyu'upay", "Reportar", "Mapa", "Ayuda"],
-    wixarika: ["Paka", "Reportar", "Mapa", "Ayuda"]
-  };
+  const quickActions = [
+    'accion.pagar_predial',
+    'accion.reportar_bache',
+    'accion.mapa_obras',
+    'accion.ayuda',
+  ].map((clave) => ({ clave, texto: t(clave) }));
 
   const handleSendMessage = (text?: string) => {
     const userMsg = text ?? inputValue.trim();
@@ -459,13 +445,13 @@ export function CitizenApp({
               <span className="px-2 py-0.5 bg-indigo-500/10 text-indigo-600 rounded-full text-[8px] font-black tracking-widest border border-indigo-500/20">VER 18.0</span>
             </div>
             <h1 className="text-3xl font-serif font-black text-slate-900 leading-[0.9] tracking-tighter">
-              {translations[lang].welcome.split(',')[0]},<br/>
-              <span className="text-magenta-600" style={{color:'var(--magenta)'}}>{translations[lang].welcome.split(',')[1]}</span>
+              {saludoAntes.trim()}<br/>
+              <span className="text-magenta-600" style={{color:'var(--magenta)'}}>{nombreCorto}{saludoDespues}</span>
             </h1>
             <div className="flex items-center gap-3 mt-4">
                <AuraCertificationSeal />
                <div className="flex gap-2">
-               {['es', 'cora', 'wixarika'].map(l => {
+               {LENGUAS_CLAVES.map(l => {
                  let activeClass = "";
                  let inlineStyle: any = {};
                  
@@ -489,14 +475,15 @@ export function CitizenApp({
                  return (
                    <button 
                      key={l}
-                     onClick={() => setLang(l as Language)}
+                     onClick={() => setLang(l)}
                      className={cn(
                        "text-[8px] font-bold uppercase px-3 py-1 rounded-full transition-all",
                        activeClass
                      )}
                      style={inlineStyle}
+                     aria-label={`Interfaz en ${descriptorLengua(l).nombre}`}
                    >
-                     {l}
+                     {descriptorLengua(l).etiquetaBoton}
                    </button>
                  );
                })}
@@ -510,6 +497,12 @@ export function CitizenApp({
              <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white flex items-center justify-center text-[8px] text-white font-bold">2</div>
           </div>
         </header>
+
+        {lang !== 'es' && (
+          <div className="px-6 pb-4">
+            <AvisoLenguaOriginaria lengua={lang} />
+          </div>
+        )}
 
         {/* Content Canvas */}
         <main className="flex-1 overflow-y-auto px-6 pb-24 relative">
@@ -537,11 +530,11 @@ export function CitizenApp({
 
         {/* Navigation Bar */}
         <nav className={cn("absolute bottom-0 left-0 right-0 border-t border-slate-100 px-2 py-3 pb-8 flex justify-around items-center z-40", (!reducedMotion && isOnline) ? "bg-white/80 backdrop-blur-md" : "bg-white")}>
-           <TabButton icon={Home} label={translations[lang].home} active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
-           <TabButton icon={Users} label={translations[lang].networks} active={activeTab === 'networks'} onClick={() => setActiveTab('networks')} />
-           <TabButton icon={MessageSquare} label={translations[lang].forum} active={activeTab === 'forum'} onClick={() => setActiveTab('forum')} />
-           <TabButton icon={CreditCard} label={translations[lang].payments} active={activeTab === 'payments'} onClick={() => setActiveTab('payments')} />
-           <TabButton icon={User} label={translations[lang].profile} active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} />
+           <TabButton icon={Home} label={t('nav.inicio')} active={activeTab === 'home'} onClick={() => setActiveTab('home')} />
+           <TabButton icon={Users} label={t('nav.redes')} active={activeTab === 'networks'} onClick={() => setActiveTab('networks')} />
+           <TabButton icon={MessageSquare} label={t('nav.campana')} active={activeTab === 'forum'} onClick={() => setActiveTab('forum')} />
+           <TabButton icon={CreditCard} label={t('nav.tesoreria')} active={activeTab === 'payments'} onClick={() => setActiveTab('payments')} />
+           <TabButton icon={User} label={t('nav.perfil')} active={activeTab === 'profile'} onClick={() => setActiveTab('profile')} />
         </nav>
 
 
@@ -564,7 +557,7 @@ export function CitizenApp({
                         <p className="text-[1.1rem] font-black uppercase tracking-tight leading-none mb-1">{isAiMode ? 'Aura IA (ConnectX)' : 'Modo Offline'}</p>
                         <p className={cn("text-[10px] font-bold uppercase flex items-center gap-1", isAiMode ? "text-emerald-400" : "text-amber-400")}>
                           <span className={cn("w-1.5 h-1.5 rounded-full animate-pulse", isAiMode ? "bg-emerald-400" : "bg-amber-400")}></span>
-                          {isAiMode ? translations[lang].assistant_online : 'Fallback Mode'}
+                          {isAiMode ? t('app.asistente_en_linea') : 'Fallback Mode'}
                         </p>
                       </div>
                     </div>
@@ -660,13 +653,13 @@ export function CitizenApp({
 
                {/* Quick Actions (WhatsApp Style Chips) */}
                <div className="px-4 py-3 bg-white border-t border-slate-100 flex gap-2 overflow-x-auto custom-scrollbar no-scrollbar scroll-smooth">
-                  {quickActions[lang].map((action) => (
+                  {quickActions.map((action) => (
                     <button 
-                      key={action}
-                      onClick={() => handleSendMessage(action)}
+                      key={action.clave}
+                      onClick={() => handleSendMessage(action.texto)}
                       className="px-5 py-2.5 bg-slate-100 hover:bg-magenta-500 hover:text-white rounded-full text-xs font-black transition-all border border-slate-200 uppercase tracking-widest whitespace-nowrap active:scale-95 shadow-sm"
                     >
-                      {action}
+                      {action.texto}
                     </button>
                   ))}
                </div>

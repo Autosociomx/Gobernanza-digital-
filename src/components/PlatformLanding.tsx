@@ -270,13 +270,15 @@ export const PlatformLanding = ({ onNavigate }: PlatformLandingProps) => {
              <div className="bg-white border border-[#d4ccc2] p-8 rounded-xl relative overflow-hidden shadow-sm">
                <div className="absolute top-0 left-0 right-0 h-1 bg-[#4C9F70]"></div>
                <Globe className="w-8 h-8 text-[#4C9F70] mb-5" />
-               <h3 className="font-bold text-lg mb-3 text-[#1a2438]">En su lengua, no solo en español</h3>
+               <h3 className="font-bold text-lg mb-3 text-[#1a2438]">Hacia su lengua, no solo el español</h3>
                <p className="text-[14px] text-[#4a5568] leading-relaxed mb-5">
-                  La plataforma opera en español, náayeri (cora) y wixárika. Un trámite que no se
-                  entiende es una fila disfrazada: aquí el ciudadano de la sierra lee su gobierno
-                  en su propia lengua.
+                  Un trámite que no se entiende es una fila disfrazada. El selector de náayeri
+                  (cora) y wixárika ya está en el C5 y en la App Ciudadana, con repliegue a
+                  español cuando una cadena no existe. Lo que falta no es código: falta que
+                  hablantes revisen el glosario, y hasta entonces cada cadena se muestra
+                  etiquetada como SIN VERIFICAR.
                </p>
-               <p className="text-[10px] uppercase tracking-widest font-bold text-[#35704E]">3 lenguas · Selector integrado en el C5</p>
+               <p className="text-[10px] uppercase tracking-widest font-bold text-[#35704E]">3 lenguas en el selector · Glosario sin verificar por hablantes</p>
              </div>
 
              <div className="bg-white border border-[#d4ccc2] p-8 rounded-xl relative overflow-hidden shadow-sm">

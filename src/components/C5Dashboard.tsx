@@ -41,8 +41,15 @@ import { useAuraVoice } from '../hooks/useAuraVoice';
 import { listarColaCitas, actualizarEstadoCita, type CitaSalud, type EstadoCita } from '../services/citasSaludService';
 import { obtenerPerfil, registrarAcceso, esCurpValido, type PerfilSalud } from '../services/saludPerfilService';
 import { useAuth } from './FirebaseProvider';
+import { AvisoLenguaOriginaria } from './AvisoLenguaOriginaria';
+import {
+  descriptorLengua,
+  LENGUAS_CLAVES,
+  type LenguaClave,
+} from '../../shared/traduccion/lenguas';
+import { resolverTexto } from '../../shared/traduccion/registro';
 
-type Language = 'es' | 'cora' | 'wixarika';
+type Language = LenguaClave;
 
 import {
   AreaChart,
@@ -776,11 +783,13 @@ function IAView() {
   const auraVoice = useAuraVoice();
   const [autoSpeak, setAutoSpeak] = useState(false);
 
-  const greets = {
-    es: 'Presidenta Geraldine Ponce, el Asistente IA de ConnectX está listo. ¿Desea un reporte de la eficiencia en colonias o el estatus de la recaudación digital en Tepic?',
-    cora: "Presidenta Geraldine Ponce, ConnectX IA amu'u tyu'un. ¿Tyu'un ne'ij tyu'uti'in Tepic?",
-    wixarika: 'Geraldine Ponce keniu, ConnectX IA keniu. ¿Kewa pikanetsi\'iwau Tepic?'
-  };
+  // El saludo vive en shared/traduccion/lexico.ts con estatus y fuente. Se
+  // le retiró el nombre de la titular del Ayuntamiento: el semáforo del
+  // proyecto prohíbe nombres de políticos en componentes de la plataforma.
+  const saludoAura = React.useCallback(
+    (lengua: Language) => resolverTexto('c5.aura.saludo', lengua).texto,
+    [],
+  );
 
   const getPageContext = React.useCallback(() => {
     return `El usuario está en el módulo "Asistente IA" del C5 Governance Hub (panel administrativo de gobierno municipal). ` +
@@ -788,15 +797,14 @@ function IAView() {
   }, [lang]);
 
   const { messages, isTyping, sendMessage, resetGreeting } = useAuraChat({
-    initialGreeting: greets.es,
+    initialGreeting: saludoAura('es'),
     getPageContext,
     onReply: (respuesta) => { if (autoSpeak) auraVoice.speak(respuesta); },
   });
 
   useEffect(() => {
-    resetGreeting(greets[lang]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lang, resetGreeting]);
+    resetGreeting(saludoAura(lang));
+  }, [lang, saludoAura, resetGreeting]);
 
   const [inputValue, setInputValue] = useState('');
 
@@ -854,20 +862,23 @@ function IAView() {
               {autoSpeak ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
             </button>
           )}
-          {['es', 'cora', 'wixarika'].map(l => (
+          {LENGUAS_CLAVES.map(l => (
             <button
               key={l}
-              onClick={() => setLang(l as Language)}
+              onClick={() => setLang(l)}
+              aria-label={`Interfaz en ${descriptorLengua(l).nombre}`}
               className={cn(
-                "w-12 h-12 rounded-xl font-black text-[10px] uppercase shadow-lg transition-all",
+                "h-12 px-3 rounded-xl font-black text-[10px] uppercase shadow-lg transition-all",
                 lang === l ? "bg-purple-600 text-white ring-2 ring-purple-500/40" : "bg-slate-800 text-slate-500 hover:bg-slate-700"
               )}
             >
-              {l}
+              {descriptorLengua(l).etiquetaBoton}
             </button>
           ))}
         </div>
       </div>
+
+      {lang !== 'es' && <AvisoLenguaOriginaria lengua={lang} tono="oscuro" />}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-12">
         <div className="bg-[#12141a] border border-slate-800 rounded-[2.5rem] p-8 flex flex-col h-[650px] shadow-3xl">
