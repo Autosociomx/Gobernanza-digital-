@@ -355,12 +355,12 @@ describe('GrafoTraduccionNativa', () => {
     expect(candidato.aprobóFiltroDeriva).toBe(true);
     expect(candidato.replegado).toBe(false);
     expect(traducir).toHaveBeenCalledTimes(1);
-    expect(traducir.mock.calls[0][2]).toEqual({ temperatura: 0.1 });
+    expect(traducir.mock.calls[0][2].temperatura).toBe(0.1);
   });
 
   it('descarta el borrador alucinado y replegar a literal con temperatura 0', async () => {
-    const traducir = vi.fn<FuncionTraduccion>((_texto, instruccion) =>
-      instruccion.startsWith('Traducción literal') ? 'literal' : 'alucinado',
+    const traducir = vi.fn<FuncionTraduccion>((_texto, _destino, opciones) =>
+      opciones.instruccion.startsWith('Traducción literal') ? 'literal' : 'alucinado',
     );
     const grafo = new GrafoTraduccionNativa();
     const candidato = await grafo.ejecutar({
@@ -374,12 +374,12 @@ describe('GrafoTraduccionNativa', () => {
     expect(candidato.replegado).toBe(true);
     expect(candidato.razones).toContain('DERIVA_SEMANTICA_FUERA_DE_UMBRAL');
     expect(candidato.razones).toContain('REPLIEGUE_A_TRADUCCION_LITERAL');
-    expect(traducir.mock.calls[1][2]).toEqual({ temperatura: 0 });
+    expect(traducir.mock.calls[1][2].temperatura).toBe(0);
   });
 
   it('replega también cuando el vectorizador falla: no medir no es aprobar', async () => {
-    const traducir = vi.fn<FuncionTraduccion>((_texto, instruccion) =>
-      instruccion.startsWith('Traducción literal') ? 'literal' : 'fiel',
+    const traducir = vi.fn<FuncionTraduccion>((_texto, _destino, opciones) =>
+      opciones.instruccion.startsWith('Traducción literal') ? 'literal' : 'fiel',
     );
     const grafo = new GrafoTraduccionNativa();
     const candidato = await grafo.ejecutar({
@@ -405,8 +405,8 @@ describe('GrafoTraduccionNativa', () => {
       traducir,
       perfil: new PerfilIdiolectal({ pitchHz: 130, tempoPpm: 160, terminosLocales: ['ándale'] }),
     });
-    expect(traducir.mock.calls[0][1]).toContain('160 palabras por minuto');
-    expect(traducir.mock.calls[0][1]).toContain('ándale');
+    expect(traducir.mock.calls[0][2].instruccion).toContain('160 palabras por minuto');
+    expect(traducir.mock.calls[0][2].instruccion).toContain('ándale');
   });
 
   it('ninguna salida del grafo es publicable por sí sola', async () => {
@@ -447,6 +447,37 @@ describe('GrafoTraduccionNativa', () => {
     // Lo que sí lo detiene es el registro, no el coseno. Por eso la política
     // de publicación no puede depender del filtro vectorial.
     expect(resolverTexto('accion.ayuda', 'cora').lenguaEfectiva).toBe('es');
+  });
+
+  it('le dice al traductor a qué lengua, con su norma y su variante', async () => {
+    // Sin destino explícito la instrucción pide "traduce" sin decir a qué, y el
+    // modelo devuelve normalmente el español de entrada — que además aprueba el
+    // filtro de deriva con puntaje perfecto (ver LÍMITE MEDIDO).
+    const traducir = vi.fn<FuncionTraduccion>(() => 'fiel');
+    await new GrafoTraduccionNativa().ejecutar({
+      textoFuente: 'Reportar un bache',
+      lengua: 'wixarika',
+      embed,
+      traducir,
+      normaOrtografica: 'norma declarada por la instancia revisora',
+      variante: 'variante declarada por la comunidad',
+    });
+
+    const destino = traducir.mock.calls[0][1];
+    expect(destino.lengua).toBe('wixarika');
+    expect(destino.nombre).toBe('wixárika');
+    expect(destino.normaOrtografica).toBe('norma declarada por la instancia revisora');
+    expect(destino.variante).toBe('variante declarada por la comunidad');
+  });
+
+  it('marca el candidato cuando se preparó sin norma ortográfica declarada', async () => {
+    const candidato = await new GrafoTraduccionNativa().ejecutar({
+      textoFuente: 'Reportar un bache',
+      lengua: 'cora',
+      embed,
+      traducir: () => 'fiel',
+    });
+    expect(candidato.razones).toContain('SIN_NORMA_ORTOGRAFICA_DECLARADA');
   });
 
   it('rechaza un texto fuente vacío', async () => {

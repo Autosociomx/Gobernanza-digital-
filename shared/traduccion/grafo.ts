@@ -1,16 +1,33 @@
 import { GuardiaPreEnvio, UMBRAL_DERIVA_POR_DEFECTO } from './guardia';
-import type { LenguaClave } from './lenguas';
+import { descriptorLengua, type LenguaClave } from './lenguas';
 import { PERFIL_NEUTRO, type PerfilIdiolectal } from './perfil';
 import type { CandidatoTraduccion } from './tipos';
 
 /** Vectoriza un texto. La implementación real vive en el servidor, nunca en `src/`. */
 export type FuncionEmbedding = (texto: string) => Promise<readonly number[]> | readonly number[];
 
+/**
+ * A qué se traduce. Sin esto la instrucción pide "traduce" sin decir a qué
+ * lengua, y el modelo devuelve lo que quiera — normalmente el español de
+ * entrada, que además pasa el filtro de deriva con puntaje perfecto.
+ *
+ * `normaOrtografica` y `variante` viajan aquí porque una traducción sin norma
+ * declarada no es verificable: dos hablantes pueden discrepar y ambos tener
+ * razón si siguen convenciones de escritura distintas.
+ */
+export interface DestinoTraduccion {
+  lengua: Exclude<LenguaClave, 'es'>;
+  /** Nombre de la lengua tal como debe nombrarse en la instrucción. */
+  nombre: string;
+  normaOrtografica?: string;
+  variante?: string;
+}
+
 /** Produce un borrador de traducción. Igual: la llamada al modelo vive en el servidor. */
 export type FuncionTraduccion = (
   textoFuente: string,
-  instruccionDeEstilo: string,
-  opciones: { temperatura: number },
+  destino: DestinoTraduccion,
+  opciones: { instruccion: string; temperatura: number },
 ) => Promise<string> | string;
 
 export interface EntradaGrafo {
@@ -21,6 +38,8 @@ export interface EntradaGrafo {
   /** Clave del léxico a la que aspira el candidato, si se está preparando una. */
   clave?: string;
   perfil?: PerfilIdiolectal;
+  normaOrtografica?: string;
+  variante?: string;
 }
 
 const INSTRUCCION_LITERAL = 'Traducción literal estricta, sin agregados ni paráfrasis.';
@@ -57,17 +76,28 @@ export class GrafoTraduccionNativa {
     traducir,
     clave,
     perfil = PERFIL_NEUTRO,
+    normaOrtografica,
+    variante,
   }: EntradaGrafo): Promise<CandidatoTraduccion> {
     const fuente = textoFuente.trim();
     if (!fuente) throw new Error('TEXTO_FUENTE_VACIO');
 
     const razones: string[] = [];
+    const destino: DestinoTraduccion = {
+      lengua,
+      nombre: descriptorLengua(lengua).nombre,
+      normaOrtografica,
+      variante,
+    };
+    if (!normaOrtografica) razones.push('SIN_NORMA_ORTOGRAFICA_DECLARADA');
 
     // 1 · Inyección de contexto estilístico y acústico
     const instruccionDeEstilo = perfil.aContextoDePrompt();
 
     // 2 · Borrador con estilo
-    const borrador = (await traducir(fuente, instruccionDeEstilo, { temperatura: 0.1 })).trim();
+    const borrador = (
+      await traducir(fuente, destino, { instruccion: instruccionDeEstilo, temperatura: 0.1 })
+    ).trim();
     if (!borrador) razones.push('BORRADOR_VACIO');
 
     // 3 · Vectorización y 4 · filtro de deriva previo al envío
@@ -91,7 +121,9 @@ export class GrafoTraduccionNativa {
     }
 
     // 5 · Repliegue: decodificación literal estricta, sin estilo ni temperatura
-    const literal = (await traducir(fuente, INSTRUCCION_LITERAL, { temperatura: 0 })).trim();
+    const literal = (
+      await traducir(fuente, destino, { instruccion: INSTRUCCION_LITERAL, temperatura: 0 })
+    ).trim();
     razones.push('REPLIEGUE_A_TRADUCCION_LITERAL');
     if (!literal) {
       razones.push('REPLIEGUE_VACIO');
