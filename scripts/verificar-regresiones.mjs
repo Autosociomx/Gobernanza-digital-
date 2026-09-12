@@ -79,6 +79,34 @@ try {
   }
 } catch { /* sin carpeta public */ }
 
+// R9 · Las cadenas en lengua originaria viven en el registro, no incrustadas
+// en los componentes. Las que estaban en CitizenApp.tsx y C5Dashboard.tsx no
+// tenían autor, fecha ni forma de saber si eran correctas, y una de ellas era
+// la cadena náayeri copiada al bloque wixárika. Ahora pasan por
+// shared/traduccion/ con estatus, fuente y GuardiaPreEnvio.
+if (!existsSync('shared/traduccion/lexico.ts')) {
+  errores.push(
+    'Falta shared/traduccion/lexico.ts: es el único registro con estatus y fuente ' +
+    'de las cadenas en náayeri y wixárika. Sin él la interfaz no puede etiquetar ' +
+    'lo que no está verificado.'
+  );
+}
+let lenguasIncrustadas = '';
+try {
+  lenguasIncrustadas = execSync(
+    "grep -rlnE \"^[[:space:]]*(cora|wixarika|nayeri)[[:space:]]*:\" src/ || true",
+    { encoding: 'utf-8' },
+  ).trim();
+} catch { /* grep no disponible: se omite */ }
+if (lenguasIncrustadas) {
+  errores.push(
+    `Hay cadenas en lengua originaria incrustadas en componentes: ${lenguasIncrustadas}. ` +
+    'Deben vivir en shared/traduccion/lexico.ts con estado, origen y fuente, y resolverse ' +
+    'con resolverTexto(). Una traducción sin trazabilidad no se le puede mostrar a un ciudadano ' +
+    'sin la etiqueta SIN VERIFICAR (docs/marco/PROTOCOLO_LENGUAS_ORIGINARIAS.md).'
+  );
+}
+
 // R7 (opcional) · La llave no aparece en el bundle compilado
 if (process.argv.includes('--con-bundle')) {
   try {
