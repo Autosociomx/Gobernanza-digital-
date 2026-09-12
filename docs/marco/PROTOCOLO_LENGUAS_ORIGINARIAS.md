@@ -131,9 +131,62 @@ revisión en el mismo PR.
 El validador rechaza el atajo: `VERIFICADO` con `origen: 'MAQUINA'` o
 `'SIN_TRAZABILIDAD'`, o sin `revisadoEn`, revienta al importar el módulo.
 
+## 5.bis Límites medidos del filtro de deriva
+
+Tres cosas que el filtro vectorial **no** puede hacer, y que por eso no pueden
+delegarse en él. La primera está medida y fijada en la suite de pruebas.
+
+**a) Aprueba el paso directo del español, con puntaje perfecto.**
+`cos(x, x) = 1` es una identidad matemática: se cumple con cualquier función de
+embedding, incluida una real. Un modelo que no traduce y devuelve el español tal
+cual obtiene 1.0000 y pasa el filtro. Es exactamente el defecto que traían las
+cadenas heredadas — "Ayuda" → "Ayuda", "Mapa" → "Mapa" — así que el filtro que
+supuestamente las habría detectado es justo el que las habría aprobado. Lo que
+las detiene es el estatus `RECHAZADO` en el registro. Fijado en la prueba
+*LÍMITE MEDIDO: el filtro vectorial aprueba el paso directo del español*.
+
+**b) No hay vectorizador que cubra náayeri ni wixárika.**
+El filtro compara el vector del español fuente contra el de la salida. Eso
+funciona con modelos multilingües en los pares que sí conocen; estas dos lenguas
+no están representadas en ningún modelo de embeddings disponible. En
+consecuencia una traducción **correcta** puntúa bajo por estar en otra lengua, no
+por ser infiel — y el repliegue literal, que sale en la misma lengua, puntúa
+igual de bajo. El filtro es un detector de deriva sobre el texto fuente, no un
+validador de traducción.
+
+**c) La latencia no es local.**
+La operación coseno son microsegundos, pero obtener los dos vectores es una
+llamada al proveedor de embeddings. En esta plataforma eso es un viaje de red
+desde el servidor, no una comparación en memoria. No es apto para un camino
+síncrono frente al ciudadano; es apto para preparar candidatos fuera de línea.
+
+Nada de esto invalida el filtro: lo ubica. Sirve para lo que sí hace —detectar
+que un borrador se fue de tema respecto de la fuente— y esa es la razón de que
+`evaluarPublicacion()` no lo consulte.
+
+## 5.ter Frontera con el dato biométrico
+
+`PerfilIdiolectal` recibe hoy tres valores y no captura nada: es un objeto de
+valor que alguien construye a mano, y en la plataforma solo se usa el perfil
+neutro. Esa frontera es deliberada.
+
+En el momento en que la frecuencia fundamental, el timbre o las pausas
+respiratorias se **midan de la voz de un ciudadano**, dejan de ser parámetros de
+estilo y pasan a ser dato biométrico personal: identifican a la persona aunque
+no se guarde el audio. Eso exige base legal, consentimiento explícito ligado al
+propósito y mínimo de retención — el mismo tratamiento que Context.OS ya le da al
+contacto personal, no menos. Mientras eso no esté resuelto y asentado, el perfil
+se construye a mano o se queda en `PERFIL_NEUTRO`; regla dura 9.
+
 ## 6. Lo que este subsistema **no** hace
 
 - No traduce en vivo para el ciudadano. No hay endpoint de traducción automática.
+- No erradica alucinaciones: acota una clase de ellas (deriva respecto de la
+  fuente) y deja pasar otras, entre ellas la no-traducción (§5.bis a).
+- No produce evidencia inmutable. El runtime declara `integrityAssurance:
+  'CHECKSUM_ONLY'`: hay checksum SHA-256 y `correlationId`, que no son firma
+  digital ni prueba de inmutabilidad, y la documentación no debe insinuar que
+  lo sean.
 - No valida calidad lingüística. El filtro de deriva detecta cambio de tema, no
   corrección gramatical ni pertinencia cultural.
 - No da voz sintética en lengua originaria. Ni náayeri ni wixárika tienen voz en

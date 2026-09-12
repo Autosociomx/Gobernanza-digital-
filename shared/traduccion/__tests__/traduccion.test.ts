@@ -423,6 +423,32 @@ describe('GrafoTraduccionNativa', () => {
     }
   });
 
+  it('LÍMITE MEDIDO: el filtro vectorial aprueba el paso directo del español', async () => {
+    // cosine(x, x) = 1 es una identidad matemática: se cumple con CUALQUIER
+    // función de embedding, incluida una real. Es decir, un modelo que no
+    // traduce y devuelve el español tal cual pasa el filtro con puntaje
+    // perfecto. Es exactamente el defecto que traían las cadenas heredadas
+    // ("Ayuda" -> "Ayuda"), y el filtro de deriva es estructuralmente incapaz
+    // de detectarlo.
+    const guardia = new GuardiaPreEnvio(0.85);
+    const identico = guardia.medirDeriva(embed('Reportar un bache'), embed('Reportar un bache'));
+    expect(identico.similitud).toBeCloseTo(1, 10);
+    expect(identico.aprueba).toBe(true);
+
+    const candidato = await new GrafoTraduccionNativa().ejecutar({
+      textoFuente: 'Reportar un bache',
+      lengua: 'wixarika',
+      embed,
+      traducir: (fuente) => fuente, // el modelo no traduce: devuelve el español
+    });
+    expect(candidato.aprobóFiltroDeriva).toBe(true);
+    expect(candidato.aptoParaPublicacion).toBe(false);
+
+    // Lo que sí lo detiene es el registro, no el coseno. Por eso la política
+    // de publicación no puede depender del filtro vectorial.
+    expect(resolverTexto('accion.ayuda', 'cora').lenguaEfectiva).toBe('es');
+  });
+
   it('rechaza un texto fuente vacío', async () => {
     await expect(
       new GrafoTraduccionNativa().ejecutar({
