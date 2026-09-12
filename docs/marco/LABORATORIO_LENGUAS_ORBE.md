@@ -23,7 +23,7 @@ Cada afirmación se verificó contra el código en el commit citado.
 | Evidencia `CHECKSUM_ONLY`, no firma digital ni inmutabilidad | **Confirmada.** Y así debe describirse siempre |
 | La función de traducción del grafo no recibe la lengua destino | **Confirmada — era un defecto real. Corregido en esta entrega** |
 | No se localizó CodeLens | **Confirmada.** Cero coincidencias en toda la rama |
-| 82 pruebas aprobadas | **Corregida.** 82 es lo que corre CI (`test:orbe-contextos`, 4 archivos). La suite completa da **91**. Ambas verifican comportamiento del software, no calidad lingüística |
+| 82 pruebas aprobadas | **Precisada.** En el commit contrastado, 82 es lo que corre CI (`test:orbe-contextos`, 4 archivos) y la suite completa daba 91. Con las dos pruebas de la corrección de esta entrega: **84 en CI, 93 en total**. Todas verifican comportamiento del software, no calidad lingüística |
 
 ### 1.1 Lo que el contexto no trae y el código sí
 
@@ -241,7 +241,7 @@ Satisfacción no es comprensión, y nada simulado se presenta como evidencia.
 Registro con estado, origen, fuente y fecha · guardia pre-envío determinística, independiente
 de todo embedding · repliegue a español con constancia · etiqueta SIN VERIFICAR en la interfaz
 · `aptoParaPublicacion: false` garantizado por el compilador · lengua destino, norma y variante
-en la instrucción de traducción · regla R9 de la Guardia · 91 pruebas · límite del filtro
+en la instrucción de traducción · regla R9 de la Guardia · 93 pruebas · límite del filtro
 medido y fijado.
 
 ### 🟡 Pendiente de validar
